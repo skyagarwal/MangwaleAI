@@ -1,0 +1,95 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { ScheduleModule } from '@nestjs/schedule';
+import configuration from './config/configuration';
+import { DatabaseModule } from './database/database.module';
+import { WhatsAppModule } from './whatsapp/whatsapp.module';
+import { PhpIntegrationModule } from './php-integration/php-integration.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { OrderFlowModule } from './order-flow/order-flow.module';
+import { ConversationModule } from './conversation/conversation.module';
+import { ParcelModule } from './parcel/parcel.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { TestingModule } from './testing/testing.module';
+import { AgentsModule } from './agents/agents.module';
+import { ZonesModule } from './zones/zones.module'; // Zone-based Delivery Management
+import { RoutingModule } from './routing/routing.module'; // OSRM Distance Calculation
+import { StoresModule } from './stores/stores.module'; // Store Schedules & Hours
+import { IntegrationsModule } from './integrations/integrations.module'; // ✨ Admin Backend Integration Clients
+import { NluModule } from './nlu/nlu.module'; // ✨ NLU Intent Classification & Entity Extraction
+import { AsrModule } from './asr/asr.module'; // ✨ ASR Speech-to-Text
+import { TtsModule } from './tts/tts.module'; // ✨ TTS Text-to-Speech
+import { LlmModule } from './llm/llm.module'; // ✨ LLM Orchestration
+import { SearchModule } from './search/search.module'; // ✨ Semantic & Keyword Search
+import { VisionModule } from './vision/vision.module'; // ✨ Image AI & Vision
+import { FlowManagementModule } from './flow-management/flow-management.module'; // ✨ Visual Flow Builder
+import { TrainingModule } from './training/training.module'; // ✨ ML Training & Label Studio
+import { GamificationModule } from './gamification/gamification.module'; // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
+import { PersonalizationModule } from './personalization/personalization.module'; // ✨ AI-Powered User Profiling & Search Personalization
+import { FlowEngineModule } from './flow-engine/flow-engine.module'; // ✨ Modern State Machine Flow Engine
+import { ChatModule } from './chat/chat.module'; // ✨ WebSocket Gateway for Real-time Chat
+import { StatsModule } from './stats/stats.module'; // ✨ Dashboard Statistics & Analytics
+import { ModelsModule } from './models/models.module'; // ✨ AI Models Registry & Management
+import { HealthModule } from './health/health.module';
+import { SettingsModule } from './settings/settings.module';
+
+@Module({
+  imports: [
+    // Configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      envFilePath: '.env',
+    }),
+
+    // Database
+    DatabaseModule,
+
+    // HTTP Client
+    HttpModule.register({
+      timeout: 30000,
+      maxRedirects: 5,
+    }),
+
+    // Scheduling
+    ScheduleModule.forRoot(),
+
+    // Core modules (channel-agnostic)
+    MessagingModule,
+    OrderFlowModule,
+    PhpIntegrationModule,
+    IntegrationsModule, // ✨ Admin Backend Integration Clients (Payment, Routing)
+    ZonesModule, // ✨ Zone Detection & Filtering
+    RoutingModule, // ✨ Distance & Delivery Time Calculation
+    StoresModule, // ✨ Store Schedules & Opening Hours
+    ConversationModule, // MANGWALE CONVERSATION PLATFORM (Core)
+    ParcelModule, // AI-Powered Parcel Delivery
+    AgentsModule, // ✨ LLM-powered Agent System
+    NluModule, // ✨ NLU Intent Classification & Entity Extraction
+    AsrModule, // ✨ ASR Speech-to-Text
+    TtsModule, // ✨ TTS Text-to-Speech
+    LlmModule, // ✨ LLM Orchestration (vLLM + Cloud)
+    SearchModule, // ✨ Semantic & Keyword Search
+    VisionModule, // ✨ Image AI & Vision (PPE, Faces, Objects)
+    FlowManagementModule, // ✨ Visual Flow Builder & Execution
+    TrainingModule, // ✨ ML Training Pipeline & Label Studio
+    GamificationModule, // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
+    PersonalizationModule, // ✨ AI-Powered User Profiling & Search Personalization
+    FlowEngineModule, // ✨ Modern State Machine Flow Engine (PROD)
+    ChatModule, // ✨ WebSocket Gateway for Real-time Web Chat
+    StatsModule, // ✨ Dashboard Statistics & Analytics
+    ModelsModule, // ✨ AI Models Registry & Management
+    HealthModule, // ✨ Health Checks
+    SettingsModule, // ✨ System Settings & Connection Tests
+
+    // Channel implementation modules
+    WhatsAppModule, // WhatsApp channel
+    TelegramModule, // Telegram channel (inbound minimal)
+    // WebChatModule, // Future: Web chat channel
+    TestingModule, // Lightweight chat endpoints for testing AI flows
+  ],
+})
+export class AppModule {}
+
+
