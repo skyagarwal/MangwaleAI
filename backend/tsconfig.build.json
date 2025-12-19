@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "frontend",
+    "api-gateway",
+    "test",
+    "src/gamification",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
