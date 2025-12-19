@@ -33,11 +33,11 @@ export const authFlow: FlowDefinition = {
       description: 'Check if user is already authenticated',
       conditions: [
         {
-          expression: 'context.data.authenticated === true',
+          expression: 'context.authenticated === true || context.user_id',
           event: 'already_authenticated',
         },
         {
-          expression: 'context.data.phone_number && context.data.phone_number.length >= 10',
+          expression: 'context.phone && context.phone.length >= 10',
           event: 'has_phone',
         },
         {
@@ -289,7 +289,7 @@ export const authFlow: FlowDefinition = {
           id: 'auth_success_message',
           executor: 'response',
           config: {
-            message: '✅ {{#if user_name}}Welcome, {{user_name}}!{{else}}Login successful!{{/if}} How can I help you today?',
+            message: '✅ Yes, you\'re logged in{{#if user_name}} as {{user_name}}{{/if}}! How can I help you today?',
             buttons: [
               { id: 'btn_food', label: 'Order Food', value: 'order_food' },
               { id: 'btn_parcel', label: 'Send Parcel', value: 'parcel_booking' },

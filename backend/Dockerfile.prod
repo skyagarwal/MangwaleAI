@@ -16,7 +16,7 @@ COPY nest-cli.json ./
 COPY webpack.config.js ./
 
 # Install ALL dependencies (including dev dependencies for build)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY src ./src

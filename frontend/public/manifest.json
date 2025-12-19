@@ -1,0 +1,16 @@
+{
+  "name": "Mangwale AI",
+  "short_name": "Mangwale",
+  "description": "Nashik's Super App - AI-powered shopping and services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/bot-avatar.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

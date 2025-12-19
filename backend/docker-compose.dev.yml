@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Development Backend - Hot Reload Enabled
+  mangwale-ai:
+    image: node:20-alpine
+    container_name: mangwale_ai_dev
+    restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon --watch src --ext ts --exec 'ts-node -r tsconfig-paths/register src/main.ts'"
+    volumes:
+      - ./src:/app/src
+      - ./libs:/app/libs
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      - /app/node_modules
+      - /app/dist
+    ports:
+      - "3200:3200"
+      - "9229:9229"  # Debug port
+    environment:
+      - NODE_ENV=development
+      - PORT=3200
+      - REDIS_HOST=mangwale_redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=mangwale_postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=mangwale_config
+      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_DB=headless_mangwale
+      - NLU_SERVICE_URL=http://mangwale-ai-nlu:7010
+      - VLLM_API_URL=http://mangwale-ai-vllm:8002
+      - OSRM_SERVICE_URL=http://mangwale_osrm:5000
+    networks:
+      - headless-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3200/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: mangwale_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=mangwale_config
+      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_DB=headless_mangwale
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - headless-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mangwale_config -d headless_mangwale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: mangwale_redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - headless-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  headless-network:
+    driver: bridge

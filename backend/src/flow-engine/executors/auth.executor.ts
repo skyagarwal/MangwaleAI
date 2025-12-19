@@ -82,8 +82,11 @@ export class AuthExecutor implements ActionExecutor {
     
     if (!input) {
       return {
-        success: false,
-        error: 'No phone number provided',
+        success: true, // Changed to true to avoid "Unknown executor error"
+        output: {
+          error: 'No phone number provided',
+          valid: false,
+        },
         event: 'invalid',
       };
     }
@@ -113,9 +116,10 @@ export class AuthExecutor implements ActionExecutor {
       normalizedPhone = '+' + digitsOnly;
     } else {
       return {
-        success: false,
+        success: true, // Changed to true to trigger 'invalid' transition gracefully
         output: {
           error: 'Invalid phone number format. Please enter a 10-digit mobile number.',
+          valid: false,
         },
         event: 'invalid',
       };
@@ -124,9 +128,10 @@ export class AuthExecutor implements ActionExecutor {
     // Validate final format
     if (!/^\+\d{10,15}$/.test(normalizedPhone)) {
       return {
-        success: false,
+        success: true, // Changed to true to trigger 'invalid' transition gracefully
         output: {
           error: 'Invalid phone number format.',
+          valid: false,
         },
         event: 'invalid',
       };

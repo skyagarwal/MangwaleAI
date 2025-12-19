@@ -39,6 +39,15 @@ export interface ProductCard {
   storeName?: string
   storeId?: number
   veg?: boolean
+  isSponsored?: boolean
+  isFeatured?: boolean
+  urgency?: 'high' | 'medium' | 'low'
+  discount?: number | string
+  isOpen?: boolean
+  distance?: string
+  socialProof?: string
+  persuasionHint?: string
+  badges?: string[]
   action: {
     label: string
     value: string

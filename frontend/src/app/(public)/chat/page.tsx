@@ -667,7 +667,9 @@ function ChatContent() {
                       onError={(e) => {
                         // Fallback to emoji if image fails
                         e.currentTarget.style.display = 'none'
-                        e.currentTarget.parentElement!.innerHTML = '<span class="text-4xl">🤖</span>'
+                        if (e.currentTarget.parentElement) {
+                          e.currentTarget.parentElement.innerHTML = '<span class="text-4xl">🤖</span>'
+                        }
                       }}
                     />
                   </div>
@@ -740,7 +742,9 @@ function ChatContent() {
                                 className="object-cover"
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none'
-                                  e.currentTarget.parentElement!.innerHTML = '<span class="text-xl">🤖</span>'
+                                    if (e.currentTarget.parentElement) {
+                                      e.currentTarget.parentElement.innerHTML = '<span class="text-xl">🤖</span>'
+                                    }
                                 }}
                               />
                             )}
@@ -807,7 +811,9 @@ function ChatContent() {
                               className="object-cover"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none'
-                                e.currentTarget.parentElement!.innerHTML = '<span class="text-xl">🤖</span>'
+                                if (e.currentTarget.parentElement) {
+                                  e.currentTarget.parentElement.innerHTML = '<span class="text-xl">🤖</span>'
+                                }
                               }}
                             />
                         </div>
