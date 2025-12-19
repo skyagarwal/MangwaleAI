@@ -29,7 +29,8 @@ import { DatabaseModule } from '../database/database.module';
 import { GamificationModule } from '../gamification/gamification.module'; // ✨ Gamification integration
 import { PersonalizationModule } from '../personalization/personalization.module'; // ✨ Personalization integration
 import { UserModule } from '../user/user.module'; // ✨ User sync service
-import { SettingsModule } from '../settings/settings.module'; // ✨ Settings service
+import { SettingsModule } from '../settings/settings.module';
+import { VoiceCharactersModule } from '../voice-characters/voice-characters.module'; // ✨ Voice character personas for chatbot // ✨ Settings service
 // Import agent implementations
 import { FAQAgent } from './agents/faq.agent';
 import { SearchAgent } from './agents/search.agent';
@@ -76,6 +77,7 @@ import { AgentsService } from './services/agents.service';
     PersonalizationModule, // ✨ Personalization integration
     UserModule, // ✨ User sync service
     SettingsModule, // ✨ Settings service
+    VoiceCharactersModule, // ✨ Voice character personas for Mercury TTS
   ],
   controllers: [
     FlowTestController,

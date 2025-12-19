@@ -20,6 +20,7 @@ import { GameOrchestratorService } from '../../gamification/services/game-orches
 import { UserPreferenceService } from '../../personalization/user-preference.service';
 import { UserSyncService } from '../../user/services/user-sync.service';
 import { SettingsService } from '../../settings/settings.service';
+import { VoiceCharactersService } from '../../voice-characters/voice-characters.service';
 
 /**
  * Flow Interfaces (from Admin Backend)
@@ -86,6 +87,7 @@ export class AgentOrchestratorService {
     private userPreferenceService: UserPreferenceService,
     private userSyncService: UserSyncService,
     private phpStoreService: PhpStoreService,
+    private voiceCharactersService: VoiceCharactersService,
     private settingsService: SettingsService,
   ) {
     this.logger = new Logger(AgentOrchestratorService.name);
@@ -1194,6 +1196,25 @@ Guidelines:
 
     // Fetch dynamic system prompt from settings (or use default)
     let systemPrompt = await this.settingsService.getSetting('system-prompt', defaultSystemPrompt);
+    
+    // ===== PERSONA INTEGRATION: Inject character personality =====
+    const activePersona = await this.settingsService.getSetting('active_chatbot_persona', 'chotu');
+    if (activePersona && activePersona !== 'none') {
+      try {
+        const personaPrompt = await this.voiceCharactersService.generateSystemPromptForCharacter(activePersona);
+        if (personaPrompt) {
+          // Prepend persona to system prompt
+          systemPrompt = `${personaPrompt}
+
+---
+
+${systemPrompt}`;
+          this.logger.log(`✅ Persona "${activePersona}" injected into system prompt`);
+        }
+      } catch (error) {
+        this.logger.warn(`⚠️  Failed to load persona "${activePersona}": ${error.message}`);
+      }
+    }
 
     // Replace placeholders
     systemPrompt = systemPrompt
