@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 
 @Controller('settings')
@@ -33,5 +33,17 @@ export class SettingsController {
   @Get('minio/test')
   async testMinio() {
     return this.settingsService.testMinio();
+  }
+
+  @Get('key/:key')
+  async getSetting(@Param('key') key: string) {
+    const value = await this.settingsService.getSetting(key);
+    return { key, value };
+  }
+
+  @Put('key/:key')
+  async updateSetting(@Param('key') key: string, @Body() body: { value: string }) {
+    await this.settingsService.updateSettings([{ key, value: body.value }]);
+    return { key, value: body.value, success: true };
   }
 }

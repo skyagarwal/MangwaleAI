@@ -587,7 +587,10 @@ export class AgentOrchestratorService {
           return {
             response: result.response,
             executionTime: Date.now() - startTime,
-            metadata: { intent: 'resume_flow' }
+            metadata: { 
+              intent: 'resume_flow',
+              cards: result.metadata?.cards  // ✅ FIXED: Pass cards from resumed flow
+            }
           };
         }
       }
