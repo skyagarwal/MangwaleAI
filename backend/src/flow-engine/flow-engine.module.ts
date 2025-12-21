@@ -25,6 +25,9 @@ import { SessionExecutor } from './executors/session.executor';
 import { InventoryExecutor } from './executors/inventory.executor';
 import { ExternalSearchExecutor } from './executors/external-search.executor';
 import { SelectionExecutor } from './executors/selection.executor';
+import { ComplexOrderParserExecutor } from './executors/complex-order-parser.executor';
+import { GroupOrderSearchExecutor } from './executors/group-order-search.executor';
+import { ValuePropositionExecutor } from './executors/value-proposition.executor';
 // Game executors disabled - Prisma schema mismatch
 // import { GameScorerExecutor } from './executors/game-scorer.executor';
 // import { RewardPointsExecutor } from './executors/reward-points.executor';
@@ -45,6 +48,8 @@ import { PhpIntegrationModule } from '../php-integration/php-integration.module'
 import { AgentsModule } from '../agents/agents.module';
 import { GamificationModule } from '../gamification/gamification.module';
 import { PersonalizationModule } from '../personalization/personalization.module';
+import { OrderModule } from '../order/order.module';
+import { PricingModule } from '../pricing/pricing.module';
 
 @Module({
   imports: [
@@ -56,6 +61,8 @@ import { PersonalizationModule } from '../personalization/personalization.module
     PhpIntegrationModule,
     GamificationModule,
     PersonalizationModule,
+    OrderModule,
+    PricingModule,
     forwardRef(() => AgentsModule), // Use forwardRef to avoid circular dependency
   ],
   controllers: [FlowBuilderController, FlowsController],
@@ -89,6 +96,9 @@ import { PersonalizationModule } from '../personalization/personalization.module
     InventoryExecutor,
     ExternalSearchExecutor,
     SelectionExecutor,
+    ComplexOrderParserExecutor,
+    GroupOrderSearchExecutor,
+    ValuePropositionExecutor,
     // GameScorerExecutor, // Disabled - Prisma schema mismatch
     // RewardPointsExecutor, // Disabled - Prisma schema mismatch
   ],
@@ -122,6 +132,10 @@ export class FlowEngineModule {
     private readonly sessionExecutor: SessionExecutor,
     private readonly inventoryExecutor: InventoryExecutor,
     private readonly externalSearchExecutor: ExternalSearchExecutor,
+    private readonly selectionExecutor: SelectionExecutor,
+    private readonly complexOrderParserExecutor: ComplexOrderParserExecutor,
+    private readonly groupOrderSearchExecutor: GroupOrderSearchExecutor,
+    private readonly valuePropositionExecutor: ValuePropositionExecutor,
     // private readonly gameScorerExecutor: GameScorerExecutor, // Disabled
     // private readonly rewardPointsExecutor: RewardPointsExecutor, // Disabled
   ) {
@@ -143,6 +157,10 @@ export class FlowEngineModule {
     this.executorRegistry.register(sessionExecutor);
     this.executorRegistry.register(inventoryExecutor);
     this.executorRegistry.register(externalSearchExecutor);
+    this.executorRegistry.register(selectionExecutor);
+    this.executorRegistry.register(complexOrderParserExecutor);
+    this.executorRegistry.register(groupOrderSearchExecutor);
+    this.executorRegistry.register(valuePropositionExecutor);
     // this.executorRegistry.register(gameScorerExecutor); // Disabled
     // this.executorRegistry.register(rewardPointsExecutor); // Disabled
   }

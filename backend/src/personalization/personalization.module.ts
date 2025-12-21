@@ -7,6 +7,7 @@ import { ConversationEnrichmentService } from './conversation-enrichment.service
 import { PersonalizationController } from './personalization.controller';
 import { LlmModule } from '../llm/llm.module';
 import { DatabaseModule } from '../database/database.module';
+import { UserContextModule } from '../user-context/user-context.module'; // 🧠 Order history & wallet context
 
 /**
  * Personalization Module
@@ -29,6 +30,7 @@ import { DatabaseModule } from '../database/database.module';
   imports: [
     LlmModule,
     DatabaseModule,
+    UserContextModule, // 🧠 Order history & wallet context from MySQL
   ],
   controllers: [PersonalizationController],
   providers: [

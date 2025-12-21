@@ -17,6 +17,10 @@ import {
   Eye,
   Gamepad2,
   Sparkles,
+  GraduationCap,
+  Database,
+  Users,
+  GitBranch,
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -31,6 +35,36 @@ const navigation = [
     name: 'AI Hub',
     href: '/admin/ai-hub',
     icon: Sparkles,
+  },
+  {
+    name: 'Self-Learning',
+    icon: GraduationCap,
+    children: [
+      { name: 'Learning Dashboard', href: '/admin/learning' },
+      { name: 'Review Queue', href: '/admin/learning/review' },
+      { name: 'Training Data', href: '/admin/learning/data' },
+      { name: 'Model Performance', href: '/admin/learning/performance' },
+      { name: 'Label Studio', href: '/admin/learning/label-studio' },
+    ],
+  },
+  {
+    name: 'Data Sources',
+    icon: Database,
+    children: [
+      { name: 'Source Management', href: '/admin/data-sources' },
+      { name: 'Scraper Jobs', href: '/admin/data-sources/scraper' },
+      { name: 'Store Mappings', href: '/admin/data-sources/mappings' },
+      { name: 'Health Monitor', href: '/admin/data-sources/health' },
+    ],
+  },
+  {
+    name: 'User Management',
+    icon: Users,
+    children: [
+      { name: 'Admin Users', href: '/admin/users' },
+      { name: 'Roles & Permissions', href: '/admin/users/roles' },
+      { name: 'Activity Log', href: '/admin/users/activity' },
+    ],
   },
   {
     name: 'Vision & Safety',

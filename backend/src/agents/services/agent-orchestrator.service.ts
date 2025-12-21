@@ -376,10 +376,32 @@ export class AgentOrchestratorService {
       let finalUserPreferenceContext = userPreferenceContext;
       if (!finalUserPreferenceContext && session?.data?.user_id) {
         try {
-          const prefs = await this.userPreferenceService.getPreferenceContext(session.data.user_id);
+          // Pass phone number to enable order history lookup from MySQL
+          const prefs = await this.userPreferenceService.getPreferenceContext(
+            session.data.user_id, 
+            phoneNumber // 🧠 Enable order history context
+          );
           finalUserPreferenceContext = prefs.fullContext;
         } catch (err) {
           this.logger.warn(`Failed to fetch user preferences: ${err.message}`);
+        }
+      }
+      
+      // 🧠 SMART PERSONALIZATION: Try to load user context even without auth
+      // This enables personalized greetings for returning users before they log in
+      if (!finalUserPreferenceContext && phoneNumber && phoneNumber.length >= 10) {
+        try {
+          // Try to get order history by phone - works even without authentication
+          const prefs = await this.userPreferenceService.getPreferenceContext(
+            0, // No user_id yet
+            phoneNumber.replace(/^web-/, '').replace(/^whatsapp-/, '') // Clean phone prefix
+          );
+          if (prefs.fullContext && !prefs.fullContext.includes('NEW USER')) {
+            finalUserPreferenceContext = prefs.fullContext;
+            this.logger.log(`🧠 Loaded order history context for returning user ${phoneNumber}`);
+          }
+        } catch (err) {
+          // Silently ignore - user may not exist
         }
       }
 
@@ -607,7 +629,9 @@ export class AgentOrchestratorService {
           initialContext: {
             message,
             intent: routing.intent,
-            ...routing.entities
+            ...routing.entities,
+            // 🧠 Pass user preference context to flow for personalization
+            ...(finalUserPreferenceContext && { userPreferenceContext: finalUserPreferenceContext }),
           }
         });
 

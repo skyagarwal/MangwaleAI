@@ -37,6 +37,13 @@ import { SettingsModule } from './settings/settings.module';
 import { MonitoringModule } from './monitoring/monitoring.module'; // ✨ System Monitoring & Metrics
 import { AnalyticsModule } from './analytics/analytics.module'; // ✨ Analytics & Trending
 import { CommonModule } from './common/common.module'; // ✨ Common utilities & Audit Logs
+import { UserContextModule } from './user-context/user-context.module'; // ✨ Smart User Context for Personalization
+import { LearningModule } from './learning/learning.module'; // ✨ Self-Learning & Mistake Tracking
+import { ReviewsModule } from './reviews/reviews.module'; // ✨ Review Intelligence
+import { PricingModule } from './pricing/pricing.module'; // ✨ Value Proposition
+import { ContextModule } from './context/context.module'; // ✨ User Context (Weather, Preferences, City Knowledge)
+import { OrderModule } from './order/order.module'; // ✨ Complex Order Parsing & Group Orders
+import { ProfilesModule } from './profiles/profiles.module'; // ✨ Enhanced Profiles (Stores, Vendors, Riders, Users)
 
 @Module({
   imports: [
@@ -90,6 +97,13 @@ import { CommonModule } from './common/common.module'; // ✨ Common utilities &
     MonitoringModule, // ✨ System Monitoring & Metrics
     AnalyticsModule, // ✨ Analytics & Trending
     CommonModule, // ✨ Common utilities & Audit Logs
+    UserContextModule, // ✨ Smart User Context for Personalization
+    LearningModule, // ✨ Self-Learning & Mistake Tracking
+    ReviewsModule, // ✨ Review Intelligence
+    PricingModule, // ✨ Value Proposition
+    ContextModule, // ✨ User Context (Weather, Preferences, City Knowledge)
+    OrderModule, // ✨ Complex Order Parsing & Group Orders
+    ProfilesModule, // ✨ Enhanced Profiles (Stores, Vendors, Riders, Users)
 
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel

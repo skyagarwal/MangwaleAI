@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { UserContextService } from '../user-context/user-context.service';
 
 /**
  * 🧠 User Preference Service
@@ -11,6 +12,7 @@ import { PrismaService } from '../database/prisma.service';
  * 2. user_insights - AI-extracted insights from conversations
  * 3. user_interactions - Behavioral data (clicks, orders, searches)
  * 4. user_search_patterns - Search behavior analysis
+ * 5. MySQL orders - Real order history from PHP backend (via UserContextService)
  */
 
 export interface UserPreferences {
@@ -75,7 +77,10 @@ export interface PreferenceContext {
 export class UserPreferenceService {
   private readonly logger = new Logger(UserPreferenceService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Optional() private userContextService?: UserContextService, // 🧠 Order history from MySQL
+  ) {}
 
   /**
    * Get comprehensive user preferences from all sources
@@ -173,13 +178,37 @@ export class UserPreferenceService {
   /**
    * Get formatted context for agent prompts
    */
-  async getPreferenceContext(userId: number): Promise<PreferenceContext> {
+  async getPreferenceContext(userId: number, phone?: string): Promise<PreferenceContext> {
     const prefs = await this.getPreferences(userId);
 
+    // 🧠 Fetch order history from MySQL if UserContextService is available
+    let orderHistory: any = null;
+    let walletInfo: any = null;
+    let favoriteStores: string[] = [];
+    let favoriteItems: string[] = [];
+    
+    if (this.userContextService && phone) {
+      try {
+        const normalizedPhone = phone.replace(/^\+91/, '').replace(/^\+/, '');
+        const orderData = await this.userContextService.getOrderHistoryByPhone(normalizedPhone);
+        if (orderData && orderData.totalOrders > 0) {
+          orderHistory = orderData;
+          favoriteStores = orderData.favoriteStores?.slice(0, 3).map((s: any) => s.storeName) || [];
+          favoriteItems = orderData.favoriteItems?.slice(0, 5).map((i: any) => i.itemName) || [];
+        }
+        const walletData = await this.userContextService.getWalletInfoByPhone(normalizedPhone);
+        if (walletData) {
+          walletInfo = walletData;
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to fetch order history from MySQL: ${err.message}`);
+      }
+    }
+
     // Check if we have enough data
-    const hasBasicData = prefs.profileCompleteness > 20;
-    const hasGoodData = prefs.profileCompleteness > 50;
-    const hasExcellentData = prefs.profileCompleteness > 80;
+    const hasBasicData = prefs.profileCompleteness > 20 || (orderHistory?.totalOrders > 0);
+    const hasGoodData = prefs.profileCompleteness > 50 || (orderHistory?.totalOrders > 5);
+    const hasExcellentData = prefs.profileCompleteness > 80 || (orderHistory?.totalOrders > 20);
 
     // Build summary
     const summaryParts: string[] = [];
@@ -188,6 +217,7 @@ export class UserPreferenceService {
     if (prefs.spiceLevel) summaryParts.push(`${prefs.spiceLevel} spice`);
     if (prefs.priceSensitivity) summaryParts.push(`${prefs.priceSensitivity}-conscious`);
     if (prefs.communicationTone) summaryParts.push(`${prefs.communicationTone} tone`);
+    if (orderHistory?.totalOrders > 0) summaryParts.push(`${orderHistory.totalOrders} orders`);
 
     const summary = summaryParts.length > 0 
       ? summaryParts.join(', ') 
@@ -199,7 +229,7 @@ export class UserPreferenceService {
     if (!hasBasicData) {
       fullContext = `
 🆕 NEW USER (Profile: ${prefs.profileCompleteness}%)
-- No preferences saved yet
+- No preferences or order history yet
 - Build rapport through conversation
 - Ask preferences casually (don't interrogate)
 - Focus on providing helpful service first
@@ -214,6 +244,19 @@ STRATEGY:
       fullContext = `
 👤 USER PROFILE (${prefs.profileCompleteness}% complete)
 
+${orderHistory?.totalOrders > 0 ? `📦 ORDER HISTORY (from MySQL):
+- Total Orders: ${orderHistory.totalOrders} (${orderHistory.deliveredOrders} delivered, ${orderHistory.canceledOrders} canceled)
+- Total Spent: ₹${orderHistory.totalSpent?.toFixed(0) || 0}
+- Average Order: ₹${orderHistory.avgOrderValue?.toFixed(0) || 0}
+${orderHistory.lastOrderDate ? `- Last Order: ${new Date(orderHistory.lastOrderDate).toLocaleDateString()}` : ''}
+${favoriteStores.length > 0 ? `- Favorite Stores: ${favoriteStores.join(', ')}` : ''}
+${favoriteItems.length > 0 ? `- Favorite Items: ${favoriteItems.join(', ')}` : ''}
+` : ''}
+${walletInfo ? `💰 WALLET:
+- Balance: ₹${walletInfo.balance}
+- Loyalty Points: ${walletInfo.loyaltyPoints} pts
+${walletInfo.loyaltyPoints > 100 ? '⭐ Can suggest redeeming loyalty points!' : ''}
+` : ''}
 ${prefs.dietaryType ? `🥗 DIETARY PREFERENCES:
 - Type: ${prefs.dietaryType.toUpperCase()}
 ${prefs.dietaryRestrictions?.length ? `- Restrictions: ${prefs.dietaryRestrictions.join(', ')}` : ''}
@@ -234,6 +277,10 @@ ${prefs.personalityTraits?.impatient ? '- Impatient - be quick and concise' : ''
 ${prefs.personalityTraits?.priceConscious ? '- Always mentions discounts/offers first' : ''}
 ` : ''}
 🎯 PERSONALIZATION RULES:
+${orderHistory?.totalOrders > 0 ? `✅ RETURNING CUSTOMER - greet warmly, mention their favorite store/item if relevant` : ''}
+${favoriteStores.length > 0 ? `💡 Can suggest: "Would you like to order from ${favoriteStores[0]} again?"` : ''}
+${favoriteItems.length > 0 ? `💡 Can suggest: "Your usual ${favoriteItems[0]}?"` : ''}
+${walletInfo?.loyaltyPoints > 100 ? `💡 Can suggest: "You have ${walletInfo.loyaltyPoints} loyalty points to redeem!"` : ''}
 ${prefs.dietaryType === 'veg' ? '✅ ONLY show vegetarian options' : ''}
 ${prefs.dietaryType === 'non-veg' ? '✅ Show both veg + non-veg, prioritize non-veg' : ''}
 ${prefs.allergies?.length ? `❌ NEVER suggest items with: ${prefs.allergies.join(', ')}` : ''}

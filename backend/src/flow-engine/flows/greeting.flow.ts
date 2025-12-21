@@ -28,10 +28,22 @@ export const greetingFlow: FlowDefinition = {
           id: 'generate_greeting',
           executor: 'llm',
           config: {
-            prompt: "Generate a very short welcome message for Mangwale (Nashik's Super App). If user name is known, use it. Say 'Welcome to Mangwale! How can I help you today?'",
-            systemPrompt: "You are Mangwale AI. Be professional and extremely brief (max 15 words).",
+            prompt: `Generate a very short personalized welcome message for Mangwale (Nashik's Super App).
+
+{{#if userPreferenceContext}}
+USER CONTEXT (use this to personalize):
+{{{userPreferenceContext}}}
+
+If returning customer with favorite store, mention it: "Welcome back! Order from [store] again?"
+If they have loyalty points > 100, mention: "You have [points] points to redeem!"
+{{else}}
+New user - just say: "Welcome to Mangwale! How can I help you today?"
+{{/if}}
+
+Keep it under 20 words. Be warm and friendly.`,
+            systemPrompt: "You are Mangwale AI - Nashik's helpful super app assistant. Be professional, warm, and extremely brief.",
             temperature: 0.5,
-            maxTokens: 50
+            maxTokens: 60
           },
           output: 'greeting_text',
         },

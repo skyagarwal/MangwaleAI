@@ -507,8 +507,8 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
 
     // Show search results
     show_results: {
-      type: 'action',
-      description: 'Display food items to user',
+      type: 'wait',
+      description: 'Display food items to user and wait for selection',
       actions: [
         {
           id: 'display_items',
@@ -544,8 +544,8 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       transitions: {
         item_selected: 'add_to_cart',
         checkout: 'check_auth_for_checkout',
-        cancel: 'initial',
-        search_more: 'search',
+        cancel: 'check_trigger',
+        search_more: 'search_food',
         unclear: 'clarify_selection',
         error: 'show_results',
       },

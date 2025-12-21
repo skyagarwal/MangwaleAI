@@ -4,9 +4,12 @@ import { SessionModule } from '../session/session.module';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 import { AuthModule } from '../auth/auth.module'; // ✨ Auth trigger for transaction intents
 import { ZonesModule } from '../zones/zones.module'; // ✨ Zone detection for function executor
-import { IntegrationsModule } from '../integrations/integrations.module'; // ✨ Optional integration clients
+import { IntegrationsModule } from '../integrations/integrations.module'; // ✨ Optional integration clients + GooglePlaces
 import { OrchestratorModule } from '../orchestrator/orchestrator.module'; // ✨ SearchOrchestrator for OpenSearch/PHP routing
 import { ConversationModule } from '../conversation/conversation.module'; // ✨ For ChatWebController integration
+import { LearningModule } from '../learning/learning.module'; // ✨ Self-learning mistake tracker
+import { ReviewsModule } from '../reviews/reviews.module'; // ✨ Review intelligence
+import { PricingModule } from '../pricing/pricing.module'; // ✨ Value proposition
 import { AgentOrchestratorService } from './services/agent-orchestrator.service';
 import { AgentRegistryService } from './services/agent-registry.service';
 import { IntentRouterService } from './services/intent-router.service';
@@ -38,6 +41,7 @@ import { OrderAgent } from './agents/order.agent';
 import { ComplaintsAgent } from './agents/complaints.agent';
 import { BookingAgent } from './agents/booking.agent';
 import { AgentsService } from './services/agents.service';
+import { EnhancedAgentToolsService } from './services/enhanced-agent-tools.service'; // ✨ Enhanced tools
 
 /**
  * Agents Module
@@ -78,6 +82,9 @@ import { AgentsService } from './services/agents.service';
     UserModule, // ✨ User sync service
     SettingsModule, // ✨ Settings service
     VoiceCharactersModule, // ✨ Voice character personas for Mercury TTS
+    LearningModule, // ✨ Self-learning mistake tracker
+    ReviewsModule, // ✨ Review intelligence
+    PricingModule, // ✨ Value proposition
   ],
   controllers: [
     FlowTestController,
@@ -97,6 +104,7 @@ import { AgentsService } from './services/agents.service';
     ConversationLoggerService, // ✨ PostgreSQL conversation logging
     AgentsService, // ✨ Agent statistics and management
     AgentHandoffService, // ✨ Agent-to-agent handoff mechanism
+    EnhancedAgentToolsService, // ✨ Google Places, Reviews, Self-learning tools
     // Agent implementations
     FAQAgent,
     SearchAgent,
@@ -111,6 +119,7 @@ import { AgentsService } from './services/agents.service';
     ConversationLoggerService, // ✨ Export for use in ChatGateway
     AddressExtractionService, // ✨ Export for use in FlowEngine
     AgentHandoffService, // ✨ Export for agent handoff capability
+    EnhancedAgentToolsService, // ✨ Export enhanced tools
   ],
 })
 export class AgentsModule {}

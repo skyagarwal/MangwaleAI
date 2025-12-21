@@ -235,6 +235,56 @@ export class PhpAuthService extends PhpApiService {
   }
 
   /**
+   * Login with email/password
+   * PHP endpoint: POST /api/v1/auth/login
+   * Expects: { email_or_phone, password, login_type: 'manual', field_type: 'email'|'phone' }
+   */
+  async loginWithPassword(emailOrPhone: string, password: string, fieldType: 'email' | 'phone'): Promise<{
+    token: string;
+    id?: number;
+    phone?: string;
+    email?: string;
+    f_name?: string;
+    l_name?: string;
+    is_personal_info: number;
+    is_phone_verified: number;
+    is_email_verified: number;
+  }> {
+    // MOCK FOR TESTING
+    const isTestMode = this.configService.get('app.testMode');
+    if (isTestMode && emailOrPhone === 'test@example.com' && password === 'test123') {
+      this.logger.log(`🔐 [MOCK] Password login for ${emailOrPhone}`);
+      return {
+        token: `mock_token_password_${Date.now()}`,
+        id: 99999,
+        email: emailOrPhone,
+        f_name: 'Test',
+        l_name: 'User',
+        is_personal_info: 1,
+        is_phone_verified: 1,
+        is_email_verified: 1,
+      };
+    }
+
+    this.logger.log(`🔐 Password login for ${emailOrPhone} (${fieldType})`);
+    
+    const response: any = await this.post('/api/v1/auth/login', {
+      email_or_phone: emailOrPhone,
+      password: password,
+      login_type: 'manual',
+      field_type: fieldType,
+    });
+
+    this.logger.log(`✅ Password login response: token=${response.token ? 'YES' : 'NO'}, is_personal_info=${response.is_personal_info}`);
+    
+    if (!response.token) {
+      throw new Error('Invalid credentials');
+    }
+    
+    return response;
+  }
+
+  /**
    * Get user wallet balance
    */
   async getWalletBalance(token: string): Promise<number> {
