@@ -6,6 +6,7 @@ name: Payment Completion
 version: '1.0'
 description: Post-payment order confirmation and notification flow
 enabled: true
+finalStates: [end_flow]
 
 # Triggered after successful payment callback
 triggers:

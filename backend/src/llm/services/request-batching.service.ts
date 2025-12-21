@@ -326,7 +326,7 @@ export class RequestBatchingService implements OnModuleInit {
     chatQueueSize: number;
     embeddingQueueSize: number;
     inFlightCount: number;
-    config: typeof this.config;
+    config: { chat: BatchConfig; embedding: BatchConfig };
   } {
     return {
       chatQueueSize: this.chatQueue.length,

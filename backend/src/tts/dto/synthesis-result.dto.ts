@@ -3,7 +3,7 @@ export class SynthesisResultDto {
   audioData?: Buffer; // Raw audio data (optional)
   format: string; // 'wav', 'mp3', 'ogg'
   duration: number; // seconds
-  provider: 'xtts' | 'google' | 'azure' | 'fallback';
+  provider: 'xtts' | 'google' | 'azure' | 'fallback' | 'mercury-tts';
   processingTimeMs: number;
   voice: string;
   language: string;

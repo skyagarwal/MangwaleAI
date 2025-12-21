@@ -15,6 +15,8 @@ const getWsUrl = () => {
   const hostname = window.location.hostname;
   const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
   
+  console.log('🔍 WebSocket URL detection - hostname:', hostname, 'protocol:', protocol);
+  
   // Production domains - use same domain to avoid CORS
   // Traefik has /socket.io routes configured for each domain
   if (hostname === 'chat.mangwale.ai' || hostname === 'www.chat.mangwale.ai') {
@@ -27,15 +29,25 @@ const getWsUrl = () => {
 
   // If we are on localhost, use localhost
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    console.log('✅ Using localhost');
     return 'http://localhost:3200';
+  }
+
+  // If accessing via LAN IP (e.g., 100.x.x.x, 192.168.x.x), use same IP with port 3200
+  if (hostname.match(/^(100|192\.168|10\.)/)) {
+    const wsUrl = `${protocol}//${hostname}:3200`;
+    console.log('✅ Using LAN IP:', wsUrl);
+    return wsUrl;
   }
 
   // Fallback to env var, but filter out host.docker.internal
   const envUrl = process.env.NEXT_PUBLIC_WS_URL;
   if (envUrl && !envUrl.includes('host.docker.internal')) {
+    console.log('✅ Using env var:', envUrl);
     return envUrl;
   }
 
+  console.log('⚠️ Using fallback localhost');
   return 'http://localhost:3200'
 }
 

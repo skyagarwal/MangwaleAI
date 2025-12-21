@@ -6,6 +6,7 @@ name: Customer Order Status
 version: '1.0'
 description: Track orders and receive status updates
 enabled: true
+finalStates: [end_flow]
 
 triggers:
   - type: intent

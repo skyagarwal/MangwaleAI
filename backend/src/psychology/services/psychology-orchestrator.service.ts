@@ -325,6 +325,8 @@ export class PsychologyOrchestratorService {
       cautious: ['rating', 'authority', 'social_proof', 'guarantee'],
       value_seeker: ['price', 'scarcity', 'trending', 'rating'],
       quality_first: ['rating', 'authority', 'premium', 'social_proof'],
+      fast: ['scarcity', 'trending', 'social_proof', 'price'],
+      price_conscious: ['price', 'scarcity', 'rating', 'trending'],
       unknown: ['rating', 'social_proof', 'price', 'trending'],
     };
     return priorities[style];

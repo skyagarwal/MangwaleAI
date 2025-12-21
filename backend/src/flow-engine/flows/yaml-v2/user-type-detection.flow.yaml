@@ -7,6 +7,7 @@ name: User Type Detection
 version: '1.0'
 description: Detect if user is customer, vendor, or delivery man based on phone number
 enabled: true
+finalStates: [transfer_to_vendor_flow, transfer_to_delivery_flow, transfer_to_customer_flow, transfer_to_registration]
 
 # Trigger on any new conversation
 triggers:

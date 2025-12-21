@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -8,85 +8,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Mangwale AI User Model - Links PHP users to AI features
 model User {
-  id               Int       @id @default(autoincrement())
-  phpUserId        Int?      @unique @map("php_user_id")
-  phone            String    @unique @db.VarChar(50)
-  email            String?   @db.VarChar(255)
-  firstName        String?   @map("first_name") @db.VarChar(100)
-  lastName         String?   @map("last_name") @db.VarChar(100)
-  
-  // AI-specific preferences
-  preferredLanguage String?  @default("en") @map("preferred_language") @db.VarChar(10)
-  preferences       Json?     @default("{}")
-  interests         Json?     @default("[]")
-  
-  // Gamification tracking
-  totalGamesPlayed  Int       @default(0) @map("total_games_played")
-  totalRewardsEarned Decimal  @default(0) @map("total_rewards_earned") @db.Decimal(10,2)
-  loyaltyPoints     Int       @default(0) @map("loyalty_points")
-  
-  // Metadata
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime  @updatedAt @map("updated_at")
-  lastActiveAt      DateTime? @map("last_active_at")
-  
-  // Relations
+  id                 Int                  @id @default(autoincrement())
+  phpUserId          Int?                 @unique @map("php_user_id")
+  phone              String               @unique @db.VarChar(50)
+  email              String?              @db.VarChar(255)
+  firstName          String?              @map("first_name") @db.VarChar(100)
+  lastName           String?              @map("last_name") @db.VarChar(100)
+  preferredLanguage  String?              @default("en") @map("preferred_language") @db.VarChar(10)
+  preferences        Json?                @default("{}")
+  interests          Json?                @default("[]")
+  totalGamesPlayed   Int                  @default(0) @map("total_games_played")
+  totalRewardsEarned Decimal              @default(0) @map("total_rewards_earned") @db.Decimal(10, 2)
+  loyaltyPoints      Int                  @default(0) @map("loyalty_points")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  lastActiveAt       DateTime?            @map("last_active_at")
   conversationMemory ConversationMemory[]
   gameSessions       GameSession[]
-  
+
   @@index([phone], map: "idx_users_phone")
   @@index([phpUserId], map: "idx_users_php_id")
   @@map("users")
 }
 
-// Flow System Models
 model Flow {
-  id            String   @id
-  name          String
-  description   String?
-  module        String   @default("general")
-  trigger       String?
-  version       String   @default("1.0.0")
-  states        Json
-  initialState  String   @map("initialState")
-  finalStates   Json     @map("finalStates")
-  contextSchema Json?    @map("contextSchema")
-  metadata      Json?
-  enabled       Boolean  @default(true)
-  systemCritical Boolean @default(false) @map("system_critical") // ⭐ NEW - Prevent disabling critical flows
-  status        String   @default("active")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(3)
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamp(3)
-  
-  flowRuns      FlowRun[]
-  
-  @@index([enabled], map: "flows_enabled_idx")
-  @@index([module], map: "flows_module_idx")
-  @@index([status], map: "flows_status_idx")
+  id             String    @id
+  name           String
+  description    String?
+  module         String    @default("general")
+  trigger        String?
+  version        String    @default("1.0.0")
+  states         Json
+  initialState   String    @map("initialState")
+  finalStates    Json      @map("finalStates")
+  contextSchema  Json?     @map("contextSchema")
+  metadata       Json?
+  enabled        Boolean   @default(true)
+  systemCritical Boolean   @default(false) @map("system_critical")
+  status         String    @default("active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  flowRuns       FlowRun[]
+
+  @@index([enabled])
+  @@index([module])
+  @@index([status])
   @@map("flows")
 }
 
 model FlowRun {
-  id           String   @id @default(uuid())
-  flowId       String   @map("flow_id")
-  sessionId    String   @map("session_id")
-  phoneNumber  String   @map("phone_number")
-  currentState String   @map("current_state")
-  context      Json     @default("{}")
-  status       String   @default("active")
+  id           String    @id @default(uuid())
+  flowId       String    @map("flow_id")
+  sessionId    String    @map("session_id")
+  phoneNumber  String    @map("phone_number")
+  currentState String    @map("current_state")
+  context      Json      @default("{}")
+  status       String    @default("active")
   error        String?
-  startedAt    DateTime @default(now()) @map("started_at") @db.Timestamp(3)
-  completedAt  DateTime? @map("completed_at") @db.Timestamp(3)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamp(3)
-  
-  flow         Flow     @relation(fields: [flowId], references: [id], onDelete: Cascade)
-  
-  @@index([sessionId], map: "flow_runs_session_id_idx")
-  @@index([phoneNumber], map: "flow_runs_phone_number_idx")
-  @@index([flowId], map: "flow_runs_flow_id_idx")
-  @@index([status], map: "flow_runs_status_idx")
+  startedAt    DateTime  @default(now()) @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  flow         Flow      @relation(fields: [flowId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([phoneNumber])
+  @@index([flowId])
+  @@index([status])
   @@map("flow_runs")
 }
 
@@ -165,26 +153,24 @@ model authtoken_token {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ConversationMemory {
-  id          Int       @id @default(autoincrement())
-  userId      Int       @map("user_id")
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role        String?   @db.VarChar(10)
-  content     String
-  turnNumber  Int?      @map("turn_number")
-  sessionId   String?   @map("session_id") @db.VarChar(100)
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  id         Int       @id @default(autoincrement())
+  userId     Int       @map("user_id")
+  role       String?   @db.VarChar(10)
+  content    String
+  turnNumber Int?      @map("turn_number")
+  sessionId  String?   @map("session_id") @db.VarChar(100)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([sessionId], map: "idx_conversation_memory_session")
   @@index([userId], map: "idx_conversation_memory_user_id")
   @@map("conversation_memory")
 }
 
-// Game sessions for gamification and training data collection
 model GameSession {
   id                    Int       @id @default(autoincrement())
   sessionId             String    @unique @map("session_id") @db.VarChar(100)
   userId                Int       @map("user_id")
-  user                  User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   gameType              String    @map("game_type") @db.VarChar(50)
   difficulty            String?   @default("medium") @db.VarChar(20)
   language              String?   @default("en") @db.VarChar(10)
@@ -197,101 +183,87 @@ model GameSession {
   startedAt             DateTime? @default(now()) @map("started_at")
   completedAt           DateTime? @map("completed_at")
   updatedAt             DateTime? @default(now()) @map("updated_at")
-  
-  // ⭐ NEW - Link to training data and rewards
   trainingSampleId      Int?      @map("training_sample_id")
   conversationLogId     Int?      @map("conversation_log_id")
-  rewardTransactionId   String?   @map("reward_transaction_id") @db.VarChar(100) // PHP wallet_transactions.id
-  rewardStatus          String    @default("pending") @map("reward_status") @db.VarChar(20) // 'pending', 'credited', 'failed'
+  rewardTransactionId   String?   @map("reward_transaction_id") @db.VarChar(100)
+  rewardStatus          String    @default("pending") @map("reward_status") @db.VarChar(20)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "idx_game_sessions_user")
   @@index([status], map: "idx_game_sessions_status")
   @@map("game_sessions")
 }
 
-// ⭐ NEW - Gamification Settings (Database-driven configuration)
 model GamificationSettings {
   id          Int      @id @default(autoincrement())
   key         String   @unique @db.VarChar(100)
-  value       String   @db.Text
-  type        String   @db.VarChar(20) // 'number', 'boolean', 'json', 'string'
-  description String?  @db.Text
-  category    String?  @db.VarChar(50) // 'rewards', 'limits', 'gameplay', 'training'
+  value       String
+  type        String   @db.VarChar(20)
+  description String?
+  category    String?  @db.VarChar(50)
   updatedAt   DateTime @default(now()) @map("updated_at")
-  updatedBy   String?  @db.VarChar(100) @map("updated_by")
+  updatedBy   String?  @map("updated_by") @db.VarChar(100)
 
   @@map("gamification_settings")
 }
 
-// ⭐ NEW - System Settings (Global configuration)
 model SystemSettings {
   id          Int      @id @default(autoincrement())
   key         String   @unique @db.VarChar(100)
-  value       String   @db.Text
-  type        String   @default("string") @db.VarChar(20) // 'number', 'boolean', 'json', 'string'
-  description String?  @db.Text
-  category    String?  @db.VarChar(50) // 'general', 'security', 'performance'
+  value       String
+  type        String   @default("string") @db.VarChar(20)
+  description String?
+  category    String?  @db.VarChar(50)
   isSecret    Boolean  @default(false) @map("is_secret")
   updatedAt   DateTime @default(now()) @map("updated_at")
-  updatedBy   String?  @db.VarChar(100) @map("updated_by")
+  updatedBy   String?  @map("updated_by") @db.VarChar(100)
 
   @@map("system_settings")
 }
 
-// ⭐ NEW - Game Question Bank (Mix: Personalized + General)
 model GameQuestion {
-  id               Int       @id @default(autoincrement())
-  gameType         String    @map("game_type") @db.VarChar(50)
-  questionText     String    @map("question_text") @db.Text
-  questionContext  String?   @map("question_context") @db.Text
-  correctAnswer    String    @map("correct_answer") @db.Text
-  answerOptions    Json?     @map("answer_options")
-  difficulty       String    @default("medium") @db.VarChar(20)
-  rewardAmount     Decimal?  @map("reward_amount") @db.Decimal(10, 2)
-  contextRequired  Boolean   @default(false) @map("context_required") // Needs user conversation context?
-  tags             String[]
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @default(now()) @map("updated_at")
-  enabled          Boolean   @default(true)
-  usageCount       Int       @default(0) @map("usage_count")
-  successRate      Decimal?  @map("success_rate") @db.Decimal(5, 4)
+  id              Int      @id @default(autoincrement())
+  gameType        String   @map("game_type") @db.VarChar(50)
+  questionText    String   @map("question_text")
+  questionContext String?  @map("question_context")
+  correctAnswer   String   @map("correct_answer")
+  answerOptions   Json?    @map("answer_options")
+  difficulty      String   @default("medium") @db.VarChar(20)
+  rewardAmount    Decimal? @map("reward_amount") @db.Decimal(10, 2)
+  contextRequired Boolean  @default(false) @map("context_required")
+  tags            String[]
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+  enabled         Boolean  @default(true)
+  usageCount      Int      @default(0) @map("usage_count")
+  successRate     Decimal? @map("success_rate") @db.Decimal(5, 4)
 
   @@index([gameType], map: "idx_game_questions_type")
   @@index([enabled], map: "idx_game_questions_enabled")
   @@map("game_questions")
 }
 
-// ⭐ NEW - Training Samples (High-quality training data for IndicBERT)
 model TrainingSample {
   id              Int       @id @default(autoincrement())
   userId          Int?      @map("user_id")
   sessionId       String?   @map("session_id") @db.VarChar(100)
   gameSessionId   String?   @map("game_session_id") @db.VarChar(100)
-  
-  // Training data
-  text            String    @db.Text
+  text            String
   intent          String    @db.VarChar(100)
   entities        Json?
   confidence      Decimal?  @db.Decimal(5, 4)
   language        String?   @db.VarChar(10)
   tone            String?   @db.VarChar(50)
   context         Json?
-  
-  // Metadata
-  source          String    @default("game") @db.VarChar(50) // 'game', 'conversation', 'manual'
+  source          String    @default("game") @db.VarChar(50)
   nluProvider     String?   @map("nlu_provider") @db.VarChar(50)
-  
-  // Quality control
   approved        Boolean   @default(false)
   approvedBy      String?   @map("approved_by") @db.VarChar(100)
   approvedAt      DateTime? @map("approved_at")
-  reviewStatus    String    @default("pending") @map("review_status") @db.VarChar(20) // 'pending', 'approved', 'rejected'
+  reviewStatus    String    @default("pending") @map("review_status") @db.VarChar(20)
   reviewPriority  Int       @default(0) @map("review_priority")
-  
-  // Training tracking
   usedInTraining  Boolean   @default(false) @map("used_in_training")
   trainingBatchId String?   @map("training_batch_id") @db.VarChar(100)
-  
   createdAt       DateTime  @default(now()) @map("created_at")
 
   @@index([intent], map: "idx_training_samples_intent")
@@ -302,51 +274,35 @@ model TrainingSample {
   @@map("training_samples")
 }
 
-// ⭐ NEW - Conversation Logs (Detailed analytics with full NLU breakdown)
 model ConversationLog {
-  id                       Int       @id @default(autoincrement())
-  
-  // Session tracking
-  userId                   Int?      @map("user_id")
-  sessionId                String    @map("session_id") @db.VarChar(100)
-  phoneNumber              String?   @map("phone_number") @db.VarChar(50)
-  channel                  String    @default("web") @db.VarChar(50)
-  
-  // Message content
-  userMessage              String    @map("user_message") @db.Text
-  botResponse              String?   @map("bot_response") @db.Text
-  messageType              String    @default("text") @map("message_type") @db.VarChar(20)
-  
-  // NLU Analysis (Full breakdown)
-  nluIntent                String?   @map("nlu_intent") @db.VarChar(100)
-  nluConfidence            Decimal?  @map("nlu_confidence") @db.Decimal(5, 4)
-  nluAlternateIntents      Json?     @map("nlu_alternate_intents")
-  nluEntities              Json?     @map("nlu_entities")
-  nluLanguage              String?   @map("nlu_language") @db.VarChar(10)
-  nluTone                  String?   @map("nlu_tone") @db.VarChar(50)
-  nluProvider              String?   @map("nlu_provider") @db.VarChar(50)
-  nluProcessingTimeMs      Int?      @map("nlu_processing_time_ms")
-  
-  // Routing decision
-  routedTo                 String?   @map("routed_to") @db.VarChar(100)
-  routingReason            String?   @map("routing_reason") @db.Text
-  flowId                   String?   @map("flow_id") @db.VarChar(100)
-  agentId                  String?   @map("agent_id") @db.VarChar(100)
-  
-  // Response metadata
-  responseType             String?   @map("response_type") @db.VarChar(50)
-  responseSuccess          Boolean   @default(true) @map("response_success")
-  responseTimeMs           Int?      @map("response_time_ms")
-  
-  // Context (Full session state snapshot)
-  conversationContext      Json?     @map("conversation_context")
-  turnNumber               Int?      @map("turn_number")
-  
-  // Analytics
-  isTrainingCandidate      Boolean   @default(false) @map("is_training_candidate")
-  trainingConfidenceBucket String?   @map("training_confidence_bucket") @db.VarChar(20)
-  
-  createdAt                DateTime  @default(now()) @map("created_at")
+  id                       Int      @id @default(autoincrement())
+  userId                   Int?     @map("user_id")
+  sessionId                String   @map("session_id") @db.VarChar(100)
+  phoneNumber              String?  @map("phone_number") @db.VarChar(50)
+  channel                  String   @default("web") @db.VarChar(50)
+  userMessage              String   @map("user_message")
+  botResponse              String?  @map("bot_response")
+  messageType              String   @default("text") @map("message_type") @db.VarChar(20)
+  nluIntent                String?  @map("nlu_intent") @db.VarChar(100)
+  nluConfidence            Decimal? @map("nlu_confidence") @db.Decimal(5, 4)
+  nluAlternateIntents      Json?    @map("nlu_alternate_intents")
+  nluEntities              Json?    @map("nlu_entities")
+  nluLanguage              String?  @map("nlu_language") @db.VarChar(10)
+  nluTone                  String?  @map("nlu_tone") @db.VarChar(50)
+  nluProvider              String?  @map("nlu_provider") @db.VarChar(50)
+  nluProcessingTimeMs      Int?     @map("nlu_processing_time_ms")
+  routedTo                 String?  @map("routed_to") @db.VarChar(100)
+  routingReason            String?  @map("routing_reason")
+  flowId                   String?  @map("flow_id") @db.VarChar(100)
+  agentId                  String?  @map("agent_id") @db.VarChar(100)
+  responseType             String?  @map("response_type") @db.VarChar(50)
+  responseSuccess          Boolean  @default(true) @map("response_success")
+  responseTimeMs           Int?     @map("response_time_ms")
+  conversationContext      Json?    @map("conversation_context")
+  turnNumber               Int?     @map("turn_number")
+  isTrainingCandidate      Boolean  @default(false) @map("is_training_candidate")
+  trainingConfidenceBucket String?  @map("training_confidence_bucket") @db.VarChar(20)
+  createdAt                DateTime @default(now()) @map("created_at")
 
   @@index([sessionId], map: "idx_conversation_logs_session")
   @@index([userId], map: "idx_conversation_logs_user")
@@ -356,25 +312,24 @@ model ConversationLog {
   @@map("conversation_logs")
 }
 
-// AI Models Registry
 model Model {
-  id              String    @id @default(uuid())
-  name            String    @db.VarChar(255)
-  provider        String    @db.VarChar(100) // "openai", "groq", "vllm-local", "openrouter", "huggingface"
-  providerModelId String    @map("provider_model_id") @db.VarChar(255) // e.g., "gpt-4", "llama-3-8b"
-  modelType       String    @map("model_type") @db.VarChar(50) // "llm", "nlu", "embedding"
-  endpoint        String?   @db.VarChar(512) // For local/custom models
-  apiKey          String?   @map("api_key") @db.Text // Encrypted API key
-  deploymentName  String?   @map("deployment_name") @db.VarChar(255) // For Azure deployments
-  config          Json?     @default("{}") // Model-specific config (temperature, max_tokens, etc.)
-  capabilities    String[]  @default([]) // ["chat", "completion", "function-calling", "vision"]
-  maxTokens       Int?      @map("max_tokens") // Context window size
-  costPerToken    Decimal?  @map("cost_per_token") @db.Decimal(10, 8) // Cost per 1M tokens
-  status          String    @default("active") @db.VarChar(50) // "active", "inactive", "testing"
-  isLocal         Boolean   @default(false) @map("is_local") // True for vLLM/local models
-  metadata        Json?     @default("{}") // Additional metadata
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  name            String   @db.VarChar(255)
+  provider        String   @db.VarChar(100)
+  providerModelId String   @map("provider_model_id") @db.VarChar(255)
+  modelType       String   @map("model_type") @db.VarChar(50)
+  endpoint        String?  @db.VarChar(512)
+  apiKey          String?  @map("api_key")
+  deploymentName  String?  @map("deployment_name") @db.VarChar(255)
+  config          Json?    @default("{}")
+  capabilities    String[] @default([])
+  maxTokens       Int?     @map("max_tokens")
+  costPerToken    Decimal? @map("cost_per_token") @db.Decimal(10, 8)
+  status          String   @default("active") @db.VarChar(50)
+  isLocal         Boolean  @default(false) @map("is_local")
+  metadata        Json?    @default("{}")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@index([provider], map: "idx_models_provider")
   @@index([modelType], map: "idx_models_type")
@@ -830,7 +785,7 @@ model io_storages_gcsstoragemixin {
   regex_filter                   String?
   use_blob_urls                  Boolean
   google_application_credentials String?
-  google_project_id                String?                            @db.VarChar(255)
+  google_project_id              String?                       @db.VarChar(255)
   io_storages_gcsexportstorage   io_storages_gcsexportstorage?
   io_storages_gcsimportstorage   io_storages_gcsimportstorage?
 }
@@ -906,8 +861,8 @@ model io_storages_localfilesimportstoragelink {
   storage_id                          Int
   row_group                           Int?
   row_index                           Int?
-  io_storages_localfilesimportstorage io_storages_localfilesimportstorage @relation(fields: [storage_id], references: [localfilesmixin_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "io_storages_localfil_storage_id_59a5663c_fk_io_storag")
   task                                task                                @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "io_storages_localblob_task_id_d0e8315f_fk_task_id")
+  io_storages_localfilesimportstorage io_storages_localfilesimportstorage @relation(fields: [storage_id], references: [localfilesmixin_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "io_storages_localfil_storage_id_59a5663c_fk_io_storag")
 
   @@index([storage_id], map: "io_storages_localfilesimportstoragelink_storage_id_59a5663c")
 }
@@ -1979,33 +1934,28 @@ model webhook_action {
   @@index([webhook_id], map: "webhook_action_webhook_id_4eb6213f")
 }
 
-// Additions for api-gateway compatibility
-
 model ConversationMessage {
-  id             String   @id @default(uuid())
-  sessionId      String   @map("session_id")
-  userId         String?  @map("user_id")
-  phoneNumber    String?  @map("phone_number")
-  role           String?  // user, assistant, system
-  content        String?
-  intent         String?  // Detected intent
-  confidence     Float?   // Intent confidence
-  turnNumber     Int?     @map("turn_number")
-  metadata       Json?    // Flow state, entities, etc.
-  createdAt      DateTime @default(now()) @map("created_at")
-  
-  // Added to match code expectations
-  sender         String?
-  message        String?
-
-  // Fields for api-gateway compatibility
-  phone          String?
-  messageType    String?  @map("message_type")
-  messageText    String?  @map("message_text")
-  flowId         String?  @map("flow_id")
-  stepId         String?  @map("step_id")
-  variables      Json?
-  platform       String?
+  id          String   @id @default(uuid())
+  sessionId   String   @map("session_id")
+  userId      String?  @map("user_id")
+  phoneNumber String?  @map("phone_number")
+  role        String?
+  content     String?
+  intent      String?
+  confidence  Float?
+  turnNumber  Int?     @map("turn_number")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  sender      String?
+  message     String?
+  phone       String?
+  messageType String?  @map("message_type")
+  messageText String?  @map("message_text")
+  flowId      String?  @map("flow_id")
+  stepId      String?  @map("step_id")
+  variables   Json?
+  platform    String?
+  entities    Json?    @default("{}")
 
   @@index([sessionId])
   @@index([userId])
@@ -2015,37 +1965,206 @@ model ConversationMessage {
   @@map("conversation_messages")
 }
 
-// ⭐ NEW - Intent Definitions for NLU Management
 model IntentDefinition {
   id          String   @id @default(uuid())
   name        String   @unique
   description String?
-  examples    String[] // Training phrases
-  slots       Json?    // Parameters/Entities to extract
+  examples    String[]
+  slots       Json?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("intent_definitions")
 }
 
-// ⭐ NEW - NLU Training Data for continuous learning
 model NluTrainingData {
   id           String   @id @default(uuid())
-  text         String   @unique // The user message
-  intent       String   // Classified intent
-  entities     Json?    @default("{}") // Extracted entities
-  tone         String?  // Detected tone
-  sentiment    String?  // Detected sentiment
-  confidence   Float    // Classification confidence
-  source       String   // 'nlu', 'llm-fallback', 'manual'
-  reviewStatus String   @default("pending") @map("review_status") // 'pending', 'approved', 'rejected'
+  text         String   @unique
+  intent       String
+  entities     Json?    @default("{}")
+  tone         String?
+  sentiment    String?
+  confidence   Float
+  source       String
+  reviewStatus String   @default("pending") @map("review_status")
   userId       String?  @map("user_id")
   sessionId    String?  @map("session_id")
   language     String   @default("en")
   createdAt    DateTime @default(now()) @map("created_at")
 
-  @@index([intent], map: "nlu_training_data_intent_idx")
-  @@index([reviewStatus], map: "nlu_training_data_review_status_idx")
-  @@index([source], map: "nlu_training_data_source_idx")
+  @@index([intent])
+  @@index([reviewStatus])
+  @@index([source])
   @@map("nlu_training_data")
+}
+
+model VoiceCharacter {
+  id                  String                 @id @default(uuid())
+  name                String                 @unique @db.VarChar(50)
+  displayName         String                 @map("display_name") @db.VarChar(100)
+  description         String?
+  avatar              String?                @db.VarChar(512)
+  personality         Json?                  @default("{}")
+  traits              String[]               @default([])
+  defaultLanguage     String                 @default("hi") @map("default_language") @db.VarChar(10)
+  defaultExaggeration Float                  @default(0.5) @map("default_exaggeration")
+  defaultCfgWeight    Float                  @default(0.5) @map("default_cfg_weight")
+  defaultSpeed        Float                  @default(1.0) @map("default_speed")
+  defaultPitch        Float                  @default(1.0) @map("default_pitch")
+  voiceReferenceUrl   String?                @map("voice_reference_url") @db.VarChar(512)
+  voiceReferenceText  String?                @map("voice_reference_text")
+  ttsEngine           String                 @default("chatterbox") @map("tts_engine") @db.VarChar(50)
+  ttsConfig           Json?                  @default("{}") @map("tts_config")
+  isActive            Boolean                @default(true) @map("is_active")
+  isDefault           Boolean                @default(false) @map("is_default")
+  sortOrder           Int                    @default(0) @map("sort_order")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
+  createdBy           String?                @map("created_by") @db.VarChar(100)
+  emotionPresets      VoiceEmotionPreset[]
+  languageSettings    VoiceLanguageSetting[]
+  stylePresets        VoiceStylePreset[]
+  usageLogs           VoiceUsageLog[]
+
+  @@index([isActive], map: "idx_voice_characters_active")
+  @@index([isDefault], map: "idx_voice_characters_default")
+  @@map("voice_characters")
+}
+
+model VoiceLanguageSetting {
+  id                 String         @id @default(uuid())
+  characterId        String         @map("character_id")
+  languageCode       String         @map("language_code") @db.VarChar(10)
+  languageName       String         @map("language_name") @db.VarChar(50)
+  exaggeration       Float          @default(0.5)
+  cfgWeight          Float          @default(0.5) @map("cfg_weight")
+  speed              Float          @default(1.0)
+  pitch              Float          @default(1.0)
+  voiceReferenceUrl  String?        @map("voice_reference_url") @db.VarChar(512)
+  voiceReferenceText String?        @map("voice_reference_text")
+  isEnabled          Boolean        @default(true) @map("is_enabled")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  character          VoiceCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, languageCode])
+  @@index([characterId], map: "idx_voice_language_character")
+  @@map("voice_language_settings")
+}
+
+model VoiceEmotionPreset {
+  id              String         @id @default(uuid())
+  characterId     String         @map("character_id")
+  name            String         @db.VarChar(50)
+  displayName     String         @map("display_name") @db.VarChar(100)
+  description     String?
+  category        String?        @db.VarChar(50)
+  exaggeration    Float          @default(0.5)
+  cfgWeight       Float          @default(0.5) @map("cfg_weight")
+  speedMultiplier Float          @default(1.0) @map("speed_multiplier")
+  voiceModifiers  Json?          @default("{}") @map("voice_modifiers")
+  sampleText      String?        @map("sample_text")
+  sampleAudioUrl  String?        @map("sample_audio_url") @db.VarChar(512)
+  isActive        Boolean        @default(true) @map("is_active")
+  sortOrder       Int            @default(0) @map("sort_order")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  character       VoiceCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, name])
+  @@index([characterId], map: "idx_voice_emotion_character")
+  @@map("voice_emotion_presets")
+}
+
+model VoiceStylePreset {
+  id              String         @id @default(uuid())
+  characterId     String         @map("character_id")
+  name            String         @db.VarChar(50)
+  displayName     String         @map("display_name") @db.VarChar(100)
+  description     String?
+  exaggeration    Float          @default(0.5)
+  cfgWeight       Float          @default(0.5) @map("cfg_weight")
+  speed           Float          @default(1.0)
+  pitch           Float          @default(1.0)
+  triggerPatterns String[]       @default([]) @map("trigger_patterns")
+  useForIntents   String[]       @default([]) @map("use_for_intents")
+  sampleText      String?        @map("sample_text")
+  sampleAudioUrl  String?        @map("sample_audio_url") @db.VarChar(512)
+  isActive        Boolean        @default(true) @map("is_active")
+  sortOrder       Int            @default(0) @map("sort_order")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  character       VoiceCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, name])
+  @@index([characterId], map: "idx_voice_style_character")
+  @@map("voice_style_presets")
+}
+
+model VoiceUsageLog {
+  id               String          @id @default(uuid())
+  characterId      String?         @map("character_id")
+  text             String
+  language         String          @db.VarChar(10)
+  emotionUsed      String?         @map("emotion_used") @db.VarChar(50)
+  styleUsed        String?         @map("style_used") @db.VarChar(50)
+  exaggeration     Float?
+  cfgWeight        Float?          @map("cfg_weight")
+  speed            Float?
+  pitch            Float?
+  processingTimeMs Int?            @map("processing_time_ms")
+  audioLengthMs    Int?            @map("audio_length_ms")
+  audioBytesSize   Int?            @map("audio_bytes_size")
+  source           String          @default("api") @db.VarChar(50)
+  sessionId        String?         @map("session_id") @db.VarChar(100)
+  userId           String?         @map("user_id") @db.VarChar(100)
+  success          Boolean         @default(true)
+  errorMessage     String?         @map("error_message")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  character        VoiceCharacter? @relation(fields: [characterId], references: [id])
+
+  @@index([characterId], map: "idx_voice_usage_character")
+  @@index([createdAt(sort: Desc)], map: "idx_voice_usage_created")
+  @@index([source], map: "idx_voice_usage_source")
+  @@map("voice_usage_logs")
+}
+
+model TtsEngine {
+  id                 String    @id @default(uuid())
+  name               String    @unique @db.VarChar(50)
+  displayName        String    @map("display_name") @db.VarChar(100)
+  description        String?
+  endpoint           String    @db.VarChar(512)
+  healthEndpoint     String?   @map("health_endpoint") @db.VarChar(512)
+  supportedLanguages String[]  @default([]) @map("supported_languages")
+  supportsStreaming  Boolean   @default(false) @map("supports_streaming")
+  supportsCloning    Boolean   @default(false) @map("supports_cloning")
+  supportsEmotions   Boolean   @default(false) @map("supports_emotions")
+  minExaggeration    Float     @default(0.0) @map("min_exaggeration")
+  maxExaggeration    Float     @default(1.0) @map("max_exaggeration")
+  minCfgWeight       Float     @default(0.0) @map("min_cfg_weight")
+  maxCfgWeight       Float     @default(1.0) @map("max_cfg_weight")
+  isActive           Boolean   @default(true) @map("is_active")
+  isDefault          Boolean   @default(false) @map("is_default")
+  lastHealthCheck    DateTime? @map("last_health_check")
+  healthStatus       String?   @map("health_status") @db.VarChar(20)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@map("tts_engines")
+}
+
+model search_logs {
+  id                String    @id @db.Uuid
+  query             String
+  search_type       String?   @db.VarChar(50)
+  filters           Json?
+  results_count     Int?
+  execution_time_ms Int?
+  session_id        String?   @db.VarChar(100)
+  user_id           String?   @db.VarChar(100)
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([created_at], map: "idx_search_logs_created_at")
+  @@index([query], map: "idx_search_logs_query")
 }

@@ -40,7 +40,9 @@ export class SettingsService {
     const keysOfInterest = [
       'LABEL_STUDIO_URL', 'LABEL_STUDIO_API_KEY',
       'ASR_SERVICE_URL', 'TTS_SERVICE_URL', 'MINIO_ENDPOINT',
-      'SYSTEM_PROMPT'
+      'SYSTEM_PROMPT',
+      'ACTIVE_CHATBOT_PERSONA',
+      'PERSONA_CHOTU_IMAGE'
     ];
 
     const result = [];
@@ -108,24 +110,40 @@ export class SettingsService {
   }
 
   async testAsr() {
-    const url = await this.getSetting('asr-service-url', 'http://localhost:7000');
+    // Use env variable with Mercury server default
+    const url = await this.getSetting('asr-service-url', this.config.get('ASR_SERVICE_URL', 'http://192.168.0.151:7001'));
     try {
-      await axios.get(`${url}/health`, { timeout: 5000 });
-      return { ok: true, message: 'ASR Service is healthy' };
+      const response = await axios.get(`${url}/health`, { timeout: 5000 });
+      return { 
+        ok: true, 
+        success: true,
+        message: 'ASR Service is healthy',
+        service: response.data?.service || 'asr',
+        providers: response.data?.providers || {},
+        latency: response.data?.gpu_available ? 'GPU' : 'CPU'
+      };
     } catch (error) {
       this.logger.error(`ASR test failed: ${error.message}`);
-      return { ok: false, error: error.message };
+      return { ok: false, success: false, error: error.message };
     }
   }
 
   async testTts() {
-    const url = await this.getSetting('tts-service-url', 'http://localhost:8010');
+    // Use env variable with Mercury server default
+    const url = await this.getSetting('tts-service-url', this.config.get('TTS_SERVICE_URL', 'http://192.168.0.151:7002'));
     try {
-      await axios.get(`${url}/health`, { timeout: 5000 });
-      return { ok: true, message: 'TTS Service is healthy' };
+      const response = await axios.get(`${url}/health`, { timeout: 5000 });
+      return { 
+        ok: true, 
+        success: true,
+        message: 'TTS Service is healthy',
+        service: response.data?.service || 'tts',
+        providers: response.data?.providers || {},
+        latency: response.data?.gpu_available ? 'GPU' : 'CPU'
+      };
     } catch (error) {
       this.logger.error(`TTS test failed: ${error.message}`);
-      return { ok: false, error: error.message };
+      return { ok: false, success: false, error: error.message };
     }
   }
 

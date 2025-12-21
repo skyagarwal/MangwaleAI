@@ -44,10 +44,31 @@ interface Alert {
   timestamp: number;
 }
 
+interface SystemMetrics {
+  cpu_usage: number;
+  memory_usage: number;
+  memory_total: number;
+  memory_free: number;
+  disk_usage: number;
+  uptime_seconds: number;
+  load_average: number[];
+  platform: string;
+  hostname: string;
+}
+
+interface ServiceHealth {
+  name: string;
+  status: 'healthy' | 'degraded' | 'down';
+  latency_ms: number;
+  last_check: string;
+}
+
 export default function MonitoringDashboard() {
   const [llmCosts, setLLMCosts] = useState<LLMCosts>({});
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [systemMetrics, setSystemMetrics] = useState<SystemMetrics | null>(null);
+  const [services, setServices] = useState<ServiceHealth[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());

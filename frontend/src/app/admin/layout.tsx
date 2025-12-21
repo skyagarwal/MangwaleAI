@@ -55,6 +55,7 @@ const navigation = [
       { name: 'Models Registry', href: '/admin/models' },
       { name: 'Agent Settings', href: '/admin/agent-settings' },
       { name: 'Voice AI (ASR/TTS)', href: '/admin/voice' },
+      { name: 'Voice Characters', href: '/admin/voice/characters' },
       { name: 'Docker Management', href: '/admin/docker' },
       { name: 'vLLM Settings', href: '/admin/vllm-settings' },
       { name: 'LLM Failover', href: '/admin/llm-failover' },

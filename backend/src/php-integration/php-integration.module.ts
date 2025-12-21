@@ -13,7 +13,10 @@ import { PhpLoyaltyService } from './services/php-loyalty.service';
 import { PhpCouponService } from './services/php-coupon.service';
 import { PhpReviewService } from './services/php-review.service';
 import { PhpStoreService } from './services/php-store.service';
-import { RoutingModule } from '../routing/routing.module'; // Import for OSRM integration
+import { PhpVendorAuthService } from './services/php-vendor-auth.service';
+import { PhpDeliveryAuthService } from './services/php-delivery-auth.service';
+import { UserTypeDetectorService } from './services/user-type-detector.service';
+import { RoutingModule } from '../routing/routing.module';
 
 @Module({
   imports: [
@@ -22,7 +25,7 @@ import { RoutingModule } from '../routing/routing.module'; // Import for OSRM in
       timeout: 30000,
       maxRedirects: 5,
     }),
-    RoutingModule, // Add RoutingModule to use OSRM for distance calculation
+    RoutingModule,
   ],
   providers: [
     PhpHttpClientService,
@@ -37,11 +40,14 @@ import { RoutingModule } from '../routing/routing.module'; // Import for OSRM in
     PhpCouponService,
     PhpReviewService,
     PhpStoreService,
+    PhpVendorAuthService,
+    PhpDeliveryAuthService,
+    UserTypeDetectorService,
   ],
   exports: [
     PhpHttpClientService,
     PhpParcelService,
-    PhpApiService, // ✅ Export for gamification module
+    PhpApiService,
     PhpAuthService,
     PhpAddressService,
     PhpOrderService,
@@ -51,8 +57,9 @@ import { RoutingModule } from '../routing/routing.module'; // Import for OSRM in
     PhpCouponService,
     PhpReviewService,
     PhpStoreService,
+    PhpVendorAuthService,
+    PhpDeliveryAuthService,
+    UserTypeDetectorService,
   ],
 })
 export class PhpIntegrationModule {}
-
-

@@ -5,6 +5,7 @@ import { IntentAccuracyService } from './services/intent-accuracy.service';
 import { ResponseTimeService } from './services/response-time.service';
 import { AlertingService } from './services/alerting.service';
 import { AnalyticsDashboardController } from './controllers/analytics-dashboard.controller';
+import { TrendingController } from './controllers/trending.controller';
 import { DatabaseModule } from '../database/database.module';
 
 /**
@@ -42,7 +43,7 @@ import { DatabaseModule } from '../database/database.module';
     ResponseTimeService,
     AlertingService,
   ],
-  controllers: [AnalyticsDashboardController],
+  controllers: [AnalyticsDashboardController, TrendingController],
   exports: [
     AnalyticsService,
     ConversionFunnelService,

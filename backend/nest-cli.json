@@ -4,7 +4,17 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true,
-    "webpackConfigPath": "webpack.config.js"
+    "webpack": false,
+    "builder": "tsc",
+    "assets": [
+      {
+        "include": "flow-engine/flows/yaml-v2/**/*.yaml",
+        "watchAssets": true
+      },
+      {
+        "include": "flow-engine/flows/yaml/**/*.yaml",
+        "watchAssets": true
+      }
+    ]
   }
 }

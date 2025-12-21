@@ -241,6 +241,8 @@ services:
       start_period: 20s
 
   # NLU Service (IndicBERT Intent Classification)
+  # Model: ai4bharat/IndicBERTv2-MLM-Back-TLM (278M params, 23 Indic languages)
+  # Trained model: indicbert_v5_enhanced (25 intents, 1009 samples)
   nlu:
     image: admin-nlu:latest
     container_name: mangwale-ai-nlu
@@ -250,14 +252,24 @@ services:
     volumes:
       - ./models:/models
       - ./training:/app/training
+      - ./training-data:/app/training-data
     environment:
-      - INTENT_MODEL=/models/indicbert_v3
-      - BASE_ENCODER=/models/indicbert_v3
+      # Trained intent classifier (25 intents)
+      - INTENT_MODEL=/models/indicbert_v5_enhanced
+      # Base encoder for embeddings (uses trained model for consistency)
+      - BASE_ENCODER=/models/indicbert_v5_enhanced
+      # HuggingFace model for fallback/cache
+      - HF_MODEL_NAME=ai4bharat/IndicBERTv2-MLM-Back-TLM
       - PORT=7010
     networks:
       - headless-network
       - mangwale_ai_network
-    # No healthcheck - service doesn't provide health endpoint
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7010/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   # vLLM Inference Engine (LLM for agents)
   # Qwen2.5-7B-Instruct-AWQ - Optimized for RTX 3060 12GB

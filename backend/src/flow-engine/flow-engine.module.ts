@@ -20,11 +20,16 @@ import { GameExecutor } from './executors/game.executor';
 import { ParcelExecutor } from './executors/parcel.executor';
 import { PreferenceExecutor } from './executors/preference.executor';
 import { AuthExecutor } from './executors/auth.executor';
+import { PhpApiExecutor } from './executors/php-api.executor';
+import { SessionExecutor } from './executors/session.executor';
+import { InventoryExecutor } from './executors/inventory.executor';
+import { ExternalSearchExecutor } from './executors/external-search.executor';
 // Game executors disabled - Prisma schema mismatch
 // import { GameScorerExecutor } from './executors/game-scorer.executor';
 // import { RewardPointsExecutor } from './executors/reward-points.executor';
 import { FlowInitializerService } from './services/flow-initializer.service';
 import { YamlFlowLoaderService } from './services/yaml-flow-loader.service';
+import { YamlV2FlowLoaderService } from './services/yaml-v2-flow-loader.service';
 import { FlowVersionManagerService } from './services/flow-version-manager.service';
 import { FlowBuilderController } from './controllers/flow-builder.controller';
 import { FlowsController } from './flows.controller';
@@ -61,6 +66,7 @@ import { PersonalizationModule } from '../personalization/personalization.module
     ExecutorRegistryService,
     FlowInitializerService, // Auto-load flows on startup
     YamlFlowLoaderService, // Load flows from YAML files
+    YamlV2FlowLoaderService, // Load YAML V2 flows (vendor/driver)
     FlowVersionManagerService, // A/B testing and version control
 
     // Executors
@@ -77,6 +83,10 @@ import { PersonalizationModule } from '../personalization/personalization.module
     ParcelExecutor,
     PreferenceExecutor,
     AuthExecutor,
+    PhpApiExecutor,
+    SessionExecutor,
+    InventoryExecutor,
+    ExternalSearchExecutor,
     // GameScorerExecutor, // Disabled - Prisma schema mismatch
     // RewardPointsExecutor, // Disabled - Prisma schema mismatch
   ],
@@ -85,6 +95,7 @@ import { PersonalizationModule } from '../personalization/personalization.module
     FlowContextService,
     ExecutorRegistryService,
     YamlFlowLoaderService,
+    YamlV2FlowLoaderService,
     FlowVersionManagerService,
   ],
 })
@@ -105,6 +116,10 @@ export class FlowEngineModule {
     private readonly parcelExecutor: ParcelExecutor,
     private readonly preferenceExecutor: PreferenceExecutor,
     private readonly authExecutor: AuthExecutor,
+    private readonly phpApiExecutor: PhpApiExecutor,
+    private readonly sessionExecutor: SessionExecutor,
+    private readonly inventoryExecutor: InventoryExecutor,
+    private readonly externalSearchExecutor: ExternalSearchExecutor,
     // private readonly gameScorerExecutor: GameScorerExecutor, // Disabled
     // private readonly rewardPointsExecutor: RewardPointsExecutor, // Disabled
   ) {
@@ -122,6 +137,10 @@ export class FlowEngineModule {
     this.executorRegistry.register(parcelExecutor);
     this.executorRegistry.register(preferenceExecutor);
     this.executorRegistry.register(authExecutor);
+    this.executorRegistry.register(phpApiExecutor);
+    this.executorRegistry.register(sessionExecutor);
+    this.executorRegistry.register(inventoryExecutor);
+    this.executorRegistry.register(externalSearchExecutor);
     // this.executorRegistry.register(gameScorerExecutor); // Disabled
     // this.executorRegistry.register(rewardPointsExecutor); // Disabled
   }

@@ -14,6 +14,7 @@ export enum Platform {
   SMS = 'sms',               // SMS (Twilio/MSG91)
   MOBILE_APP = 'app',        // Mobile App (Push + API)
   VOICE = 'voice',           // IVR / Voice Call
+  INSTAGRAM = 'instagram',   // Instagram Direct API
 }
 
 /**

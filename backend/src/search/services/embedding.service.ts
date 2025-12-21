@@ -21,14 +21,16 @@ export class EmbeddingService {
   async embed(text: string): Promise<number[]> {
     try {
       // Call embedding service (sentence-transformers)
+      // Service expects 'texts' array format
       const response = await firstValueFrom(
         this.httpService.post(`${this.embeddingUrl}/embed`, {
-          text,
+          texts: [text], // Service expects array format
           model: 'all-MiniLM-L6-v2', // Default model
         }),
       );
 
-      return response.data.embedding || [];
+      // Response returns 'embeddings' array
+      return response.data.embeddings?.[0] || response.data.embedding || [];
     } catch (error) {
       this.logger.error(`Embedding generation failed: ${error.message}`, error.stack);
       
@@ -39,8 +41,9 @@ export class EmbeddingService {
 
   async embedBatch(texts: string[]): Promise<number[][]> {
     try {
+      // Use same /embed endpoint - it accepts array of texts
       const response = await firstValueFrom(
-        this.httpService.post(`${this.embeddingUrl}/embed/batch`, {
+        this.httpService.post(`${this.embeddingUrl}/embed`, {
           texts,
           model: 'all-MiniLM-L6-v2',
         }),

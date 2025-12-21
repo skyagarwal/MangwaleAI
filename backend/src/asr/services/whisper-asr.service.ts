@@ -18,8 +18,8 @@ export class WhisperAsrService {
     private readonly httpService: HttpService,
     private readonly config: ConfigService,
   ) {
-    // Use Docker service name 'asr' with internal port 8000, fallback to localhost for dev
-    this.whisperUrl = this.config.get('ASR_SERVICE_URL', 'http://asr:8000');
+    // Mercury ASR server default, fallback to Docker internal
+    this.whisperUrl = this.config.get('ASR_SERVICE_URL', 'http://192.168.0.151:7001');
     this.logger.log(`🎤 Whisper ASR URL: ${this.whisperUrl}`);
   }
 

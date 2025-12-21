@@ -61,13 +61,14 @@ export class ConversationLoggerService implements OnModuleInit, OnModuleDestroy 
     variables?: Record<string, any>;
     nluIntent?: string;
     nluConfidence?: number;
+    entities?: Record<string, any>;
   }): Promise<void> {
     try {
-      // Use actual database schema: id, session_id, sender, message, intent, confidence
+      // Store all fields including platform and entities for training
       await this.pool.query(
         `INSERT INTO conversation_messages 
-         (id, session_id, sender, message, intent, confidence, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+         (id, session_id, sender, message, intent, confidence, platform, phone, flow_id, step_id, variables, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())`,
         [
           randomUUID(), // id
           params.sessionId || params.phone, // session_id
@@ -75,10 +76,15 @@ export class ConversationLoggerService implements OnModuleInit, OnModuleDestroy 
           params.messageText, // message
           params.nluIntent || null, // intent
           params.nluConfidence || null, // confidence
+          params.platform || 'unknown', // platform - CRITICAL for training analytics
+          params.phone, // phone
+          params.flowId || null, // flow_id
+          params.stepId || null, // step_id
+          JSON.stringify(params.variables || {}), // variables (includes entities if passed)
         ]
       );
 
-      this.logger.debug(`📝 Logged user message from ${params.phone}`);
+      this.logger.debug(`📝 Logged user message from ${params.phone} [${params.platform || 'unknown'}]`);
     } catch (error) {
       this.logger.error(`❌ Failed to log user message: ${error.message}`);
     }
@@ -99,11 +105,11 @@ export class ConversationLoggerService implements OnModuleInit, OnModuleDestroy 
     agentId?: string;
   }): Promise<void> {
     try {
-      // Use actual database schema: id, session_id, sender, message, intent, confidence
+      // Store all fields including platform for analytics
       await this.pool.query(
         `INSERT INTO conversation_messages 
-         (id, session_id, sender, message, intent, confidence, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+         (id, session_id, sender, message, intent, confidence, platform, phone, flow_id, step_id, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
         [
           randomUUID(), // id
           params.sessionId || params.phone, // session_id
@@ -111,10 +117,14 @@ export class ConversationLoggerService implements OnModuleInit, OnModuleDestroy 
           params.messageText, // message
           params.flowId || params.agentId || null, // intent (store flow/agent ID)
           1.0, // confidence (always 1.0 for bot responses)
+          params.platform || 'unknown', // platform
+          params.phone, // phone
+          params.flowId || null, // flow_id
+          params.stepId || null, // step_id
         ]
       );
 
-      this.logger.debug(`📝 Logged bot message to ${params.phone}`);
+      this.logger.debug(`📝 Logged bot message to ${params.phone} [${params.platform || 'unknown'}]`);
     } catch (error) {
       this.logger.error(`❌ Failed to log bot message: ${error.message}`);
     }

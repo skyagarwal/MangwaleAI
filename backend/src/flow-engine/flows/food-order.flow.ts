@@ -5,7 +5,7 @@ export const foodOrderFlow: FlowDefinition = {
   name: 'Food Order Flow',
   description: 'Complete food ordering flow with search, selection, address, and payment',
   module: 'food',
-  trigger: 'order_food',
+  trigger: 'order_food|browse_menu|browse_category|ask_recommendation|ask_famous|check_availability',
   version: '1.0.0',
   
   contextSchema: {
@@ -106,6 +106,10 @@ JSON:`,
         order_food: 'search_food',
         search_product: 'search_food',
         browse_menu: 'search_food',
+        browse_category: 'search_food',
+        ask_recommendation: 'show_recommendations',
+        ask_famous: 'search_food',
+        check_availability: 'search_food',
         default: 'search_food',
       },
     },
@@ -119,7 +123,7 @@ JSON:`,
           id: 'search_items',
           executor: 'search',
           config: {
-            index: 'food_items_v4',
+            index: 'food_items',
             query: '{{extracted_food.search_query}}',
             size: 10,
             fields: ['item_name', 'category', 'subcategory', 'description', 'restaurant_name'],
@@ -135,6 +139,77 @@ JSON:`,
         no_items: 'analyze_no_results',
         error: 'analyze_no_results', // Handle search errors gracefully
       },
+    },
+
+    // Show popular/recommended items
+    show_recommendations: {
+      type: 'action',
+      description: 'Show top-rated and popular items',
+      actions: [
+        {
+          id: 'get_recommendations',
+          executor: 'search',
+          config: {
+            index: 'food_items',
+            query: 'popular best trending top rated',
+            size: 10,
+            fields: ['item_name', 'category', 'subcategory', 'description', 'restaurant_name'],
+            formatForUi: true,
+            sortBy: 'rating',
+            lat: '{{location.lat}}',
+            lng: '{{location.lng}}',
+          },
+          output: 'recommendation_results',
+        },
+      ],
+      transitions: {
+        items_found: 'display_recommendations',
+        no_items: 'no_recommendations',
+        error: 'no_recommendations',
+      },
+    },
+
+    // Display recommendations to user
+    display_recommendations: {
+      type: 'wait',
+      description: 'Show recommended items',
+      actions: [
+        {
+          id: 'show_recs',
+          executor: 'response',
+          config: {
+            message: '🌟 Here are our top recommendations for you! Tap any item to order:',
+            dynamicMetadata: {
+              cards: 'recommendation_results.cards'
+            }
+          },
+          output: '_last_response',
+        }
+      ],
+      transitions: {
+        user_message: 'understand_request',
+        item_selected: 'process_selection',
+        default: 'understand_request',
+      }
+    },
+
+    // No recommendations fallback
+    no_recommendations: {
+      type: 'wait',
+      description: 'No recommendations available',
+      actions: [
+        {
+          id: 'no_recs_msg',
+          executor: 'response',
+          config: {
+            message: 'Aapke liye recommendations load nahi ho paye. Kya order karna chahte ho? Pizza, Biryani, ya kuch aur?',
+          },
+          output: '_last_response',
+        }
+      ],
+      transitions: {
+        user_message: 'understand_request',
+      }
     },
 
     // Analyze why search failed and if we can offer custom pickup
@@ -168,12 +243,170 @@ JSON:`,
       conditions: [
         {
           expression: 'context._failure_analysis?.specific_restaurant === true',
-          event: 'offer_custom',
+          event: 'search_external', // First try Google Places search
         }
       ],
       transitions: {
-        offer_custom: 'offer_custom_pickup',
+        search_external: 'search_external_vendor', // NEW: Search Google Places first
         default: 'no_results',
+      }
+    },
+
+    // NEW: Search Google Places for external vendor
+    search_external_vendor: {
+      type: 'action',
+      description: 'Search Google Places for the restaurant not in our database',
+      actions: [
+        {
+          id: 'external_search',
+          executor: 'external_search',
+          config: {
+            query: '{{_failure_analysis.restaurant_name}}',
+            location: '{{location.city || "Nashik"}}',
+            type: 'restaurant',
+            radius: 25000, // 25km radius
+            lat: '{{location.lat}}',
+            lng: '{{location.lng}}',
+          },
+          output: 'external_search_results',
+        }
+      ],
+      transitions: {
+        found: 'show_external_results',
+        not_found: 'offer_custom_pickup',
+        error: 'offer_custom_pickup',
+      }
+    },
+
+    // NEW: Show external search results
+    show_external_results: {
+      type: 'wait',
+      description: 'Display Google Places results to user',
+      actions: [
+        {
+          id: 'display_external',
+          executor: 'response',
+          config: {
+            message: '{{external_search_results.chatMessage}}',
+            dynamicMetadata: {
+              cards: 'external_search_results.cards'
+            }
+          },
+          output: '_last_response',
+        }
+      ],
+      transitions: {
+        user_message: 'handle_external_selection',
+        select_external: 'confirm_external_pickup', // Direct selection from card
+      }
+    },
+
+    // NEW: Handle external vendor selection
+    handle_external_selection: {
+      type: 'action',
+      description: 'Parse user selection from external results',
+      actions: [
+        {
+          id: 'parse_external_selection',
+          executor: 'llm',
+          config: {
+            systemPrompt: 'Extract which external vendor the user selected. Results: {{external_search_results.places}}',
+            prompt: 'User said: "{{user_message}}". Which vendor did they select? Return JSON: {"selected_index": 0, "vendor_name": "name", "selected": true/false}',
+            temperature: 0.1,
+            maxTokens: 80,
+            parseJson: true
+          },
+          output: '_external_selection',
+        }
+      ],
+      transitions: {
+        success: 'check_external_selection',
+        error: 'show_external_results',
+      }
+    },
+
+    // NEW: Check if user made a valid selection
+    check_external_selection: {
+      type: 'decision',
+      description: 'Validate external selection',
+      conditions: [
+        {
+          expression: 'context._external_selection?.selected === true',
+          event: 'selected',
+        }
+      ],
+      transitions: {
+        selected: 'confirm_external_pickup',
+        default: 'offer_custom_pickup', // Fallback to manual pickup offer
+      }
+    },
+
+    // NEW: Confirm pickup from external vendor
+    confirm_external_pickup: {
+      type: 'action',
+      description: 'Set up custom pickup from selected external vendor',
+      actions: [
+        {
+          id: 'set_external_vendor',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              'is_custom_order': true,
+              'is_external_vendor': true,
+              'external_vendor_name': '{{external_search_results.topResult.name || _external_selection.vendor_name}}',
+              'external_vendor_address': '{{external_search_results.topResult.address}}',
+              'external_vendor_location': {
+                'lat': '{{external_search_results.topResult.lat}}',
+                'lng': '{{external_search_results.topResult.lng}}'
+              },
+              'maps_link': '{{external_search_results.topResult.mapsLink}}',
+              'custom_pickup_location': {
+                'name': '{{external_search_results.topResult.name}}',
+                'address': '{{external_search_results.topResult.address}}',
+                'lat': '{{external_search_results.topResult.lat}}',
+                'lng': '{{external_search_results.topResult.lng}}'
+              }
+            }
+          }
+        },
+        {
+          id: 'confirm_external_message',
+          executor: 'llm',
+          config: {
+            systemPrompt: 'You are confirming a pickup order. Be enthusiastic and brief.',
+            prompt: `Great choice! User selected {{external_vendor_name || external_search_results.topResult.name}}.
+Address: {{external_vendor_address || external_search_results.topResult.address}}
+Distance: {{external_search_results.topResult.distance || "nearby"}}
+
+Tell them we'll send a rider to pick up their order. Ask what specific items they want from this place.`,
+            temperature: 0.7,
+            maxTokens: 120,
+          },
+          output: '_last_response',
+        }
+      ],
+      transitions: {
+        user_message: 'collect_external_order_items',
+      }
+    },
+
+    // NEW: Collect items for external order
+    collect_external_order_items: {
+      type: 'action',
+      description: 'Record what items user wants from external vendor',
+      actions: [
+        {
+          id: 'save_items',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              'custom_item_details': '{{user_message}}'
+            }
+          }
+        }
+      ],
+      transitions: {
+        success: 'collect_address', // Continue to normal address collection
       }
     },
 
@@ -845,7 +1078,7 @@ Tell them they'll receive live updates on WhatsApp and can track their order.`,
           executor: 'search',
           config: {
             type: 'categories',
-            index: 'food_items_v4',
+            index: 'food_items',
             limit: 8
           },
           output: 'popular_categories'

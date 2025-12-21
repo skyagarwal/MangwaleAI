@@ -189,4 +189,119 @@ export class PhpStoreService extends PhpApiService {
       return { data: [] };
     }
   }
+
+  /**
+   * Check stock availability for items
+   */
+  async checkItemStock(itemIds: (number | string)[], zoneId?: number): Promise<{
+    allAvailable: boolean;
+    items: Array<{
+      id: number | string;
+      available: boolean;
+      stock?: number;
+      name?: string;
+      lowStock?: boolean;
+    }>;
+    unavailableItems?: string[];
+  }> {
+    try {
+      this.logger.log(`📦 Checking stock for ${itemIds.length} items (Zone: ${zoneId || 'Default'})`);
+
+      const headers: any = {};
+      if (zoneId) headers['zoneId'] = JSON.stringify([zoneId]);
+
+      const itemStatuses = [];
+      const unavailableItems: string[] = [];
+      
+      for (const itemId of itemIds) {
+        try {
+          const itemDetails: any = await this.get(
+            `/api/v1/items/details/${itemId}`,
+            {},
+            headers
+          );
+
+          const stock = itemDetails?.stock ?? 100;
+          const isAvailable = itemDetails && stock !== 0 && itemDetails.available !== false;
+          const isLowStock = stock > 0 && stock < 10;
+          const name = itemDetails?.name || `Item ${itemId}`;
+          
+          if (!isAvailable) {
+            unavailableItems.push(name);
+          }
+          
+          itemStatuses.push({
+            id: itemId,
+            available: isAvailable,
+            stock: stock,
+            name: name,
+            lowStock: isLowStock,
+          });
+        } catch (err) {
+          this.logger.warn(`Failed to check stock for item ${itemId}: ${err.message}`);
+          const name = `Item ${itemId}`;
+          unavailableItems.push(name);
+          itemStatuses.push({
+            id: itemId,
+            available: false,
+            name: name,
+            lowStock: false,
+          });
+        }
+      }
+
+      return {
+        allAvailable: itemStatuses.every(item => item.available),
+        items: itemStatuses,
+        unavailableItems,
+      };
+    } catch (error) {
+      this.logger.error(`Stock check failed: ${error.message}`);
+      return {
+        allAvailable: false,
+        items: itemIds.map(id => ({ id, available: false, lowStock: false })),
+        unavailableItems: itemIds.map(id => `Item ${id}`),
+      };
+    }
+  }
+
+  /**
+   * Check store availability (accepting orders)
+   */
+  async checkStoreAvailability(storeId: number, zoneId?: number): Promise<{
+    acceptingOrders: boolean;
+    open: boolean;
+    message?: string;
+    nextOpenTime?: string;
+  }> {
+    try {
+      this.logger.log(`🏪 Checking store ${storeId} availability (Zone: ${zoneId || 'Default'})`);
+
+      const headers: any = {};
+      if (zoneId) headers['zoneId'] = JSON.stringify([zoneId]);
+
+      const storeDetails: any = await this.get(
+        `/api/v1/stores/details/${storeId}`,
+        {},
+        headers
+      );
+
+      const isOpen = storeDetails?.open ?? storeDetails?.is_open ?? true;
+      const acceptingOrders = storeDetails?.accepting_orders ?? storeDetails?.active ?? isOpen;
+
+      return {
+        acceptingOrders,
+        open: isOpen,
+        message: acceptingOrders ? undefined : 'Store is currently not accepting orders',
+        nextOpenTime: storeDetails?.next_open_time || storeDetails?.opening_time,
+      };
+    } catch (error) {
+      this.logger.error(`Store availability check failed: ${error.message}`);
+      return {
+        acceptingOrders: false,
+        open: false,
+        message: 'Unable to check store availability',
+      };
+    }
+  }
 }

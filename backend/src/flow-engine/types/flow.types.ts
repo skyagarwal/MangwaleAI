@@ -32,7 +32,7 @@ export interface FlowCondition {
  * State definition in the flow
  */
 export interface FlowState {
-  type: 'action' | 'decision' | 'parallel' | 'wait' | 'end';
+  type: 'action' | 'decision' | 'parallel' | 'wait' | 'end' | 'input' | 'final';
   description?: string; // Optional description for documentation
   actions?: FlowAction[]; // Actions to execute in this state
   conditions?: FlowCondition[]; // Conditions to evaluate (for decision states)
@@ -43,6 +43,16 @@ export interface FlowState {
     [event: string]: string; // event name → next state name
   };
   metadata?: Record<string, any>; // Additional state metadata
+  
+  // Input configuration (for input states from YAML V2)
+  inputConfig?: {
+    variable: string;
+    validation?: {
+      pattern?: string;
+      errorMessage?: string;
+    };
+    prompt?: string;
+  };
 }
 
 /**
@@ -52,7 +62,7 @@ export interface FlowDefinition {
   id: string;
   name: string;
   description?: string;
-  module: 'food' | 'parcel' | 'ecommerce' | 'general' | 'personalization' | 'gamification';
+  module: 'food' | 'parcel' | 'ecommerce' | 'general' | 'personalization' | 'gamification' | 'vendor' | 'delivery' | 'customer';
   trigger?: string; // Intent that triggers this flow
   version?: string; // Flow version for A/B testing
   
@@ -66,6 +76,9 @@ export interface FlowDefinition {
   
   // Context schema (for validation)
   contextSchema?: Record<string, any>; // Simplified for Prisma JSON storage
+  
+  // Constants (for YAML V2 flows)
+  constants?: Record<string, any>;
   
   // Flow metadata
   metadata?: {

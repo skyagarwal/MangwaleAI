@@ -20,7 +20,7 @@ export class SearchExecutor implements ActionExecutor {
   ): Promise<ActionExecutionResult> {
     try {
       const type = config.type || 'search';
-      const index = config.index as string || 'food_items_v4';
+      const index = config.index as string || 'food_items';
 
       // Handle Category Fetching
       if (type === 'categories') {

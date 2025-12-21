@@ -209,34 +209,26 @@ export class ConversationCaptureService {
     nluConfidence?: number;
   }) {
     try {
-      const defaultQualityScore = this.configService.get<number>('training.defaultQualityScore', 0.9);
-
       await this.prisma.$executeRawUnsafe(`
         INSERT INTO training_samples (
-          text, intent, module_id, module_type,
+          text, intent,
           entities, language,
-          expected_service,
           review_status, source,
-          confidence_bucket, quality_score
+          confidence
         ) VALUES (
-          $1, $2, $3, $4,
-          $5::jsonb, $6,
-          $7,
-          $8, $9,
-          $10, $11
+          $1, $2,
+          $3::jsonb, $4,
+          $5, $6,
+          $7
         )
       `,
         data.userMessage,
         data.nluIntent,
-        data.nluModuleId,
-        data.nluModuleType,
         data.nluEntities ? JSON.stringify(data.nluEntities) : null,
         data.messageLanguage || 'en',
-        data.routedTo || 'opensearch',
         'approved', // Auto-approved
         'production', // Real user data
-        'high',
-        data.nluConfidence || defaultQualityScore
+        data.nluConfidence || 0.9
       );
 
       this.logger.log(`Created training sample: ${data.nluIntent}`);
@@ -340,10 +332,9 @@ export class ConversationCaptureService {
     try {
       let query = `
         SELECT
-          text, intent, module_id, module_type,
+          text, intent,
           entities, language,
-          expected_service,
-          quality_score
+          confidence, source
         FROM training_samples
         WHERE review_status = ANY($1::text[])
       `;

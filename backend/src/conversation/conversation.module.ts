@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { ConversationService } from './services/conversation.service';
 import { AuthFlowBridgeService } from './services/auth-flow-bridge.service';
+import { UserTypeRouterService } from './services/user-type-router.service';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 import { MessagingModule } from '../messaging/messaging.module';
 import { OrderFlowModule } from '../order-flow/order-flow.module';
@@ -11,11 +12,14 @@ import { ConversationCaptureService } from '../services/conversation-capture.ser
 import { HttpModule } from '@nestjs/axios';
 import { AgentsModule } from '../agents/agents.module';
 import { NluModule } from '../nlu/nlu.module';
+import { FlowEngineModule } from '../flow-engine/flow-engine.module';
 // import { GamificationModule } from '../gamification/gamification.module'; // ARCHIVED
 import { UserModule } from '../user/user.module';
 import { TestController } from './controllers/test.controller';
+import { VoiceConversationController } from './controllers/voice-conversation.controller';
 import { PersonalizationModule } from '../personalization/personalization.module';
 import { AuthModule } from '../auth/auth.module';
+import { DatabaseModule } from '../database/database.module';
 
 /**
  * ConversationModule - MANGWALE CONVERSATION PLATFORM (Core)
@@ -61,18 +65,24 @@ import { AuthModule } from '../auth/auth.module';
     forwardRef(() => ParcelModule), // AI-Powered Parcel Delivery
     forwardRef(() => AgentsModule), // 🤖 Agent System - LLM-powered intelligent responses (forwardRef to prevent circular dependency)
     NluModule, // NLU services for intent classification with LLM fallback
+    forwardRef(() => FlowEngineModule), // 🔄 Flow Engine for vendor/driver flows
     // GamificationModule, // 🎮 ARCHIVED - 82 TypeScript errors, needs Prisma schema fixes
     UserModule, // 👤 User Sync - Links PHP users to AI database
     PersonalizationModule, // 🧠 User Preferences - Personalized conversation context
     AuthModule, // 🔐 Smart Auth - Authentication triggers & inline OTP
+    DatabaseModule, // 🗄️ Database services for conversation logging
   ],
-  controllers: [TestController], // 🧪 Test endpoints for conversation flow testing
+  controllers: [
+    TestController, // 🧪 Test endpoints for conversation flow testing
+    VoiceConversationController, // 🎤 Voice API for Mercury integration
+  ],
   providers: [
     ConversationService,
     NluClientService,
     ConversationCaptureService,
     AuthFlowBridgeService, // 🔄 Bridge for legacy auth → flow engine migration
+    UserTypeRouterService, // 🚦 Routes users to vendor/driver/customer flows
   ],
-  exports: [ConversationService, NluClientService, ConversationCaptureService, AuthFlowBridgeService],
+  exports: [ConversationService, NluClientService, ConversationCaptureService, AuthFlowBridgeService, UserTypeRouterService],
 })
 export class ConversationModule {}

@@ -8,6 +8,12 @@
     "test",
     "src/gamification",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "src/llm/services/prompt-ab-testing.service.ts",
+    "src/llm/controllers/prompt-ab-testing.controller.ts",
+    "src/nlu/services/response-template.service.ts",
+    "src/database/secrets.service.ts",
+    "src/database/secrets.controller.ts",
+    "src/vision/**"
   ]
 }

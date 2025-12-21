@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Logger, Param, Query } from '@nestjs/commo
 import { SearchService } from '../services/search.service';
 import { OpenSearchService } from '../services/opensearch.service';
 import { ModuleService } from '../services/module.service';
+import { ExternalVendorService } from '../services/external-vendor.service';
 import { SearchDto } from '../dto/search.dto';
 import { SearchResultDto } from '../dto/search-result.dto';
 
@@ -13,6 +14,7 @@ export class SearchController {
     private readonly searchService: SearchService,
     private readonly openSearchService: OpenSearchService,
     private readonly moduleService: ModuleService,
+    private readonly externalVendorService: ExternalVendorService,
   ) {}
 
   @Post()
@@ -111,5 +113,47 @@ export class SearchController {
       status: opensearchHealth ? 'ok' : 'degraded',
       opensearch: opensearchHealth,
     };
+  }
+
+  /**
+   * External vendor search - Searches Google Places for vendors not in our database
+   * Example: /search/external?q=tushar%20missal&city=Nashik
+   */
+  @Get('external')
+  async searchExternalVendor(@Query() query: Record<string, string>): Promise<any> {
+    const q = query.q || '';
+    const city = query.city || 'Nashik';
+    const type = (query.type as any) || 'restaurant';
+    const radius = parseInt(query.radius || '10000', 10);
+    
+    this.logger.log(`🔍 External vendor search: "${q}" in ${city}`);
+    
+    if (!q || q.length < 2) {
+      return {
+        success: false,
+        error: 'Query must be at least 2 characters',
+        results: [],
+      };
+    }
+    
+    const result = await this.externalVendorService.searchExternalVendor(q, {
+      city,
+      type,
+      radius,
+      location: query.lat && query.lng ? {
+        lat: parseFloat(query.lat),
+        lng: parseFloat(query.lng),
+      } : undefined,
+    });
+    
+    // Format for chat display
+    if (result.success && result.results.length > 0) {
+      return {
+        ...result,
+        chatMessage: this.externalVendorService.formatResultsForChat(result.results, q),
+      };
+    }
+    
+    return result;
   }
 }

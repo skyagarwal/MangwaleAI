@@ -22,7 +22,7 @@ import { AsrModule } from './asr/asr.module'; // ✨ ASR Speech-to-Text
 import { TtsModule } from './tts/tts.module'; // ✨ TTS Text-to-Speech
 import { LlmModule } from './llm/llm.module'; // ✨ LLM Orchestration
 import { SearchModule } from './search/search.module'; // ✨ Semantic & Keyword Search
-import { VisionModule } from './vision/vision.module'; // ✨ Image AI & Vision
+// import { VisionModule } from './vision/vision.module'; // ✨ Image AI & Vision (DISABLED - onnxruntime issues)
 import { FlowManagementModule } from './flow-management/flow-management.module'; // ✨ Visual Flow Builder
 import { TrainingModule } from './training/training.module'; // ✨ ML Training & Label Studio
 import { GamificationModule } from './gamification/gamification.module'; // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
@@ -30,9 +30,13 @@ import { PersonalizationModule } from './personalization/personalization.module'
 import { FlowEngineModule } from './flow-engine/flow-engine.module'; // ✨ Modern State Machine Flow Engine
 import { ChatModule } from './chat/chat.module'; // ✨ WebSocket Gateway for Real-time Chat
 import { StatsModule } from './stats/stats.module'; // ✨ Dashboard Statistics & Analytics
+import { VoiceCharactersModule } from './voice-characters/voice-characters.module'; // ✨ Voice Characters & TTS Presets
 import { ModelsModule } from './models/models.module'; // ✨ AI Models Registry & Management
 import { HealthModule } from './health/health.module';
 import { SettingsModule } from './settings/settings.module';
+import { MonitoringModule } from './monitoring/monitoring.module'; // ✨ System Monitoring & Metrics
+import { AnalyticsModule } from './analytics/analytics.module'; // ✨ Analytics & Trending
+import { CommonModule } from './common/common.module'; // ✨ Common utilities & Audit Logs
 
 @Module({
   imports: [
@@ -71,7 +75,7 @@ import { SettingsModule } from './settings/settings.module';
     TtsModule, // ✨ TTS Text-to-Speech
     LlmModule, // ✨ LLM Orchestration (vLLM + Cloud)
     SearchModule, // ✨ Semantic & Keyword Search
-    VisionModule, // ✨ Image AI & Vision (PPE, Faces, Objects)
+    // VisionModule, // ✨ Image AI & Vision (PPE, Faces, Objects) - DISABLED
     FlowManagementModule, // ✨ Visual Flow Builder & Execution
     TrainingModule, // ✨ ML Training Pipeline & Label Studio
     GamificationModule, // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
@@ -81,7 +85,11 @@ import { SettingsModule } from './settings/settings.module';
     StatsModule, // ✨ Dashboard Statistics & Analytics
     ModelsModule, // ✨ AI Models Registry & Management
     HealthModule, // ✨ Health Checks
+    VoiceCharactersModule, // Voice Characters
     SettingsModule, // ✨ System Settings & Connection Tests
+    MonitoringModule, // ✨ System Monitoring & Metrics
+    AnalyticsModule, // ✨ Analytics & Trending
+    CommonModule, // ✨ Common utilities & Audit Logs
 
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel
