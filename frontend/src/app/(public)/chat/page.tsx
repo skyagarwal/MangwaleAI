@@ -862,14 +862,32 @@ function ChatContent() {
                   />
 
                   <div className="flex items-center gap-1">
-                    <VoiceInput 
+                    {useEnhancedVoice ? (
+                      <EnhancedVoiceInput 
                         onTranscription={(text) => {
-                        setInput(text)
-                        setTimeout(() => handleSend(text), 100)
+                          setInput(text)
+                          setInterimTranscript('')
+                          setTimeout(() => handleSend(text), 100)
+                        }}
+                        onInterimTranscription={(text) => {
+                          setInterimTranscript(text)
+                        }}
+                        language="hi-IN"
+                        enableStreaming={true}
+                        showSettings={true}
+                        autoSend={true}
+                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      />
+                    ) : (
+                      <VoiceInput 
+                        onTranscription={(text) => {
+                          setInput(text)
+                          setTimeout(() => handleSend(text), 100)
                         }}
                         language="hi-IN"
                         className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                    />
+                      />
+                    )}
                     <button
                         onClick={handleSendClick}
                         disabled={!input.trim() || isTyping}
@@ -883,8 +901,22 @@ function ChatContent() {
                     </button>
                   </div>
                </div>
-               <div className="text-center mt-2 text-xs text-gray-400">
-                  Mangwale AI can make mistakes. Consider checking important information.
+               {/* Interim transcript display */}
+               {interimTranscript && (
+                 <div className="px-4 py-2 text-sm text-gray-500 italic bg-gray-50 rounded-lg mx-4 mb-2">
+                   🎤 {interimTranscript}...
+                 </div>
+               )}
+               <div className="text-center mt-2 text-xs text-gray-400 flex items-center justify-center gap-2">
+                  <span>Mangwale AI can make mistakes. Consider checking important information.</span>
+                  <button 
+                    onClick={() => setUseEnhancedVoice(!useEnhancedVoice)}
+                    className={`ml-2 px-2 py-0.5 rounded text-xs ${useEnhancedVoice ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+                    title={useEnhancedVoice ? 'Using streaming voice (click to switch to basic)' : 'Using basic voice (click to switch to streaming)'}
+                  >
+                    <Mic className="w-3 h-3 inline mr-1" />
+                    {useEnhancedVoice ? 'Streaming' : 'Basic'}
+                  </button>
                </div>
             </div>
           </div>
