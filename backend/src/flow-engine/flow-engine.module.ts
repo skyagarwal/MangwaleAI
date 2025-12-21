@@ -24,6 +24,7 @@ import { PhpApiExecutor } from './executors/php-api.executor';
 import { SessionExecutor } from './executors/session.executor';
 import { InventoryExecutor } from './executors/inventory.executor';
 import { ExternalSearchExecutor } from './executors/external-search.executor';
+import { SelectionExecutor } from './executors/selection.executor';
 // Game executors disabled - Prisma schema mismatch
 // import { GameScorerExecutor } from './executors/game-scorer.executor';
 // import { RewardPointsExecutor } from './executors/reward-points.executor';
@@ -87,6 +88,7 @@ import { PersonalizationModule } from '../personalization/personalization.module
     SessionExecutor,
     InventoryExecutor,
     ExternalSearchExecutor,
+    SelectionExecutor,
     // GameScorerExecutor, // Disabled - Prisma schema mismatch
     // RewardPointsExecutor, // Disabled - Prisma schema mismatch
   ],

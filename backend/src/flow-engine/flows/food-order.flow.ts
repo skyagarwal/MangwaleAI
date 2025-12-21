@@ -530,33 +530,240 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
     // Process item selection
     process_selection: {
       type: 'action',
-      description: 'Parse selected items and quantities',
+      description: 'Parse selected items and quantities using selection executor',
       actions: [
         {
           id: 'parse_selection',
-          executor: 'nlu',
+          executor: 'selection',
           config: {
-            extractEntities: true,
+            // Selection executor will parse user message and match against search_results
           },
-          output: 'selection_nlu',
-        },
-        // TODO: Add custom executor to parse "1x2, 3x1" format
-        // For now, using LLM to extract selections
-        {
-          id: 'extract_selections',
-          executor: 'llm',
-          config: {
-            systemPrompt: 'Extract item numbers and quantities from user message. Return JSON array.',
-            prompt: 'User message: {{user_message}}\n\nExtract selections in format: [{"itemIndex": 0, "quantity": 2}]. If unclear, ask for clarification.',
-            temperature: 0.3,
-            maxTokens: 150,
-          },
-          output: '_selection_extract',
+          output: 'selection_result',
         },
       ],
       transitions: {
-        success: 'confirm_selection',
+        item_selected: 'add_to_cart',
+        checkout: 'check_auth_for_checkout',
+        cancel: 'initial',
+        search_more: 'search',
+        unclear: 'clarify_selection',
         error: 'show_results',
+      },
+    },
+
+    // Clarify unclear selection
+    clarify_selection: {
+      type: 'action',
+      description: 'Ask user to clarify their selection',
+      actions: [
+        {
+          id: 'clarify_prompt',
+          executor: 'response',
+          config: {
+            template: 'I didn\'t quite understand your selection. Please:\n- Type a number (1, 2, 3) to select an item\n- Type "Add [item name] to cart"\n- Or say "checkout" when ready',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        user_message: 'process_selection',
+      },
+    },
+
+    // Add items to cart
+    add_to_cart: {
+      type: 'action',
+      description: 'Add selected items to cart',
+      actions: [
+        {
+          id: 'update_cart',
+          executor: 'llm',
+          config: {
+            systemPrompt: 'You are confirming items added to cart.',
+            prompt: `Added to cart: {{selection_result.items}}
+
+Respond with a brief confirmation showing what was added and the running total.
+Ask if they want to add more items or proceed to checkout.`,
+            temperature: 0.7,
+            maxTokens: 150,
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        user_message: 'process_selection',
+      },
+    },
+
+    // Check authentication before checkout
+    check_auth_for_checkout: {
+      type: 'decision',
+      description: 'Check if user is authenticated before checkout',
+      conditions: [
+        {
+          expression: 'context.user_authenticated === true',
+          event: 'authenticated',
+        },
+      ],
+      transitions: {
+        authenticated: 'collect_address',
+        default: 'request_phone',
+      },
+    },
+
+    // Request phone for authentication
+    request_phone: {
+      type: 'wait',
+      description: 'Ask user for phone number to authenticate',
+      actions: [
+        {
+          id: 'ask_phone',
+          executor: 'response',
+          config: {
+            template: 'To complete your order, please provide your phone number for verification.',
+            responseType: 'request_phone',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        phone_provided: 'verify_otp',
+        user_message: 'parse_phone',
+      },
+    },
+
+    // Parse phone from user message
+    parse_phone: {
+      type: 'action',
+      description: 'Extract phone number from user message',
+      actions: [
+        {
+          id: 'extract_phone',
+          executor: 'auth',
+          config: {
+            action: 'extract_phone',
+          },
+          output: 'phone_result',
+        },
+      ],
+      transitions: {
+        phone_valid: 'send_otp',
+        phone_invalid: 'request_phone',
+        error: 'request_phone',
+      },
+    },
+
+    // Send OTP
+    send_otp: {
+      type: 'action',
+      description: 'Send OTP to user phone',
+      actions: [
+        {
+          id: 'send_otp_action',
+          executor: 'auth',
+          config: {
+            action: 'send_otp',
+          },
+          output: 'otp_result',
+        },
+        {
+          id: 'otp_sent_message',
+          executor: 'response',
+          config: {
+            template: 'We\'ve sent an OTP to your phone. Please enter it to continue.',
+            responseType: 'request_otp',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        otp_sent: 'verify_otp',
+        error: 'otp_error',
+      },
+    },
+
+    // Verify OTP
+    verify_otp: {
+      type: 'wait',
+      description: 'Wait for user to enter OTP',
+      actions: [],
+      transitions: {
+        user_message: 'check_otp',
+      },
+    },
+
+    // Check OTP
+    check_otp: {
+      type: 'action',
+      description: 'Verify the OTP entered by user',
+      actions: [
+        {
+          id: 'verify_otp_action',
+          executor: 'auth',
+          config: {
+            action: 'verify_otp',
+          },
+          output: 'otp_verify_result',
+        },
+      ],
+      transitions: {
+        otp_valid: 'collect_address',
+        otp_invalid: 'otp_retry',
+        error: 'otp_error',
+      },
+    },
+
+    // OTP retry
+    otp_retry: {
+      type: 'action',
+      description: 'Ask user to re-enter OTP',
+      actions: [
+        {
+          id: 'otp_retry_message',
+          executor: 'response',
+          config: {
+            template: 'That OTP doesn\'t seem right. Please try again or type "resend" to get a new OTP.',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        user_message: 'check_otp_or_resend',
+      },
+    },
+
+    // Check if user wants to resend or entered new OTP
+    check_otp_or_resend: {
+      type: 'decision',
+      description: 'Check if user wants to resend OTP',
+      conditions: [
+        {
+          expression: 'context._user_message?.toLowerCase().includes("resend")',
+          event: 'resend',
+        },
+      ],
+      transitions: {
+        resend: 'send_otp',
+        default: 'check_otp',
+      },
+    },
+
+    // OTP error
+    otp_error: {
+      type: 'action',
+      description: 'Handle OTP error',
+      actions: [
+        {
+          id: 'otp_error_message',
+          executor: 'response',
+          config: {
+            template: 'Sorry, there was an issue with OTP verification. Please try again.',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        user_message: 'request_phone',
       },
     },
 
