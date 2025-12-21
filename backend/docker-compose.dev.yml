@@ -33,6 +33,9 @@ services:
       - NLU_SERVICE_URL=http://mangwale-ai-nlu:7010
       - VLLM_API_URL=http://mangwale-ai-vllm:8002
       - OSRM_SERVICE_URL=http://mangwale_osrm:5000
+      - FRAPPE_BASE_URL=https://erp.sarvin.in
+      - FRAPPE_API_KEY=7ecd0d170da2d0c
+      - FRAPPE_API_SECRET=110aae031544028
     networks:
       - headless-network
     depends_on:

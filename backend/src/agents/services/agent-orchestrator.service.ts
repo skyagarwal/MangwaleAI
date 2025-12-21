@@ -212,7 +212,25 @@ export class AgentOrchestratorService {
 
       this.logger.log(`🔍 Processing message: "${message}" for ${phoneNumber}`);
 
-      // 🧠 SMART GREETING & LOCATION CHECK - DISABLED
+      // �‍💼 HUMAN TAKEOVER CHECK
+      // If conversation is escalated to human, pause AI responses.
+      // Messages are still logged but we return a polite "human will respond" message.
+      if (session?.data?.escalated_to_human === true) {
+        this.logger.log(`⏸️ Conversation escalated to human - AI paused for ${phoneNumber}`);
+        
+        const issueId = session?.data?.frappe_issue_id;
+        return {
+          response: `Your conversation has been escalated to our support team.${issueId ? ` Ticket: ${issueId}.` : ''} A human agent will assist you shortly.`,
+          executionTime: Date.now() - startTime,
+          metadata: {
+            escalated: true,
+            ai_paused: true,
+            issueId,
+          },
+        };
+      }
+
+      // �🧠 SMART GREETING & LOCATION CHECK - DISABLED
       // User requested to allow small talk first before asking for location.
       // Location will be requested when a transactional intent is detected.
       /*

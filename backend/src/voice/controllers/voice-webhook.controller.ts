@@ -110,6 +110,22 @@ export class VoiceWebhookController {
       return;
     }
 
+    // If already escalated to a human, end the IVR flow gracefully.
+    try {
+      const escalated = await this.sessionService.getData(parsed.callSid, 'escalated_to_human');
+      if (escalated === true) {
+        const language = (await this.sessionService.getData(parsed.callSid, 'language')) || 'en-IN';
+        res.send(this.voiceService.generateSpeechResponse(
+          'Your request has been escalated to our support team. A human agent will contact you shortly. Goodbye.',
+          false,
+          language,
+        ).xml);
+        return;
+      }
+    } catch {
+      // Ignore and continue normal flow
+    }
+
     this.logger.log(`🎤 Speech from ${parsed.from}: "${parsed.speechResult}"`);
 
     try {

@@ -73,8 +73,9 @@ export class StateMachineEngine {
     );
 
     try {
-      // 1. Execute onEntry actions
-      if (state.onEntry && state.onEntry.length > 0) {
+      // 1. Execute onEntry actions - ONLY when first entering (no event)
+      // When resuming with user input (event='user_message'), skip onEntry
+      if (state.onEntry && state.onEntry.length > 0 && !event) {
         this.logger.debug(`Running ${state.onEntry.length} onEntry actions`);
         await this.executeActions(state.onEntry, context, currentStateName);
       }
@@ -82,9 +83,13 @@ export class StateMachineEngine {
       // 2. Execute main actions based on state type
       let triggeredEvent: string | undefined = event;
 
-      // Allow actions for 'wait' states too (e.g. sending a prompt)
-      // BUT skip if we are processing an event (resuming wait)
-      const shouldExecuteActions = state.type === 'action' || (state.type === 'wait' && !event);
+      // For 'wait' states:
+      // - When first entering (no event): DON'T run actions (only onEntry prompts)
+      // - When resuming with user input (event='user_message'): Run actions for validation
+      // For 'action' states: ALWAYS run actions
+      const shouldExecuteActions = 
+        state.type === 'action' || 
+        (state.type === 'wait' && event); // Wait states ONLY execute actions when resuming with event
 
       if (shouldExecuteActions && state.actions) {
         const results = await this.executeActions(state.actions, context, currentStateName);

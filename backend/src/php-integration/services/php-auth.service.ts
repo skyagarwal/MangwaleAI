@@ -10,8 +10,39 @@ import { normalizePhoneNumber } from '../../common/utils/helpers';
  */
 @Injectable()
 export class PhpAuthService extends PhpApiService {
+  // Cache guest_id to avoid repeated guest creation
+  private guestIdCache: string | null = null;
+
   constructor(configService: ConfigService) {
     super(configService);
+  }
+
+  /**
+   * Ensure we have a guest_id from PHP backend (required for auth APIs)
+   */
+  private async ensureGuestId(): Promise<string> {
+    if (this.guestIdCache) {
+      return this.guestIdCache;
+    }
+
+    try {
+      this.logger.log('🆔 Requesting guest_id from PHP backend');
+      const resp: any = await this.post('/api/v1/auth/guest/request', {
+        fcm_token: null,
+      });
+
+      const guestId = resp?.guest_id || resp?.guestId;
+      if (guestId) {
+        this.guestIdCache = guestId;
+        this.logger.log(`✅ Acquired guest_id: ${guestId}`);
+        return guestId;
+      }
+
+      throw new Error('guest_id not returned by PHP backend');
+    } catch (error) {
+      this.logger.error(`❌ Failed to fetch guest_id: ${error.message}`);
+      throw error;
+    }
   }
 
   /**
@@ -39,10 +70,12 @@ export class PhpAuthService extends PhpApiService {
     try {
       this.logger.log(`📞 Sending OTP to ${normalizedPhone}`);
       
+      const guestId = await this.ensureGuestId();
+
       const response = await this.post('/api/v1/auth/login', {
         phone: normalizedPhone,
         login_type: 'otp',
-        guest_id: null,
+        guest_id: guestId,
       });
 
       return { success: true, ...response };
@@ -97,12 +130,14 @@ export class PhpAuthService extends PhpApiService {
     try {
       this.logger.log(`🔐 Verifying OTP for ${normalizedPhone}`);
       
+      const guestId = await this.ensureGuestId();
+
       const response: any = await this.post('/api/v1/auth/verify-phone', {
         phone: normalizedPhone,
         verification_type: 'phone',
         otp: otp,
         login_type: 'otp',
-        guest_id: null,
+        guest_id: guestId,
       });
 
       this.logger.log(`✅ OTP verified response: ${JSON.stringify(response)}`);

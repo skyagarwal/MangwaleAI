@@ -34,10 +34,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: "cover",
-  themeColor: "#059211",
+  themeColor: "#f97316",
 };
 
 export default function RootLayout({
@@ -49,17 +49,18 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* PWA Meta Tags */}
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/mangwale-logo.png" />
+        <link rel="icon" type="image/png" href="/mangwale-logo.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Mangwale" />
         
         {/* Splash Screens for iOS */}
-        <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
+        <link rel="apple-touch-startup-image" href="/chotu-avatar.png" />
         
-        {/* Android Theme */}
-        <meta name="theme-color" content="#059211" />
-        <meta name="msapplication-TileColor" content="#059211" />
+        {/* Android Theme - Orange brand color */}
+        <meta name="theme-color" content="#f97316" />
+        <meta name="msapplication-TileColor" content="#f97316" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

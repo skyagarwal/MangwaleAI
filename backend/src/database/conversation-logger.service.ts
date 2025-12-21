@@ -152,6 +152,45 @@ export class ConversationLoggerService implements OnModuleInit, OnModuleDestroy 
   }
 
   /**
+   * Get recent conversation history by session ID (for WebSocket reconnection)
+   * Returns messages in ascending order (oldest first) for proper display
+   */
+  async getSessionHistory(sessionId: string, limit: number = 20): Promise<any[]> {
+    try {
+      const result = await this.pool.query(
+        `SELECT 
+           id, 
+           sender as role,
+           message as content,
+           variables,
+           created_at as timestamp
+         FROM conversation_messages
+         WHERE session_id = $1
+         ORDER BY created_at DESC
+         LIMIT $2`,
+        [sessionId, limit]
+      );
+
+      // Return in ascending order (oldest first) for chat display
+      const messages = result.rows.reverse().map(row => ({
+        id: row.id,
+        role: row.role === 'user' ? 'user' : 'assistant',
+        content: row.content,
+        timestamp: new Date(row.timestamp).getTime(),
+        // Parse any cards/buttons from variables if present
+        ...(row.variables?.cards && { cards: row.variables.cards }),
+        ...(row.variables?.buttons && { buttons: row.variables.buttons }),
+      }));
+
+      this.logger.debug(`📜 Retrieved ${messages.length} messages for session ${sessionId}`);
+      return messages;
+    } catch (error) {
+      this.logger.error(`❌ Failed to get session history: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
    * Get conversation statistics
    */
   async getConversationStats(): Promise<{

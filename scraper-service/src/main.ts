@@ -17,7 +17,7 @@
 
 import express, { Request, Response } from 'express';
 import { Pool } from 'pg';
-import Redis from 'redis';
+import { createClient } from 'redis';
 import cron from 'node-cron';
 import dotenv from 'dotenv';
 import winston from 'winston';
@@ -48,7 +48,7 @@ const pool = new Pool({
 });
 
 // Redis connection
-const redis = Redis.createClient({
+const redis = createClient({
   url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
@@ -72,7 +72,7 @@ app.get('/health', (req: Request, res: Response) => {
  */
 app.post('/api/scrape/zomato', async (req: Request, res: Response) => {
   try {
-    const { restaurantUrl, restaurantName, city } = req.body;
+    const { restaurantUrl, restaurantName, city, lat, lng } = req.body;
     
     if (!restaurantUrl && !restaurantName) {
       return res.status(400).json({ error: 'restaurantUrl or restaurantName required' });
@@ -90,11 +90,12 @@ app.post('/api/scrape/zomato', async (req: Request, res: Response) => {
     // Queue the scrape job
     const jobId = uuidv4();
     await scraperQueue.addJob({
-      id: jobId,
-      type: 'zomato',
+      source: 'zomato',
       url: restaurantUrl,
-      searchQuery: restaurantName,
-      city: city || 'nashik',
+      storeName: restaurantName,
+      storeAddress: city || 'nashik',
+      lat: lat || 19.9975,
+      lng: lng || 73.7898,
       priority: 'high'
     });
 
@@ -130,13 +131,12 @@ app.post('/api/scrape/swiggy', async (req: Request, res: Response) => {
 
     const jobId = uuidv4();
     await scraperQueue.addJob({
-      id: jobId,
-      type: 'swiggy',
+      source: 'swiggy',
       url: restaurantUrl,
-      searchQuery: restaurantName,
-      city: city || 'nashik',
-      lat,
-      lng,
+      storeName: restaurantName,
+      storeAddress: city || 'nashik',
+      lat: lat || 19.9975,
+      lng: lng || 73.7898,
       priority: 'high'
     });
 

@@ -72,11 +72,16 @@ export class SwiggyScraper {
 
     this.browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium-browser',
+      protocolTimeout: 60000, // 60 seconds timeout
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
+        '--disable-gpu',
         '--window-size=1920x1080',
+        '--single-process',
+        '--no-zygote',
       ]
     });
 

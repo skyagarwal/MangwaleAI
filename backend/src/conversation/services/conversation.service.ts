@@ -115,6 +115,61 @@ export class ConversationService {
       const messageText = message.text?.body?.trim().toLowerCase();
       this.logger.log(`📱 Processing message from ${phoneNumber}: "${messageText}" | Current step: ${session.currentStep}`);
 
+      // 🧑‍💼 HUMAN TAKEOVER MODE
+      // If escalated, we avoid bot replies for ConversationService-driven channels.
+      // We still log the message and (optionally) append it to the linked ERPNext Issue.
+      if (session?.data?.escalated_to_human === true) {
+        try {
+          const rawText = (message.text?.body || '').toString().trim();
+          const platform = session?.data?.platform || 'whatsapp';
+
+          if (rawText) {
+            await this.conversationCaptureService.captureConversation({
+              sessionId: phoneNumber,
+              phoneNumber,
+              userMessage: rawText,
+              nluIntent: 'human_takeover',
+              nluConfidence: 0,
+              responseText: null,
+              responseSuccess: true,
+              conversationContext: {
+                currentStep: session.currentStep,
+                escalated_to_human: true,
+                escalation_reason: session?.data?.escalation_reason,
+                frappe_issue_id: session?.data?.frappe_issue_id,
+              },
+              platform,
+            });
+
+            const issueId = session?.data?.frappe_issue_id;
+            const baseUrl = (process.env.FRAPPE_BASE_URL || '').replace(/\/+$/, '');
+            const apiKey = process.env.FRAPPE_API_KEY || '';
+            const apiSecret = process.env.FRAPPE_API_SECRET || '';
+            if (issueId && baseUrl && apiKey && apiSecret && (globalThis as any).fetch) {
+              const url = `${baseUrl}/api/method/frappe.desk.form.utils.add_comment`;
+              await (globalThis as any).fetch(url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Authorization': `token ${apiKey}:${apiSecret}`,
+                },
+                body: JSON.stringify({
+                  reference_doctype: 'Issue',
+                  reference_name: issueId,
+                  content: `[${platform}] User: ${rawText}`,
+                }),
+              });
+            }
+          }
+        } catch (e: any) {
+          this.logger.warn(`Human takeover logging failed (continuing): ${e?.message || e}`);
+        }
+
+        // Do not send automated responses while escalated.
+        return;
+      }
+
       // 🏠 GLOBAL MENU HANDLER - User can always go back to main menu
       if (['menu', 'main menu', 'home', 'back'].includes(messageText)) {
         this.logger.log(`🏠 User requested main menu, resetting from step: ${session.currentStep}`);
@@ -332,12 +387,29 @@ export class ConversationService {
             );
             
             // 🛒 Check for checkout intent/keyword to trigger transactional flow
+            // BUT respect flow engine auth requirements - check if user is authenticated first
             const intent = agentResult.metadata?.intent;
             const lowerMessage = messageText?.toLowerCase() || '';
             const isCheckout = intent === 'checkout' || lowerMessage.includes('checkout') || lowerMessage.includes('check out');
 
             if (isCheckout) {
-                this.logger.log(`🛒 Checkout detected via Agent/Keyword, triggering checkout flow`);
+                // 🔐 Check auth token before proceeding to checkout
+                const authToken = await this.sessionService.getData(phoneNumber, 'auth_token');
+                if (!authToken) {
+                  this.logger.log(`🔐 Checkout requires auth - user ${phoneNumber} not logged in`);
+                  // Don't handle checkout directly, the flow engine will handle auth
+                  // Just send the flow engine response which asks for phone number
+                  if (agentResult.response) {
+                    const platform = session?.data?.platform || 'whatsapp';
+                    const platformEnum = platform === 'web' ? Platform.WEB : 
+                                        platform === 'telegram' ? Platform.TELEGRAM : 
+                                        Platform.WHATSAPP;
+                    await this.messagingService.sendTextMessage(platformEnum, phoneNumber, agentResult.response);
+                  }
+                  return;
+                }
+                
+                this.logger.log(`🛒 Checkout detected (user authenticated), triggering checkout flow`);
                 await this.handleCheckout(phoneNumber, messageText);
                 return;
             }
@@ -1240,12 +1312,24 @@ export class ConversationService {
       );
 
       // 🛒 Check for checkout intent/keyword to trigger transactional flow
+      // BUT respect flow engine auth requirements
       const intent = agentResult.metadata?.intent;
       const lowerMessage = messageText?.toLowerCase() || '';
       const isCheckout = intent === 'checkout' || lowerMessage.includes('checkout') || lowerMessage.includes('check out');
 
       if (isCheckout) {
-          this.logger.log(`🛒 Checkout detected via Agent/Keyword in Main Menu, triggering checkout flow`);
+          // 🔐 Check auth token before proceeding to checkout
+          const authToken = await this.sessionService.getData(phoneNumber, 'auth_token');
+          if (!authToken) {
+            this.logger.log(`🔐 Checkout (Main Menu) requires auth - user ${phoneNumber} not logged in`);
+            // Send flow engine response (should ask for phone) instead of jumping to checkout
+            if (agentResult.response) {
+              await this.messagingService.sendTextMessage(Platform.WHATSAPP, phoneNumber, agentResult.response);
+            }
+            return;
+          }
+          
+          this.logger.log(`🛒 Checkout detected in Main Menu (user authenticated), triggering checkout flow`);
           await this.handleCheckout(phoneNumber, messageText);
           return;
       }
@@ -2266,9 +2350,23 @@ export class ConversationService {
   /**
    * STEP 11.5: Payment Method Selection
    * Ask user to choose payment method before checkout
+   * IMPORTANT: Requires authentication before proceeding
    */
   private async proceedToPaymentSelection(phoneNumber: string): Promise<void> {
     const authToken = await this.sessionService.getData(phoneNumber, 'auth_token');
+    
+    // 🔐 CHECK AUTH FIRST - Cannot proceed without login
+    if (!authToken) {
+      this.logger.log(`🔐 User ${phoneNumber} not authenticated - redirecting to login`);
+      await this.messagingService.sendTextMessage(Platform.WHATSAPP, 
+        phoneNumber,
+        '🔐 **Login Required**\n\n' +
+        'To complete your order, please verify your phone number.\n\n' +
+        'Please enter your 10-digit mobile number:'
+      );
+      await this.sessionService.setStep(phoneNumber, 'awaiting_phone_number');
+      return;
+    }
     
     // Get estimated order amount
     const orderData = await this.sessionService.getData(phoneNumber);
@@ -2361,6 +2459,20 @@ export class ConversationService {
 
     try {
       const authToken = await this.sessionService.getData(phoneNumber, 'auth_token');
+      
+      // 🔐 CRITICAL: Check auth before order placement
+      if (!authToken) {
+        this.logger.warn(`⚠️ Auth token missing for ${phoneNumber} - redirecting to login`);
+        await this.messagingService.sendTextMessage(Platform.WHATSAPP, 
+          phoneNumber,
+          '🔐 **Session Expired**\n\n' +
+          'Your session has expired. Please log in again to complete your order.\n\n' +
+          'Enter your 10-digit mobile number:'
+        );
+        await this.sessionService.setStep(phoneNumber, 'awaiting_phone_number');
+        return;
+      }
+      
       const orderData = await this.sessionService.getData(phoneNumber);
       
       // Get estimated delivery charge

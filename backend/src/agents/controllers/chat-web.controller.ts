@@ -32,8 +32,21 @@ export class ChatWebController {
    * Body: { recipientId: string, text?: string, location?: { lat: number; lng: number }, type?: 'text' | 'location' }
    */
   @Post('send')
-  async sendMessage(@Body() body: { recipientId: string; text?: string; location?: { lat: number; lng: number }; type?: 'text' | 'location' }) {
-    const { recipientId, text, location, type = 'text' } = body;
+  async sendMessage(@Body() body: { recipientId?: string; sessionId?: string; message?: string; text?: string; location?: { lat: number; lng: number }; type?: 'text' | 'location' }) {
+    // Support both recipientId and sessionId for backwards compatibility
+    const recipientId = body.recipientId || body.sessionId;
+    // Support both text and message fields
+    const text = body.text || body.message;
+    const { location, type = 'text' } = body;
+    
+    // Validate required field
+    if (!recipientId) {
+      return {
+        success: false,
+        error: 'recipientId or sessionId is required',
+        response: 'Please provide a recipientId or sessionId',
+      };
+    }
     
     this.logger.log(`💬 Web chat message from ${recipientId}: "${type === 'location' ? 'Location Shared' : text}"`);
     

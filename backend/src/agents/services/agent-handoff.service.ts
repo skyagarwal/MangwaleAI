@@ -94,6 +94,13 @@ export interface HandoffResult {
 @Injectable()
 export class AgentHandoffService {
   private readonly logger = new Logger(AgentHandoffService.name);
+
+  private readonly frappeBaseUrl: string;
+  private readonly frappeApiKey: string;
+  private readonly frappeApiSecret: string;
+  private readonly frappeIssueDoctype: string;
+  private readonly frappeExternalIdField: string;
+  private readonly frappeEnabled: boolean;
   
   // Handoff statistics
   private handoffStats: Map<string, {
@@ -118,6 +125,152 @@ export class AgentHandoffService {
     private readonly configService: ConfigService,
   ) {
     this.logger.log('🤝 Agent Handoff Service initialized');
+
+    this.frappeBaseUrl = (this.configService.get<string>('FRAPPE_BASE_URL') || '').replace(/\/+$/, '');
+    this.frappeApiKey = this.configService.get<string>('FRAPPE_API_KEY') || '';
+    this.frappeApiSecret = this.configService.get<string>('FRAPPE_API_SECRET') || '';
+    this.frappeIssueDoctype = this.configService.get<string>('FRAPPE_ISSUE_DOCTYPE') || 'Issue';
+    this.frappeExternalIdField = this.configService.get<string>('FRAPPE_EXTERNAL_ID_FIELD') || 'custom_external_conversation_id';
+    this.frappeEnabled = !!(this.frappeBaseUrl && this.frappeApiKey && this.frappeApiSecret);
+  }
+
+  private getFrappeAuthHeader(): string | null {
+    if (!this.frappeEnabled) return null;
+    return `token ${this.frappeApiKey}:${this.frappeApiSecret}`;
+  }
+
+  private async frappeRequest<T>(opts: {
+    method: 'GET' | 'POST' | 'PUT';
+    path: string;
+    query?: Record<string, string>;
+    body?: any;
+    timeoutMs?: number;
+  }): Promise<T> {
+    if (!this.frappeEnabled) {
+      throw new Error('Frappe integration not configured (missing FRAPPE_BASE_URL/FRAPPE_API_KEY/FRAPPE_API_SECRET)');
+    }
+
+    const fetchFn: any = (globalThis as any).fetch;
+    if (!fetchFn) {
+      throw new Error('Global fetch() not available in this runtime');
+    }
+
+    const base = this.frappeBaseUrl;
+    const url = new URL(`${base}${opts.path.startsWith('/') ? '' : '/'}${opts.path}`);
+    for (const [k, v] of Object.entries(opts.query || {})) {
+      url.searchParams.set(k, v);
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    const authHeader = this.getFrappeAuthHeader();
+    if (authHeader) headers['Authorization'] = authHeader;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), opts.timeoutMs ?? 8000);
+
+    try {
+      const resp = await fetchFn(url.toString(), {
+        method: opts.method,
+        headers,
+        body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+        signal: controller.signal,
+      });
+
+      const text = await resp.text();
+      let json: any;
+      try {
+        json = text ? JSON.parse(text) : null;
+      } catch {
+        json = { raw: text };
+      }
+
+      if (!resp.ok) {
+        const msg = json?.exception || json?.message || json?._server_messages || text || `HTTP ${resp.status}`;
+        throw new Error(`Frappe API ${opts.method} ${opts.path} failed: ${msg}`);
+      }
+
+      return json as T;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private async findExistingIssueByExternalId(externalConversationId: string): Promise<string | null> {
+    if (!this.frappeEnabled) return null;
+
+    // If the custom field doesn't exist in ERPNext yet, this call will error; we treat it as "not found".
+    try {
+      const fields = JSON.stringify(['name']);
+      const filters = JSON.stringify([[this.frappeIssueDoctype, this.frappeExternalIdField, '=', externalConversationId]]);
+
+      const result = await this.frappeRequest<{ data?: Array<{ name: string }> }>({
+        method: 'GET',
+        path: `/api/resource/${encodeURIComponent(this.frappeIssueDoctype)}`,
+        query: {
+          fields,
+          filters,
+          limit_page_length: '1',
+        },
+      });
+
+      const name = result?.data?.[0]?.name;
+      return name || null;
+    } catch (err: any) {
+      this.logger.warn(`Frappe Issue lookup skipped/failed (will create new): ${err?.message || err}`);
+      return null;
+    }
+  }
+
+  private mapPriority(p?: string): string {
+    const normalized = (p || '').toLowerCase();
+    if (normalized === 'critical') return 'Urgent';
+    if (normalized === 'high') return 'High';
+    if (normalized === 'low') return 'Low';
+    return 'Medium';
+  }
+
+  private async createIssueOnFrappe(params: {
+    externalConversationId: string;
+    channel: string;
+    userRef: string;
+    reason: string;
+    priority?: string;
+    userMessage?: string;
+    conversationSummary?: string;
+  }): Promise<string> {
+    const subject = `Mangwale AI escalation: ${params.channel} ${params.userRef}`;
+    const descriptionLines = [
+      `Escalation reason: ${params.reason}`,
+      `Priority: ${params.priority || 'medium'}`,
+      `Channel: ${params.channel}`,
+      `External conversation ID: ${params.externalConversationId}`,
+      params.userMessage ? `Last user message: ${params.userMessage}` : undefined,
+      params.conversationSummary ? `Summary: ${params.conversationSummary}` : undefined,
+    ].filter(Boolean);
+
+    const payload: Record<string, any> = {
+      subject,
+      status: 'Open',
+      priority: this.mapPriority(params.priority),
+      description: descriptionLines.join('\n\n'),
+    };
+
+    // Best-effort attach external ID field if it exists
+    payload[this.frappeExternalIdField] = params.externalConversationId;
+    payload['custom_channel'] = params.channel;
+
+    const created = await this.frappeRequest<{ data: { name: string } }>({
+      method: 'POST',
+      path: `/api/resource/${encodeURIComponent(this.frappeIssueDoctype)}`,
+      body: payload,
+    });
+
+    const issueName = created?.data?.name;
+    if (!issueName) throw new Error('Frappe Issue create returned no Issue name');
+    return issueName;
   }
   
   /**
@@ -419,6 +572,40 @@ export class AgentHandoffService {
     await this.sessionService.setData(context.phoneNumber, 'escalation_reason', request.reason);
     await this.sessionService.setData(context.phoneNumber, 'escalation_priority', request.context.priority);
     await this.sessionService.setData(context.phoneNumber, 'escalation_time', new Date().toISOString());
+
+    // Phase 1: Create ERPNext Issue (best-effort; do not block escalation response)
+    let issueId: string | null = null;
+    try {
+      // Idempotency: reuse previously created Issue for this conversation/session
+      const existingFromSession = await this.sessionService.getData(context.phoneNumber, 'frappe_issue_id');
+      if (existingFromSession && typeof existingFromSession === 'string') {
+        issueId = existingFromSession;
+      } else if (this.frappeEnabled) {
+        const platform = (await this.sessionService.getData(context.phoneNumber, 'platform')) || 'unknown';
+        const channel = typeof platform === 'string' ? platform : 'unknown';
+        const externalConversationId = String(context.phoneNumber);
+
+        // Optional lookup by externalConversationId (requires custom field present)
+        issueId = await this.findExistingIssueByExternalId(externalConversationId);
+        if (!issueId) {
+          issueId = await this.createIssueOnFrappe({
+            externalConversationId,
+            channel,
+            userRef: externalConversationId,
+            reason: request.reason,
+            priority: request.context.priority,
+            userMessage: request.context.userMessage,
+            conversationSummary: request.context.conversationSummary,
+          });
+        }
+
+        await this.sessionService.setData(context.phoneNumber, 'frappe_issue_id', issueId);
+      } else {
+        this.logger.warn('Frappe Issue creation skipped: FRAPPE_* env vars not configured');
+      }
+    } catch (err: any) {
+      this.logger.error(`Frappe Issue creation failed (continuing): ${err?.message || err}`);
+    }
     
     // In production, this would:
     // 1. Create a support ticket
@@ -436,13 +623,15 @@ export class AgentHandoffService {
       targetResponse: {
         response: `I've escalated your concern to our support team. ` +
           `Priority: ${request.context.priority || 'medium'}. ` +
-          `A human agent will contact you shortly. ` +
-          `Reference: ${context.phoneNumber.slice(-4)}`,
+          `A human agent will contact you shortly.` +
+          (issueId ? ` Ticket: ${issueId}.` : '') +
+          ` Reference: ${context.phoneNumber.slice(-4)}`,
         functionsCalled: ['handoff_to_human'],
         executionTime: 0,
         metadata: {
           escalated: true,
           priority: request.context.priority,
+          issueId,
         },
       },
       handoffChain,
@@ -544,6 +733,20 @@ export class AgentHandoffService {
     };
   }
   
+  /**
+   * Resolve human escalation and hand conversation back to AI
+   * Called when human agent marks Issue as resolved/closed
+   */
+  async resolveHumanEscalation(phoneNumber: string): Promise<void> {
+    this.logger.log(`✅ Resolving human escalation for ${phoneNumber} - handing back to AI`);
+    
+    await this.sessionService.setData(phoneNumber, 'escalated_to_human', false);
+    await this.sessionService.setData(phoneNumber, 'escalation_resolved_at', new Date().toISOString());
+    
+    // Keep frappe_issue_id in session for reference/history
+    // but conversation will now resume with AI
+  }
+
   /**
    * Clear handoff state for a session (e.g., on conversation reset)
    */

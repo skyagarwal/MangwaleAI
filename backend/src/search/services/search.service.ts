@@ -123,20 +123,61 @@ export class SearchService {
   }
 
   /**
-   * Module-specific search - proxies to Search API
+   * Module-specific search - proxies to Search API with fallback to OpenSearch
    */
   async moduleSearch(module: string, q: string, filters: Record<string, string>): Promise<any> {
     try {
       const response = await firstValueFrom(
         this.httpService.get(`${this.searchApiUrl}/search/${module}`, {
           params: { q, ...filters },
+          timeout: 3000, // 3 second timeout
         }),
       );
       
       return response.data;
     } catch (error) {
-      this.logger.error(`${module} search failed: ${error.message}`);
-      throw error;
+      this.logger.warn(`${module} search API failed: ${error.message}, falling back to OpenSearch`);
+      
+      // Fallback to direct OpenSearch
+      try {
+        const index = module === 'food' ? 'food_items' : module === 'ecom' ? 'ecom_items' : 'food_items';
+        const result = await this.openSearchService.keywordSearch(q, index, 10, 0, []);
+        
+        // S3 base URL for images (CDN has SSL issues)
+        const S3_BASE = 'https://s3.ap-south-1.amazonaws.com/mangwale/product';
+        
+        // Map to expected response format
+        return {
+          items: result.results.map(hit => {
+            // Handle image - prefer full URL, fallback to filename with S3
+            let imageUrl = hit.source?.image_full_url || hit.source?.image;
+            if (imageUrl && !imageUrl.startsWith('http')) {
+              imageUrl = `${S3_BASE}/${imageUrl}`;
+            } else if (imageUrl && imageUrl.includes('storage.mangwale.ai')) {
+              // Replace problematic CDN with S3
+              imageUrl = imageUrl.replace('https://storage.mangwale.ai/mangwale/product', S3_BASE);
+            }
+            
+            return {
+              id: hit.id,
+              name: hit.source?.name || hit.source?.title,
+              description: hit.source?.description,
+              price: hit.source?.price || hit.source?.mrp,
+              image: imageUrl,
+              rating: hit.source?.rating || 0,
+              deliveryTime: hit.source?.delivery_time || '30-45 min',
+              category: hit.source?.category,
+              storeName: hit.source?.store_name,
+              storeId: hit.source?.store_id,
+              veg: hit.source?.veg,
+            };
+          }),
+          total: result.total,
+        };
+      } catch (fallbackError) {
+        this.logger.error(`OpenSearch fallback also failed: ${fallbackError.message}`);
+        throw error;
+      }
     }
   }
 

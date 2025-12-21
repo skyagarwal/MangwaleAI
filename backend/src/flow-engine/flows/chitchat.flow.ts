@@ -12,7 +12,8 @@ export const chitchatFlow: FlowDefinition = {
   name: 'Chitchat Flow',
   description: 'Handles casual conversation (how are you, what\'s up, thank you, etc.)',
   version: '1.0.0',
-  trigger: 'how are you|what\'s up|whats up|wassup|thank you|thanks|good job|nice|cool|awesome|great',
+  // Include Hindi/Hinglish variations: kaise hai, kya haal, kaise ho, kaisa hai
+  trigger: 'how are you|what\'s up|whats up|wassup|thank you|thanks|good job|nice|cool|awesome|great|kaise hai|kaise ho|kaisa hai|kya haal|kya chal raha|theek ho|sab theek|chotu|re chotu|hey chotu',
   module: 'general',
   enabled: true,
   initialState: 'respond_friendly',

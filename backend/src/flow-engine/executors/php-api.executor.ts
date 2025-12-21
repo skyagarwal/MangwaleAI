@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
-import { PhpVendorAuthService } from '../../php-integration/services/php-vendor-auth.service';
+import { PhpVendorAuthService, VendorUser } from '../../php-integration/services/php-vendor-auth.service';
 import { PhpDeliveryAuthService } from '../../php-integration/services/php-delivery-auth.service';
 import { PhpOrderService } from '../../php-integration/services/php-order.service';
 import { PhpAuthService } from '../../php-integration/services/php-auth.service';
 import { PhpAddressService } from '../../php-integration/services/php-address.service';
 import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
 import { UserTypeDetectorService } from '../../php-integration/services/user-type-detector.service';
+import { VendorProfileService } from '../../profiles/services/vendor-profile.service';
+import { RiderProfileService } from '../../profiles/services/rider-profile.service';
 
 /**
  * PHP API Executor
@@ -33,6 +35,8 @@ export class PhpApiExecutor implements ActionExecutor {
     private readonly addressService: PhpAddressService,
     private readonly paymentService: PhpPaymentService,
     private readonly userTypeDetectorService: UserTypeDetectorService,
+    private readonly vendorProfileService: VendorProfileService,
+    private readonly riderProfileService: RiderProfileService,
   ) {
     this.logger.log('🔌 PHP API Executor initialized');
   }
@@ -126,14 +130,72 @@ export class PhpApiExecutor implements ActionExecutor {
         );
 
       case 'vendor_verify_otp':
-        return this.vendorAuthService.verifyVendorOtp(
+        // Verify OTP and sync vendor profile to PostgreSQL
+        const otpResult = await this.vendorAuthService.verifyVendorOtp(
           config.emailOrPhone,
           config.otp,
           config.vendorType || 'owner'
         );
+        
+        // Auto-sync to PostgreSQL on successful login
+        if (otpResult.success && otpResult.data?.vendor) {
+          const vendorUser: VendorUser = {
+            id: otpResult.data.vendor.id,
+            phone: otpResult.data.vendor.phone,
+            email: otpResult.data.vendor.email,
+            firstName: otpResult.data.vendor.f_name || otpResult.data.vendor.firstName,
+            lastName: otpResult.data.vendor.l_name || otpResult.data.vendor.lastName,
+            token: otpResult.data.token,
+            storeId: otpResult.data.vendor.stores?.[0]?.id || otpResult.data.vendor.store_id,
+            storeName: otpResult.data.vendor.stores?.[0]?.name || otpResult.data.vendor.store_name,
+            isActive: otpResult.data.vendor.status === 1,
+            vendorType: config.vendorType || 'owner',
+            zoneWiseTopic: otpResult.data.zoneWiseTopic,
+          };
+          
+          // Sync vendor profile to PostgreSQL (non-blocking)
+          this.vendorProfileService.onVendorLogin(vendorUser)
+            .then(profile => {
+              if (profile) {
+                this.logger.log(`✅ Vendor ${profile.name} synced to PostgreSQL on login`);
+              }
+            })
+            .catch(err => this.logger.error(`Failed to sync vendor on login: ${err.message}`));
+        }
+        
+        return otpResult;
 
       case 'vendor_login':
-        return this.vendorAuthService.vendorLogin(config.email, config.password);
+        // Password login and sync vendor profile
+        const loginResult = await this.vendorAuthService.vendorLogin(config.email, config.password);
+        
+        // Auto-sync to PostgreSQL on successful login
+        if (loginResult.success && loginResult.data?.vendor) {
+          const vendorUser: VendorUser = {
+            id: loginResult.data.vendor.id,
+            phone: loginResult.data.vendor.phone,
+            email: loginResult.data.vendor.email,
+            firstName: loginResult.data.vendor.f_name || loginResult.data.vendor.firstName,
+            lastName: loginResult.data.vendor.l_name || loginResult.data.vendor.lastName,
+            token: loginResult.data.token,
+            storeId: loginResult.data.vendor.stores?.[0]?.id || loginResult.data.vendor.store_id,
+            storeName: loginResult.data.vendor.stores?.[0]?.name || loginResult.data.vendor.store_name,
+            isActive: loginResult.data.vendor.status === 1,
+            vendorType: 'owner',
+            zoneWiseTopic: loginResult.data.zoneWiseTopic,
+          };
+          
+          // Sync vendor profile to PostgreSQL (non-blocking)
+          this.vendorProfileService.onVendorLogin(vendorUser)
+            .then(profile => {
+              if (profile) {
+                this.logger.log(`✅ Vendor ${profile.name} synced to PostgreSQL on login`);
+              }
+            })
+            .catch(err => this.logger.error(`Failed to sync vendor on login: ${err.message}`));
+        }
+        
+        return loginResult;
 
       case 'get_vendor_profile':
         return this.vendorAuthService.getVendorProfile(config.token);
@@ -170,7 +232,24 @@ export class PhpApiExecutor implements ActionExecutor {
       // ============================================
       case 'delivery_man_login':
       case 'dm_login':
-        return this.deliveryAuthService.deliveryManLogin(config.email, config.password);
+        // Login and sync rider profile to PostgreSQL
+        const dmLoginResult = await this.deliveryAuthService.deliveryManLogin(config.email, config.password);
+        
+        // Auto-sync to PostgreSQL on successful login
+        if (dmLoginResult.success && dmLoginResult.data?.deliveryMan) {
+          const dm = dmLoginResult.data.deliveryMan;
+          
+          // Sync rider profile to PostgreSQL (non-blocking)
+          this.riderProfileService.syncRiderFromPhp(dm.id)
+            .then(profile => {
+              if (profile) {
+                this.logger.log(`✅ Rider ${profile.name} synced to PostgreSQL on login`);
+              }
+            })
+            .catch(err => this.logger.error(`Failed to sync rider on login: ${err.message}`));
+        }
+        
+        return dmLoginResult;
 
       case 'get_delivery_man_profile':
       case 'dm_get_profile':

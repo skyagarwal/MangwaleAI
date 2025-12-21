@@ -102,6 +102,14 @@ export class TelegramWebhookController {
         // Voice messages are logged the same way - ASR transcription becomes the message
       });
 
+      // 🧑‍💼 HUMAN TAKEOVER CHECK
+      // If escalated, log only (no bot response). Agent Orchestrator will handle the response.
+      // But we still route through it so it can append to Issue if configured.
+      const escalated = session?.data?.escalated_to_human === true;
+      if (escalated) {
+        this.logger.log(`⏸️ Telegram conversation ${recipientId} escalated - routing for logging only`);
+      }
+
       // 🎯 MULTI-CHANNEL ARCHITECTURE: Route through Agent Orchestrator
       this.logger.log(`🚀 Processing Telegram message through Agent Orchestrator (module: general)`);
       const result = await this.agentOrchestratorService.processMessage(

@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
-import { Send, MapPin, ArrowLeft, Map, User, RotateCcw, Menu, X, Plus, MessageSquare, Settings, ChevronDown, LogOut, Mic } from 'lucide-react'
+import { Send, MapPin, User, RotateCcw, Menu, X, Plus, MessageSquare, ChevronDown, LogOut, Mic, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { getChatWSClient } from '@/lib/websocket/chat-client'
-import { parseButtonsFromText, parseCardsFromText } from '@/lib/utils/helpers'
+import { parseButtonsFromText } from '@/lib/utils/helpers'
 import { ProductCard } from '@/components/chat/ProductCard'
 import { InlineLogin } from '@/components/chat/InlineLogin'
 import { VoiceInput } from '@/components/chat/VoiceInput'
@@ -37,6 +37,14 @@ const modules = [
   // { id: 'health', name: 'Health', emoji: '❤️' },
 ]
 
+// Quick action suggestions for users
+const quickActions = [
+  { id: 'food', label: '🍔 Order Food', action: 'I want to order food' },
+  { id: 'parcel', label: '📦 Send Parcel', action: 'I want to send a parcel' },
+  { id: 'track', label: '🔍 Track Order', action: 'Track my order' },
+  { id: 'help', label: '❓ Help', action: 'I need help' },
+]
+
 function ChatContent() {
   const searchParams = useSearchParams()
   const moduleParam = searchParams.get('module')
@@ -57,11 +65,13 @@ function ChatContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [useEnhancedVoice, setUseEnhancedVoice] = useState(true) // Enhanced voice mode with streaming
   const [interimTranscript, setInterimTranscript] = useState('') // For showing interim results
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({}) // Track which card groups are expanded
 
   const wsClientRef = useRef<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const profileRef = useRef<HTMLDivElement>(null)
+  const cardScrollRefs = useRef<Record<string, HTMLDivElement | null>>({}) // For horizontal scrolling
 
   // Logout handler - syncs across all channels
   const handleLogout = () => {
@@ -76,6 +86,29 @@ function ChatContent() {
     localStorage.removeItem('mangwale-user-profile')
     setUserProfile(null)
     setShowProfile(false)
+    window.location.reload()
+  }
+
+  // New Chat handler - properly resets session and WebSocket
+  const handleNewChat = () => {
+    // Leave current session
+    if (wsClientRef.current && sessionIdState) {
+      wsClientRef.current.leaveSession(sessionIdState)
+    }
+    
+    // Clear session ID to force new one on reload
+    localStorage.removeItem('mangwale-chat-session-id')
+    
+    // Clear messages state
+    setMessages([])
+    setSelectedModule(null)
+    
+    // Disconnect and reconnect WebSocket
+    if (wsClientRef.current) {
+      wsClientRef.current.disconnect()
+    }
+    
+    // Reload to get fresh session
     window.location.reload()
   }
 
@@ -218,15 +251,26 @@ function ChatContent() {
         const textContent = message.content || (message as { text?: string }).text || ''
         const { cleanText, buttons: parsedButtons } = parseButtonsFromText(textContent)
         
-        setMessages(prev => [...prev, {
-          id: message.id || `bot-${prev.length}-${Date.now()}`,
-          // Handle both role (new) and sender (legacy) fields
-          role: (message.role === 'user' || (message as { sender?: string }).sender === 'user') ? 'user' : 'assistant',
-          content: cleanText,
-          timestamp: message.timestamp || Date.now(),
-          buttons: parsedButtons.length > 0 ? parsedButtons : (message.buttons || undefined),
-          cards: message.cards || (message.metadata && message.metadata.cards) || undefined,
-        }])
+        // Deduplicate messages by ID to prevent duplicates on reconnection
+        setMessages(prev => {
+          const messageId = message.id || `bot-${prev.length}-${Date.now()}`
+          
+          // Check if message with same ID already exists
+          if (prev.some(m => m.id === messageId || m.id === message.id)) {
+            console.log('⚠️ Skipping duplicate message:', messageId)
+            return prev
+          }
+          
+          return [...prev, {
+            id: messageId,
+            // Handle both role (new) and sender (legacy) fields
+            role: (message.role === 'user' || (message as { sender?: string }).sender === 'user') ? 'user' : 'assistant',
+            content: cleanText,
+            timestamp: message.timestamp || Date.now(),
+            buttons: parsedButtons.length > 0 ? parsedButtons : (message.buttons || undefined),
+            cards: message.cards || (message.metadata && message.metadata.cards) || undefined,
+          }]
+        })
         setIsTyping(false)
       },
       onError: (error) => {
@@ -277,6 +321,12 @@ function ChatContent() {
       },
       onAuthFailed: (data) => {
         console.error('❌ Auth failed:', data)
+      },
+      // Location request handler - server wants user to share location
+      onRequestLocation: (data) => {
+        console.log('📍 Server requesting location:', data)
+        // Show the location picker
+        setShowLocationPicker(true)
       },
     })
 
@@ -501,12 +551,20 @@ function ChatContent() {
       <div className="flex h-screen bg-white text-gray-900 overflow-hidden font-sans">
         {/* Sidebar - Desktop */}
         <div className="hidden md:flex flex-col w-[260px] bg-gray-900 text-gray-100 p-3 transition-all">
+          {/* Logo header */}
+          <div className="flex items-center gap-2.5 px-2 py-2 mb-3">
+            <Image 
+              src="/mangwale-logo.png" 
+              alt="Mangwale" 
+              width={32} 
+              height={32} 
+              className="rounded-lg"
+            />
+            <span className="font-bold text-lg">Mangwale</span>
+          </div>
+          
           <button 
-            onClick={() => {
-              if (confirm('Start new chat?')) {
-                window.location.reload()
-              }
-            }}
+            onClick={handleNewChat}
             className="flex items-center gap-3 px-3 py-3 rounded-md border border-gray-700 hover:bg-gray-800 transition-colors mb-4 text-sm text-left"
           >
             <Plus className="w-4 h-4" />
@@ -570,13 +628,21 @@ function ChatContent() {
              <X className="w-6 h-6" />
            </button>
            
+           {/* Logo header in mobile sidebar */}
+           <div className="flex items-center gap-2.5 px-2 py-2 mb-3 mt-1">
+             <Image 
+               src="/mangwale-logo.png" 
+               alt="Mangwale" 
+               width={32} 
+               height={32} 
+               className="rounded-lg"
+             />
+             <span className="font-bold text-lg">Mangwale</span>
+           </div>
+           
            <button 
-            onClick={() => {
-              if (confirm('Start new chat?')) {
-                window.location.reload()
-              }
-            }}
-            className="flex items-center gap-3 px-3 py-3 rounded-md border border-gray-700 hover:bg-gray-800 transition-colors mb-4 text-sm text-left mt-8"
+            onClick={handleNewChat}
+            className="flex items-center gap-3 px-3 py-3 rounded-md border border-gray-700 hover:bg-gray-800 transition-colors mb-4 text-sm text-left"
           >
             <Plus className="w-4 h-4" />
             <span>New chat</span>
@@ -630,18 +696,24 @@ function ChatContent() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col h-full relative">
-          {/* Mobile Header */}
-          <div className="md:hidden flex items-center justify-between p-3 border-b border-gray-200 bg-white">
-            <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-gray-600">
-              <Menu className="w-6 h-6" />
+          {/* Mobile Header - Improved with logo */}
+          <div className="md:hidden flex items-center justify-between px-3 py-2 border-b border-gray-100 bg-white/95 backdrop-blur-sm sticky top-0 z-30">
+            <button onClick={() => setIsSidebarOpen(true)} className="p-2.5 -ml-1 text-gray-600 hover:bg-gray-100 rounded-xl active:scale-95 transition-all">
+              <Menu className="w-5 h-5" />
             </button>
-            <div className="font-semibold text-gray-700">Mangwale AI</div>
-            <button onClick={() => {
-                if (confirm('Start new chat?')) {
-                  window.location.reload()
-                }
-            }} className="p-2 -mr-2 text-gray-600">
-              <Plus className="w-6 h-6" />
+            <div className="flex items-center gap-2">
+              <Image 
+                src="/mangwale-logo.png" 
+                alt="Mangwale" 
+                width={28} 
+                height={28} 
+                className="rounded-lg"
+              />
+              <span className="font-bold text-gray-800 text-sm">Mangwale</span>
+              <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-400'}`} />
+            </div>
+            <button onClick={handleNewChat} className="p-2.5 -mr-1 text-gray-600 hover:bg-gray-100 rounded-xl active:scale-95 transition-all">
+              <Plus className="w-5 h-5" />
             </button>
           </div>
 
@@ -657,41 +729,105 @@ function ChatContent() {
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 overflow-y-auto scroll-smooth">
-            <div className="max-w-3xl mx-auto px-4 py-8">
+          <div className="flex-1 overflow-y-auto scroll-smooth overscroll-contain">
+            <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-6 min-h-full">
               {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-                  <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mb-6 border border-gray-200 overflow-hidden relative">
-                    <Image 
-                      src="/bot-avatar.png" 
-                      alt="Mangwale AI" 
-                      fill
-                      className="object-cover"
-                      onError={(e) => {
-                        // Fallback to emoji if image fails
-                        e.currentTarget.style.display = 'none'
-                        if (e.currentTarget.parentElement) {
-                          e.currentTarget.parentElement.innerHTML = '<span class="text-4xl">🤖</span>'
-                        }
-                      }}
-                    />
+                <div className="flex flex-col items-center justify-center min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] text-center px-2">
+                  {/* Logo & Avatar combo */}
+                  <div className="relative mb-4">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-gradient-to-br from-orange-100 to-orange-50 rounded-full shadow-lg flex items-center justify-center border-4 border-orange-200 overflow-hidden relative animate-bounce-slow">
+                      <Image 
+                        src="/chotu-avatar.png" 
+                        alt="Chotu - Mangwale AI" 
+                        fill
+                        className="object-cover p-1"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                          if (e.currentTarget.parentElement) {
+                            e.currentTarget.parentElement.innerHTML = '<span class="text-3xl sm:text-4xl">🤖</span>'
+                          }
+                        }}
+                      />
+                    </div>
+                    {/* Small Mangwale badge */}
+                    <div className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-9 sm:h-9 bg-white rounded-full shadow-md flex items-center justify-center border-2 border-orange-200">
+                      <Image 
+                        src="/mangwale-logo.png" 
+                        alt="Mangwale" 
+                        width={24} 
+                        height={24}
+                        className="rounded-md"
+                      />
+                    </div>
                   </div>
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-2">How can I help you today?</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-8 w-full max-w-2xl">
-                    {modules.map(mod => (
-                      <button 
-                        key={mod.id}
-                        onClick={() => handleModuleSelect(mod.id)}
-                        className="p-4 border border-gray-200 rounded-xl hover:bg-gray-50 text-left transition-colors"
-                      >
-                        <div className="font-medium text-gray-800 mb-1">{mod.emoji} {mod.name}</div>
-                        <div className="text-sm text-gray-500">Explore {mod.name.toLowerCase()} options</div>
-                      </button>
-                    ))}
+                  
+                  {/* Greeting with time awareness */}
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">
+                    {(() => {
+                      const hour = new Date().getHours()
+                      if (hour < 12) return 'Good Morning! ☀️'
+                      if (hour < 17) return 'Good Afternoon! 🌤️'
+                      if (hour < 21) return 'Good Evening! 🌅'
+                      return 'Hello Night Owl! 🌙'
+                    })()}
+                  </h2>
+                  <p className="text-base sm:text-lg text-gray-600 mb-1">I&apos;m <span className="font-semibold text-orange-600">Chotu</span> - your Nashik buddy!</p>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6">Order food, send parcels, or just chat with me 💬</p>
+                  
+                  {/* Quick action cards - Mobile optimized grid */}
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-md sm:max-w-2xl mb-4 sm:mb-6">
+                    <button 
+                      onClick={() => handleSend('I want to order food')}
+                      className="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl sm:rounded-2xl border-2 border-orange-200 hover:border-orange-400 hover:shadow-lg active:scale-[0.98] transition-all group"
+                    >
+                      <span className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">🍔</span>
+                      <span className="font-semibold text-gray-800 text-xs sm:text-sm">Order Food</span>
+                      <span className="text-[10px] sm:text-xs text-gray-500 hidden sm:block">Restaurants near you</span>
+                    </button>
+                    <button 
+                      onClick={() => handleSend('I want to send a parcel')}
+                      className="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg active:scale-[0.98] transition-all group"
+                    >
+                      <span className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">📦</span>
+                      <span className="font-semibold text-gray-800 text-xs sm:text-sm">Send Parcel</span>
+                      <span className="text-[10px] sm:text-xs text-gray-500 hidden sm:block">Quick delivery</span>
+                    </button>
+                    <button 
+                      onClick={() => handleSend('Track my order')}
+                      className="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl sm:rounded-2xl border-2 border-green-200 hover:border-green-400 hover:shadow-lg active:scale-[0.98] transition-all group"
+                    >
+                      <span className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">🔍</span>
+                      <span className="font-semibold text-gray-800 text-xs sm:text-sm">Track Order</span>
+                      <span className="text-[10px] sm:text-xs text-gray-500 hidden sm:block">Real-time updates</span>
+                    </button>
+                    <button 
+                      onClick={() => setShowLocationPicker(true)}
+                      className="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl sm:rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:shadow-lg active:scale-[0.98] transition-all group"
+                    >
+                      <span className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">📍</span>
+                      <span className="font-semibold text-gray-800 text-xs sm:text-sm">Set Location</span>
+                      <span className="text-[10px] sm:text-xs text-gray-500 hidden sm:block">For delivery</span>
+                    </button>
+                  </div>
+                  
+                  {/* Suggestion chips - Horizontally scrollable on mobile */}
+                  <div className="w-full max-w-md sm:max-w-lg">
+                    <span className="text-[10px] sm:text-xs text-gray-400 block text-center mb-2">Try saying:</span>
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-start sm:justify-center sm:flex-wrap px-1">
+                      {['What can you do?', 'Show me biryani', 'kya chal raha hai?', 'I\'m hungry'].map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          onClick={() => handleSend(suggestion)}
+                          className="flex-shrink-0 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[11px] sm:text-xs text-gray-600 hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600 active:scale-95 transition-all whitespace-nowrap shadow-sm"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
                   {messages
                     .filter((message) => {
                       // Hide internal/system messages from display
@@ -728,44 +864,56 @@ function ChatContent() {
                       
                       return true
                     })
-                    .map((message) => (
-                    <div key={message.id} className="group w-full text-gray-800 border-b border-black/5 dark:border-white/5 pb-6 last:border-0">
-                      <div className="flex gap-4 md:gap-6 m-auto">
-                        <div className="flex-shrink-0 flex flex-col relative items-end">
-                          <div className={`w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden relative ${
-                            message.role === 'user' ? 'bg-gray-500' : 'bg-white border border-gray-200'
+                    .map((message, msgIndex) => (
+                    <div 
+                      key={message.id} 
+                      className={`group w-full ${message.role === 'user' ? 'flex justify-end' : ''}`}
+                    >
+                      <div className={`flex gap-2 sm:gap-3 max-w-[90%] sm:max-w-[85%] md:max-w-[75%] ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                        {/* Avatar - Smaller on mobile */}
+                        <div className="flex-shrink-0">
+                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center overflow-hidden relative ${
+                            message.role === 'user' 
+                              ? 'bg-gradient-to-br from-green-500 to-green-600 shadow-sm' 
+                              : 'bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-200'
                           }`}>
                             {message.role === 'user' ? (
-                              <User className="w-5 h-5 text-white" />
+                              <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                             ) : (
                               <Image 
-                                src="/bot-avatar.png" 
-                                alt="AI" 
+                                src="/chotu-avatar.png" 
+                                alt="Chotu" 
                                 fill
-                                className="object-cover"
+                                className="object-cover p-0.5"
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none'
                                     if (e.currentTarget.parentElement) {
-                                      e.currentTarget.parentElement.innerHTML = '<span class="text-xl">🤖</span>'
+                                      e.currentTarget.parentElement.innerHTML = '<span class="text-lg">🤖</span>'
                                     }
                                 }}
                               />
                             )}
                           </div>
                         </div>
-                        <div className="relative flex-1 overflow-hidden">
-                          <div className="prose prose-slate max-w-none leading-7">
-                            {message.content}
+                        
+                        {/* Message bubble */}
+                        <div className={`relative flex-1 ${message.role === 'user' ? 'text-right' : ''}`}>
+                          <div className={`inline-block px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-[13px] sm:text-sm leading-relaxed ${
+                            message.role === 'user' 
+                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white rounded-br-md' 
+                              : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                          }`}>
+                            <span className="whitespace-pre-wrap">{message.content}</span>
                           </div>
                           
-                          {/* TTS Button */}
+                          {/* TTS Button - only for assistant */}
                           {message.role === 'assistant' && message.content && (
-                            <div className="mt-2">
+                            <div className="mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <TTSButton text={message.content} language="hi-IN" />
                             </div>
                           )}
 
-                          {/* Buttons */}
+                          {/* Buttons - Zomato style compact pills */}
                           {message.role === 'assistant' && message.buttons && (
                             <div className="flex flex-wrap gap-2 mt-3">
                               {message.buttons.map((button) => (
@@ -780,7 +928,7 @@ function ChatContent() {
                                       handleSend(button.value, button.id || button.value)
                                     }
                                   }}
-                                  className="px-4 py-2 bg-white border border-gray-200 hover:border-green-500 hover:text-green-600 hover:bg-green-50 rounded-full text-sm font-medium transition-all shadow-sm"
+                                  className="px-3 py-1.5 bg-white border border-gray-200 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 rounded-full text-xs font-medium transition-all shadow-sm active:scale-95"
                                 >
                                   {button.label}
                                 </button>
@@ -788,16 +936,83 @@ function ChatContent() {
                             </div>
                           )}
 
-                          {/* Cards */}
-                          {message.role === 'assistant' && message.cards && (
-                            <div className="flex flex-col gap-4 mt-4">
-                              {message.cards.map((card) => (
-                                <ProductCard
-                                  key={card.id}
-                                  card={card}
-                                  onAction={(value) => handleSend(value)}
-                                />
-                              ))}
+                          {/* Cards - Compact horizontal scroll with max 6 visible */}
+                          {message.role === 'assistant' && message.cards && message.cards.length > 0 && (
+                            <div className="mt-3">
+                              {/* Card count badge */}
+                              {message.cards.length > 1 && (
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3" />
+                                    {message.cards.length} items found
+                                  </span>
+                                  {message.cards.length > 6 && (
+                                    <button
+                                      onClick={() => setExpandedCards(prev => ({ ...prev, [message.id]: !prev[message.id] }))}
+                                      className="text-xs text-orange-600 hover:text-orange-700 font-medium"
+                                    >
+                                      {expandedCards[message.id] ? 'Show less' : `View all ${message.cards.length}`}
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {/* Horizontal scrolling container */}
+                              <div className="relative group">
+                                {/* Scroll buttons for desktop */}
+                                {message.cards.length > 2 && (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        const container = cardScrollRefs.current[message.id]
+                                        if (container) container.scrollBy({ left: -200, behavior: 'smooth' })
+                                      }}
+                                      className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-8 h-8 bg-white shadow-lg rounded-full items-center justify-center text-gray-600 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      <ChevronLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        const container = cardScrollRefs.current[message.id]
+                                        if (container) container.scrollBy({ left: 200, behavior: 'smooth' })
+                                      }}
+                                      className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-8 h-8 bg-white shadow-lg rounded-full items-center justify-center text-gray-600 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      <ChevronRight className="w-5 h-5" />
+                                    </button>
+                                  </>
+                                )}
+                                
+                                <div 
+                                  ref={el => { cardScrollRefs.current[message.id] = el }}
+                                  className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent snap-x snap-mandatory"
+                                  style={{ scrollbarWidth: 'thin' }}
+                                >
+                                  {(expandedCards[message.id] ? message.cards : message.cards.slice(0, 6)).map((card, cardIndex) => (
+                                    <div key={card.id} className="snap-start">
+                                      <ProductCard
+                                        card={card}
+                                        onAction={(value) => handleSend(value)}
+                                        index={cardIndex}
+                                        compact={message.cards!.length > 2}
+                                        direction={cardIndex % 2 === 0 ? 'left' : 'right'}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Show more indicator for mobile */}
+                              {message.cards.length > 6 && !expandedCards[message.id] && (
+                                <div className="text-center mt-2">
+                                  <button
+                                    onClick={() => setExpandedCards(prev => ({ ...prev, [message.id]: true }))}
+                                    className="text-xs text-orange-600 hover:text-orange-700 font-medium py-1 px-3 rounded-full bg-orange-50 hover:bg-orange-100 transition-colors"
+                                  >
+                                    +{message.cards.length - 6} more items
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
@@ -805,44 +1020,63 @@ function ChatContent() {
                     </div>
                   ))}
                   {isTyping && (
-                    <div className="flex gap-4 md:gap-6 m-auto">
-                        <div className="w-8 h-8 bg-white border border-gray-200 rounded-sm flex items-center justify-center overflow-hidden relative">
+                    <div className="flex gap-3 max-w-[85%] animate-pulse">
+                        <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-200 rounded-full flex items-center justify-center overflow-hidden relative flex-shrink-0">
                             <Image 
-                              src="/bot-avatar.png" 
-                              alt="AI" 
+                              src="/chotu-avatar.png" 
+                              alt="Chotu" 
                               fill
-                              className="object-cover"
+                              className="object-cover p-0.5"
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none'
                                 if (e.currentTarget.parentElement) {
-                                  e.currentTarget.parentElement.innerHTML = '<span class="text-xl">🤖</span>'
+                                  e.currentTarget.parentElement.innerHTML = '<span class="text-lg">🤖</span>'
                                 }
                               }}
                             />
                         </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
+                        <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                            <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                     </div>
                   )}
-                  <div ref={messagesEndRef} className="h-12" />
+                  <div ref={messagesEndRef} className="h-4" />
                 </div>
               )}
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="w-full border-t md:border-t-0 bg-white md:bg-transparent pt-2">
-            <div className="max-w-3xl mx-auto px-4 pb-4 md:pb-6">
-               <div className="relative flex items-end gap-2 bg-white border border-gray-300 shadow-sm rounded-xl p-3 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500 transition-all">
+          {/* Quick Actions - Above Input (shown when chatting) */}
+          {messages.length > 0 && (
+            <div className="w-full bg-gradient-to-t from-white via-white/95 to-transparent pt-1 pb-0.5 sm:pt-2 sm:pb-1">
+              <div className="max-w-3xl mx-auto px-3 sm:px-4">
+                <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 sm:pb-2 scrollbar-hide">
+                  {quickActions.map((action) => (
+                    <button
+                      key={action.id}
+                      onClick={() => handleSend(action.action)}
+                      className="flex-shrink-0 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white border border-gray-200 rounded-full text-[11px] sm:text-xs font-medium text-gray-600 hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600 active:scale-95 transition-all whitespace-nowrap shadow-sm"
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Input Area - Safe area aware */}
+          <div className="w-full border-t bg-white/95 backdrop-blur-sm pt-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] safe-area-inset-bottom">
+            <div className="max-w-3xl mx-auto px-3 sm:px-4 pb-3 sm:pb-4 md:pb-6">
+               <div className="relative flex items-end gap-1.5 sm:gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-1.5 sm:p-2 focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-100 focus-within:bg-white transition-all">
                   <button 
                     onClick={() => setShowLocationPicker(true)}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 sm:p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-colors active:scale-95"
                     title="Share Location"
                   >
-                    <MapPin className="w-5 h-5" />
+                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   
                   <textarea
@@ -856,12 +1090,12 @@ function ChatContent() {
                         }
                     }}
                     placeholder="Message Mangwale AI..."
-                    className="flex-1 max-h-[200px] min-h-[24px] bg-transparent border-0 focus:ring-0 p-0 resize-none py-2 text-base"
+                    className="flex-1 max-h-[100px] sm:max-h-[120px] min-h-[22px] sm:min-h-[24px] bg-transparent border-0 focus:ring-0 focus:outline-none p-0 resize-none py-1.5 sm:py-2 text-[13px] sm:text-sm placeholder:text-gray-400"
                     rows={1}
-                    style={{ height: 'auto', minHeight: '24px' }}
+                    style={{ height: 'auto', minHeight: '22px' }}
                   />
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
                     {useEnhancedVoice ? (
                       <EnhancedVoiceInput 
                         onTranscription={(text) => {
@@ -876,7 +1110,7 @@ function ChatContent() {
                         enableStreaming={true}
                         showSettings={true}
                         autoSend={true}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-colors active:scale-95"
                       />
                     ) : (
                       <VoiceInput 
@@ -885,16 +1119,16 @@ function ChatContent() {
                           setTimeout(() => handleSend(text), 100)
                         }}
                         language="hi-IN"
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-colors active:scale-95"
                       />
                     )}
                     <button
                         onClick={handleSendClick}
                         disabled={!input.trim() || isTyping}
-                        className={`p-2 rounded-lg transition-colors ${
+                        className={`p-2 sm:p-2.5 rounded-xl transition-all ${
                             input.trim() && !isTyping 
-                            ? 'bg-green-500 text-white hover:bg-green-600' 
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 shadow-md hover:shadow-lg active:scale-95' 
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         }`}
                     >
                         <Send className="w-4 h-4" />
@@ -903,19 +1137,21 @@ function ChatContent() {
                </div>
                {/* Interim transcript display */}
                {interimTranscript && (
-                 <div className="px-4 py-2 text-sm text-gray-500 italic bg-gray-50 rounded-lg mx-4 mb-2">
-                   🎤 {interimTranscript}...
+                 <div className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-500 italic bg-orange-50 rounded-xl mt-2 flex items-center gap-2">
+                   <Mic className="w-3 h-3 text-orange-500 animate-pulse" />
+                   <span className="truncate">{interimTranscript}...</span>
                  </div>
                )}
-               <div className="text-center mt-2 text-xs text-gray-400 flex items-center justify-center gap-2">
-                  <span>Mangwale AI can make mistakes. Consider checking important information.</span>
+               <div className="text-center mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-400 flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
+                  <span className="hidden sm:inline">Mangwale AI can make mistakes. Consider checking important information.</span>
+                  <span className="sm:hidden">AI can make mistakes</span>
                   <button 
                     onClick={() => setUseEnhancedVoice(!useEnhancedVoice)}
-                    className={`ml-2 px-2 py-0.5 rounded text-xs ${useEnhancedVoice ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
-                    title={useEnhancedVoice ? 'Using streaming voice (click to switch to basic)' : 'Using basic voice (click to switch to streaming)'}
+                    className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs ${useEnhancedVoice ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+                    title={useEnhancedVoice ? 'Using streaming voice' : 'Using basic voice'}
                   >
-                    <Mic className="w-3 h-3 inline mr-1" />
-                    {useEnhancedVoice ? 'Streaming' : 'Basic'}
+                    <Mic className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-0.5" />
+                    <span className="hidden sm:inline">{useEnhancedVoice ? 'Streaming' : 'Basic'}</span>
                   </button>
                </div>
             </div>

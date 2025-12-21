@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { PhpAuthService } from '../php-integration/services/php-auth.service';
 import { normalizePhoneNumber } from '../common/utils/helpers';
+import { PrismaClient } from '@prisma/client';
 
 export interface AuthenticatedUser {
   userId: number;
@@ -42,6 +43,7 @@ export interface AuthEvent {
 export class CentralizedAuthService {
   private readonly logger = new Logger(CentralizedAuthService.name);
   private readonly redis: Redis;
+  private readonly prisma: PrismaClient;
   private readonly authTtl: number = 7 * 24 * 60 * 60; // 7 days
 
   constructor(
@@ -56,7 +58,8 @@ export class CentralizedAuthService {
     };
 
     this.redis = new Redis(redisConfig);
-    this.logger.log('✅ Centralized Auth Service initialized');
+    this.prisma = new PrismaClient();
+    this.logger.log('✅ Centralized Auth Service initialized with PostgreSQL sync');
   }
 
   /**
@@ -99,6 +102,7 @@ export class CentralizedAuthService {
   /**
    * Authenticate user and store globally
    * Called after OTP verification succeeds
+   * Also syncs user to PostgreSQL for AI persistence
    */
   async authenticateUser(
     phone: string,
@@ -137,6 +141,15 @@ export class CentralizedAuthService {
     this.logger.log(`✅ User ${userData.firstName} (${normalizedPhone}) authenticated via ${channel}`);
     this.logger.log(`   Active channels: ${authUser.channels.join(', ')}`);
 
+    // 🔄 CRITICAL: Sync customer to PostgreSQL for AI persistence (ALL CHANNELS)
+    this.syncUserToPostgres(normalizedPhone, userData, channel)
+      .then(aiUser => {
+        if (aiUser) {
+          this.logger.log(`✅ Customer ${userData.firstName} synced to PostgreSQL: ai_user_id=${aiUser.id}, php_user_id=${userData.userId}`);
+        }
+      })
+      .catch(err => this.logger.error(`Failed to sync customer to PostgreSQL: ${err.message}`));
+
     // Emit auth event for all listeners (WebSocket, etc.)
     const authEvent: AuthEvent = {
       type: 'LOGIN',
@@ -154,6 +167,44 @@ export class CentralizedAuthService {
     await this.redis.publish('auth:events', JSON.stringify(authEvent));
 
     return authUser;
+  }
+
+  /**
+   * Sync customer to PostgreSQL users table (for AI features)
+   * This enables: conversation history, preferences, gamification, personalization
+   */
+  private async syncUserToPostgres(
+    phone: string,
+    userData: { userId: number; firstName: string; lastName?: string; email?: string },
+    channel: string,
+  ): Promise<{ id: number } | null> {
+    try {
+      const aiUser = await this.prisma.user.upsert({
+        where: { phone },
+        update: {
+          phpUserId: userData.userId,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          lastActiveAt: new Date(),
+          updatedAt: new Date(),
+        },
+        create: {
+          phpUserId: userData.userId,
+          phone,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          preferredLanguage: 'en',
+          lastActiveAt: new Date(),
+        },
+      });
+
+      return aiUser;
+    } catch (error) {
+      this.logger.error(`Error syncing user to PostgreSQL: ${error.message}`);
+      return null;
+    }
   }
 
   /**

@@ -12,6 +12,7 @@ import { StoreSyncService } from './store-sync.service';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import * as mysql from 'mysql2/promise';
 
 export interface VendorProfile {
   id: string;                     // PostgreSQL UUID
@@ -47,7 +48,7 @@ export interface VendorPerformance {
 export class VendorProfileService implements OnModuleInit {
   private readonly logger = new Logger(VendorProfileService.name);
   private readonly phpBackendUrl: string;
-
+  private mysqlPool: mysql.Pool;
   constructor(
     private readonly prisma: PrismaService,
     private readonly phpVendorAuth: PhpVendorAuthService,
@@ -56,36 +57,78 @@ export class VendorProfileService implements OnModuleInit {
     private readonly configService: ConfigService,
   ) {
     this.phpBackendUrl = this.configService.get('PHP_BACKEND_URL', 'http://localhost:8000');
+    
+    // Initialize MySQL pool for direct vendor queries
+    const mysqlHost = this.configService.get('MYSQL_HOST', '103.86.176.59');
+    const mysqlPort = parseInt(this.configService.get('MYSQL_PORT', '3306'));
+    const mysqlUser = this.configService.get('MYSQL_USER', 'root');
+    const mysqlPassword = this.configService.get('MYSQL_PASSWORD', 'root_password');
+    const mysqlDatabase = this.configService.get('MYSQL_DATABASE', 'mangwale_db');
+    
+    this.mysqlPool = mysql.createPool({
+      host: mysqlHost,
+      port: mysqlPort,
+      user: mysqlUser,
+      password: mysqlPassword,
+      database: mysqlDatabase,
+      waitForConnections: true,
+      connectionLimit: 5,
+      queueLimit: 0,
+    });
   }
 
   async onModuleInit() {
     this.logger.log('👤 VendorProfileService initialized');
+    this.logger.log(`   MySQL: ${this.configService.get('MYSQL_HOST', '103.86.176.59')}`);
   }
 
   /**
-   * Sync vendor profile from PHP using vendor ID (direct API call)
+   * Sync vendor profile from PHP using vendor ID (direct MySQL query)
    */
   async syncVendorFromPhp(phpVendorId: number): Promise<VendorProfile | null> {
     try {
-      this.logger.log(`📥 Syncing vendor from PHP: ${phpVendorId}`);
+      this.logger.log(`📥 Syncing vendor from MySQL: ${phpVendorId}`);
 
-      // Fetch vendor details directly from PHP backend
-      const response = await firstValueFrom(
-        this.httpService.get(`${this.phpBackendUrl}/api/v1/vendor/${phpVendorId}`)
-      );
+      // Fetch vendor details directly from MySQL
+      // stores.vendor_id links to vendors.id
+      const [rows] = await this.mysqlPool.execute(`
+        SELECT 
+          v.id as vendor_id,
+          v.f_name,
+          v.l_name,
+          v.email,
+          v.phone,
+          v.image,
+          v.status,
+          s.id as store_id,
+          s.name as store_name
+        FROM vendors v
+        LEFT JOIN stores s ON s.vendor_id = v.id
+        WHERE v.id = ?
+        LIMIT 1
+      `, [phpVendorId]);
 
-      const phpVendor = response.data?.data || response.data;
-      if (!phpVendor || !phpVendor.id) {
-        this.logger.warn(`Vendor not found in PHP: ${phpVendorId}`);
+      const vendorRows = rows as any[];
+      if (!vendorRows || vendorRows.length === 0) {
+        this.logger.warn(`Vendor not found in MySQL: ${phpVendorId}`);
         return null;
       }
 
+      const phpVendor = vendorRows[0];
+      this.logger.log(`📥 Found vendor: ${phpVendor.f_name} ${phpVendor.l_name} (Store: ${phpVendor.store_name || 'N/A'})`);
+
       // Ensure store is synced first
       let storeId: string | null = null;
-      const vendorStoreId = phpVendor.store_id || phpVendor.restaurants?.[0]?.id;
-      if (vendorStoreId) {
-        const store = await this.storeSyncService.getStoreByPhpId(vendorStoreId);
-        storeId = store?.id || null;
+      if (phpVendor.store_id) {
+        const store = await this.storeSyncService.getStoreByPhpId(phpVendor.store_id);
+        if (!store) {
+          // Sync the store first
+          await this.storeSyncService.syncStoreFromPhp(phpVendor.store_id);
+          const syncedStore = await this.storeSyncService.getStoreByPhpId(phpVendor.store_id);
+          storeId = syncedStore?.id || null;
+        } else {
+          storeId = store.id;
+        }
       }
 
       // Upsert vendor profile to PostgreSQL
@@ -102,21 +145,19 @@ export class VendorProfileService implements OnModuleInit {
           is_active,
           is_primary_owner,
           permissions,
-          zone_wise_topic,
           profile_image
         ) VALUES (
           ${phpVendorId}::INTEGER,
           ${storeId}::UUID,
-          ${vendorStoreId || null}::INTEGER,
+          ${phpVendor.store_id || null}::INTEGER,
           ${(phpVendor.f_name || '') + ' ' + (phpVendor.l_name || '')}::VARCHAR,
           ${phpVendor.phone || ''}::VARCHAR,
           ${phpVendor.email || null}::VARCHAR,
-          ${phpVendor.vendor_type || 'owner'}::VARCHAR,
-          ${phpVendor.role || 'owner'}::VARCHAR,
-          ${phpVendor.status === 1 || phpVendor.is_active === 1}::BOOLEAN,
+          'owner'::VARCHAR,
+          'owner'::VARCHAR,
+          ${phpVendor.status === 1}::BOOLEAN,
           true::BOOLEAN,
-          ${JSON.stringify(phpVendor.permissions || {})}::JSONB,
-          ${phpVendor.zone_wise_topic || null}::VARCHAR,
+          '{}'::JSONB,
           ${phpVendor.image || null}::VARCHAR
         )
         ON CONFLICT (php_vendor_id)
@@ -129,8 +170,6 @@ export class VendorProfileService implements OnModuleInit {
           vendor_type = EXCLUDED.vendor_type,
           role = EXCLUDED.role,
           is_active = EXCLUDED.is_active,
-          permissions = EXCLUDED.permissions,
-          zone_wise_topic = EXCLUDED.zone_wise_topic,
           profile_image = EXCLUDED.profile_image,
           updated_at = NOW()
         RETURNING *

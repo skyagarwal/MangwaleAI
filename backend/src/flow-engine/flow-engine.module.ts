@@ -50,6 +50,7 @@ import { GamificationModule } from '../gamification/gamification.module';
 import { PersonalizationModule } from '../personalization/personalization.module';
 import { OrderModule } from '../order/order.module';
 import { PricingModule } from '../pricing/pricing.module';
+import { ProfilesModule } from '../profiles/profiles.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { PricingModule } from '../pricing/pricing.module';
     PersonalizationModule,
     OrderModule,
     PricingModule,
+    ProfilesModule,
     forwardRef(() => AgentsModule), // Use forwardRef to avoid circular dependency
   ],
   controllers: [FlowBuilderController, FlowsController],

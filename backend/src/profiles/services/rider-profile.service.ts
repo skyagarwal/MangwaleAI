@@ -10,6 +10,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import * as mysql from 'mysql2/promise';
 
 export interface RiderProfile {
   id: string;                     // PostgreSQL UUID
@@ -51,6 +52,7 @@ export interface ExternalPlatformProfile {
 export class RiderProfileService implements OnModuleInit {
   private readonly logger = new Logger(RiderProfileService.name);
   private readonly phpBackendUrl: string;
+  private mysqlPool: mysql.Pool;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -58,69 +60,101 @@ export class RiderProfileService implements OnModuleInit {
     private readonly configService: ConfigService,
   ) {
     this.phpBackendUrl = this.configService.get('PHP_BACKEND_URL', 'http://localhost:8000');
+    
+    // Initialize MySQL pool for direct rider queries
+    const mysqlHost = this.configService.get('MYSQL_HOST', '103.86.176.59');
+    const mysqlPort = parseInt(this.configService.get('MYSQL_PORT', '3306'));
+    const mysqlUser = this.configService.get('MYSQL_USER', 'root');
+    const mysqlPassword = this.configService.get('MYSQL_PASSWORD', 'root_password');
+    const mysqlDatabase = this.configService.get('MYSQL_DATABASE', 'mangwale_db');
+    
+    this.mysqlPool = mysql.createPool({
+      host: mysqlHost,
+      port: mysqlPort,
+      user: mysqlUser,
+      password: mysqlPassword,
+      database: mysqlDatabase,
+      waitForConnections: true,
+      connectionLimit: 5,
+      queueLimit: 0,
+    });
   }
 
   async onModuleInit() {
     this.logger.log('🏍️ RiderProfileService initialized');
+    this.logger.log(`   MySQL: ${this.configService.get('MYSQL_HOST', '103.86.176.59')}`);
   }
 
   /**
-   * Sync rider profile from PHP to PostgreSQL
+   * Sync rider profile from MySQL to PostgreSQL
    */
   async syncRiderFromPhp(phpRiderId: number): Promise<RiderProfile | null> {
     try {
-      this.logger.log(`📥 Syncing rider from PHP: ${phpRiderId}`);
+      this.logger.log(`📥 Syncing rider from MySQL: ${phpRiderId}`);
 
-      // Fetch rider details from PHP backend
-      const response = await firstValueFrom(
-        this.httpService.get(`${this.phpBackendUrl}/api/v1/dm/${phpRiderId}`)
-      );
+      // Fetch rider details from MySQL
+      const [rows] = await this.mysqlPool.execute(`
+        SELECT 
+          dm.id as rider_id,
+          dm.f_name,
+          dm.l_name,
+          dm.email,
+          dm.phone,
+          dm.image,
+          dm.active,
+          dm.vehicle_id
+        FROM delivery_men dm
+        WHERE dm.id = ?
+        LIMIT 1
+      `, [phpRiderId]);
 
-      const phpRider = response.data?.data;
-      if (!phpRider) {
-        this.logger.warn(`Rider not found in PHP: ${phpRiderId}`);
+      const riderRows = rows as any[];
+      if (!riderRows || riderRows.length === 0) {
+        this.logger.warn(`Rider not found in MySQL: ${phpRiderId}`);
         return null;
       }
+
+      const phpRider = riderRows[0];
+      this.logger.log(`📥 Found rider: ${phpRider.f_name} ${phpRider.l_name}`);
 
       // Upsert rider profile to PostgreSQL
       const result = await this.prisma.$queryRaw<any[]>`
         INSERT INTO rider_profiles (
           php_rider_id,
-          name,
+          first_name,
+          last_name,
           phone,
           email,
           vehicle_type,
-          vehicle_number,
           is_active,
-          zone_ids,
-          profile_image
+          preferred_zones,
+          avatar_url
         ) VALUES (
           ${phpRiderId}::INTEGER,
-          ${phpRider.f_name + ' ' + (phpRider.l_name || '')}::VARCHAR,
-          ${phpRider.phone}::VARCHAR,
+          ${phpRider.f_name || ''}::VARCHAR,
+          ${phpRider.l_name || ''}::VARCHAR,
+          ${phpRider.phone || ''}::VARCHAR,
           ${phpRider.email || null}::VARCHAR,
-          ${phpRider.vehicle_type || 'bike'}::VARCHAR,
-          ${phpRider.vehicle_number || null}::VARCHAR,
+          ${phpRider.vehicle_id ? 'bike' : 'bike'}::VARCHAR,
           ${phpRider.active === 1}::BOOLEAN,
-          ${phpRider.zone_ids || []}::INTEGER[],
-          ${phpRider.image || null}::VARCHAR
+          '{}'::INTEGER[],
+          ${phpRider.image || null}::TEXT
         )
         ON CONFLICT (php_rider_id)
         DO UPDATE SET
-          name = EXCLUDED.name,
+          first_name = EXCLUDED.first_name,
+          last_name = EXCLUDED.last_name,
           phone = EXCLUDED.phone,
           email = EXCLUDED.email,
           vehicle_type = EXCLUDED.vehicle_type,
-          vehicle_number = EXCLUDED.vehicle_number,
           is_active = EXCLUDED.is_active,
-          zone_ids = EXCLUDED.zone_ids,
-          profile_image = EXCLUDED.profile_image,
+          avatar_url = EXCLUDED.avatar_url,
           updated_at = NOW()
         RETURNING *
       `;
 
       const rider = result[0];
-      this.logger.log(`✅ Synced rider: ${rider.name} (${rider.id})`);
+      this.logger.log(`✅ Synced rider: ${rider.first_name} ${rider.last_name} (${rider.id})`);
 
       return this.mapRiderRow(rider);
     } catch (error) {
@@ -330,26 +364,26 @@ export class RiderProfileService implements OnModuleInit {
     return {
       id: row.id,
       phpRiderId: row.php_rider_id,
-      name: row.name,
+      name: ((row.first_name || '') + ' ' + (row.last_name || '')).trim(),
       phone: row.phone,
       email: row.email,
       vehicleType: row.vehicle_type,
       vehicleNumber: row.vehicle_number,
       isActive: row.is_active,
-      zoneIds: row.zone_ids,
+      zoneIds: row.preferred_zones || [],
       performanceMetrics: {
-        totalDeliveries: row.total_deliveries,
-        avgDeliveryTime: row.avg_delivery_time,
+        totalDeliveries: row.total_deliveries || 0,
+        avgDeliveryTime: row.avg_delivery_time || 0,
         avgRating: parseFloat(row.avg_rating || '0'),
-        positiveRatings: row.positive_ratings,
-        negativeRatings: row.negative_ratings,
-        completionRate: parseFloat(row.completion_rate || '0'),
-        monthlyEarnings: parseFloat(row.monthly_earnings || '0'),
-        activeHours: row.active_hours,
-        lastDeliveryAt: row.last_delivery_at,
+        positiveRatings: row.total_ratings || 0,
+        negativeRatings: 0,
+        completionRate: parseFloat(row.on_time_delivery_rate || '0'),
+        monthlyEarnings: parseFloat(row.current_week_earnings || '0'),
+        activeHours: 0,
+        lastDeliveryAt: row.last_online_at,
       },
       externalPlatforms: row.external_platforms || [],
-      profileImage: row.profile_image,
+      profileImage: row.avatar_url,
     };
   }
 }

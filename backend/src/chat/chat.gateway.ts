@@ -12,9 +12,11 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { ConversationService } from '../conversation/services/conversation.service';
 import { SessionService } from '../session/session.service';
+import { SessionIdentifierService } from '../session/session-identifier.service';
 import { AgentOrchestratorService } from '../agents/services/agent-orchestrator.service';
 import { ConversationLoggerService } from '../database/conversation-logger.service';
 import { CentralizedAuthService } from '../auth/centralized-auth.service';
+import { FlowEngineService } from '../flow-engine/flow-engine.service';
 
 interface MessagePayload {
   message: string;
@@ -58,9 +60,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   constructor(
     private readonly conversationService: ConversationService,
     private readonly sessionService: SessionService,
+    private readonly sessionIdentifierService: SessionIdentifierService,
     private readonly agentOrchestratorService: AgentOrchestratorService,
     private readonly conversationLogger: ConversationLoggerService,
     private readonly centralizedAuth: CentralizedAuthService,
+    private readonly flowEngineService: FlowEngineService,
   ) {
     console.log('🚀🚀🚀 ChatGateway CONSTRUCTOR CALLED 🚀🚀🚀');
     this.logger.log('🚀 ChatGateway instance created');
@@ -146,13 +150,21 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     
     await client.join(sessionId);
     
-    // DON'T send old conversation history - let each session start fresh with flow-based responses
-    // Old history may contain hardcoded messages from previous architecture
-    // const history = await this.sessionService.getBotMessages(sessionId);
+    // Retrieve conversation history for reconnection (last 20 messages)
+    // This ensures messages are not lost when WebSocket reconnects
+    let history: any[] = [];
+    try {
+      history = await this.conversationLogger.getSessionHistory(sessionId, 20);
+      if (history.length > 0) {
+        this.logger.log(`📜 Retrieved ${history.length} messages for session ${sessionId}`);
+      }
+    } catch (error) {
+      this.logger.warn(`Could not retrieve session history: ${error.message}`);
+    }
     
     client.emit('session:joined', { 
       sessionId,
-      history: [], // Always start fresh
+      history,
       authenticated: !!userId
     });
   }
@@ -225,16 +237,28 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       let processedMessage = message;
       if (payload.type === 'button_click' && payload.action) {
         this.logger.log(`🔘 Button click detected: ${payload.action}`);
+        
+        // Special handling for location button - trigger location request
+        if (payload.action === '__LOCATION__' || payload.action === 'share_location') {
+          this.logger.log(`📍 Location button clicked - requesting location from client`);
+          client.emit('request:location', { 
+            sessionId,
+            message: 'Please share your location for better results' 
+          });
+          return; // Don't process further, wait for location:update event
+        }
+        
         processedMessage = this.convertButtonActionToMessage(payload.action, payload.metadata);
         this.logger.log(`✨ Converted to message: "${processedMessage}"`);
       }
       
-      // Get session data for user info
-      const session = await this.sessionService.getSession(sessionId);
-      const phone = session?.data?.phone || sessionId;
-      const userId = session?.data?.user_id;
+      // 🔐 Use SessionIdentifierService to properly resolve phone number from session
+      // This handles web chat where sessionId != phoneNumber
+      const identifierResolution = await this.sessionIdentifierService.resolve(sessionId);
+      const phone = identifierResolution.phoneNumber || sessionId;
+      const userId = identifierResolution.userId;
       
-      this.logger.log(`📋 Session data: userId=${userId}, phone=${phone ? '***' : 'none'}`);
+      this.logger.log(`📋 Session data: userId=${userId}, phone=${identifierResolution.isPhoneVerified ? '***verified' : (phone ? '***' : 'none')}`);
       
       // Log user message to PostgreSQL
       try {
@@ -308,7 +332,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         }
         
         // Log bot response to PostgreSQL
-        const flowContext = session?.data?.flowContext;
+        // Get fresh session for flowContext (may have been updated during processing)
+        const currentSession = await this.sessionService.getSession(sessionId);
+        const flowContext = currentSession?.data?.flowContext;
         try {
           await this.conversationLogger.logBotMessage({
             phone,
@@ -389,12 +415,30 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log(`📍 Location update for ${sessionId}: (${lat}, ${lng})`);
     
     try {
+      // Save location to session first
       await this.sessionService.setData(sessionId, {
         location: { lat, lng },
         lastLocationUpdate: Date.now(),
       });
       client.emit('location:updated', { success: true });
+      
+      // Check if there's an active flow waiting for location
+      const flowContext = await this.flowEngineService.getContext(sessionId);
+      if (flowContext && flowContext.currentState === 'request_location') {
+        this.logger.log(`📍 Active flow waiting for location - advancing with "location_shared" event`);
+        // Advance the flow with a "location_shared" event
+        // The location is already saved to session, so flow-engine will pick it up
+        const response = await this.flowEngineService.processMessage(
+          sessionId,
+          `Location shared: ${lat}, ${lng}`, // Message for context
+          'location_shared' // Event to trigger the transition
+        );
+        if (response) {
+          this.emitBotResponse(client, sessionId, response);
+        }
+      }
     } catch (error) {
+      this.logger.error(`❌ Failed to update location:`, error);
       client.emit('error', { message: 'Failed to update location' });
     }
   }
@@ -554,6 +598,44 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   // REMOVED: Legacy 'user_message' handler - was causing duplicate message processing
   // The 'message:send' handler above is the active handler for all message processing
+
+  /**
+   * Helper to emit bot response to client
+   * Used for flow engine responses (e.g., after location is shared)
+   */
+  private emitBotResponse(client: Socket, sessionId: string, response: any) {
+    if (!response) return;
+    
+    const { content, text, message, buttons, cards, metadata } = response;
+    const responseText = content || text || message || '';
+    
+    if (!responseText && !cards?.length) {
+      this.logger.warn(`⚠️ Empty response from flow engine for ${sessionId}`);
+      return;
+    }
+    
+    const messagePayload: any = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      role: 'assistant',
+      content: responseText,
+      timestamp: Date.now(),
+    };
+    
+    if (buttons?.length) {
+      messagePayload.buttons = buttons;
+    }
+    
+    if (cards?.length) {
+      messagePayload.cards = cards;
+    }
+    
+    if (metadata) {
+      messagePayload.metadata = metadata;
+    }
+    
+    this.logger.log(`📤 Emitting flow response to ${sessionId}`);
+    this.server.to(sessionId).emit('message', messagePayload);
+  }
 
   /**
    * Convert button action to natural language message for intent detection

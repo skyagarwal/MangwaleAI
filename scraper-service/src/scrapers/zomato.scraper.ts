@@ -69,6 +69,8 @@ export class ZomatoScraper {
     // Use puppeteer-extra with stealth plugin in production
     this.browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium-browser',
+      protocolTimeout: 60000, // 60 seconds timeout
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -76,6 +78,8 @@ export class ZomatoScraper {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
         '--window-size=1920x1080',
+        '--single-process', // Helps in container environments
+        '--no-zygote',
       ]
     });
 

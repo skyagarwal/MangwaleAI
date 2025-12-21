@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { SessionService } from '../session/session.service';
+import { SessionIdentifierService } from '../session/session-identifier.service';
 import { FlowContextService } from './flow-context.service';
 import { StateMachineEngine } from './state-machine.engine';
 import { ExecutorRegistryService } from './executor-registry.service';
@@ -16,6 +17,9 @@ import {
  * Flow Engine Service
  * 
  * Main service for flow management and execution
+ * 
+ * IMPORTANT: Uses SessionIdentifierService to properly resolve phone numbers
+ * from session IDs (critical for web chat where sessionId != phoneNumber)
  */
 @Injectable()
 export class FlowEngineService {
@@ -27,6 +31,7 @@ export class FlowEngineService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly sessionService: SessionService,
+    private readonly sessionIdentifierService: SessionIdentifierService,
     private readonly contextService: FlowContextService,
     private readonly stateMachine: StateMachineEngine,
     private readonly executorRegistry: ExecutorRegistryService,
@@ -54,6 +59,15 @@ export class FlowEngineService {
       throw new Error(`Invalid flow: ${validation.errors.join(', ')}`);
     }
 
+    // 2.5. Resolve phone number from session if not provided
+    // This handles the web chat case where sessionId != phoneNumber
+    let resolvedPhoneNumber = options.phoneNumber;
+    if (!resolvedPhoneNumber || resolvedPhoneNumber === options.sessionId) {
+      const resolution = await this.sessionIdentifierService.resolve(options.sessionId);
+      resolvedPhoneNumber = resolution.phoneNumber || options.sessionId;
+      this.logger.log(`🔍 Resolved phone for flow: ${resolvedPhoneNumber} (session: ${options.sessionId})`);
+    }
+
     // 3. Create flow run record
     const flowRunId = `run_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     const flowRun = await this.prisma.flowRun.create({
@@ -61,7 +75,7 @@ export class FlowEngineService {
         id: flowRunId,
         flowId: flowId,
         sessionId: options.sessionId,
-        phoneNumber: options.phoneNumber || options.sessionId,
+        phoneNumber: resolvedPhoneNumber,
         currentState: flow.initialState,
         context: {},
         status: 'active',
@@ -76,9 +90,34 @@ export class FlowEngineService {
       flowRun.id,
       options.sessionId,
       options.userId,
-      options.phoneNumber,
+      resolvedPhoneNumber,
       options.initialContext
     );
+
+    // 🧠 LOAD SESSION-LEVEL CONVERSATION HISTORY
+    // This preserves context across flow completions!
+    const session = await this.sessionService.getSession(options.sessionId);
+    if (session?.data?._conversation_history && Array.isArray(session.data._conversation_history)) {
+      context.data._conversation_history = session.data._conversation_history;
+      this.logger.log(`📚 Loaded ${session.data._conversation_history.length} history entries from session`);
+    }
+
+    // 📍 INJECT LOCATION DATA FROM SESSION INTO FLOW CONTEXT
+    // Critical for geo-distance filtering in search executors
+    if (session?.data?.location) {
+      context.data.location = session.data.location;
+      context.data.lastLocationUpdate = session.data.lastLocationUpdate;
+      this.logger.log(`📍 Injected location into flow context: ${JSON.stringify(session.data.location)}`);
+    }
+
+    // 🏠 INJECT USER DATA FROM SESSION
+    if (session?.data?.user_id) {
+      context.data.user_id = session.data.user_id;
+      context.data.user_authenticated = true;
+    }
+    if (session?.data?.user_name || session?.data?.userName) {
+      context.data.user_name = session.data.user_name || session.data.userName;
+    }
 
     // Ensure _user_message is set (critical for NLU executors)
     // Support both 'message' and 'user_message' as input keys
@@ -217,6 +256,31 @@ export class FlowEngineService {
 
     // 4. Restore context
     const context: FlowContext = flowRun.context as any;
+    
+    // 🧠 MERGE SESSION-LEVEL CONVERSATION HISTORY
+    // This ensures we have the latest conversation context even if flow context is older
+    if (session?.data?._conversation_history && Array.isArray(session.data._conversation_history)) {
+      if (!context.data._conversation_history) {
+        context.data._conversation_history = [];
+      }
+      // Merge session history with flow context history, keeping unique entries
+      const existingMessages = new Set(context.data._conversation_history.map(m => m.content));
+      for (const msg of session.data._conversation_history) {
+        if (!existingMessages.has(msg.content)) {
+          context.data._conversation_history.push(msg);
+        }
+      }
+      // Keep last 40 messages max
+      if (context.data._conversation_history.length > 40) {
+        context.data._conversation_history = context.data._conversation_history.slice(-40);
+      }
+    }
+
+    // 📍 REFRESH LOCATION DATA FROM SESSION (may have been updated since flow started)
+    if (session?.data?.location) {
+      context.data.location = session.data.location;
+      context.data.lastLocationUpdate = session.data.lastLocationUpdate;
+    }
     
     // Store user message in context
     this.contextService.set(context, '_user_message', message);
@@ -389,6 +453,19 @@ export class FlowEngineService {
   }
 
   /**
+   * Get current flow context for session (includes currentState)
+   */
+  async getContext(sessionId: string): Promise<{ flowRunId: string; currentState: string } | null> {
+    const session = await this.sessionService.getSession(sessionId);
+    const flowContext = session?.data?.flowContext;
+    if (!flowContext?.flowRunId) return null;
+    return {
+      flowRunId: flowContext.flowRunId,
+      currentState: flowContext.currentState || '',
+    };
+  }
+
+  /**
    * Cancel active flow
    */
   async cancelFlow(sessionId: string): Promise<void> {
@@ -522,6 +599,20 @@ export class FlowEngineService {
     
     // Try keyword-based matching on INTENT
     const lowerIntent = intent.toLowerCase();
+    
+    // Login/Auth keywords - Check FIRST before greeting fallback
+    // This catches "login", "sign in", "otp", etc. even with unknown intent
+    if (message) {
+      const lowerMsg = message.toLowerCase();
+      if (lowerMsg.includes('login') || lowerMsg.includes('sign in') || lowerMsg.includes('signin') || lowerMsg.includes('log in') || lowerMsg.includes('authenticate') || lowerMsg.includes('verify phone') || lowerMsg.includes('otp') || lowerMsg === 'login') {
+        // Match EXACT trigger 'login' for customer auth (not vendor_login or delivery_login)
+        flow = flows.find(f => f.trigger === 'login' && f.enabled !== false);
+        if (flow) {
+          this.logger.log(`✅ Login keyword match: ${flow.name}`);
+          return flow;
+        }
+      }
+    }
     
     // Greeting keywords - ALWAYS check, especially for default/unknown intents
     if (lowerIntent.includes('greet') || lowerIntent === 'greeting' || lowerIntent === 'hello' || lowerIntent === 'hi' || lowerIntent === 'hey' || intent === 'default' || intent === 'unknown') {
@@ -801,18 +892,27 @@ export class FlowEngineService {
 
   /**
    * Clear flow from session (called when flow completes)
+   * IMPORTANT: Preserves conversation history for context continuity
    */
   private async clearFlowFromSession(sessionId: string): Promise<void> {
     const session = await this.sessionService.getSession(sessionId);
+    
+    // 🧠 PRESERVE CONVERSATION HISTORY: Extract it before clearing flowContext
+    const existingHistory = session?.data?.flowContext?.data?._conversation_history || [];
+    const existingSessionHistory = session?.data?._conversation_history || [];
+    
+    // Merge histories, keeping most recent entries (last 20 turns max)
+    const mergedHistory = [...existingSessionHistory, ...existingHistory].slice(-40);
     
     await this.sessionService.saveSession(sessionId, {
       data: {
         ...session?.data,
         flowContext: null, // Clear flow context
+        _conversation_history: mergedHistory, // Preserve conversation history at session level!
       },
     });
     
-    this.logger.log(`🧹 Cleared flow from session ${sessionId}`);
+    this.logger.log(`🧹 Cleared flow from session ${sessionId} (preserved ${mergedHistory.length} history entries)`);
   }
 
   /**

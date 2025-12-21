@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { PhpAuthService } from '../../php-integration/services/php-auth.service';
 import { SessionService } from '../../session/session.service';
+import { SessionIdentifierService } from '../../session/session-identifier.service';
 import { normalizePhoneNumber } from '../../common/utils/helpers';
 
 /**
@@ -16,6 +17,9 @@ import { normalizePhoneNumber } from '../../common/utils/helpers';
  * - AgentOrchestratorService.handlePhoneNumberInput()
  * - AgentOrchestratorService.handleOtpInput()
  * - ConversationService.handleOtpVerification()
+ * 
+ * IMPORTANT: Uses SessionIdentifierService to properly resolve phone numbers
+ * from session IDs (critical for web chat where sessionId != phoneNumber)
  */
 @Injectable()
 export class AuthExecutor implements ActionExecutor {
@@ -25,6 +29,7 @@ export class AuthExecutor implements ActionExecutor {
   constructor(
     private readonly phpAuthService: PhpAuthService,
     private readonly sessionService: SessionService,
+    private readonly sessionIdentifierService: SessionIdentifierService,
   ) {}
 
   async execute(
@@ -80,7 +85,10 @@ export class AuthExecutor implements ActionExecutor {
   ): Promise<ActionExecutionResult> {
     let input = this.resolveValue(config.input, context) as string;
     
+    this.logger.log(`📱 validatePhone: config.input="${config.input}", resolved input="${input}", _user_message="${context.data._user_message}"`);
+    
     if (!input) {
+      this.logger.warn(`⚠️ No phone input found!`);
       return {
         success: true, // Changed to true to avoid "Unknown executor error"
         output: {
@@ -182,7 +190,7 @@ export class AuthExecutor implements ActionExecutor {
             sent: true,
             phone: phone,
           },
-          event: 'success',
+          event: 'success', // Match flow transition
         };
       } else {
         this.logger.warn(`❌ OTP send failed: ${result.message}`);
@@ -285,16 +293,24 @@ export class AuthExecutor implements ActionExecutor {
           context.data.user_email = userProfile.email;
         }
 
-        // Update session
+        // 🔐 CRITICAL: Link verified phone to session using SessionIdentifierService
+        // This properly links web sessions (e.g., "web-abc123") to real phone numbers
         const sessionId = context._system.sessionId;
+        await this.sessionIdentifierService.linkPhoneToSession(sessionId, phone);
+        
+        // Also update session with full auth data
         await this.sessionService.saveSession(sessionId, {
           data: {
             auth_token: result.data.token,
             user_id: userProfile?.id,
             user_name: userProfile?.firstName,
+            user_phone: phone, // Store the verified phone number
+            phone_number: phone, // Also store as phone_number for compatibility
             authenticated: true,
           },
         });
+        
+        this.logger.log(`🔗 Session ${sessionId} linked to verified phone ${phone}`);
 
         return {
           success: true,
@@ -304,7 +320,7 @@ export class AuthExecutor implements ActionExecutor {
             user: userProfile,
             is_personal_info: result.data.is_personal_info,
           },
-          event: 'valid',
+          event: 'valid', // Match flow transition
         };
       } else {
         this.logger.warn(`❌ OTP verification failed: ${result.message}`);
@@ -313,7 +329,7 @@ export class AuthExecutor implements ActionExecutor {
           output: {
             error: result.message || 'Invalid OTP',
           },
-          event: 'invalid',
+          event: 'invalid', // Match flow transition
         };
       }
     } catch (error) {
@@ -321,7 +337,7 @@ export class AuthExecutor implements ActionExecutor {
       return {
         success: false,
         error: error.message,
-        event: 'invalid',
+        event: 'otp_invalid',
       };
     }
   }
@@ -486,13 +502,15 @@ export class AuthExecutor implements ActionExecutor {
           context.data.user_email = userProfile.email;
         }
 
-        // Update session
+        // Update session - IMPORTANT: Store phone_number for order placement
         const sessionId = context._system.sessionId;
         await this.sessionService.saveSession(sessionId, {
           data: {
             auth_token: result.token || token,
             user_id: userProfile?.id,
             user_name: userProfile?.firstName,
+            user_phone: phone, // Store the verified phone number
+            phone_number: phone, // Also store as phone_number for compatibility
             authenticated: true,
           },
         });

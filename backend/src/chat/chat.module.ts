@@ -5,6 +5,7 @@ import { SessionModule } from '../session/session.module';
 import { AgentsModule } from '../agents/agents.module';
 import { DatabaseModule } from '../database/database.module';
 import { AuthModule } from '../auth/auth.module';
+import { FlowEngineModule } from '../flow-engine/flow-engine.module';
 import { ModuleRef } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 
@@ -24,6 +25,7 @@ import { Logger } from '@nestjs/common';
     forwardRef(() => ConversationModule),
     AgentsModule, // No circular dependency, remove forwardRef
     AuthModule, // ✅ Required for CentralizedAuthService
+    forwardRef(() => FlowEngineModule), // ✨ For flow-based location handling
   ],
   providers: [ChatGateway],
   exports: [ChatGateway],

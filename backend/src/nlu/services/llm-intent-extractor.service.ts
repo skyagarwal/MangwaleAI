@@ -32,6 +32,34 @@ export class LlmIntentExtractorService {
   ): Promise<LlmIntentExtractionResult> {
     this.logger.log(`LLM fallback for: "${text}"`);
 
+    // Quick pattern-based check for Hinglish chitchat before LLM (saves tokens)
+    const hinglishChitchatPatterns = [
+      /kaise\s*(hai|ho)/i,       // kaise hai, kaise ho
+      /kya\s*(haal|chal)/i,      // kya haal, kya chal
+      /kaisa\s*hai/i,            // kaisa hai
+      /theek\s*(ho|hai)/i,       // theek ho, theek hai
+      /sab\s*theek/i,            // sab theek
+      /kya\s*kar\s*rahe/i,       // kya kar rahe ho
+      /\bchotu\b/i,              // chotu (bot name)
+      /\bre\s+chotu\b/i,         // re chotu
+      /\bhey\s+chotu\b/i,        // hey chotu
+    ];
+
+    for (const pattern of hinglishChitchatPatterns) {
+      if (pattern.test(text)) {
+        this.logger.log(`Matched Hinglish chitchat pattern: ${pattern}`);
+        return {
+          intent: 'chitchat',
+          confidence: 0.92,
+          entities: {},
+          tone: 'friendly',
+          sentiment: 'positive',
+          urgency: 0.1,
+          reasoning: 'Hinglish chitchat/greeting pattern detected',
+        };
+      }
+    }
+
     let intentList = '';
     
     try {
@@ -61,6 +89,7 @@ export class LlmIntentExtractorService {
         'help': 'User needs help/support',
         'complaint': 'User complaining about service/product (wrong item, damaged, refund)',
         'greeting': 'User greeting (hi, hello, hey, namaste)',
+        'chitchat': 'Casual conversation or small talk: "how are you", "kaise hai", "kya haal", "what\'s up", "thanks", "chotu" (bot name)',
         'login': 'User wants to login, sign in, register, or check authentication status',
         'manage_address': 'User wants to add, view, or manage saved addresses ("add address", "show my addresses")',
         'service_inquiry': 'User asking about available services, vehicles, categories, or pricing ("what vehicles do you have", "show categories")',

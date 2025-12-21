@@ -59,11 +59,20 @@ export class SearchExecutor implements ActionExecutor {
 
       // Add geo-location filter if coordinates provided
       if (lat && lng) {
-        filters.push({
-          field: 'location',
-          operator: 'geo_distance',
-          value: { lat, lng, distance: radius }
-        });
+        // Parse coordinates if they're strings (from Handlebars interpolation)
+        const parsedLat = typeof lat === 'string' ? parseFloat(lat) : lat;
+        const parsedLng = typeof lng === 'string' ? parseFloat(lng) : lng;
+        
+        if (!isNaN(parsedLat) && !isNaN(parsedLng)) {
+          this.logger.log(`📍 Adding geo-distance filter: lat=${parsedLat}, lng=${parsedLng}, radius=${radius}`);
+          filters.push({
+            field: 'location',
+            operator: 'geo_distance',
+            value: { lat: parsedLat, lon: parsedLng, distance: radius }
+          });
+        } else {
+          this.logger.warn(`⚠️ Invalid location coordinates: lat=${lat}, lng=${lng}`);
+        }
       }
 
       this.logger.debug(`Searching ${index} for: "${query}"`);
@@ -88,6 +97,23 @@ export class SearchExecutor implements ActionExecutor {
         hasResults: flattenedItems.length > 0,
       };
 
+      // S3 base URL for images (CDN has SSL issues)
+      const S3_BASE = 'https://s3.ap-south-1.amazonaws.com/mangwale/product';
+
+      // Helper to get proper image URL
+      const getImageUrl = (item: any): string | undefined => {
+        let imageUrl = item.image_full_url || item.image_fallback_url || item.image || item.images?.[0];
+        if (!imageUrl) return undefined;
+        if (!imageUrl.startsWith('http')) {
+          return `${S3_BASE}/${imageUrl}`;
+        }
+        // Replace problematic CDN with S3
+        if (imageUrl.includes('storage.mangwale.ai')) {
+          return imageUrl.replace('https://storage.mangwale.ai/mangwale/product', S3_BASE);
+        }
+        return imageUrl;
+      };
+
       // Always generate UI cards for product results
       if (output.hasResults) {
         output.cards = flattenedItems.slice(0, 10).map((item: any) => ({
@@ -95,8 +121,7 @@ export class SearchExecutor implements ActionExecutor {
           name: item.title || item.name,
           description: item.description || item.category,
           price: item.mrp ? `₹${item.mrp}` : (item.price ? `₹${item.price}` : undefined),
-          // Use full CDN URL, fallback to S3, then local image path
-          image: item.image_full_url || item.image_fallback_url || item.image || item.images?.[0],
+          image: getImageUrl(item),
           rating: item.rating || item.avg_rating || 4.5,
           deliveryTime: item.delivery_time || '30-45 min',
           brand: item.brand,

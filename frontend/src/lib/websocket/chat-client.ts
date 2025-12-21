@@ -58,6 +58,8 @@ interface ChatEventHandlers {
   onError?: (error: Error) => void
   onConnect?: () => void
   onDisconnect?: () => void
+  // Location Events
+  onRequestLocation?: (data: { sessionId: string; message?: string }) => void
   // Centralized Auth Event Handlers
   onAuthSynced?: (data: { userId: number; userName: string; token: string; platform: string }) => void
   onAuthLoggedOut?: () => void
@@ -193,6 +195,12 @@ class ChatWebSocketClient {
     this.socket.on('auth:failed', (data: { message: string; reason?: string }) => {
       console.error('❌ Auth failed:', data)
       this.handlers.onAuthFailed?.(data)
+    })
+
+    // Location request event - backend wants the client to share location
+    this.socket.on('request:location', (data: { sessionId: string; message?: string }) => {
+      console.log('📍 Location requested by server:', data)
+      this.handlers.onRequestLocation?.(data)
     })
   }
 

@@ -36,8 +36,88 @@ export const foodOrderFlow: FlowDefinition = {
         }
       ],
       transitions: {
-        has_query: 'understand_request',
+        has_query: 'check_location',
         default: 'greet_user',
+      },
+    },
+
+    // 📍 NEW: Check if we have user location before searching
+    check_location: {
+      type: 'decision',
+      description: 'Check if user location is available for geo-filtered search',
+      conditions: [
+        {
+          // Location exists and is less than 2 hours old
+          expression: 'context.location && context.location.lat && context.location.lng',
+          event: 'has_location',
+        }
+      ],
+      transitions: {
+        has_location: 'understand_request',
+        default: 'request_location',
+      },
+    },
+
+    // 📍 NEW: Request location from user
+    request_location: {
+      type: 'wait',
+      description: 'Ask user to share their location for better results',
+      actions: [
+        {
+          id: 'ask_location',
+          executor: 'response',
+          config: {
+            message: '📍 To show you the best food options nearby, please share your location!\n\nTap the button below or type your area name.',
+            responseType: 'request_location',
+            buttons: [
+              { id: 'btn_location', label: '📍 Share Location', value: '__LOCATION__' },
+              { id: 'btn_skip', label: 'Skip for now', value: 'skip_location' }
+            ]
+          },
+          output: '_last_response',
+        }
+      ],
+      transitions: {
+        location_shared: 'understand_request',
+        user_message: 'handle_location_response',
+      },
+    },
+
+    // 📍 NEW: Handle location response (text input or skip)
+    handle_location_response: {
+      type: 'decision',
+      description: 'Check if user skipped or provided area name',
+      conditions: [
+        {
+          expression: 'context._user_message?.toLowerCase().includes("skip")',
+          event: 'skipped',
+        }
+      ],
+      transitions: {
+        skipped: 'understand_request', // Continue without location
+        default: 'extract_location_from_text',
+      },
+    },
+
+    // 📍 NEW: Try to extract location from text
+    extract_location_from_text: {
+      type: 'action',
+      description: 'Extract location from user area name',
+      actions: [
+        {
+          id: 'parse_area',
+          executor: 'address',
+          config: {
+            field: 'location',
+            useUserMessage: true,
+            city: 'Nashik',
+          },
+          output: 'location',
+        }
+      ],
+      transitions: {
+        address_valid: 'understand_request',
+        error: 'understand_request', // Continue even if extraction fails
       },
     },
 
@@ -560,7 +640,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           id: 'clarify_prompt',
           executor: 'response',
           config: {
-            template: 'I didn\'t quite understand your selection. Please:\n- Type a number (1, 2, 3) to select an item\n- Type "Add [item name] to cart"\n- Or say "checkout" when ready',
+            message: 'I didn\'t quite understand your selection. Please:\n- Type a number (1, 2, 3) to select an item\n- Type "Add [item name] to cart"\n- Or say "checkout" when ready',
           },
           output: '_last_response',
         },
@@ -620,7 +700,7 @@ Ask if they want to add more items or proceed to checkout.`,
           id: 'ask_phone',
           executor: 'response',
           config: {
-            template: 'To complete your order, please provide your phone number for verification.',
+            message: 'To complete your order, please provide your phone number for verification.',
             responseType: 'request_phone',
           },
           output: '_last_response',
@@ -638,17 +718,19 @@ Ask if they want to add more items or proceed to checkout.`,
       description: 'Extract phone number from user message',
       actions: [
         {
-          id: 'extract_phone',
+          id: 'validate_phone_action',
           executor: 'auth',
           config: {
-            action: 'extract_phone',
+            action: 'validate_phone',
+            input: '{{_user_message}}',
           },
           output: 'phone_result',
         },
       ],
       transitions: {
-        phone_valid: 'send_otp',
-        phone_invalid: 'request_phone',
+        valid: 'send_otp',
+        invalid: 'request_phone',
+        cancel: 'cancelled',
         error: 'request_phone',
       },
     },
@@ -670,7 +752,7 @@ Ask if they want to add more items or proceed to checkout.`,
           id: 'otp_sent_message',
           executor: 'response',
           config: {
-            template: 'We\'ve sent an OTP to your phone. Please enter it to continue.',
+            message: 'We\'ve sent an OTP to your phone. Please enter it to continue.',
             responseType: 'request_otp',
           },
           output: '_last_response',
@@ -722,7 +804,7 @@ Ask if they want to add more items or proceed to checkout.`,
           id: 'otp_retry_message',
           executor: 'response',
           config: {
-            template: 'That OTP doesn\'t seem right. Please try again or type "resend" to get a new OTP.',
+            message: 'That OTP doesn\'t seem right. Please try again or type "resend" to get a new OTP.',
           },
           output: '_last_response',
         },
@@ -757,7 +839,7 @@ Ask if they want to add more items or proceed to checkout.`,
           id: 'otp_error_message',
           executor: 'response',
           config: {
-            template: 'Sorry, there was an issue with OTP verification. Please try again.',
+            message: 'Sorry, there was an issue with OTP verification. Please try again.',
           },
           output: '_last_response',
         },
@@ -1396,6 +1478,6 @@ Ask what else they'd like to try.`,
     },
   },
 
-  initialState: 'understand_request',
+  initialState: 'check_trigger',
   finalStates: ['completed', 'cancelled', 'address_error', 'out_of_zone', 'distance_error', 'order_failed'],
 };
