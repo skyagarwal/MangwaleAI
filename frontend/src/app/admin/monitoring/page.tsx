@@ -15,7 +15,11 @@ import {
   MessageSquare,
   Search,
   Globe,
-  RefreshCw
+  RefreshCw,
+  Cpu,
+  HardDrive,
+  Server,
+  Wifi
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
@@ -198,6 +202,35 @@ export default function MonitoringDashboard() {
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       default:
         return <CheckCircle className="h-4 w-4 text-blue-500" />;
+    }
+  };
+
+  const formatUptime = (seconds: number) => {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'healthy': return 'text-green-500';
+      case 'degraded': return 'text-yellow-500';
+      case 'down': return 'text-red-500';
+      default: return 'text-gray-500';
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'healthy': return 'default';
+      case 'degraded': return 'outline';
+      case 'down': return 'destructive';
+      default: return 'secondary';
+    }
+  };
     }
   };
 
