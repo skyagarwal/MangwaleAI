@@ -287,6 +287,132 @@ export default function MonitoringDashboard() {
         </Button>
       </div>
 
+      {/* System Metrics */}
+      {systemMetrics && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">CPU Usage</CardTitle>
+              <Cpu className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${systemMetrics.cpu_usage > 80 ? 'text-red-500' : systemMetrics.cpu_usage > 60 ? 'text-yellow-500' : 'text-green-500'}`}>
+                {systemMetrics.cpu_usage.toFixed(1)}%
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className={`h-2 rounded-full ${systemMetrics.cpu_usage > 80 ? 'bg-red-500' : systemMetrics.cpu_usage > 60 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                  style={{ width: `${Math.min(systemMetrics.cpu_usage, 100)}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
+              <Server className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${systemMetrics.memory_usage > 85 ? 'text-red-500' : systemMetrics.memory_usage > 70 ? 'text-yellow-500' : 'text-green-500'}`}>
+                {systemMetrics.memory_usage.toFixed(1)}%
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {systemMetrics.memory_free.toFixed(1)}GB free / {systemMetrics.memory_total.toFixed(1)}GB
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Disk Usage</CardTitle>
+              <HardDrive className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${systemMetrics.disk_usage > 90 ? 'text-red-500' : systemMetrics.disk_usage > 75 ? 'text-yellow-500' : 'text-green-500'}`}>
+                {systemMetrics.disk_usage}%
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className={`h-2 rounded-full ${systemMetrics.disk_usage > 90 ? 'bg-red-500' : systemMetrics.disk_usage > 75 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                  style={{ width: `${systemMetrics.disk_usage}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Uptime</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                {formatUptime(systemMetrics.uptime_seconds)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Load: {systemMetrics.load_average.map(l => l.toFixed(2)).join(' ')}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Host</CardTitle>
+              <Wifi className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-lg font-bold">{systemMetrics.hostname}</div>
+              <p className="text-xs text-muted-foreground capitalize">
+                {systemMetrics.platform}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Service Health */}
+      {services.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Server className="h-5 w-5" />
+              Service Health
+            </CardTitle>
+            <CardDescription>Real-time service status and latency</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {services.map((service) => (
+                <div
+                  key={service.name}
+                  className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                >
+                  <div className="flex items-center gap-3">
+                    {service.status === 'healthy' ? (
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    ) : service.status === 'degraded' ? (
+                      <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                    ) : (
+                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                    )}
+                    <div>
+                      <p className="font-medium">{service.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {service.latency_ms}ms
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant={getStatusBadge(service.status) as "default" | "destructive" | "outline" | "secondary"}>
+                    {service.status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
