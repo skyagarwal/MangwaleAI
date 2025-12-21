@@ -1,12 +1,13 @@
 import { FlowDefinition } from '../types/flow.types';
+import { enhancedFoodOrderStates } from './enhanced-food-order-states';
 
 export const foodOrderFlow: FlowDefinition = {
   id: 'food_order_v1',
   name: 'Food Order Flow',
-  description: 'Complete food ordering flow with search, selection, address, and payment',
+  description: 'Complete food ordering flow with search, selection, address, and payment. Enhanced with group orders, budget constraints, and Chotu personality.',
   module: 'food',
-  trigger: 'order_food|browse_menu|browse_category|ask_recommendation|ask_famous|check_availability',
-  version: '1.0.0',
+  trigger: 'order_food|browse_menu|browse_category|ask_recommendation|ask_famous|check_availability|group_order',
+  version: '1.1.0',
   
   contextSchema: {
     search_query: { type: 'string', required: false },
@@ -143,10 +144,10 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
-    // Understand what user wants
+    // Understand what user wants - now with group order detection
     understand_request: {
       type: 'action',
-      description: 'Extract food intent and entities',
+      description: 'Extract food intent and entities, detect group orders',
       actions: [
         {
           id: 'analyze_request',
@@ -155,6 +156,12 @@ export const foodOrderFlow: FlowDefinition = {
             extractEntities: true,
           },
           output: 'food_nlu',
+        },
+        {
+          id: 'check_complex_order',
+          executor: 'complex_order_parser',
+          config: {},
+          output: 'group_context',
         },
         {
           id: 'extract_food_details',
@@ -182,6 +189,10 @@ JSON:`,
         }
       ],
       transitions: {
+        group_order: 'validate_group_order',       // NEW: Route to group order flow
+        specific_restaurant: 'search_specific_restaurant', // NEW: Specific restaurant request
+        budget_order: 'search_budget_options',     // NEW: Budget-focused order
+        time_constrained: 'search_quick_delivery', // NEW: Time-critical order
         success: 'search_food',
         order_food: 'search_food',
         search_product: 'search_food',
@@ -190,6 +201,37 @@ JSON:`,
         ask_recommendation: 'show_recommendations',
         ask_famous: 'search_food',
         check_availability: 'search_food',
+        default: 'check_order_type',  // NEW: Check if it's a complex order type
+      },
+    },
+
+    // NEW: Check if this is a complex order type based on parser results
+    check_order_type: {
+      type: 'decision',
+      description: 'Route based on complex order parser results',
+      conditions: [
+        {
+          expression: 'context.group_context?.intent === "group_order" && context.group_context?.groupSize > 1',
+          event: 'group_order',
+        },
+        {
+          expression: 'context.group_context?.intent === "specific_restaurant" && context.group_context?.restaurant?.name',
+          event: 'specific_restaurant',
+        },
+        {
+          expression: 'context.group_context?.intent === "budget_order" && context.group_context?.budget?.amount',
+          event: 'budget_order',
+        },
+        {
+          expression: 'context.group_context?.intent === "time_constrained" && context.group_context?.timeConstraint?.isUrgent',
+          event: 'time_constrained',
+        },
+      ],
+      transitions: {
+        group_order: 'validate_group_order',
+        specific_restaurant: 'search_specific_restaurant',
+        budget_order: 'search_budget_options',
+        time_constrained: 'search_quick_delivery',
         default: 'search_food',
       },
     },
@@ -1476,6 +1518,10 @@ Ask what else they'd like to try.`,
       ],
       transitions: {},
     },
+
+    // ==================== ENHANCED CHOTU GROUP ORDER STATES ====================
+    // Merge enhanced states for group orders, budget orders, and value proposition
+    ...enhancedFoodOrderStates,
   },
 
   initialState: 'check_trigger',

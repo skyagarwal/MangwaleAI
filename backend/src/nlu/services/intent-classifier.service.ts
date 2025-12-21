@@ -65,7 +65,8 @@ export class IntentClassifierService {
         try {
           const availableIntents = [
             'greeting', 'track_order', 'parcel_booking', 'search_product', 
-            'cancel_order', 'help', 'complaint', 'unknown', 'order_food', 'login'
+            'cancel_order', 'help', 'complaint', 'unknown', 'order_food', 'login',
+            'group_order'  // NEW: Group order intent for Chotu
           ];
           const llmResult = await this.llmIntentExtractor.extractIntent(text, language, availableIntents);
           if (llmResult.intent && llmResult.confidence >= 0.5) {
@@ -116,6 +117,16 @@ export class IntentClassifierService {
       cancel_order: [/cancel.*order/i, /cancel/i],
       help: [/help/i, /support/i, /problem/i, /issue/i],
       complaint: [/complain/i, /refund/i, /wrong.*item/i, /damaged/i],
+      // NEW: Group order patterns for Chotu
+      group_order: [
+        /\d+\s*(?:log|logon|people|persons|banda|bandey)/i,    // "3 log", "4 people"
+        /hum\s*\d+\s*(?:log|hai|hain)/i,                       // "hum 4 log hai"
+        /(?:we\s*(?:are\s*)?|for\s*)\d+/i,                     // "we are 3", "for 4"
+        /(?:family|group|party)\s*(?:of\s*)?\d+/i,             // "family of 5"
+        /\d+\s*(?:ke?\s*andar|under|mein)\s*order/i,           // "1000 ke andar order"
+        /under\s*[₹rs]?\s*\d+/i,                               // "under 1000"
+        /budget\s*(?:hai|is|:)?\s*[₹rs]?\s*\d+/i,              // "budget 1000"
+      ],
       order_food: [/order.*food/i, /hungry/i, /eat/i, /pizza/i, /burger/i, /biryani/i, /paneer/i, /menu/i],
       login: [/login/i, /sign in/i, /auth/i, /register/i, /signup/i],
     };

@@ -93,6 +93,7 @@ export class LlmIntentExtractorService {
         'login': 'User wants to login, sign in, register, or check authentication status',
         'manage_address': 'User wants to add, view, or manage saved addresses ("add address", "show my addresses")',
         'service_inquiry': 'User asking about available services, vehicles, categories, or pricing ("what vehicles do you have", "show categories")',
+        'group_order': 'User ordering food for a GROUP with budget constraints. Examples: "3 log hain, 1000 mein order karo", "we are 4 people under 1500", "family dinner for 5", "hungry 3 banda hain"',
         'unknown': 'Message unclear or doesn\'t fit other intents'
       };
 
