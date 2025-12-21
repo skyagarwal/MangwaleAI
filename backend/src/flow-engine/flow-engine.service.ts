@@ -165,8 +165,9 @@ export class FlowEngineService {
         break;
       }
       
-      // Only auto-execute action states, not input/decision states
-      if (nextState.type !== 'action' && nextState.type !== 'decision') {
+      // Auto-execute action, decision, and end states
+      // End states need to run to send their onEntry success messages
+      if (nextState.type !== 'action' && nextState.type !== 'decision' && nextState.type !== 'end') {
         this.logger.debug(`⏸️ Stopping auto-execution at non-action state: ${result.nextState} (type: ${nextState.type})`);
         break;
       }
@@ -325,8 +326,9 @@ export class FlowEngineService {
         break;
       }
       
-      // Only auto-execute action states, not input/decision states
-      if (nextState.type !== 'action' && nextState.type !== 'decision') {
+      // Auto-execute action, decision, and end states
+      // End states need to run to send their onEntry success messages
+      if (nextState.type !== 'action' && nextState.type !== 'decision' && nextState.type !== 'end') {
         this.logger.debug(`⏸️ Stopping auto-execution at non-action state: ${result.nextState} (type: ${nextState.type})`);
         break;
       }
@@ -346,6 +348,16 @@ export class FlowEngineService {
     
     if (iterations >= maxIterations) {
       this.logger.error(`❌ Auto-execution loop limit reached! Last state: ${result.nextState}`);
+    }
+
+    // 6b. Execute final state if completed (to show success message)
+    if (result.completed && result.nextState) {
+      const finalState = flow.states[result.nextState];
+      if (finalState && finalState.type === 'end') {
+        this.logger.log(`🏁 Executing final state: ${result.nextState}`);
+        this.contextService.updateState(context, result.nextState);
+        await this.stateMachine.executeState(flow, context);
+      }
     }
 
     // 7. Update flow run
@@ -463,6 +475,23 @@ export class FlowEngineService {
       flowRunId: flowContext.flowRunId,
       currentState: flowContext.currentState || '',
     };
+  }
+
+  /**
+   * Check if flow is in a wait state (collecting user input)
+   * This is important to prevent interruptions during data collection
+   */
+  async isInWaitState(sessionId: string): Promise<boolean> {
+    const session = await this.sessionService.getSession(sessionId);
+    const flowContext = session?.data?.flowContext;
+    if (!flowContext?.flowRunId || !flowContext?.currentState) return false;
+    
+    // Get flow definition to check state type
+    const flow = await this.getFlowById(flowContext.flowId);
+    if (!flow) return false;
+    
+    const currentState = flow.states[flowContext.currentState];
+    return currentState?.type === 'wait';
   }
 
   /**

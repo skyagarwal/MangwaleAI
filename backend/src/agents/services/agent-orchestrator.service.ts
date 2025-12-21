@@ -608,9 +608,16 @@ export class AgentOrchestratorService {
             (currentFlowDef.module === 'ecommerce' && routing.intent === 'search_product')
         );
 
+        // 🔒 FIX: Never interrupt if flow is in a wait state (collecting user input like location, address, selection)
+        const isInWaitState = await this.flowEngineService.isInWaitState(phoneNumber);
+        if (isInWaitState) {
+          this.logger.log(`🔒 Flow is collecting data (wait state) - NOT interrupting for ${routing.intent}`);
+        }
+
         const isStrongIntent = strongIntents.includes(routing.intent) && 
                                routing.confidence > 0.8 && 
                                !isSameIntent && // Don't interrupt if it's the same intent type
+                               !isInWaitState && // 🔒 Never interrupt during data collection
                                (!isShortMessage || ['help', 'cancel', 'stop', 'menu', 'login'].includes(routing.intent));
         
         if (isStrongIntent) {
