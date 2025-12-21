@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
-import { Send, MapPin, ArrowLeft, Map, User, RotateCcw, Menu, X, Plus, MessageSquare, Settings, ChevronDown, LogOut } from 'lucide-react'
+import { Send, MapPin, ArrowLeft, Map, User, RotateCcw, Menu, X, Plus, MessageSquare, Settings, ChevronDown, LogOut, Mic } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import Script from 'next/script'
@@ -10,6 +10,7 @@ import { parseButtonsFromText, parseCardsFromText } from '@/lib/utils/helpers'
 import { ProductCard } from '@/components/chat/ProductCard'
 import { InlineLogin } from '@/components/chat/InlineLogin'
 import { VoiceInput } from '@/components/chat/VoiceInput'
+import { EnhancedVoiceInput } from '@/components/chat/EnhancedVoiceInput'
 import { TTSButton } from '@/components/chat/TTSButton'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -54,6 +55,8 @@ function ChatContent() {
   const [userProfile, setUserProfile] = useState<any>(null)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [useEnhancedVoice, setUseEnhancedVoice] = useState(true) // Enhanced voice mode with streaming
+  const [interimTranscript, setInterimTranscript] = useState('') // For showing interim results
 
   const wsClientRef = useRef<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
