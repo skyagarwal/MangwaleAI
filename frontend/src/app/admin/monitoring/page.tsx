@@ -77,20 +77,76 @@ export default function MonitoringDashboard() {
     try {
       setLoading(true);
 
+      // Fetch system metrics (new)
+      try {
+        const metricsRes = await fetch('/api/monitoring/metrics');
+        if (metricsRes.ok) {
+          const metricsData = await metricsRes.json();
+          setSystemMetrics(metricsData);
+        }
+      } catch (e) {
+        console.error('Error fetching system metrics:', e);
+      }
+
+      // Fetch service health (new)
+      try {
+        const servicesRes = await fetch('/api/monitoring/services');
+        if (servicesRes.ok) {
+          const servicesData = await servicesRes.json();
+          setServices(servicesData.services || []);
+        }
+      } catch (e) {
+        console.error('Error fetching service health:', e);
+      }
+
       // Fetch LLM costs
-      const costsRes = await fetch(`${API_URL}/monitoring/llm/costs`);
-      const costsData = await costsRes.json();
-      setLLMCosts(costsData);
+      try {
+        const costsRes = await fetch(`${API_URL}/monitoring/llm/costs`);
+        if (costsRes.ok) {
+          const costsData = await costsRes.json();
+          setLLMCosts(costsData);
+        }
+      } catch (e) {
+        console.error('Error fetching LLM costs:', e);
+      }
 
       // Fetch analytics summary
-      const analyticsRes = await fetch(`${API_URL}/monitoring/analytics/summary?timeRange=${timeRange}`);
-      const analyticsData = await analyticsRes.json();
-      setAnalytics(analyticsData);
+      try {
+        const analyticsRes = await fetch(`${API_URL}/monitoring/analytics/summary?timeRange=${timeRange}`);
+        if (analyticsRes.ok) {
+          const analyticsData = await analyticsRes.json();
+          setAnalytics(analyticsData);
+        }
+      } catch (e) {
+        console.error('Error fetching analytics:', e);
+      }
 
-      // Fetch alerts
-      const alertsRes = await fetch(`${API_URL}/monitoring/alerts`);
-      const alertsData = await alertsRes.json();
-      setAlerts(alertsData.alerts || []);
+      // Fetch alerts from both old and new endpoints
+      try {
+        const [oldAlertsRes, newAlertsRes] = await Promise.all([
+          fetch(`${API_URL}/monitoring/alerts`).catch(() => null),
+          fetch('/api/monitoring/alerts').catch(() => null),
+        ]);
+        
+        const combinedAlerts: Alert[] = [];
+        if (oldAlertsRes?.ok) {
+          const oldData = await oldAlertsRes.json();
+          combinedAlerts.push(...(oldData.alerts || []));
+        }
+        if (newAlertsRes?.ok) {
+          const newData = await newAlertsRes.json();
+          const formattedAlerts = (newData.alerts || []).map((a: any) => ({
+            id: a.id,
+            type: a.type,
+            message: a.message,
+            timestamp: new Date(a.timestamp).getTime(),
+          }));
+          combinedAlerts.push(...formattedAlerts);
+        }
+        setAlerts(combinedAlerts);
+      } catch (e) {
+        console.error('Error fetching alerts:', e);
+      }
 
       setLastUpdate(new Date());
     } catch (error) {
