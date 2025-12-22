@@ -175,6 +175,7 @@ export class ReviewIntelligenceService implements OnModuleInit {
     if (googleCredentials && googleProjectId) {
       try {
         // Dynamic import to avoid errors if package not installed
+        // @ts-ignore - Package may not be installed
         const { LanguageServiceClient } = await import('@google-cloud/language');
         this.googleNLClient = new LanguageServiceClient();
         this.useGoogleAPI = true;

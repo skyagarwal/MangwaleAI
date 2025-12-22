@@ -84,7 +84,7 @@ export const foodOrderFlow: FlowDefinition = {
     request_location: {
       type: 'wait',
       description: 'Ask user to share their location for better results',
-      actions: [
+      onEntry: [
         {
           id: 'ask_location',
           executor: 'response',
@@ -99,6 +99,7 @@ export const foodOrderFlow: FlowDefinition = {
           output: '_last_response',
         }
       ],
+      actions: [],
       transitions: {
         location_shared: 'understand_request',
         user_message: 'handle_location_response',
