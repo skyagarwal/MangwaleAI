@@ -318,15 +318,18 @@ export class AddressExtractionService {
    */
   async extractFromTextAddress(userInput: string): Promise<AddressExtractionResult> {
     // Skip if input is too short or looks like non-address text
-    if (userInput.length < 5) {
+    if (userInput.length < 3) {
       return { success: false, error: 'Input too short to be an address' };
     }
 
-    // Check if it looks like an address (has common address keywords)
-    const addressKeywords = /\b(street|road|avenue|lane|colony|nagar|society|building|house|flat|floor|landmark|near|opposite|behind|sector|block|plot|area|pin|pincode|zip|city|state|country|chowk|gali|marg)\b/i;
+    // Check if it looks like an address (has common address keywords OR known landmarks/areas)
+    const addressKeywords = /\b(street|road|avenue|lane|colony|nagar|society|building|house|flat|floor|landmark|near|opposite|behind|sector|block|plot|area|pin|pincode|zip|city|state|country|chowk|gali|marg|gate|station|bus stand|railway|metro|airport|terminal|market|bazaar|mall|complex|tower|square|circle|bridge|flyover)\b/i;
     
-    if (!addressKeywords.test(userInput)) {
-      // Doesn't look like a typical address, skip geocoding
+    // Known area/landmark names that should be geocoded even without keywords
+    const knownAreas = /\b(swargate|shivajinagar|kothrud|deccan|hadapsar|magarpatta|wakad|pimpri|chinchwad|baner|aundh|kalyani nagar|viman nagar|kharadi|hinjewadi|sadashiv peth|model colony|koregaon park|camp|fc road|jm road|mg road|pune|nashik|mumbai|bandra|andheri|thane|kalyan|dadar|kurla|borivali|malad|goregaon|versova|santacruz|chembur|powai|mulund|dombivli|ambernath|kalyan|virar|vasai|panvel|kharghar|vashi|nerul|belapur|navi mumbai)\b/i;
+    
+    if (!addressKeywords.test(userInput) && !knownAreas.test(userInput)) {
+      // Doesn't look like a typical address or known area, skip geocoding
       return { success: false, error: 'Input does not look like an address' };
     }
 
@@ -395,6 +398,136 @@ export class AddressExtractionService {
               metadata: {
                 raw_input: userInput,
                 city: 'Mumbai'
+              },
+            },
+          };
+      }
+      
+      // Pune areas
+      if (userInput.toLowerCase().includes('swargate')) {
+         return {
+            success: true,
+            address: {
+              address: 'Swargate, Pune, Maharashtra, India',
+              latitude: 18.5018,
+              longitude: 73.8636,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('shivajinagar') || userInput.toLowerCase().includes('shivaji nagar')) {
+         return {
+            success: true,
+            address: {
+              address: 'Shivajinagar, Pune, Maharashtra, India',
+              latitude: 18.5314,
+              longitude: 73.8446,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('deccan')) {
+         return {
+            success: true,
+            address: {
+              address: 'Deccan Gymkhana, Pune, Maharashtra, India',
+              latitude: 18.5196,
+              longitude: 73.8411,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('koregaon') || userInput.toLowerCase().includes('kp')) {
+         return {
+            success: true,
+            address: {
+              address: 'Koregaon Park, Pune, Maharashtra, India',
+              latitude: 18.5362,
+              longitude: 73.8938,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('hadapsar')) {
+         return {
+            success: true,
+            address: {
+              address: 'Hadapsar, Pune, Maharashtra, India',
+              latitude: 18.5089,
+              longitude: 73.9259,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('hinjewadi') || userInput.toLowerCase().includes('hinjawadi')) {
+         return {
+            success: true,
+            address: {
+              address: 'Hinjewadi, Pune, Maharashtra, India',
+              latitude: 18.5912,
+              longitude: 73.7380,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().includes('kothrud')) {
+         return {
+            success: true,
+            address: {
+              address: 'Kothrud, Pune, Maharashtra, India',
+              latitude: 18.5074,
+              longitude: 73.8077,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
+              },
+            },
+          };
+      }
+      if (userInput.toLowerCase().trim() === 'pune' || (userInput.toLowerCase().includes('pune') && userInput.length < 15)) {
+         return {
+            success: true,
+            address: {
+              address: 'Pune, Maharashtra, India',
+              latitude: 18.5204,
+              longitude: 73.8567,
+              source: 'text_geocoded',
+              confidence: 1.0,
+              metadata: {
+                raw_input: userInput,
+                city: 'Pune'
               },
             },
           };

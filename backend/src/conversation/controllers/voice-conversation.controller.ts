@@ -144,7 +144,12 @@ export class VoiceConversationController {
       );
 
       // Optimize response for TTS
-      const ttsResponse = this.optimizeForTTS(agentResponse.response, detectedLanguage);
+      // Handle response being either a string or an object with message property
+      const rawResponse = agentResponse.response as any;
+      const responseText = typeof rawResponse === 'string' 
+        ? rawResponse 
+        : rawResponse?.message || JSON.stringify(rawResponse);
+      const ttsResponse = this.optimizeForTTS(responseText, detectedLanguage);
       
       // Extract DTMF options if buttons present
       const dtmfOptions = this.extractDTMFOptions(agentResponse);
@@ -374,7 +379,10 @@ export class VoiceConversationController {
     }
 
     // Order success → happy
-    if (response.response?.includes('confirm') || response.response?.includes('success')) {
+    const respText = typeof response.response === 'string' 
+      ? response.response 
+      : (response.response as any)?.message || '';
+    if (respText.includes('confirm') || respText.includes('success')) {
       return 'happy';
     }
 

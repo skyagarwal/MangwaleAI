@@ -117,6 +117,22 @@ export class FlowContextService {
   }
 
   /**
+   * Resolve a simple {{path.to.value}} reference and return the raw value
+   * If the template is not a simple reference, returns undefined
+   */
+  private resolveSimpleReference(context: FlowContext, template: string): any {
+    // Check if this is a simple Handlebars reference like {{path.to.value}}
+    const match = template.match(/^\{\{([^}]+)\}\}$/);
+    if (!match) return undefined;
+
+    const path = match[1].trim();
+    // Use getByPath to support nested paths like selection_result.selectedItems
+    const value = this.getByPath(context, path);
+    this.logger.debug(`resolveSimpleReference: path=${path}, valueType=${typeof value}, isArray=${Array.isArray(value)}`);
+    return value;
+  }
+
+  /**
    * Interpolate object recursively
    */
   interpolateObject(
@@ -127,7 +143,17 @@ export class FlowContextService {
 
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === 'string') {
-        result[key] = this.interpolate(context, value);
+        // Try to resolve as a simple reference first (to preserve arrays/objects)
+        const resolved = this.resolveSimpleReference(context, value);
+        this.logger.debug(`interpolateObject key=${key}, value=${value?.slice(0, 50)}, resolved type=${typeof resolved}, isArray=${Array.isArray(resolved)}`);
+        if (resolved !== undefined && (Array.isArray(resolved) || typeof resolved === 'object')) {
+          // Preserve arrays and objects directly
+          result[key] = resolved;
+          this.logger.debug(`interpolateObject: preserved ${key} as ${Array.isArray(resolved) ? 'array' : 'object'}`);
+        } else {
+          // Fall back to string interpolation
+          result[key] = this.interpolate(context, value);
+        }
       } else if (Array.isArray(value)) {
         result[key] = value.map(item =>
           typeof item === 'string'

@@ -743,7 +743,40 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         checkout: 'check_auth_for_checkout',
         cancel: 'check_trigger',
         search_more: 'search_food',
+        search_items: 'search_requested_items', // User requested specific items not in results
         unclear: 'clarify_selection',
+        error: 'show_results',
+      },
+    },
+
+    // Search for specific items user requested
+    search_requested_items: {
+      type: 'action',
+      description: 'Search for specific items user requested that were not in current results',
+      actions: [
+        {
+          id: 'update_query',
+          executor: 'response',
+          config: {
+            save_to_context: {
+              'extracted_food.search_query': '{{selection_result.searchSuggestion}}',
+            },
+          },
+        },
+        {
+          id: 'search_items',
+          executor: 'search',
+          config: {
+            query: '{{selection_result.searchSuggestion}}',
+            type: 'food',
+            limit: 10,
+          },
+          output: 'search_results',
+        },
+      ],
+      transitions: {
+        items_found: 'show_results',
+        no_items: 'no_results',
         error: 'show_results',
       },
     },
@@ -1350,7 +1383,7 @@ Reply "confirm" to book the rider.`,
     show_order_summary: {
       type: 'wait',
       description: 'Display complete order summary',
-      actions: [
+      onEntry: [
         {
           id: 'summary_message',
           executor: 'llm',

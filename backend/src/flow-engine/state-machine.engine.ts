@@ -94,15 +94,20 @@ export class StateMachineEngine {
       if (shouldExecuteActions && state.actions) {
         const results = await this.executeActions(state.actions, context, currentStateName);
         // Check if any action explicitly triggered an event
-        const actionEvent = this.findTriggeredEvent(results);
+        // Pass state.type to allow different behavior for action vs wait states
+        const actionEvent = this.findTriggeredEvent(results, state.type);
+        this.logger.debug(`Action results events: ${JSON.stringify(results.map(r => ({ event: r.event, success: r.success })))}`);
+        this.logger.debug(`actionEvent from findTriggeredEvent: ${actionEvent}, state.type: ${state.type}, incoming event: ${event}`);
         // For wait states resuming with user input: preserve user_message event
-        // unless action returns a meaningful event (not 'default')
+        // unless action returns a meaningful event (not 'default' or 'success')
         if (state.type === 'wait' && event) {
           // Keep the incoming event (e.g., 'user_message') unless action explicitly triggers different
+          // Note: 'success' is no longer inferred for wait states
           triggeredEvent = (actionEvent && actionEvent !== 'default') ? actionEvent : event;
         } else {
           triggeredEvent = actionEvent || event;
         }
+        this.logger.debug(`Final triggeredEvent: ${triggeredEvent}`);
       } else if (state.type === 'decision' && state.conditions) {
         triggeredEvent = await this.evaluateConditions(state.conditions, context);
       } else if (state.type === 'end') {
@@ -408,13 +413,32 @@ export class StateMachineEngine {
 
   /**
    * Find if any action result triggered an event
+   * For action states, infer 'success' if all actions succeed without explicit events
+   * For wait states, only return explicit events (not inferred)
    */
-  private findTriggeredEvent(results: ActionExecutionResult[]): string | undefined {
+  private findTriggeredEvent(results: ActionExecutionResult[], stateType?: string): string | undefined {
+    // First, check for explicit events
     for (const result of results) {
       if (result.event) {
         return result.event;
       }
     }
+    
+    // Only infer 'success' for action states (not wait states)
+    // Wait states should preserve the incoming user_message event
+    if (stateType === 'action') {
+      const allSucceeded = results.length > 0 && results.every(r => r.success);
+      if (allSucceeded) {
+        return 'success';
+      }
+    }
+    
+    // Check if any action failed - always return 'error' for failures
+    const anyFailed = results.some(r => r.success === false);
+    if (anyFailed) {
+      return 'error';
+    }
+    
     return undefined;
   }
 

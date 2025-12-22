@@ -77,14 +77,19 @@ export class IntentRouterService {
       
       let finalIntent = classification.intent;
       
-      // If message contains multiple intents, check for action intent
-      if (this.hasMultipleIntents(context.message)) {
-        this.logger.debug(`🔍 Multiple intents detected in: "${context.message}"`);
+      // FALLBACK: If NLU returns unknown or low confidence, try pattern matching
+      const shouldTryPatterns = 
+        finalIntent === 'unknown' || 
+        classification.confidence < 0.6 || 
+        this.hasMultipleIntents(context.message);
+      
+      if (shouldTryPatterns) {
+        this.logger.debug(`🔍 Pattern matching fallback (intent: ${finalIntent}, confidence: ${classification.confidence})`);
         
         // Check if we have an action intent embedded in the message
         for (const actionIntent of actionIntents) {
           if (this.messageMatchesIntent(context.message, actionIntent)) {
-            this.logger.log(`✨ Prioritizing action intent "${actionIntent}" over "${finalIntent}"`);
+            this.logger.log(`✨ Pattern matched intent "${actionIntent}" over "${finalIntent}" (NLU confidence: ${classification.confidence})`);
             finalIntent = actionIntent;
             break;
           }
@@ -171,8 +176,8 @@ export class IntentRouterService {
     const intentPatterns: Record<string, RegExp[]> = {
       order_food: [/\border\b/i, /\bfood\b/i, /\bpizza\b/i, /\burger\b/i, /\bmenu\b/i, /\bhungry\b/i, /\beat\b/i],
       search_product: [/\bsearch\b/i, /\bfind\b/i, /\bproduct\b/i, /\bitem\b/i, /\bbuy\b/i, /\bshopping\b/i, /\bshop\b/i, /\bdukan\b/i, /\bstore\b/i, /\bgrocery\b/i, /\bkirana\b/i],
-      book_parcel: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i],
-      parcel_booking: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i],
+      book_parcel: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i, /\bpick\s*up\b/i, /\bdrop\b/i, /\bbike\b/i, /\bcoolie\b/i],
+      parcel_booking: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i, /\bpick\s*up\b/i, /\bdrop\b/i, /\bbike\b/i, /\bcoolie\b/i],
       track_order: [/\btrack\b/i, /\bstatus\b/i, /\bwhere.*order\b/i],
       cancel_order: [/\bcancel\b/i, /\bstop.*order\b/i],
       refund_request: [/\brefund\b/i, /\bmoney.*back\b/i],
