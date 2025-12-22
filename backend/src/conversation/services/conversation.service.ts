@@ -999,6 +999,51 @@ export class ConversationService {
           // Continue even if sync fails - user can still use the service
         }
         
+        // 🔄 RESUME PENDING INTENT (if user was trying to do something before auth)
+        const session = await this.sessionService.getSession(phoneNumber);
+        const pendingIntent = session?.data?.pendingIntent;
+        
+        if (pendingIntent) {
+          this.logger.log(`🔄 Resuming pending intent after auth: ${pendingIntent}`);
+          
+          // Clear pending data
+          await this.sessionService.saveSession(phoneNumber, {
+            data: {
+              ...session.data,
+              pendingAction: null,
+              pendingModule: null,
+              pendingIntent: null,
+              pendingEntities: null,
+            }
+          });
+          
+          // Send success message and trigger the pending intent flow
+          await this.messagingService.sendTextMessage(Platform.WHATSAPP,
+            phoneNumber,
+            `✅ Login successful${userName ? `, ${userName}` : ''}!\n\nResuming your request...`
+          );
+          
+          // Re-process with a message that matches the pending intent
+          // This will route through the flow engine
+          const intentToMessage: Record<string, string> = {
+            'parcel_booking': 'send parcel',
+            'order_food': 'order food',
+            'search_product': 'search products',
+            'track_order': 'track my order',
+          };
+          
+          const triggerMessage = intentToMessage[pendingIntent] || pendingIntent;
+          
+          // Call processMessage recursively with the trigger message
+          await this.processMessage(phoneNumber, {
+            text: { body: triggerMessage },
+            from: phoneNumber,
+            type: 'text',
+          });
+          
+          return;
+        }
+        
         await this.showModules(phoneNumber, { name: userName, phone: inputPhone });
       } else {
         await this.messagingService.sendTextMessage(Platform.WHATSAPP, 

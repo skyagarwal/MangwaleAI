@@ -52,28 +52,61 @@ export class ZoneExecutor implements ActionExecutor {
 
       this.logger.debug(`Validating zone for: (${latitude}, ${longitude})`);
 
-      // Simple zone validation (can be enhanced with actual zone service)
-      // For now, just check if coordinates are within reasonable bounds
-      const nashikBounds = {
-        minLat: 19.9,
-        maxLat: 20.1,
-        minLng: 73.6,
-        maxLng: 73.9,
-      };
+      // Zone validation for Maharashtra cities
+      // Define service areas for multiple cities
+      const serviceBounds = [
+        // Nashik City bounds
+        {
+          name: 'Nashik City',
+          zoneId: 4,
+          minLat: 19.9,
+          maxLat: 20.1,
+          minLng: 73.6,
+          maxLng: 73.9,
+        },
+        // Pune City bounds (expanded to cover Swargate, Koregaon Park, Hinjewadi, etc.)
+        {
+          name: 'Pune City',
+          zoneId: 5,
+          minLat: 18.4,
+          maxLat: 18.7,
+          minLng: 73.7,
+          maxLng: 74.0,
+        },
+        // Mumbai Metropolitan Region
+        {
+          name: 'Mumbai',
+          zoneId: 6,
+          minLat: 18.87,
+          maxLat: 19.3,
+          minLng: 72.7,
+          maxLng: 73.1,
+        },
+      ];
 
-      const isValid = 
-        latitude >= nashikBounds.minLat &&
-        latitude <= nashikBounds.maxLat &&
-        longitude >= nashikBounds.minLng &&
-        longitude <= nashikBounds.maxLng;
+      // Check if coordinates fall within any service zone
+      let matchedZone = null;
+      for (const zone of serviceBounds) {
+        if (
+          latitude >= zone.minLat &&
+          latitude <= zone.maxLat &&
+          longitude >= zone.minLng &&
+          longitude <= zone.maxLng
+        ) {
+          matchedZone = zone;
+          break;
+        }
+      }
+
+      const isValid = matchedZone !== null;
 
       const output = {
         valid: isValid,
-        zoneName: isValid ? 'Nashik City' : 'Outside service area',
-        zoneId: isValid ? 4 : null,
+        zoneName: matchedZone?.name || 'Outside service area',
+        zoneId: matchedZone?.zoneId || null,
       };
 
-      this.logger.debug(`Zone validation: ${isValid ? 'VALID' : 'INVALID'}`);
+      this.logger.debug(`Zone validation: ${isValid ? 'VALID' : 'INVALID'} - ${matchedZone?.name || 'No match'}`);
 
       const event = isValid ? 'zone_valid' : 'zone_invalid';
 

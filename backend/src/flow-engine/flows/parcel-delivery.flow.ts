@@ -36,30 +36,38 @@ export const parcelDeliveryFlow: FlowDefinition = {
 
     // Initial state - welcome and explain process
     init: {
-      type: 'action',
+      type: 'wait',  // Changed to 'wait' so we wait for user response
       description: 'Welcome user and explain coolie service',
-      actions: [
+      onEntry: [
         {
           id: 'welcome_message',
-          executor: 'llm',
+          executor: 'response',
           config: {
-            systemPrompt: 'You are Mangwale Coolie (Local Delivery). Be extremely brief.',
-            prompt: 'Say "I can help you send items anywhere in Nashik. Where should I pick it up from?"',
-            temperature: 0.5,
-            maxTokens: 60,
+            message: 'I can help you send items anywhere in Nashik. Where should I pick it up from?\n\n📍 Share your pickup location or type the address.',
           },
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
-        user_message: 'collect_pickup',
+        user_message: 'process_pickup_address',  // Go directly to processing
       },
     },
 
     // Collect pickup address
     collect_pickup: {
-      type: 'action',
+      type: 'wait',  // Changed from 'action' to 'wait' so we get user input
       description: 'Collect pickup address with saved addresses support',
+      onEntry: [
+        {
+          id: 'ask_pickup',
+          executor: 'response',
+          config: {
+            message: 'Where should we pick up the parcel from?\n\n📍 Share location or type your pickup address.',
+          },
+          output: '_last_response',
+        },
+      ],
       actions: [
         {
           id: 'get_pickup_address',
@@ -76,18 +84,31 @@ export const parcelDeliveryFlow: FlowDefinition = {
       ],
       transitions: {
         address_valid: 'validate_pickup_zone',
-        waiting_for_input: 'wait_for_pickup',
+        waiting_for_input: 'collect_pickup',  // Stay in this state if waiting
         error: 'pickup_error',
+        user_message: 'process_pickup_address',  // Process new user input
       },
     },
 
-    // Wait for pickup input
-    wait_for_pickup: {
-      type: 'wait',
-      description: 'Wait for user to provide pickup address',
-      actions: [],
+    // Process pickup address from user
+    process_pickup_address: {
+      type: 'action',
+      description: 'Process the pickup address provided by user',
+      actions: [
+        {
+          id: 'extract_pickup',
+          executor: 'address',
+          config: {
+            field: 'pickup_address',
+            input: '{{_user_message}}',
+          },
+          output: 'pickup_address',
+        },
+      ],
       transitions: {
-        user_message: 'collect_pickup',
+        address_valid: 'validate_pickup_zone',
+        waiting_for_input: 'collect_pickup',
+        error: 'pickup_error',
       },
     },
 
