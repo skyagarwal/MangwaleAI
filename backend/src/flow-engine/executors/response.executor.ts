@@ -28,6 +28,30 @@ export class ResponseExecutor implements ActionExecutor {
     }
   }
 
+  // Get value by dot-path from an object
+  private getValueByPath(obj: any, path: string): any {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  }
+
+  // Resolve a value - if it's a path reference like "selection_result.selectedItems", get the actual value
+  private resolveValue(value: string, data: any): any {
+    // If it looks like a simple Handlebars variable {{path.to.value}}, extract the path
+    const match = value.match(/^\{\{([^}]+)\}\}$/);
+    this.logger.debug(`resolveValue: value=${value}, match=${JSON.stringify(match)}`);
+    if (match) {
+      const path = match[1].trim();
+      const resolvedValue = this.getValueByPath(data, path);
+      this.logger.debug(`resolveValue: path=${path}, resolvedValue type=${typeof resolvedValue}, isArray=${Array.isArray(resolvedValue)}`);
+      // If the resolved value is an array or object, return it directly
+      if (resolvedValue !== undefined && (Array.isArray(resolvedValue) || typeof resolvedValue === 'object')) {
+        this.logger.debug(`Resolved ${path} to ${Array.isArray(resolvedValue) ? 'array' : 'object'} with ${Array.isArray(resolvedValue) ? resolvedValue.length : Object.keys(resolvedValue || {}).length} items`);
+        return resolvedValue;
+      }
+    }
+    // Otherwise, treat it as a regular Handlebars template and interpolate
+    return this.interpolate(value, data);
+  }
+
   async execute(
     config: Record<string, any>,
     context: FlowContext
@@ -45,9 +69,10 @@ export class ResponseExecutor implements ActionExecutor {
       // Handle saveToContext
       if (saveToContext) {
         for (const [key, value] of Object.entries(saveToContext)) {
-          const finalValue = typeof value === 'string' ? this.interpolate(value, context.data) : value;
+          // Use resolveValue to properly handle arrays and objects
+          const finalValue = typeof value === 'string' ? this.resolveValue(value, context.data) : value;
           context.data[key] = finalValue;
-          this.logger.debug(`Response executor: Saved to context ${key}=${finalValue}`);
+          this.logger.debug(`Response executor: Saved to context ${key}=${typeof finalValue === 'object' ? JSON.stringify(finalValue)?.slice(0, 100) : finalValue}`);
         }
         
         // If only saving context, return success immediately

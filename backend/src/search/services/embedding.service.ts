@@ -18,34 +18,48 @@ export class EmbeddingService {
     );
   }
 
-  async embed(text: string): Promise<number[]> {
+  /**
+   * Generate embedding using specified model
+   * @param text - Text to embed
+   * @param modelType - 'general' (384-dim) or 'food' (768-dim)
+   */
+  async embed(text: string, modelType: 'general' | 'food' = 'general'): Promise<number[]> {
     try {
       // Call embedding service (sentence-transformers)
-      // Service expects 'texts' array format
+      // Service expects 'texts' array format and 'model_type' parameter
       const response = await firstValueFrom(
         this.httpService.post(`${this.embeddingUrl}/embed`, {
           texts: [text], // Service expects array format
-          model: 'all-MiniLM-L6-v2', // Default model
+          model_type: modelType, // 'general' (384-dim) or 'food' (768-dim)
         }),
       );
 
-      // Response returns 'embeddings' array
-      return response.data.embeddings?.[0] || response.data.embedding || [];
+      const embedding = response.data.embeddings?.[0] || response.data.embedding || [];
+      this.logger.debug(`Generated ${embedding.length}-dim embedding using ${modelType} model`);
+      return embedding;
     } catch (error) {
       this.logger.error(`Embedding generation failed: ${error.message}`, error.stack);
       
-      // Fallback: return zero vector
-      return new Array(384).fill(0); // all-MiniLM-L6-v2 dimension
+      // Fallback: return zero vector of appropriate dimension
+      const dimension = modelType === 'food' ? 768 : 384;
+      return new Array(dimension).fill(0);
     }
   }
+  
+  /**
+   * Generate 768-dim food embedding (for food_items_v3 index)
+   */
+  async embedFood(text: string): Promise<number[]> {
+    return this.embed(text, 'food');
+  }
 
-  async embedBatch(texts: string[]): Promise<number[][]> {
+  async embedBatch(texts: string[], modelType: 'general' | 'food' = 'general'): Promise<number[][]> {
     try {
       // Use same /embed endpoint - it accepts array of texts
       const response = await firstValueFrom(
         this.httpService.post(`${this.embeddingUrl}/embed`, {
           texts,
-          model: 'all-MiniLM-L6-v2',
+          model_type: modelType,
         }),
       );
 
@@ -54,7 +68,8 @@ export class EmbeddingService {
       this.logger.error(`Batch embedding failed: ${error.message}`, error.stack);
       
       // Fallback: return zero vectors
-      return texts.map(() => new Array(384).fill(0));
+      const dimension = modelType === 'food' ? 768 : 384;
+      return texts.map(() => new Array(dimension).fill(0));
     }
   }
 }

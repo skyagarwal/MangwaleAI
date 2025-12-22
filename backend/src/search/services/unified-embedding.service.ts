@@ -114,6 +114,38 @@ export class UnifiedEmbeddingService {
   }
   
   /**
+   * Generate food-specific embedding (768 dimensions)
+   * Uses jonny9f/food_embeddings model which is optimized for food items
+   * This is required for searching food_items_v3 index which has item_vector (768-dim)
+   */
+  async embedFood(text: string): Promise<EmbeddingResult> {
+    const startTime = Date.now();
+    const languageDetection = this.detectLanguage(text);
+    
+    try {
+      // Use the dedicated food embedding model (768-dim)
+      const embedding = await this.embeddingService.embedFood(text);
+      
+      if (!embedding || embedding.length !== 768) {
+        this.logger.warn(`Food embedding returned ${embedding?.length || 0} dims, expected 768`);
+        // Fall back to IndicBERT (also 768-dim)
+        return this.embedWithIndicBERT(text, languageDetection.language, startTime);
+      }
+      
+      return {
+        embedding,
+        model: 'food-768' as any,
+        dimensions: 768,
+        language: languageDetection.language,
+        processingTimeMs: Date.now() - startTime,
+      };
+    } catch (error) {
+      this.logger.warn(`Food embedding failed, falling back to IndicBERT: ${error.message}`);
+      return this.embedWithIndicBERT(text, languageDetection.language, startTime);
+    }
+  }
+  
+  /**
    * Generate embeddings for multiple texts
    */
   async embedBatch(texts: string[]): Promise<EmbeddingResult[]> {

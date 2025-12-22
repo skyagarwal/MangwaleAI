@@ -258,16 +258,30 @@ export class SearchService {
   }
 
   private async semanticSearch(dto: SearchDto): Promise<SearchResultDto> {
-    // Use UnifiedEmbeddingService for language-aware embeddings
-    // Automatically uses IndicBERT for Hindi/Marathi, MiniLM for English
-    const embeddingResult = await this.unifiedEmbeddingService.embed(dto.query);
+    // Determine if we should use the food embedding model
+    // food_items_v3 index requires 768-dim food embeddings (jonny9f/food_embeddings model)
+    const isFoodIndex = dto.index?.includes('food_items');
     
-    this.logger.debug(
-      `Semantic search: query="${dto.query.substring(0, 30)}..." ` +
-      `model=${embeddingResult.model} lang=${embeddingResult.language} dim=${embeddingResult.dimensions}`
-    );
+    let embeddingResult;
+    if (isFoodIndex) {
+      // Use dedicated food embedding model (768-dim) for food searches
+      embeddingResult = await this.unifiedEmbeddingService.embedFood(dto.query);
+      this.logger.debug(
+        `Food semantic search: query="${dto.query.substring(0, 30)}..." ` +
+        `model=${embeddingResult.model} dim=${embeddingResult.dimensions}`
+      );
+    } else {
+      // Use language-aware embeddings for other searches
+      // Automatically uses IndicBERT for Hindi/Marathi, MiniLM for English
+      embeddingResult = await this.unifiedEmbeddingService.embed(dto.query);
+      this.logger.debug(
+        `Semantic search: query="${dto.query.substring(0, 30)}..." ` +
+        `model=${embeddingResult.model} lang=${embeddingResult.language} dim=${embeddingResult.dimensions}`
+      );
+    }
 
     // Use native embedding dimensions - OpenSearchService will pick the right field
+    // food_items_v3: item_vector (768-dim)
     // embedding_384 for MiniLM (English), embedding_768 for IndicBERT (Hindi)
     return this.openSearchService.vectorSearch(
       embeddingResult.embedding,

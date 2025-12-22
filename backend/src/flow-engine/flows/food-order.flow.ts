@@ -106,19 +106,52 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
-    // 📍 NEW: Handle location response (text input or skip)
+    // 📍 NEW: Handle location response (GPS coordinates, text input, or skip)
     handle_location_response: {
       type: 'decision',
-      description: 'Check if user skipped or provided area name',
+      description: 'Check if user shared GPS location, skipped, or provided area name',
       conditions: [
+        {
+          // Check if GPS coordinates were shared (location object in context)
+          expression: 'context.location?.lat && context.location?.lng',
+          event: 'location_shared',
+        },
+        {
+          // Check if _raw_location has coordinates (from message)
+          expression: 'context._raw_location?.lat && context._raw_location?.lng',
+          event: 'location_shared',
+        },
         {
           expression: 'context._user_message?.toLowerCase().includes("skip")',
           event: 'skipped',
         }
       ],
       transitions: {
-        skipped: 'understand_request', // Continue without location
+        location_shared: 'restore_original_query', // GPS coordinates received - restore query first
+        skipped: 'restore_original_query', // Continue without location
         default: 'extract_location_from_text',
+      },
+    },
+
+    // 🔄 NEW: Restore the original food query after location is collected
+    restore_original_query: {
+      type: 'action',
+      description: 'Restore the original food query to _user_message for NLU analysis',
+      actions: [
+        {
+          id: 'restore_query',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              _user_message: '{{original_food_query}}',
+            },
+            event: 'restored',
+          },
+        },
+      ],
+      transitions: {
+        restored: 'understand_request',
+        default: 'understand_request',
       },
     },
 
@@ -185,58 +218,113 @@ export const foodOrderFlow: FlowDefinition = {
           id: 'extract_food_details',
           executor: 'llm',
           config: {
-            systemPrompt: 'You are a JSON extractor. Extract food order details. Return JSON with keys: "item", "restaurant", "search_query". "search_query" is REQUIRED.',
+            systemPrompt: 'You are a JSON extractor. Extract food order details. Return JSON only, no explanations.',
             // 💾 Use original_food_query if available (preserved before location request), otherwise use current message
             prompt: `User message: "{{#if original_food_query}}{{original_food_query}}{{else}}{{user_message}}{{/if}}"
 
-Extract details into this JSON format:
+Extract into JSON:
 {
-  "item": "extracted food item or null",
-  "restaurant": "extracted restaurant name or null",
-  "search_query": "full search string"
+  "item": "primary food item(s) user wants",
+  "restaurant": "restaurant/cafe name if user mentioned one (e.g., 'from Inayat Cafe'), otherwise null",
+  "search_query": "ONLY the food items to search for, WITHOUT restaurant name"
 }
 
-If the user just says "I want food", search_query should be "food".
-If the user says "order pizza", search_query should be "pizza".
-If the user says "I want to order misal pav", search_query should be "misal pav".
+IMPORTANT: 
+- search_query should NOT include "from [restaurant]" - only food items!
+- Restaurant/cafe names like "Inayat Cafe", "McDonald's", "Dominos" go in "restaurant" field
+
+Examples:
+- "paneer tikka from inayat cafe" → {"item":"paneer tikka","restaurant":"Inayat Cafe","search_query":"paneer tikka"}
+- "pizza and burger from dominos" → {"item":"pizza, burger","restaurant":"Dominos","search_query":"pizza burger"}
+- "order biryani" → {"item":"biryani","restaurant":null,"search_query":"biryani"}
+- "paneer tikka, butter naan and chicken tikka from inayat cafe" → {"item":"paneer tikka, butter naan, chicken tikka","restaurant":"Inayat Cafe","search_query":"paneer tikka butter naan chicken tikka"}
 
 JSON:`,
             temperature: 0.1,
-            maxTokens: 100,
+            maxTokens: 150,
             parseJson: true
           },
           output: 'extracted_food',
         }
       ],
       transitions: {
-        success: 'search_food',
-        order_food: 'search_food',
-        search_product: 'search_food',
-        browse_menu: 'search_food',
-        browse_category: 'search_food',
+        success: 'check_restaurant_filter',
+        order_food: 'check_restaurant_filter',
+        search_product: 'check_restaurant_filter',
+        browse_menu: 'check_restaurant_filter',
+        browse_category: 'check_restaurant_filter',
         ask_recommendation: 'show_recommendations',
-        ask_famous: 'search_food',
-        check_availability: 'search_food',
-        default: 'search_food',
+        ask_famous: 'check_restaurant_filter',
+        check_availability: 'check_restaurant_filter',
+        default: 'check_restaurant_filter',
       },
     },
 
     // Search for food items
+    // Decision state to check if restaurant filter is needed
+    check_restaurant_filter: {
+      type: 'decision',
+      description: 'Check if user specified a restaurant to filter by',
+      conditions: [
+        {
+          // If restaurant was extracted, use filtered search
+          expression: 'context.extracted_food?.restaurant && context.extracted_food.restaurant !== "null" && context.extracted_food.restaurant !== null',
+          event: 'has_restaurant',
+        }
+      ],
+      transitions: {
+        has_restaurant: 'search_food_with_restaurant',
+        default: 'search_food',
+      },
+    },
+
+    // Search with restaurant filter
+    search_food_with_restaurant: {
+      type: 'action',
+      description: 'Search OpenSearch for food items filtered by restaurant name',
+      actions: [
+        {
+          id: 'search_items_restaurant',
+          executor: 'search',
+          config: {
+            index: 'food_items_v3',  // Use v3 index with 768-dim item_vector embeddings
+            query: '{{extracted_food.search_query}}',
+            size: 20,  // Get more results when filtering by restaurant
+            fields: ['name', 'category_name', 'description', 'store_name'],
+            formatForUi: true,
+            lat: '{{location.lat}}',
+            lng: '{{location.lng}}',
+            radius: '10km',  // 10km radius for nearby restaurants
+            filters: [
+              { field: 'store_name', operator: 'contains', value: '{{extracted_food.restaurant}}' }
+            ],
+          },
+          output: 'search_results',
+        },
+      ],
+      transitions: {
+        items_found: 'show_results',
+        no_items: 'search_food',  // Fallback to unfiltered search if restaurant not found
+        error: 'search_food',
+      },
+    },
+
     search_food: {
       type: 'action',
-      description: 'Search OpenSearch for food items',
+      description: 'Search OpenSearch for food items with vector embeddings',
       actions: [
         {
           id: 'search_items',
           executor: 'search',
           config: {
-            index: 'food_items',
+            index: 'food_items_v3',  // Use v3 index with 768-dim item_vector embeddings
             query: '{{extracted_food.search_query}}',
             size: 10,
-            fields: ['item_name', 'category', 'subcategory', 'description', 'restaurant_name'],
+            fields: ['name', 'category_name', 'description', 'store_name'],
             formatForUi: true,
             lat: '{{location.lat}}',
             lng: '{{location.lng}}',
+            radius: '10km',  // 10km radius for nearby restaurants
           },
           output: 'search_results',
         },
@@ -257,14 +345,15 @@ JSON:`,
           id: 'get_recommendations',
           executor: 'search',
           config: {
-            index: 'food_items',
+            index: 'food_items_v3',  // Use v3 index with embeddings
             query: 'popular best trending top rated',
             size: 10,
-            fields: ['item_name', 'category', 'subcategory', 'description', 'restaurant_name'],
+            fields: ['name', 'category_name', 'description', 'store_name'],
             formatForUi: true,
             sortBy: 'rating',
             lat: '{{location.lat}}',
             lng: '{{location.lng}}',
+            radius: '15km',  // 15km for recommendations (wider search)
           },
           output: 'recommendation_results',
         },
@@ -616,7 +705,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
     show_results: {
       type: 'wait',
       description: 'Display food items to user and wait for selection',
-      actions: [
+      onEntry: [
         {
           id: 'display_items',
           executor: 'response',
@@ -629,6 +718,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
         user_message: 'process_selection',
       },
@@ -679,24 +769,25 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
 
     // Add items to cart
     add_to_cart: {
-      type: 'wait', // Changed from 'action' to wait for user input after showing cart
+      type: 'wait', // Wait for user input after showing cart confirmation
       description: 'Add selected items to cart',
-      actions: [
+      onEntry: [
         {
-          id: 'update_cart',
-          executor: 'llm',
+          id: 'confirm_cart',
+          executor: 'response',
           config: {
-            systemPrompt: 'You are confirming items added to cart.',
-            prompt: `Added to cart: {{selection_result.items}}
-
-Respond with a brief confirmation showing what was added and the running total.
-Ask if they want to add more items or proceed to checkout.`,
-            temperature: 0.7,
-            maxTokens: 150,
+            message: `✅ Added to cart!\n\n🛒 {{selection_result.selectedItems.0.itemName}} x{{selection_result.selectedItems.0.quantity}} - ₹{{selection_result.totalPrice}}\n\nAdd more items or say "checkout" when ready.`,
+            responseType: 'cart_update',
+            // Save the selected item to cart AND selected_items (for distance/pricing)
+            saveToContext: {
+              cart_items: '{{selection_result.selectedItems}}',
+              selected_items: '{{selection_result.selectedItems}}',
+            },
           },
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
         user_message: 'process_selection',
       },
@@ -722,7 +813,7 @@ Ask if they want to add more items or proceed to checkout.`,
     request_phone: {
       type: 'wait',
       description: 'Ask user for phone number to authenticate',
-      actions: [
+      onEntry: [
         {
           id: 'ask_phone',
           executor: 'response',
@@ -733,6 +824,7 @@ Ask if they want to add more items or proceed to checkout.`,
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
         phone_provided: 'verify_otp',
         user_message: 'parse_phone',
@@ -786,6 +878,7 @@ Ask if they want to add more items or proceed to checkout.`,
         },
       ],
       transitions: {
+        success: 'verify_otp',
         otp_sent: 'verify_otp',
         error: 'otp_error',
       },
@@ -811,12 +904,15 @@ Ask if they want to add more items or proceed to checkout.`,
           executor: 'auth',
           config: {
             action: 'verify_otp',
+            otp: '{{_user_message}}',
           },
           output: 'otp_verify_result',
         },
       ],
       transitions: {
+        valid: 'collect_address',
         otp_valid: 'collect_address',
+        invalid: 'otp_retry',
         otp_invalid: 'otp_retry',
         error: 'otp_error',
       },
@@ -1006,6 +1102,20 @@ Ask if they want to:
     collect_address: {
       type: 'wait',
       description: 'Get delivery address',
+      onEntry: [
+        {
+          id: 'get_address_onentry',
+          executor: 'address',
+          config: {
+            field: 'delivery_address',
+            prompt: 'Where should we deliver your order?',
+            offerSaved: true,
+          },
+          output: 'delivery_address',
+          retryOnError: true,
+          maxRetries: 3,
+        },
+      ],
       actions: [
         {
           id: 'get_address',
@@ -1151,11 +1261,12 @@ Reply "confirm" to book the rider.`,
           id: 'get_distance',
           executor: 'distance',
           config: {
-            // TODO: Get restaurant coordinates from selected items
-            fromLatPath: 'selected_items.0.restaurant_lat',
-            fromLngPath: 'selected_items.0.restaurant_lng',
-            toLatPath: 'delivery_address.lat',
-            toLngPath: 'delivery_address.lng',
+            // Use storeLat/storeLng from cart_items (saved during add_to_cart)
+            fromLatPath: 'cart_items.0.storeLat',
+            fromLngPath: 'cart_items.0.storeLng',
+            // delivery_address uses latitude/longitude not lat/lng
+            toLatPath: 'delivery_address.latitude',
+            toLngPath: 'delivery_address.longitude',
           },
           output: 'distance',
           retryOnError: true,

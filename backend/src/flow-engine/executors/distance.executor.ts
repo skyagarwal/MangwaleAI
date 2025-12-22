@@ -35,8 +35,19 @@ export class DistanceExecutor implements ActionExecutor {
       ): { latitude: number; longitude: number } | null => {
         // Case 1: Explicit paths provided
         if (latPath && lngPath) {
+          this.logger.debug(`Getting coords from paths: latPath=${latPath}, lngPath=${lngPath}`);
+          this.logger.debug(`Context data keys: ${Object.keys(context.data || {})}`);
+          // Debug: log the intermediate values
+          const pathParts = latPath.split('.');
+          this.logger.debug(`Path parts: ${JSON.stringify(pathParts)}`);
+          let current = context.data;
+          for (const part of pathParts) {
+            current = current?.[part];
+            this.logger.debug(`After ${part}: ${JSON.stringify(current)?.slice(0, 100)}`);
+          }
           const lat = this.getValueByPath(context.data, latPath);
           const lng = this.getValueByPath(context.data, lngPath);
+          this.logger.debug(`Got lat=${lat}, lng=${lng} from paths`);
           if (lat && lng) return { latitude: parseFloat(lat), longitude: parseFloat(lng) };
         }
 

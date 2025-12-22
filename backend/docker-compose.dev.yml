@@ -41,6 +41,7 @@ services:
       - VLLM_URL=http://172.18.0.3:8002
       - OPENSEARCH_URL=http://172.25.0.2:9200
       - OPENSEARCH_NODE=http://172.25.0.2:9200
+      - EMBEDDING_SERVICE_URL=http://172.25.0.1:3101
       - OSRM_SERVICE_URL=http://mangwale_osrm:5000
       - PHP_BACKEND_URL=https://testing.mangwale.com
       - FRAPPE_BASE_URL=https://erp.sarvin.in

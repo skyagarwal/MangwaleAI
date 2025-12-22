@@ -103,30 +103,40 @@ export class OpenSearchService {
   ): Promise<SearchResultDto> {
     const startTime = Date.now();
 
-    // Determine which embedding field to use based on vector dimension
-    const embeddingField = this.getEmbeddingField(embedding.length);
-    this.logger.debug(`Vector search using field: ${embeddingField} (${embedding.length}-dim)`);
+    // Determine which embedding field to use based on vector dimension and index
+    const embeddingField = this.getEmbeddingField(embedding.length, index);
+    this.logger.debug(`Vector search using field: ${embeddingField} (${embedding.length}-dim) in index: ${index}`);
+
+    // Build filters for post-filtering
+    const builtFilters = this.buildFilters(filters);
+    if (builtFilters.length > 0) {
+      this.logger.log(`📋 Vector search filters: ${JSON.stringify(builtFilters)}`);
+    }
 
     try {
-      const searchBody = {
+      // Use post_filter for filtering KNN results
+      // This filters AFTER the KNN search, ensuring correct results
+      const searchBody: any = {
         query: {
-          bool: {
-            must: [
-              {
-                knn: {
-                  [embeddingField]: {
-                    vector: embedding,
-                    k: limit,
-                  },
-                },
-              },
-            ],
-            filter: this.buildFilters(filters),
+          knn: {
+            [embeddingField]: {
+              vector: embedding,
+              k: builtFilters.length > 0 ? limit * 5 : limit,  // Request more candidates when filtering
+            },
           },
         },
         from: offset,
         size: limit,
       };
+
+      // Add post_filter if filters exist (filters applied after KNN returns candidates)
+      if (builtFilters.length > 0) {
+        searchBody.post_filter = builtFilters.length === 1 
+          ? builtFilters[0] 
+          : { bool: { must: builtFilters } };
+      }
+
+      this.logger.debug(`OpenSearch KNN query with post_filter: k=${searchBody.query.knn[embeddingField].k}, filters=${JSON.stringify(searchBody.post_filter || 'none')}`);
 
       const response = await firstValueFrom(
         this.httpService.post(`${this.opensearchUrl}/${index}/_search`, searchBody, {
@@ -158,9 +168,18 @@ export class OpenSearchService {
   }
 
   /**
-   * Determine embedding field based on vector dimension
+   * Determine embedding field based on vector dimension and index
+   * Different indices may have different field names:
+   * - food_items_v3: item_vector (768-dim)
+   * - ecom_items_v3: item_vector (384-dim)
+   * - Other indices: embedding_384 or embedding_768
    */
-  private getEmbeddingField(dimension: number): string {
+  private getEmbeddingField(dimension: number, index?: string): string {
+    // Food and ecom items use 'item_vector' field
+    if (index && (index.includes('food_items_v3') || index.includes('ecom_items_v3'))) {
+      return 'item_vector';
+    }
+    
     switch (dimension) {
       case 384:
         return 'embedding_384';
@@ -204,7 +223,9 @@ export class OpenSearchService {
         case 'equals':
           return { term: { [filter.field]: filter.value } };
         case 'contains':
-          return { match: { [filter.field]: filter.value } };
+          // Use match_phrase for exact phrase matching (e.g., store names)
+          // This prevents partial word matches like "Cafe" matching all cafes
+          return { match_phrase: { [filter.field]: filter.value } };
         case 'range':
           return { range: { [filter.field]: filter.value } };
         case 'geo_distance':

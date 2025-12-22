@@ -45,10 +45,15 @@ export class SearchExecutor implements ActionExecutor {
         query = context.data[config.queryPath] || context.data._user_message;
       }
       const limit = config.limit || config.size || 10;
-      const filters = config.filters || [];
+      const filters = config.filters ? [...config.filters] : [];
       const lat = config.lat;
       const lng = config.lng;
       const radius = config.radius || '10km';
+
+      // Log filters for debugging
+      if (filters.length > 0) {
+        this.logger.log(`🔍 Search filters from config: ${JSON.stringify(filters)}`);
+      }
 
       if (!query) {
         return {
@@ -65,8 +70,10 @@ export class SearchExecutor implements ActionExecutor {
         
         if (!isNaN(parsedLat) && !isNaN(parsedLng)) {
           this.logger.log(`📍 Adding geo-distance filter: lat=${parsedLat}, lng=${parsedLng}, radius=${radius}`);
+          // Use 'store_location' for food_items_v3, 'location' for other indices
+          const geoField = index.includes('food_items') ? 'store_location' : 'location';
           filters.push({
-            field: 'location',
+            field: geoField,
             operator: 'geo_distance',
             value: { lat: parsedLat, lon: parsedLng, distance: radius }
           });
@@ -75,6 +82,8 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
 
+      // Log all filters before search
+      this.logger.log(`🔍 Final search filters: ${JSON.stringify(filters)}`);
       this.logger.debug(`Searching ${index} for: "${query}"`);
 
       // Perform search
@@ -128,6 +137,9 @@ export class SearchExecutor implements ActionExecutor {
           category: item.category || item.category_name,
           storeName: item.store_name,
           storeId: item.store_id,
+          // Store coordinates can be in store_location.lat/lon or store_latitude/store_longitude
+          storeLat: item.store_location?.lat || item.store_latitude,
+          storeLng: item.store_location?.lon || item.store_longitude,
           veg: item.veg,
           action: {
             label: 'Add +',

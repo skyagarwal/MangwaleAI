@@ -7,6 +7,8 @@ interface CardItem {
   price: string | number;
   storeId?: number;
   storeName?: string;
+  storeLat?: number;
+  storeLng?: number;
   [key: string]: any;
 }
 
@@ -19,6 +21,8 @@ interface SelectionResult {
     price: number;
     storeId?: number;
     storeName?: string;
+    storeLat?: number;
+    storeLng?: number;
   }>;
   action: 'add_to_cart' | 'search_more' | 'checkout' | 'cancel' | 'unknown';
   totalPrice: number;
@@ -178,6 +182,8 @@ export class SelectionExecutor implements ActionExecutor {
           price: this.parsePrice(card.price),
           storeId: card.storeId,
           storeName: card.storeName,
+          storeLat: card.storeLat,
+          storeLng: card.storeLng,
         };
       }
     }
@@ -203,6 +209,8 @@ export class SelectionExecutor implements ActionExecutor {
           price: this.parsePrice(card.price),
           storeId: card.storeId,
           storeName: card.storeName,
+          storeLat: card.storeLat,
+          storeLng: card.storeLng,
         });
       }
       return selections;
@@ -225,6 +233,8 @@ export class SelectionExecutor implements ActionExecutor {
               price: this.parsePrice(card.price),
               storeId: card.storeId,
               storeName: card.storeName,
+              storeLat: card.storeLat,
+              storeLng: card.storeLng,
             });
           }
         }
@@ -247,6 +257,8 @@ export class SelectionExecutor implements ActionExecutor {
           price: this.parsePrice(card.price),
           storeId: card.storeId,
           storeName: card.storeName,
+          storeLat: card.storeLat,
+          storeLng: card.storeLng,
         });
       }
       return selections;
@@ -274,6 +286,8 @@ export class SelectionExecutor implements ActionExecutor {
           price: this.parsePrice(card.price),
           storeId: card.storeId,
           storeName: card.storeName,
+          storeLat: card.storeLat,
+          storeLng: card.storeLng,
         };
       }
     }
@@ -313,6 +327,8 @@ export class SelectionExecutor implements ActionExecutor {
         price: this.parsePrice(card.price),
         storeId: card.storeId,
         storeName: card.storeName,
+        storeLat: card.storeLat,
+        storeLng: card.storeLng,
       };
     }
 

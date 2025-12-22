@@ -64,6 +64,16 @@ export class ChatWebController {
         this.logger.log(`✅ Set platform=web for session ${webRecipientId}`);
       }
       
+      // 📍 SAVE GPS LOCATION TO SESSION IF PROVIDED
+      // This ensures flow-engine can access location data from session
+      if (location?.lat && location?.lng) {
+        await this.sessionService.setData(webRecipientId, {
+          location: { lat: location.lat, lng: location.lng },
+          lastLocationUpdate: Date.now(),
+        });
+        this.logger.log(`📍 Saved GPS location to session: (${location.lat}, ${location.lng})`);
+      }
+      
       // Store user message
       this.addMessage(webRecipientId, type === 'location' ? `Location: ${location?.lat}, ${location?.lng}` : (text || ''), 'user');
 
