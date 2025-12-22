@@ -94,7 +94,15 @@ export class StateMachineEngine {
       if (shouldExecuteActions && state.actions) {
         const results = await this.executeActions(state.actions, context, currentStateName);
         // Check if any action explicitly triggered an event
-        triggeredEvent = this.findTriggeredEvent(results) || event;
+        const actionEvent = this.findTriggeredEvent(results);
+        // For wait states resuming with user input: preserve user_message event
+        // unless action returns a meaningful event (not 'default')
+        if (state.type === 'wait' && event) {
+          // Keep the incoming event (e.g., 'user_message') unless action explicitly triggers different
+          triggeredEvent = (actionEvent && actionEvent !== 'default') ? actionEvent : event;
+        } else {
+          triggeredEvent = actionEvent || event;
+        }
       } else if (state.type === 'decision' && state.conditions) {
         triggeredEvent = await this.evaluateConditions(state.conditions, context);
       } else if (state.type === 'end') {

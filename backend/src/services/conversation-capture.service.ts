@@ -81,9 +81,9 @@ export class ConversationCaptureService {
           nluLanguage: data.messageLanguage || 'en',
           
           nluIntent: data.nluIntent || null,
-          nluConfidence: data.nluConfidence ? new Prisma.Decimal(data.nluConfidence) : null,
+          nluConfidence: data.nluConfidence ?? null,
           nluProvider: data.nluProvider || null,
-          nluEntities: data.nluEntities || Prisma.JsonNull,
+          nluEntities: data.nluEntities ?? null,
           nluTone: data.nluTone || null,
           nluProcessingTimeMs: data.nluProcessingTimeMs || null,
           
@@ -95,7 +95,7 @@ export class ConversationCaptureService {
           responseTimeMs: data.responseTimeMs || null,
           responseSuccess: data.responseSuccess !== undefined ? data.responseSuccess : true,
           
-          conversationContext: data.conversationContext || Prisma.JsonNull,
+          conversationContext: data.conversationContext ?? null,
           
           isTrainingCandidate: isTrainingCandidate,
           trainingConfidenceBucket: confidenceBucket,

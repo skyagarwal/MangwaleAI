@@ -103,8 +103,8 @@ export class AuthController {
     this.logger.log(`✅ OTP verified for ${normalizedPhone}`);
     this.logger.debug(`📦 Response data: ${JSON.stringify(result.data)}`);
 
-    // Extract user data from PHP response
-    const phpData = result.data || {};
+    // Extract user data from PHP response (type as any to access PHP response fields)
+    const phpData: any = result.data || {};
     
     // is_personal_info at root level for frontend compatibility
     // 0 = new user needs to complete registration

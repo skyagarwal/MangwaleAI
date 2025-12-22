@@ -110,13 +110,26 @@ export class FlowEngineService {
       this.logger.log(`📍 Injected location into flow context: ${JSON.stringify(session.data.location)}`);
     }
 
-    // 🏠 INJECT USER DATA FROM SESSION
+    // 🏠 INJECT USER DATA FROM SESSION (INCLUDING AUTH)
+    // CRITICAL: Load ALL auth-related data so flows can check authentication properly
     if (session?.data?.user_id) {
       context.data.user_id = session.data.user_id;
       context.data.user_authenticated = true;
+      context.data.authenticated = true; // Also set this for flows that check context.authenticated
+    }
+    if (session?.data?.authenticated) {
+      context.data.authenticated = session.data.authenticated;
+      context.data.user_authenticated = session.data.authenticated;
+    }
+    if (session?.data?.auth_token) {
+      context.data.auth_token = session.data.auth_token;
+      this.logger.log(`🔐 Injected auth_token into flow context`);
     }
     if (session?.data?.user_name || session?.data?.userName) {
       context.data.user_name = session.data.user_name || session.data.userName;
+    }
+    if (session?.data?.phone_number || session?.data?.user_phone) {
+      context.data.phone_number = session.data.phone_number || session.data.user_phone;
     }
 
     // Ensure _user_message is set (critical for NLU executors)
@@ -281,6 +294,21 @@ export class FlowEngineService {
     if (session?.data?.location) {
       context.data.location = session.data.location;
       context.data.lastLocationUpdate = session.data.lastLocationUpdate;
+    }
+    
+    // 🔐 REFRESH AUTH DATA FROM SESSION (critical for flows that check authentication)
+    if (session?.data?.authenticated) {
+      context.data.authenticated = session.data.authenticated;
+      context.data.user_authenticated = session.data.authenticated;
+    }
+    if (session?.data?.auth_token) {
+      context.data.auth_token = session.data.auth_token;
+    }
+    if (session?.data?.user_id) {
+      context.data.user_id = session.data.user_id;
+    }
+    if (session?.data?.phone_number || session?.data?.user_phone) {
+      context.data.phone_number = session.data.phone_number || session.data.user_phone;
     }
     
     // Store user message in context

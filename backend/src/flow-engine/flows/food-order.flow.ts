@@ -36,12 +36,34 @@ export const foodOrderFlow: FlowDefinition = {
         }
       ],
       transitions: {
-        has_query: 'check_location',
+        has_query: 'save_original_query',
         default: 'greet_user',
       },
     },
 
-    // 📍 NEW: Check if we have user location before searching
+    // 💾 NEW: Save the original query before asking for location
+    save_original_query: {
+      type: 'action',
+      description: 'Save the original user query so we can use it after location is collected',
+      actions: [
+        {
+          id: 'save_query',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              original_food_query: '{{_user_message}}',
+            },
+            event: 'saved',
+          },
+        },
+      ],
+      transitions: {
+        saved: 'check_location',
+        default: 'check_location',
+      },
+    },
+
+    // 📍 Check if we have user location before searching
     check_location: {
       type: 'decision',
       description: 'Check if user location is available for geo-filtered search',
@@ -117,7 +139,9 @@ export const foodOrderFlow: FlowDefinition = {
       ],
       transitions: {
         address_valid: 'understand_request',
+        waiting_for_input: 'request_location', // Go back to request if address not found
         error: 'understand_request', // Continue even if extraction fails
+        default: 'understand_request', // Fallback
       },
     },
 
@@ -161,7 +185,8 @@ export const foodOrderFlow: FlowDefinition = {
           executor: 'llm',
           config: {
             systemPrompt: 'You are a JSON extractor. Extract food order details. Return JSON with keys: "item", "restaurant", "search_query". "search_query" is REQUIRED.',
-            prompt: `User message: "{{user_message}}"
+            // 💾 Use original_food_query if available (preserved before location request), otherwise use current message
+            prompt: `User message: "{{#if original_food_query}}{{original_food_query}}{{else}}{{user_message}}{{/if}}"
 
 Extract details into this JSON format:
 {
@@ -172,6 +197,7 @@ Extract details into this JSON format:
 
 If the user just says "I want food", search_query should be "food".
 If the user says "order pizza", search_query should be "pizza".
+If the user says "I want to order misal pav", search_query should be "misal pav".
 
 JSON:`,
             temperature: 0.1,
@@ -633,7 +659,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
 
     // Clarify unclear selection
     clarify_selection: {
-      type: 'action',
+      type: 'wait', // Changed from 'action' to wait for user input
       description: 'Ask user to clarify their selection',
       actions: [
         {
@@ -652,7 +678,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
 
     // Add items to cart
     add_to_cart: {
-      type: 'action',
+      type: 'wait', // Changed from 'action' to wait for user input after showing cart
       description: 'Add selected items to cart',
       actions: [
         {

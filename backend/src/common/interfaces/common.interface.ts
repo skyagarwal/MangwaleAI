@@ -13,6 +13,7 @@ export interface User {
   isPhoneVerified?: boolean;
   isEmailVerified?: boolean;
   hasPersonalInfo?: boolean;
+  image?: string | null;
 }
 
 /**
