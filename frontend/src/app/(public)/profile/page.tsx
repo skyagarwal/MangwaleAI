@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   User,
   Mail,
@@ -17,8 +18,12 @@ import {
   Plus,
   Edit,
   Trash2,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react'
 import Link from 'next/link'
+import { api } from '@/lib/api'
+import { useAuthStore } from '@/store/authStore'
 
 interface Address {
   id: string
@@ -38,81 +43,195 @@ interface PaymentMethod {
   isDefault: boolean
 }
 
-const MOCK_USER = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  phone: '+91 98765 43210',
-  avatar: '👤',
-  joinedDate: '2024-01-15',
-  walletBalance: 1250,
+interface UserProfile {
+  name: string
+  email: string
+  phone: string
+  avatar: string
+  joinedDate: string
+  walletBalance: number
 }
 
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: '1',
-    type: 'home',
-    label: 'Home',
-    address: '123 Main Street, Koramangala, Bangalore 560001',
-    lat: 12.9352,
-    lng: 77.6245,
-    isDefault: true,
-  },
-  {
-    id: '2',
-    type: 'work',
-    label: 'Office',
-    address: '456 Tech Park, Whitefield, Bangalore 560066',
-    lat: 12.9698,
-    lng: 77.7500,
-    isDefault: false,
-  },
-]
-
-const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
-  {
-    id: '1',
-    type: 'card',
-    label: 'HDFC Credit Card',
-    details: '**** **** **** 4321',
-    isDefault: true,
-  },
-  {
-    id: '2',
-    type: 'upi',
-    label: 'Google Pay',
-    details: 'john@oksbi',
-    isDefault: false,
-  },
-  {
-    id: '3',
-    type: 'wallet',
-    label: 'Mangwale Wallet',
-    details: `₹${MOCK_USER.walletBalance} available`,
-    isDefault: false,
-  },
-]
-
 export default function ProfilePage() {
-  const [addresses] = useState(MOCK_ADDRESSES)
-  const [paymentMethods] = useState(MOCK_PAYMENT_METHODS)
+  const router = useRouter()
+  const { user, isAuthenticated, clearAuth, _hasHydrated } = useAuthStore()
+  
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'account' | 'addresses' | 'payments' | 'settings'>(
     'account'
   )
 
+  const loadProfileData = useCallback(async () => {
+    if (!isAuthenticated || !user) {
+      // Use auth store data for basic profile
+      if (user) {
+        setProfile({
+          name: `${user.f_name || ''} ${user.l_name || ''}`.trim() || 'User',
+          email: user.email || '',
+          phone: user.phone || '',
+          avatar: user.image || '👤',
+          joinedDate: new Date().toISOString(),
+          walletBalance: 0,
+        })
+      }
+      setLoading(false)
+      return
+    }
+
+    try {
+      setError(null)
+      
+      // Load profile from API
+      const profileRes = await api.auth.getProfile().catch(() => null)
+      if (profileRes?.data) {
+        const userData = profileRes.data
+        setProfile({
+          name: `${userData.f_name || ''} ${userData.l_name || ''}`.trim() || 'User',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          avatar: userData.image || '👤',
+          joinedDate: userData.created_at || new Date().toISOString(),
+          walletBalance: parseFloat(userData.wallet_balance) || 0,
+        })
+      } else if (user) {
+        // Fallback to auth store data
+        setProfile({
+          name: `${user.f_name || ''} ${user.l_name || ''}`.trim() || 'User',
+          email: user.email || '',
+          phone: user.phone || '',
+          avatar: '👤',
+          joinedDate: new Date().toISOString(),
+          walletBalance: 0,
+        })
+      }
+
+      // Load addresses
+      const addressRes = await api.addresses.list().catch(() => null)
+      if (addressRes?.data && Array.isArray(addressRes.data)) {
+        const transformedAddresses: Address[] = addressRes.data.map((addr: any) => ({
+          id: addr.id?.toString() || `addr-${Date.now()}`,
+          type: addr.address_type || 'other',
+          label: addr.address_type === 'home' ? 'Home' : addr.address_type === 'work' ? 'Office' : 'Other',
+          address: addr.address || '',
+          lat: parseFloat(addr.latitude) || 0,
+          lng: parseFloat(addr.longitude) || 0,
+          isDefault: addr.is_default || false,
+        }))
+        setAddresses(transformedAddresses)
+      }
+
+      // Load payment methods (if endpoint exists)
+      const paymentRes = await api.payments.methods().catch(() => null)
+      if (paymentRes?.data && Array.isArray(paymentRes.data)) {
+        const transformedPayments: PaymentMethod[] = paymentRes.data.map((pm: any) => ({
+          id: pm.id?.toString() || `pm-${Date.now()}`,
+          type: pm.type || 'card',
+          label: pm.name || pm.label || 'Payment Method',
+          details: pm.details || pm.last_four ? `**** ${pm.last_four}` : '',
+          isDefault: pm.is_default || false,
+        }))
+        setPaymentMethods(transformedPayments)
+      } else {
+        // Default wallet payment method
+        setPaymentMethods([{
+          id: 'wallet',
+          type: 'wallet',
+          label: 'Mangwale Wallet',
+          details: `₹${profile?.walletBalance || 0} available`,
+          isDefault: true,
+        }])
+      }
+
+    } catch (err) {
+      console.error('Failed to load profile:', err)
+      setError('Failed to load profile data')
+    } finally {
+      setLoading(false)
+    }
+  }, [isAuthenticated, user])
+
+  useEffect(() => {
+    if (_hasHydrated) {
+      loadProfileData()
+    }
+  }, [_hasHydrated, loadProfileData])
+
+  const handleLogout = () => {
+    clearAuth()
+    router.push('/login')
+  }
+
+  const handleDeleteAddress = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this address?')) return
+    
+    try {
+      await api.addresses.delete(id)
+      setAddresses(prev => prev.filter(a => a.id !== id))
+    } catch (err) {
+      console.error('Failed to delete address:', err)
+      alert('Failed to delete address')
+    }
+  }
+
+  // Redirect to login if not authenticated
+  if (_hasHydrated && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Please Log In</h2>
+          <p className="text-gray-600 mb-6">You need to be logged in to view your profile</p>
+          <Link
+            href="/login"
+            className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            Log In
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-red-50 border-b border-red-200 px-6 py-3">
+          <div className="max-w-6xl mx-auto flex items-center gap-2 text-red-700">
+            <AlertCircle className="w-5 h-5" />
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-4xl">
-              {MOCK_USER.avatar}
+              {profile?.avatar || '👤'}
             </div>
             <div>
-              <h1 className="text-3xl font-bold">{MOCK_USER.name}</h1>
-              <p className="text-blue-100 mt-1">{MOCK_USER.email}</p>
-              <p className="text-blue-100 text-sm mt-1">
-                Member since {new Date(MOCK_USER.joinedDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              <h1 className="text-3xl font-bold">{profile?.name || 'User'}</h1>
+              <p className="text-orange-100 mt-1">{profile?.email || 'No email'}</p>
+              <p className="text-orange-100 text-sm mt-1">
+                {profile?.phone || 'No phone'} • Member since {profile?.joinedDate ? new Date(profile.joinedDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently'}
               </p>
             </div>
           </div>
@@ -122,13 +241,13 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3">
               <Wallet className="w-8 h-8" />
               <div>
-                <p className="text-sm text-blue-100">Wallet Balance</p>
-                <p className="text-2xl font-bold">₹{MOCK_USER.walletBalance}</p>
+                <p className="text-sm text-orange-100">Wallet Balance</p>
+                <p className="text-2xl font-bold">₹{profile?.walletBalance || 0}</p>
               </div>
             </div>
-            <button className="px-4 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            <Link href="/wallet" className="px-4 py-2 bg-white text-orange-600 rounded-lg font-medium hover:bg-orange-50 transition-colors">
               Add Money
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -141,7 +260,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('account')}
               className={`py-4 border-b-2 font-medium transition-colors ${
                 activeTab === 'account'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -151,7 +270,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('addresses')}
               className={`py-4 border-b-2 font-medium transition-colors ${
                 activeTab === 'addresses'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -161,7 +280,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('payments')}
               className={`py-4 border-b-2 font-medium transition-colors ${
                 activeTab === 'payments'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -171,7 +290,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('settings')}
               className={`py-4 border-b-2 font-medium transition-colors ${
                 activeTab === 'settings'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -193,9 +312,9 @@ export default function ProfilePage() {
                   <User className="w-5 h-5 text-gray-400" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-500">Full Name</p>
-                    <p className="font-medium text-gray-900">{MOCK_USER.name}</p>
+                    <p className="font-medium text-gray-900">{profile?.name || 'Not set'}</p>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-700">
+                  <button className="text-orange-600 hover:text-orange-700">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
@@ -203,9 +322,9 @@ export default function ProfilePage() {
                   <Mail className="w-5 h-5 text-gray-400" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-500">Email</p>
-                    <p className="font-medium text-gray-900">{MOCK_USER.email}</p>
+                    <p className="font-medium text-gray-900">{profile?.email || 'Not set'}</p>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-700">
+                  <button className="text-orange-600 hover:text-orange-700">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
@@ -213,9 +332,9 @@ export default function ProfilePage() {
                   <Phone className="w-5 h-5 text-gray-400" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-500">Phone</p>
-                    <p className="font-medium text-gray-900">{MOCK_USER.phone}</p>
+                    <p className="font-medium text-gray-900">{profile?.phone || 'Not set'}</p>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-700">
+                  <button className="text-orange-600 hover:text-orange-700">
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
@@ -299,16 +418,29 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100">
+                    <button className="p-2 text-gray-400 hover:text-orange-600 rounded-lg hover:bg-gray-100">
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100">
+                    <button 
+                      onClick={() => handleDeleteAddress(address.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
             ))}
+
+            {addresses.length === 0 && (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No addresses saved yet</p>
+                <button className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                  Add Your First Address
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -317,7 +449,7 @@ export default function ProfilePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">Payment Methods</h2>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
                 <Plus className="w-4 h-4" />
                 Add Method
               </button>
@@ -348,7 +480,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100">
+                    <button className="p-2 text-gray-400 hover:text-orange-600 rounded-lg hover:bg-gray-100">
                       <Edit className="w-4 h-4" />
                     </button>
                     {method.type !== 'wallet' && (
@@ -409,7 +541,10 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            <button className="w-full bg-white rounded-lg shadow-sm border border-red-200 p-4 flex items-center justify-center gap-2 text-red-600 font-medium hover:bg-red-50 transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="w-full bg-white rounded-lg shadow-sm border border-red-200 p-4 flex items-center justify-center gap-2 text-red-600 font-medium hover:bg-red-50 transition-colors"
+            >
               <LogOut className="w-5 h-5" />
               Logout
             </button>

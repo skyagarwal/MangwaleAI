@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { Package, Clock, MapPin, Phone, ChevronDown, ChevronRight, Check } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Package, Clock, MapPin, Phone, ChevronDown, ChevronRight, Check, Loader2, RefreshCw, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { api } from '@/lib/api'
+import { useAuthStore } from '@/store/authStore'
 
 interface Order {
   id: string
@@ -32,92 +34,86 @@ interface Order {
   }
 }
 
-const MOCK_ORDERS: Order[] = [
+const MODULE_ICONS: Record<string, string> = {
+  food: '🍔',
+  ecom: '🛒',
+  parcel: '📦',
+  ride: '🚗',
+  rooms: '🏨',
+  movies: '🎬',
+  health: '🏥',
+  services: '🔧',
+}
+
+const MODULE_TYPES: Record<string, string> = {
+  food: 'Food Delivery',
+  ecom: 'Shopping',
+  parcel: 'Parcel Delivery',
+  ride: 'Ride Booking',
+  rooms: 'Hotel Booking',
+  movies: 'Movie Ticket',
+  health: 'Healthcare',
+  services: 'Service Booking',
+}
+
+// Transform backend order to frontend format
+const transformOrder = (backendOrder: any): Order => {
+  const module = backendOrder.order_type || backendOrder.module || 'food'
+  return {
+    id: backendOrder.id?.toString() || `ORD-${Date.now()}`,
+    module,
+    moduleIcon: MODULE_ICONS[module] || '📦',
+    type: MODULE_TYPES[module] || 'Order',
+    status: backendOrder.order_status || 'pending',
+    items: backendOrder.details?.map((item: any) => ({
+      name: item.food_details?.name || item.product_details?.name || item.name || 'Item',
+      quantity: item.quantity || 1,
+      price: parseFloat(item.price) || 0,
+    })) || [],
+    total: parseFloat(backendOrder.order_amount) || 0,
+    createdAt: backendOrder.created_at || new Date().toISOString(),
+    estimatedDelivery: backendOrder.expected_delivery_time || backendOrder.schedule_at,
+    deliveryAddress: backendOrder.delivery_address?.address || backendOrder.delivery_address,
+    tracking: backendOrder.tracking || generateTrackingSteps(backendOrder.order_status),
+    contact: backendOrder.delivery_man ? {
+      name: `${backendOrder.delivery_man.f_name || ''} ${backendOrder.delivery_man.l_name || ''}`.trim() || 'Delivery Partner',
+      phone: backendOrder.delivery_man.phone || '',
+    } : undefined,
+  }
+}
+
+// Generate tracking steps based on status
+const generateTrackingSteps = (status: string) => {
+  const steps = [
+    { label: 'Order placed', completed: true },
+    { label: 'Confirmed', completed: ['confirmed', 'preparing', 'on_the_way', 'delivered'].includes(status) },
+    { label: 'Preparing', completed: ['preparing', 'on_the_way', 'delivered'].includes(status) },
+    { label: 'On the way', completed: ['on_the_way', 'delivered'].includes(status) },
+    { label: 'Delivered', completed: status === 'delivered' },
+  ]
+  return { steps }
+}
+
+// Fallback mock data for demo/development
+const FALLBACK_ORDERS: Order[] = [
   {
-    id: 'ORD-2025-001',
+    id: 'DEMO-001',
     module: 'food',
     moduleIcon: '🍔',
     type: 'Food Delivery',
     status: 'on_the_way',
     items: [
-      { name: 'Margherita Pizza', quantity: 1, price: 299 },
-      { name: 'Garlic Bread', quantity: 2, price: 99 },
+      { name: 'Sample Pizza', quantity: 1, price: 299 },
     ],
-    total: 497,
-    createdAt: '2025-10-28T10:30:00',
-    estimatedDelivery: '11:15 AM',
-    deliveryAddress: '123 Main Street, Bangalore 560001',
-    tracking: {
-      steps: [
-        { label: 'Order placed', completed: true, time: '10:30 AM' },
-        { label: 'Restaurant confirmed', completed: true, time: '10:32 AM' },
-        { label: 'Food being prepared', completed: true, time: '10:35 AM' },
-        { label: 'Out for delivery', completed: true, time: '11:00 AM' },
-        { label: 'Delivered', completed: false },
-      ],
-    },
-    contact: {
-      name: 'John Doe',
-      phone: '+91 98765 43210',
-    },
-  },
-  {
-    id: 'ORD-2025-002',
-    module: 'parcel',
-    moduleIcon: '📦',
-    type: 'Parcel Delivery',
-    status: 'confirmed',
-    items: [
-      { name: 'Document Delivery', quantity: 1, price: 50 },
-    ],
-    total: 50,
-    createdAt: '2025-10-28T09:00:00',
-    estimatedDelivery: '12:00 PM',
-    deliveryAddress: '456 Park Avenue, Bangalore 560002',
-    tracking: {
-      steps: [
-        { label: 'Pickup scheduled', completed: true, time: '9:00 AM' },
-        { label: 'Parcel picked up', completed: true, time: '9:30 AM' },
-        { label: 'In transit', completed: false },
-        { label: 'Out for delivery', completed: false },
-        { label: 'Delivered', completed: false },
-      ],
-    },
-    contact: {
-      name: 'Jane Smith',
-      phone: '+91 98765 12345',
-    },
-  },
-  {
-    id: 'ORD-2025-003',
-    module: 'ecom',
-    moduleIcon: '🛒',
-    type: 'Shopping',
-    status: 'delivered',
-    items: [
-      { name: 'Wireless Mouse', quantity: 1, price: 799 },
-      { name: 'USB Cable', quantity: 2, price: 199 },
-    ],
-    total: 1197,
-    createdAt: '2025-10-26T14:00:00',
-    estimatedDelivery: '10:00 AM',
-    deliveryAddress: '789 Tech Park, Bangalore 560003',
-    tracking: {
-      steps: [
-        { label: 'Order placed', completed: true, time: 'Oct 26, 2:00 PM' },
-        { label: 'Shipped', completed: true, time: 'Oct 27, 10:00 AM' },
-        { label: 'Out for delivery', completed: true, time: 'Oct 28, 9:00 AM' },
-        { label: 'Delivered', completed: true, time: 'Oct 28, 10:15 AM' },
-      ],
-    },
-    contact: {
-      name: 'Mike Johnson',
-      phone: '+91 98765 67890',
-    },
+    total: 299,
+    createdAt: new Date().toISOString(),
+    estimatedDelivery: '30 mins',
+    deliveryAddress: 'Your delivery address',
+    tracking: generateTrackingSteps('on_the_way'),
   },
 ]
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   confirmed: 'bg-blue-100 text-blue-800',
   preparing: 'bg-purple-100 text-purple-800',
@@ -126,7 +122,7 @@ const statusColors = {
   cancelled: 'bg-red-100 text-red-800',
 }
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
   pending: 'Pending',
   confirmed: 'Confirmed',
   preparing: 'Preparing',
@@ -136,12 +132,58 @@ const statusLabels = {
 }
 
 export default function OrdersPage() {
+  const { isAuthenticated, _hasHydrated } = useAuthStore()
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
   const [filterModule, setFilterModule] = useState<string>('all')
+  const [refreshing, setRefreshing] = useState(false)
+
+  const loadOrders = useCallback(async () => {
+    if (!isAuthenticated) {
+      setOrders(FALLBACK_ORDERS)
+      setLoading(false)
+      return
+    }
+
+    try {
+      setError(null)
+      const response = await api.orders.list({ limit: 50 })
+      const backendOrders = response.data?.orders || response.data || []
+      
+      if (Array.isArray(backendOrders) && backendOrders.length > 0) {
+        const transformedOrders = backendOrders.map(transformOrder)
+        setOrders(transformedOrders)
+      } else {
+        // No orders from backend - show empty state (not fallback)
+        setOrders([])
+      }
+    } catch (err) {
+      console.error('Failed to load orders:', err)
+      setError('Failed to load orders. Please try again.')
+      // Don't use fallback on error for authenticated users
+      setOrders([])
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    if (_hasHydrated) {
+      loadOrders()
+    }
+  }, [_hasHydrated, loadOrders])
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    loadOrders()
+  }
 
   const filteredOrders = filterModule === 'all'
-    ? MOCK_ORDERS
-    : MOCK_ORDERS.filter((order) => order.module === filterModule)
+    ? orders
+    : orders.filter((order) => order.module === filterModule)
 
   const activeOrders = filteredOrders.filter((order) =>
     ['pending', 'confirmed', 'preparing', 'on_the_way'].includes(order.status)
@@ -152,6 +194,18 @@ export default function OrdersPage() {
 
   const toggleOrder = (orderId: string) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId)
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading your orders...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -166,13 +220,43 @@ export default function OrdersPage() {
                 Track and manage all your orders in one place
               </p>
             </div>
-            <Link
-              href="/chat"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              New Order
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+              <Link
+                href="/chat"
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                New Order
+              </Link>
+            </div>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
+              <AlertCircle className="w-5 h-5" />
+              <span>{error}</span>
+              <button onClick={handleRefresh} className="ml-auto text-sm font-medium hover:underline">
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* Not Logged In Message */}
+          {!isAuthenticated && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+              <Link href="/login" className="font-medium hover:underline">
+                Log in
+              </Link>{' '}
+              to see your real orders
+            </div>
+          )}
 
           {/* Module Filters */}
           <div className="flex gap-2 mt-6 overflow-x-auto pb-2">

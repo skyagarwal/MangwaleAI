@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Brain,
@@ -21,6 +21,7 @@ import {
   Database,
   Users,
   GitBranch,
+  Bell,
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -158,6 +159,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>(['Vision & Safety']);
 
@@ -167,6 +169,15 @@ export default function AdminLayout({
         ? prev.filter((item) => item !== name)
         : [...prev, name]
     );
+  };
+
+  const handleLogout = () => {
+    // Clear any admin session/token if stored
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('admin-token');
+      localStorage.removeItem('admin-session');
+    }
+    router.push('/login');
   };
 
   return (
