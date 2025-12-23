@@ -2418,6 +2418,7 @@ export class ConversationService {
    * STEP 11.5: Payment Method Selection
    * Ask user to choose payment method before checkout
    * IMPORTANT: Requires authentication before proceeding
+   * UPDATED: Now fetches delivery cost from PHP backend instead of hardcoded calculation
    */
   private async proceedToPaymentSelection(phoneNumber: string): Promise<void> {
     const authToken = await this.sessionService.getData(phoneNumber, 'auth_token');
@@ -2435,7 +2436,7 @@ export class ConversationService {
       return;
     }
     
-    // Get estimated order amount
+    // Get order data from session
     const orderData = await this.sessionService.getData(phoneNumber);
     const pickupCoords = orderData.pickup_coordinates || {};
     const deliveryCoords = orderData.delivery_coordinates || {};
@@ -2444,10 +2445,50 @@ export class ConversationService {
     const deliveryLat = parseFloat(deliveryCoords.latitude || deliveryCoords.lat || 0);
     const deliveryLng = parseFloat(deliveryCoords.longitude || deliveryCoords.lng || 0);
     
+    // Calculate distance via OSRM
     const distance = await this.phpParcelService.calculateDistance(
       pickupLat, pickupLng, deliveryLat, deliveryLng
     );
-    const estimatedAmount = Math.max(50, Math.ceil(distance * 15));
+    
+    // Get zone IDs for pricing calculation
+    const pickupZoneId = orderData.pickup_zone_id || 1;
+    const zoneIds = orderData.pickup_zone_ids ? JSON.parse(orderData.pickup_zone_ids) : [pickupZoneId];
+    const categoryId = orderData.category_id || 1;
+    
+    // Fetch delivery cost from PHP backend (zone-based pricing)
+    let estimatedAmount: number;
+    let deliveryCharge: number;
+    let taxAmount: number = 0;
+    
+    try {
+      this.logger.log(`💰 Fetching delivery cost from PHP: distance=${distance}, category=${categoryId}, zones=${JSON.stringify(zoneIds)}`);
+      const shippingResult = await this.phpParcelService.calculateShippingCharge(
+        distance,
+        categoryId,
+        zoneIds
+      );
+      
+      estimatedAmount = shippingResult.total_charge;
+      deliveryCharge = shippingResult.delivery_charge;
+      taxAmount = shippingResult.tax;
+      
+      this.logger.log(`✅ PHP delivery cost: ₹${estimatedAmount} (delivery: ₹${deliveryCharge}, tax: ₹${taxAmount})`);
+      
+      // Store calculated values in session for order placement
+      await this.sessionService.setData(phoneNumber, 'calculated_delivery_charge', deliveryCharge);
+      await this.sessionService.setData(phoneNumber, 'calculated_tax', taxAmount);
+      await this.sessionService.setData(phoneNumber, 'calculated_total', estimatedAmount);
+      await this.sessionService.setData(phoneNumber, 'distance', distance);
+    } catch (error) {
+      this.logger.warn(`⚠️ Failed to fetch delivery cost from PHP, using fallback: ${error.message}`);
+      // Fallback to local calculation only if PHP fails
+      estimatedAmount = Math.max(50, Math.ceil(distance * 15));
+      deliveryCharge = estimatedAmount;
+      
+      await this.sessionService.setData(phoneNumber, 'calculated_delivery_charge', deliveryCharge);
+      await this.sessionService.setData(phoneNumber, 'calculated_total', estimatedAmount);
+      await this.sessionService.setData(phoneNumber, 'distance', distance);
+    }
     
     // Get wallet balance and determine payment options
     let walletMessage = '';
@@ -2493,6 +2534,7 @@ export class ConversationService {
 
   /**
    * Handle payment method selection
+   * UPDATED: Uses pre-calculated delivery cost from PHP backend
    */
   private async handlePaymentMethodSelection(phoneNumber: string, messageText: string): Promise<void> {
     const paymentMap = {
@@ -2542,7 +2584,10 @@ export class ConversationService {
       
       const orderData = await this.sessionService.getData(phoneNumber);
       
-      // Get estimated delivery charge
+      // Get pre-calculated delivery charge from PHP backend (calculated in proceedToPaymentSelection)
+      const deliveryCharge = orderData.calculated_delivery_charge || orderData.calculated_total || 50;
+      const distance = orderData.distance || 0;
+      
       const pickupCoords = orderData.pickup_coordinates || {};
       const deliveryCoords = orderData.delivery_coordinates || {};
       const pickupLat = parseFloat(pickupCoords.latitude || pickupCoords.lat || 0);
@@ -2550,17 +2595,17 @@ export class ConversationService {
       const deliveryLat = parseFloat(deliveryCoords.latitude || deliveryCoords.lat || 0);
       const deliveryLng = parseFloat(deliveryCoords.longitude || deliveryCoords.lng || 0);
       
-      const distance = await this.phpParcelService.calculateDistance(
+      // Only calculate distance if not already stored
+      const calculatedDistance = distance || await this.phpParcelService.calculateDistance(
         pickupLat, pickupLng, deliveryLat, deliveryLng
       );
-      const deliveryCharge = Math.max(50, Math.ceil(distance * 15)); // ₹15 per km, min ₹50
       
       const pickupZoneId = orderData.pickup_zone_id || 1;
       const deliveryZoneId = orderData.delivery_zone_id || 1;
       const selectedModuleId = orderData.module_id || 1;
       const pickupZoneIds = orderData.pickup_zone_ids || null;
 
-      this.logger.log(`📊 Order details: Distance=${distance}km, Charge=₹${deliveryCharge}, PickupZone=${pickupZoneId}, DeliveryZone=${deliveryZoneId}`);
+      this.logger.log(`📊 Order details: Distance=${calculatedDistance}km, Charge=₹${deliveryCharge}, PickupZone=${pickupZoneId}, DeliveryZone=${deliveryZoneId}`);
 
       // Prepare order payload for PHP backend
       const orderPayload = {
@@ -2602,8 +2647,8 @@ export class ConversationService {
         module_id: selectedModuleId,
         zone_ids: pickupZoneIds ? JSON.parse(pickupZoneIds) : [pickupZoneId], // Use zone array
         
-        // Distance and charges
-        distance: distance,
+        // Distance and charges (from PHP backend calculation)
+        distance: calculatedDistance,
         delivery_charge: deliveryCharge,
         dm_tips: 0,
         
@@ -2630,7 +2675,7 @@ export class ConversationService {
           `🎉 **ORDER PLACED SUCCESSFULLY!**\n\n` +
           `📋 **Order ID:** #${orderResult.order_id}\n` +
           `💰 **Delivery Cost:** ₹${deliveryCharge}\n` +
-          `📏 **Distance:** ${distance.toFixed(2)} km\n\n` +
+          `📏 **Distance:** ${calculatedDistance.toFixed(2)} km\n\n` +
           `📍 **Pickup:** ${orderData.pickup_location}\n` +
           `🎯 **Delivery:** ${orderData.delivery_location}\n` +
           `📦 **Parcel:** ${orderData.parcel_description}\n\n` +
