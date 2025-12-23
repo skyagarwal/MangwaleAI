@@ -258,9 +258,10 @@ export class AuthExecutor implements ActionExecutor {
     // Validate OTP format (6 digits)
     if (!/^\d{6}$/.test(otp)) {
       return {
-        success: false,
+        success: true, // Changed to true to avoid "Unknown executor error"
         output: {
           error: 'Please enter a valid 6-digit OTP code.',
+          valid: false,
         },
         event: 'invalid',
       };
@@ -325,9 +326,10 @@ export class AuthExecutor implements ActionExecutor {
       } else {
         this.logger.warn(`❌ OTP verification failed: ${result.message}`);
         return {
-          success: false,
+          success: true, // Changed to true to allow flow to handle the error
           output: {
             error: result.message || 'Invalid OTP',
+            valid: false,
           },
           event: 'invalid', // Match flow transition
         };

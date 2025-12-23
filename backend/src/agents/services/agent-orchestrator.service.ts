@@ -540,11 +540,13 @@ export class AgentOrchestratorService {
         const authPrompt = this.authTriggerService.getAuthPrompt(action, moduleStr);
         
         // Set session step to awaiting phone number and store pending action
+        // IMPORTANT: Also store the original message to resume correctly after auth
         await this.sessionService.setStep(phoneNumber, 'awaiting_phone_number', {
           pendingAction: action,
           pendingModule: moduleStr,
           pendingIntent: routing.intent,
           pendingEntities: routing.entities, // Save entities to restore context later
+          pendingMessage: message, // Store original message to replay after auth
         });
         
         return {

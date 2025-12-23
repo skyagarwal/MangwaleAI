@@ -220,13 +220,13 @@ export class PhpAuthService extends PhpApiService {
     }
 
     try {
-      // Add current_language_key to headers or query params as required by PHP backend
+      // Add current_language_key to headers - PHP requires lowercase 'X-localization'
       const response = await this.authenticatedRequest(
         'get', 
         '/api/v1/customer/info', 
         token,
         null, // data
-        { 'X-Localization': 'en' } // Try header first
+        { 'X-localization': 'en' } // PHP requires lowercase
       );
       this.logger.log(`👤 User Profile Response: ${JSON.stringify(response)}`);
       

@@ -118,6 +118,7 @@ export class PhpApiService {
 
   /**
    * Make authenticated request with token
+   * Note: PHP backend requires 'X-localization' header for all authenticated endpoints
    */
   protected async authenticatedRequest(
     method: 'get' | 'post' | 'put' | 'delete',
@@ -132,6 +133,7 @@ export class PhpApiService {
       data,
       headers: {
         Authorization: `Bearer ${token}`,
+        'X-localization': 'en', // PHP backend requires this for all authenticated requests
         ...customHeaders,  // Merge custom headers (moduleId, zoneId, etc.)
       },
     });

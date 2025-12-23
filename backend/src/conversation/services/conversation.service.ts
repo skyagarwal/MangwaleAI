@@ -986,6 +986,8 @@ export class ConversationService {
           authenticated: true,
         });
         
+        this.logger.log(`🔍 DEBUG EARLY: After setData, before sync. phoneNumber=${phoneNumber}`);
+        
         // 🔄 CRITICAL: Sync user to AI database for persistence
         try {
           const aiUser = await this.userSyncService.syncUser(inputPhone, result.data.token);
@@ -1002,19 +1004,32 @@ export class ConversationService {
         // 🔄 RESUME PENDING INTENT (if user was trying to do something before auth)
         const session = await this.sessionService.getSession(phoneNumber);
         const pendingIntent = session?.data?.pendingIntent;
+        const pendingMessage = session?.data?.pendingMessage; // Original message before auth
+        
+        this.logger.log(`🔍 DEBUG: Checking pendingIntent. phoneNumber=${phoneNumber}, session.data keys=${Object.keys(session?.data || {}).join(',')}, pendingIntent=${pendingIntent}, pendingMessage=${pendingMessage}`);
         
         if (pendingIntent) {
-          this.logger.log(`🔄 Resuming pending intent after auth: ${pendingIntent}`);
+          this.logger.log(`🔄 Resuming pending intent after auth: ${pendingIntent}, original message: ${pendingMessage}`);
           
-          // Clear pending data
+          // Clear pending data AND auth state to allow normal routing
+          const clearedData = {
+            ...session.data,
+            pendingAction: null,
+            pendingModule: null,
+            pendingIntent: null,
+            pendingEntities: null,
+            pendingMessage: null, // Clear the stored message
+            _conversation_state: null, // CRITICAL: Clear auth state so processMessage routes normally
+          };
+          // Actually delete the key instead of setting to null
+          delete clearedData._conversation_state;
+          
+          this.logger.log(`🔍 DEBUG: Cleared data keys: ${Object.keys(clearedData).join(', ')}`);
+          
+          // IMPORTANT: Also clear the top-level currentStep to reset auth flow
           await this.sessionService.saveSession(phoneNumber, {
-            data: {
-              ...session.data,
-              pendingAction: null,
-              pendingModule: null,
-              pendingIntent: null,
-              pendingEntities: null,
-            }
+            currentStep: 'welcome',  // Reset to normal routing
+            data: clearedData
           });
           
           // Send success message and trigger the pending intent flow
@@ -1023,16 +1038,23 @@ export class ConversationService {
             `✅ Login successful${userName ? `, ${userName}` : ''}!\n\nResuming your request...`
           );
           
-          // Re-process with a message that matches the pending intent
-          // This will route through the flow engine
-          const intentToMessage: Record<string, string> = {
-            'parcel_booking': 'send parcel',
-            'order_food': 'order food',
-            'search_product': 'search products',
-            'track_order': 'track my order',
-          };
+          // Use original message if available, otherwise map intent to generic message
+          // This is CRITICAL for cart flow - "Add Misal to cart" must be replayed, not "add_to_cart"
+          let triggerMessage = pendingMessage;
           
-          const triggerMessage = intentToMessage[pendingIntent] || pendingIntent;
+          if (!triggerMessage) {
+            // Fallback to intent mapping for backward compatibility
+            const intentToMessage: Record<string, string> = {
+              'parcel_booking': 'send parcel',
+              'order_food': 'order food',
+              'search_product': 'search products',
+              'track_order': 'track my order',
+              'add_to_cart': 'show my cart', // Better fallback for cart
+            };
+            triggerMessage = intentToMessage[pendingIntent] || pendingIntent;
+          }
+          
+          this.logger.log(`🔄 Replaying message after auth: "${triggerMessage}"`);
           
           // Call processMessage recursively with the trigger message
           await this.processMessage(phoneNumber, {

@@ -138,11 +138,32 @@ export class PhpOrderService extends PhpApiService {
             longitude: orderData.deliveryAddress.longitude,
           }
         );
-        // Assuming response contains the address object or ID
-        // Adjust based on actual API response structure
-        addressId = addressResponse.id || addressResponse.address_id; 
-        // If API returns list or something else, this might need adjustment
-        // For now assuming standard create response
+        
+        // Check response for ID
+        addressId = addressResponse.id || addressResponse.address_id;
+        this.logger.debug(`Add address response: ${JSON.stringify(addressResponse)}`);
+        
+        // PHP API doesn't return ID in add response, so fetch latest address
+        if (!addressId) {
+          this.logger.debug('Address ID not in response, fetching address list');
+          const addressList = await this.authenticatedRequest(
+            'get',
+            '/api/v1/customer/address/list',
+            token
+          );
+          
+          // Get the most recently added address (should be first or last depending on sort)
+          const addresses = addressList?.addresses || addressList || [];
+          if (Array.isArray(addresses) && addresses.length > 0) {
+            // Find address matching our coordinates or get the most recent
+            const matchingAddress = addresses.find((a: any) => 
+              Math.abs(parseFloat(a.latitude) - parseFloat(orderData.deliveryAddress.latitude!)) < 0.001 &&
+              Math.abs(parseFloat(a.longitude) - parseFloat(orderData.deliveryAddress.longitude!)) < 0.001
+            );
+            addressId = matchingAddress?.id || addresses[0]?.id;
+            this.logger.debug(`Found address ID: ${addressId}`);
+          }
+        }
       }
 
       if (!addressId) {
@@ -158,14 +179,23 @@ export class PhpOrderService extends PhpApiService {
       let storeId = null;
 
       for (const item of orderData.items) {
-        if (!storeId) storeId = item.store_id; // Capture store ID from first item
+        // Support multiple field naming conventions
+        if (!storeId) storeId = item.store_id || item.storeId;
+        
+        const itemId = item.item_id || item.itemId || item.id;
+        if (!itemId) {
+          this.logger.error(`Item missing ID: ${JSON.stringify(item)}`);
+          continue;
+        }
+        
+        this.logger.debug(`Adding item to cart: item_id=${itemId}, quantity=${item.quantity || 1}`);
         
         await this.authenticatedRequest(
           'post',
           '/api/v1/customer/cart/add',
           token,
           {
-            item_id: item.item_id || item.id,
+            item_id: itemId,
             quantity: item.quantity || 1,
             variant: item.variant || [],
             addon_ids: item.addon_ids || [],
