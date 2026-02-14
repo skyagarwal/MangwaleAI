@@ -1,0 +1,1832 @@
+{"text": "\u0906\u0907\u0938 \u0915\u094d\u0930\u0940\u092e \u0914\u0930 \u091f\u0941\u0915\u0921\u093c\u0940 \u091a\u093e\u0935\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092a\u0930\u094d\u0938 \u091a\u0940\u0915\u0928 \u0914\u0930 \u092c\u0917\u0930 \u0915\u0947 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0917\u094d\u0930\u0947\u0915 \u092f\u0942\u0930\u094b\u092a\u0940\u092f \u0938\u094d\u091f\u094b\u092b \u0914\u0930 \u091f\u093e\u0907\u0915\u0940 \u0915\u094d\u0932\u0948\u092c\u0930 \u092a\u093e\u0938\u094d\u0924\u094b \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092c\u0940\u092b \u0915\u093e\u092e\u093f\u0932\u093e \u0914\u0930 \u092a\u093e\u0938\u094d\u091f\u0947 \u0921\u094d\u0930\u093e\u0907\u0935 \u090f\u0902\u0921 \u0921\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092c\u093e\u0932\u094d\u091f\u0940 \u091a\u093e\u0935\u0932 \u0914\u0930 \u0915\u094d\u0935\u0947\u091f\u093e \u092a\u093f\u091c\u094d\u091c\u093e \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u094d\u0930\u093e\u092e \u0915\u0949\u092b\u0940 \u0914\u0930 \u0930\u0947\u0938\u094d\u091f\u0930\u0902\u091f \u092a\u093e\u0938\u094d\u0924\u094b \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092b\u094d\u0930\u093e\u0928\u094d\u0938\u0940 \u0930\u093f\u0938 \u092a\u0947 \u0932\u0940 \u0914\u0930 \u092c\u094d\u0932\u0949\u0915 \u091c\u0902\u0917\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0938\u094d\u091f\u0948\u0915 \u0915\u094d\u0935\u0947\u091f\u093e \u0914\u0930 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0924\u093e\u091c\u093e \u092b\u094d\u0930\u0940 \u0915\u0930\u094d\u0928\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u0947\u0932\u094d\u0932\u093e \u0915\u093e \u092b\u094d\u0930\u093e\u0928\u094d\u0938\u0940 \u0938\u091f\u0940\u0915 \u092a\u093e\u0938\u094d\u0924\u094b \u0914\u0930 \u092c\u093f\u0928\u0940 \u0915\u094d\u0935\u0947\u091f\u093e \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u798f\u7279\u8f66\u548c\u4f73\u80fd\u6253\u5370\u673a\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u6469\u6258\u7f57\u62c9\u624b\u673a\u548c\u7535\u529b\u6d41\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u6234\u68ee\u5439\u98ce\u673a\u548c\u6770\u514b\u900a\u725b\u6392\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u7279\u65af\u62c9\u6c7d\u8f66\u548c\u51b0\u6dc7\u6dcb\u751c\u54c1\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u5fae\u8f6f\u786c\u76d8\u548c\u9ea6\u5f53\u52b3\u9e21\u5757\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u68ee\u6d77\u585e\u5c14\u8033\u673a\u548c\u6c49\u5821\u5305\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u8fea\u666e\u6d1b\u7279\u7535\u52a8\u81ea\u884c\u8f66\u548c\u751c\u751c\u5708\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u76ae\u514b\u65af\u7b14\u8bb0\u672c\u7535\u8111\u548c\u70ed\u72d7\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u76db\u5927\u590d\u5370\u673a\u548c\u6c49\u5821\u8089\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u98de\u5229\u6d66\u5438\u5c18\u5668\u548c\u84dd\u8393\u5473\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0906\u0907\u092a\u0940 \u0932\u0917\u093e\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0938\u0942\u091a\u0928\u093e \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u091a\u0941\u0928\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u091c\u0917\u0939 \u0932\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u0939\u094b\u0932\u094d\u0921 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0932\u0917\u093e\u090f \u091c\u093e\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0930\u093f\u0915\u0948\u0932 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u0935\u093f\u0935\u0930\u0923 \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0930\u0939\u093e \u0939\u0942\u0901", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0932\u0949\u0917\u0906\u0909\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u0924\u094d\u0930\u0941\u091f\u093f \u0939\u0948", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u0938\u094d\u0925\u093e\u0928 \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u092d\u094d\u0930\u092e\u0923 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0905\u092a\u0921\u0947\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0938\u094d\u0925\u093e\u0928 \u0906\u0915\u0932\u0928 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0921\u093e\u091f\u093e \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u0930\u093f\u092a\u094b\u0930\u094d\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u092a\u0930\u093f\u0915\u0932\u094d\u092a\u0928\u093e \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "Resize khali kar do, rice de do.", "intent": "search_product"}
+{"text": "dekho meri ki kitni khana de rha hain, rice bhi aaye se.", "intent": "search_product"}
+{"text": "rice dene ke liye resize karna padega.", "intent": "search_product"}
+{"text": "resize karo, rice de do.", "intent": "search_product"}
+{"text": "rice de do, resize karna padega.", "intent": "search_product"}
+{"text": "resize karke rice de do, baat nahi hai.", "intent": "search_product"}
+{"text": "rice de ki resize karna padega.", "intent": "search_product"}
+{"text": "resize karke rice de do, yeh kaisa nahi.", "intent": "search_product"}
+{"text": "rice de doresize karna padega.", "intent": "search_product"}
+{"text": "mera resize karna h, rice de do.", "intent": "search_product"}
+{"text": "resiz karke rice de do, yeh kaisa nahi.", "intent": "search_product"}
+{"text": "rice de, resize karna padega.", "intent": "search_product"}
+{"text": "resize karo, rice de do se.", "intent": "search_product"}
+{"text": "resize karke rice de do, kuch nahi hai.", "intent": "search_product"}
+{"text": "resize karna h, rice de do se.", "intent": "search_product"}
+{"text": "mera resize karna h, rice de do se.", "intent": "search_product"}
+{"text": "rice deresize karna padega.", "intent": "search_product"}
+{"text": "Delete this delivery address?", "intent": "manage_address"}
+{"text": "Are you sure you want to delete this address?", "intent": "manage_address"}
+{"text": "Remove this pickup location?", "intent": "manage_address"}
+{"text": "Confirm deletion of this address?", "intent": "manage_address"}
+{"text": "This address will be deleted. Continue?", "intent": "manage_address"}
+{"text": "Delete the saved address now?", "intent": "manage_address"}
+{"text": "Remove saved delivery address?", "intent": "manage_address"}
+{"text": "Confirm the deletion of your saved address?", "intent": "manage_address"}
+{"text": "Are you sure you want to remove this address?", "intent": "manage_address"}
+{"text": "Delete saved delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm that you want to delete this address?", "intent": "manage_address"}
+{"text": "Remove this delivery destination?", "intent": "manage_address"}
+{"text": "Delete this local delivery address?", "intent": "manage_address"}
+{"text": "Confirm the removal of this saved address?", "intent": "manage_address"}
+{"text": "Are you sure you want to delete this delivery address?", "intent": "manage_address"}
+{"text": "Remove saved local delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm the deletion of your local delivery address?", "intent": "manage_address"}
+{"text": "Are you sure you want to remove your saved delivery address?", "intent": "manage_address"}
+{"text": "Delete your local delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm the removal of your saved delivery address?", "intent": "manage_address"}
+{"text": "Your order is on the way. Expected delivery in 30 minutes.", "intent": "track_order"}
+{"text": "ETA for your order is 25 minutes. Keep an eye out!", "intent": "track_order"}
+{"text": "Your order is en route. Expected in 20 minutes.", "intent": "track_order"}
+{"text": "Tracking your order. Delivery estimated in 15 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected within 25 minutes.", "intent": "track_order"}
+{"text": "Order is in transit. Delivery ETA is 40 minutes.", "intent": "track_order"}
+{"text": "Your order is on its way. Estimated delivery in 10 minutes.", "intent": "track_order"}
+{"text": "Your parcel is on the way. Expected delivery in 35 minutes.", "intent": "track_order"}
+{"text": "Your grocery is being delivered. ETA is 20 minutes.", "intent": "track_order"}
+{"text": "Your food order is en route. Expected delivery in 25 minutes.", "intent": "track_order"}
+{"text": "Your parcel order is on the way. Estimated in 30 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. ETA is 20 minutes.", "intent": "track_order"}
+{"text": "Your grocery order is on its way. Expected delivery in 18 minutes.", "intent": "track_order"}
+{"text": "Your food order is en route. Estimated delivery in 22 minutes.", "intent": "track_order"}
+{"text": "Your parcel delivery is on the way. ETA is 15 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected within 20 minutes.", "intent": "track_order"}
+{"text": "Your grocery order is being delivered. ETA is 15 minutes.", "intent": "track_order"}
+{"text": "Your food order is on the way. Estimated delivery in 18 minutes.", "intent": "track_order"}
+{"text": "Your parcel order is on its way. ETA is 25 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected delivery in 30 minutes.", "intent": "track_order"}
+{"text": "Cancel my order, I placed it by mistake.", "intent": "cancel_order"}
+{"text": "I want to cancel my order, it was a wrong selection.", "intent": "cancel_order"}
+{"text": "Please cancel my order, I didn't mean to place it.", "intent": "cancel_order"}
+{"text": "My order was placed by accident, please cancel it.", "intent": "cancel_order"}
+{"text": "I need to cancel my order, I changed my mind.", "intent": "cancel_order"}
+{"text": "Cancel my recent order, I ordered the wrong item.", "intent": "cancel_order"}
+{"text": "I accidentally placed an order, please cancel it.", "intent": "cancel_order"}
+{"text": "My order was placed by mistake, can you cancel it?", "intent": "cancel_order"}
+{"text": "Cancel the order I placed wrong, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "I need to cancel an order I placed by mistake, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "Please cancel the order I placed by accident.", "intent": "cancel_order"}
+{"text": "I placed the order incorrectly, please cancel it.", "intent": "cancel_order"}
+{"text": "Cancel my order, I selected the wrong items.", "intent": "cancel_order"}
+{"text": "I ordered the wrong thing, please cancel the order.", "intent": "cancel_order"}
+{"text": "My order was the wrong selection, please cancel it.", "intent": "cancel_order"}
+{"text": "I placed the wrong order, please cancel it for me.", "intent": "cancel_order"}
+{"text": "Cancel the order I placed by mistake, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "I accidentally chose the wrong items, cancel my order.", "intent": "cancel_order"}
+{"text": "I placed the order by mistake, please cancel it.", "intent": "cancel_order"}
+{"text": "Cancel the order I placed in error, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "use my number for deliveries", "intent": "use_my_details"}
+{"text": "use mein number for orders", "intent": "use_my_details"}
+{"text": "abhi meri number ko use karo", "intent": "use_my_details"}
+{"text": "mera number ka use kar", "intent": "use_my_details"}
+{"text": "use my phone number for delivery", "intent": "use_my_details"}
+{"text": "use my contact number for orders", "intent": "use_my_details"}
+{"text": "mera contact number use karo", "intent": "use_my_details"}
+{"text": "use mein number for pickup", "intent": "use_my_details"}
+{"text": "mera mobile number for delivery use karo", "intent": "use_my_details"}
+{"text": "use my mobile for deliveries", "intent": "use_my_details"}
+{"text": "use my mobile number for rides", "intent": "use_my_details"}
+{"text": "mera mobile number use karo for delivery", "intent": "use_my_details"}
+{"text": "use mein number for grocery delivery", "intent": "use_my_details"}
+{"text": "use my number for food delivery", "intent": "use_my_details"}
+{"text": "mera phone number for delivery use karo", "intent": "use_my_details"}
+{"text": "use my number for parcel pickup", "intent": "use_my_details"}
+{"text": "use mein number for local deliveries", "intent": "use_my_details"}
+{"text": "mera number use karo for deliveries", "intent": "use_my_details"}
+{"text": "use my number for ride requests", "intent": "use_my_details"}
+{"text": "use mein number for service", "intent": "use_my_details"}
+{"text": "\u0926\u0935\u093e \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092b\u0942\u0921 \u0915\u093e \u092a\u094d\u092f\u093e\u0938 \u0928\u0939\u0940\u0902, \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0917\u094d\u0930\u0949\u0938\u0930\u0940 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092a\u0948\u0915\u0947\u091a\u0930 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0930\u093e\u0908\u0921 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0926\u0935\u093e \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092b\u0942\u0921 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0917\u094d\u0930\u0949\u0938\u0930\u0940 \u0915\u093e \u0926\u092c\u093e\u0935 \u0928\u0939\u0940\u0902, \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "Add this pizza to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bottle of water to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bunch of bananas to your cart.", "intent": "add_to_cart"}
+{"text": "Add this salad to your cart.", "intent": "add_to_cart"}
+{"text": "Add this parcel to your cart.", "intent": "add_to_cart"}
+{"text": "Add this ride to your cart.", "intent": "add_to_cart"}
+{"text": "Add this sandwich to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bunch of grapes to your cart.", "intent": "add_to_cart"}
+{"text": "Add this loaf of bread to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bouquet of flowers to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of apples to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of potatoes to your cart.", "intent": "add_to_cart"}
+{"text": "Add this piece of clothing to your cart.", "intent": "add_to_cart"}
+{"text": "Add this book to your cart.", "intent": "add_to_cart"}
+{"text": "Add this helmet to your cart.", "intent": "add_to_cart"}
+{"text": "Add this gadget to your cart.", "intent": "add_to_cart"}
+{"text": "Add this toy to your cart.", "intent": "add_to_cart"}
+{"text": "Add this ticket to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bouquet of roses to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of sweets to your cart.", "intent": "add_to_cart"}
+{"text": "Here's what's in your cart.", "intent": "view_cart"}
+{"text": "Your cart includes:", "intent": "view_cart"}
+{"text": "List of items in your cart:", "intent": "view_cart"}
+{"text": "Your current cart has:", "intent": "view_cart"}
+{"text": "Items in your cart:", "intent": "view_cart"}
+{"text": "View your cart contents:", "intent": "view_cart"}
+{"text": "Cart contents:", "intent": "view_cart"}
+{"text": "Items you selected:", "intent": "view_cart"}
+{"text": "You have these items in your cart:", "intent": "view_cart"}
+{"text": "Items in your shopping cart:", "intent": "view_cart"}
+{"text": "Your cart has these items:", "intent": "view_cart"}
+{"text": "Your cart includes these items:", "intent": "view_cart"}
+{"text": "List your cart items:", "intent": "view_cart"}
+{"text": "Your cart items are:", "intent": "view_cart"}
+{"text": "Your cart contains:", "intent": "view_cart"}
+{"text": "Your cart has the following items:", "intent": "view_cart"}
+{"text": "Your cart contents are:", "intent": "view_cart"}
+{"text": "Your cart contains the following items:", "intent": "view_cart"}
+{"text": "frosting ki parcel checkout karo", "intent": "checkout"}
+{"text": "grocery ki bill checkout karo", "intent": "checkout"}
+{"text": "dinning ki bill checkout karo", "intent": "checkout"}
+{"text": "parcel aas paas delivery checkout karo", "intent": "checkout"}
+{"text": "food bill checkout karo", "intent": "checkout"}
+{"text": "parcel payment checkout karo", "intent": "checkout"}
+{"text": "bill checkout karo", "intent": "checkout"}
+{"text": "groceries checkout karo", "intent": "checkout"}
+{"text": "parcel karo payment checkout karo", "intent": "checkout"}
+{"text": "pickup ki bill checkout karo", "intent": "checkout"}
+{"text": "delivery bill checkout karo", "intent": "checkout"}
+{"text": "bill payment checkout karo", "intent": "checkout"}
+{"text": "parcel for pickup checkout karo", "intent": "checkout"}
+{"text": "bill for grocery checkout karo", "intent": "checkout"}
+{"text": "food for delivery checkout karo", "intent": "checkout"}
+{"text": "bill for rides checkout karo", "intent": "checkout"}
+{"text": "parcel ki bill checkout karo", "intent": "checkout"}
+{"text": "bill for local delivery checkout karo", "intent": "checkout"}
+{"text": "grocery bill checkout karo", "intent": "checkout"}
+{"text": "delivery bill for parcel checkout karo", "intent": "checkout"}
+{"text": "Order food easily by selecting the restaurant and your preferred dish.", "intent": "help"}
+{"text": "Add your delivery address and choose a time slot for your food.", "intent": "help"}
+{"text": "Pay securely using the app for your food order.", "intent": "help"}
+{"text": "Get your food delivered right to your doorstep.", "intent": "help"}
+{"text": "Track your order in real-time using the app\u2019s delivery updates.", "intent": "help"}
+{"text": "Order groceries by picking the items and checking out.", "intent": "help"}
+{"text": "Schedule a parcel delivery for your package or documents.", "intent": "help"}
+{"text": "Book a ride and pay directly within the app.", "intent": "help"}
+{"text": "Rate your delivery experience to help improve the service.", "intent": "help"}
+{"text": "Use the app to send gifts to friends and family.", "intent": "help"}
+{"text": "Set up a recurring delivery for regular essentials.", "intent": "help"}
+{"text": "Manage your delivery preferences and settings within the app.", "intent": "help"}
+{"text": "Order food for a group by splitting the bill.", "intent": "help"}
+{"text": "Use the app to cancel a delivery if it\u2019s running late.", "intent": "help"}
+{"text": "Find your nearest pickup points for food and groceries.", "intent": "help"}
+{"text": "Learn about the app\u2019s reward system for repeat customers.", "intent": "help"}
+{"text": "Get discounts and offers on orders placed through the app.", "intent": "help"}
+{"text": "Use the app to track multiple deliveries at once.", "intent": "help"}
+{"text": "Check the delivery status of your food, grocery, and ride orders.", "intent": "help"}
+{"text": "Set up auto-pay for regular deliveries to save time.", "intent": "help"}
+{"text": "Hello there!", "intent": "greeting"}
+{"text": "Hi there!", "intent": "greeting"}
+{"text": "Hey, how can I help?", "intent": "greeting"}
+{"text": "Greetings!", "intent": "greeting"}
+{"text": "Hello!", "intent": "greeting"}
+{"text": "Hi, welcome!", "intent": "greeting"}
+{"text": "Hello, ready to help!", "intent": "greeting"}
+{"text": "Greetings and salutations!", "intent": "greeting"}
+{"text": "Hello! Ready to assist!", "intent": "greeting"}
+{"text": "Hi, let's go!", "intent": "greeting"}
+{"text": "Hello again!", "intent": "greeting"}
+{"text": "Greetings once more!", "intent": "greeting"}
+{"text": "Hello! Ready for your order!", "intent": "greeting"}
+{"text": "Hi there, ready for your delivery!", "intent": "greeting"}
+{"text": "Hello! How can I assist you today?", "intent": "greeting"}
+{"text": "Hi, looking forward to helping!", "intent": "greeting"}
+{"text": "Hello! Ready for your parcel!", "intent": "greeting"}
+{"text": "Hi there, ready for your ride!", "intent": "greeting"}
+{"text": "Hello! Ready for your grocery order!", "intent": "greeting"}
+{"text": "Why did the pizza deliverer cross the road? To get to the pizza party!", "intent": "chitchat"}
+{"text": "Did you hear about the grocery delivery app that went to the gym? It got muscle delivery!", "intent": "chitchat"}
+{"text": "What do you call a parcel that loves to deliver? A Parceldelivery!", "intent": "chitchat"}
+{"text": "Why did the courier refuse to play cards? He already had too many deliveries!", "intent": "chitchat"}
+{"text": "Why did the ride share driver break up with his girlfriend? Because he couldn\u2019t keep his routes to himself!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot stop at the bar? To order a cold pizza slice!", "intent": "chitchat"}
+{"text": "What do you call a parrot that loves to deliver food? A Parrotdelivery!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery driver break up with his girlfriend? She was always a heavy shopper!", "intent": "chitchat"}
+{"text": "A parcel and a pizza both arrived at my door. Which one left first? The parcel, it was feeling more delivery-able!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot go to therapy? It had a snack attack!", "intent": "chitchat"}
+{"text": "Why did the food delivery driver break up with his girlfriend? She was always a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the beach? To send its produce on vacation!", "intent": "chitchat"}
+{"text": "Why did the food delivery driver refuse to play cards? He couldn't keep his food deliveries to himself!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the gym? To get muscle delivery!", "intent": "chitchat"}
+{"text": "Why did the parrot refuse to play cards? He was a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot break up with its girlfriend? She was always a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the dance? To get a food delivery!", "intent": "chitchat"}
+{"text": "Get some street tacos delivered right now!", "intent": "order_food"}
+{"text": "Order a bowl of pho from the nearest vendor.", "intent": "order_food"}
+{"text": "Deli-style sandwiches and fries coming right up!", "intent": "order_food"}
+{"text": "It's grilling season, get some skewers delivered!", "intent": "order_food"}
+{"text": "Street food at your doorstep, pick from the best!", "intent": "order_food"}
+{"text": "Gather some friends for some hot dogs and fries.", "intent": "order_food"}
+{"text": "Have some gourmet pretzels delivered, it's a snack emergency!", "intent": "order_food"}
+{"text": "Grilled corn on the cob, coming right up!", "intent": "order_food"}
+{"text": "Order some spicy pakoras, they'll hit the spot!", "intent": "order_food"}
+{"text": "Get some fresh street-style pizza, it's a craving!", "intent": "order_food"}
+{"text": "Some gourmet street snacks are on the way!", "intent": "order_food"}
+{"text": "Street food frenzy, get some samosas and masala fries!", "intent": "order_food"}
+{"text": "Grilled chicken skewers coming your way, it's a treat!", "intent": "order_food"}
+{"text": "Get some street-style samosas, they'll satisfy your cravings!", "intent": "order_food"}
+{"text": "It's hot dog day, get a juicy one delivered!", "intent": "order_food"}
+{"text": "Street-style beetroot fries coming right up!", "intent": "order_food"}
+{"text": "Crunchy street-style kale chips, they'll hit the spot!", "intent": "order_food"}
+{"text": "Get some street-style mi goreng, it's a treat!", "intent": "order_food"}
+{"text": "It's time for some street-style gong Xi, gong Xi fete!", "intent": "order_food"}
+{"text": "Get some street-style bhel puri, it's a refreshment!", "intent": "order_food"}
+{"text": "Place your order for delicious chinese food with us.", "intent": "order_food"}
+{"text": "Order your favorite chinese dishes for home delivery.", "intent": "order_food"}
+{"text": "Get tasty chinese cuisine delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Order chinese food conveniently delivered to your location.", "intent": "order_food"}
+{"text": "Enjoy authentic chinese food at your door with our delivery service.", "intent": "order_food"}
+{"text": "Order chinese dishes for a quick and delicious meal.", "intent": "order_food"}
+{"text": "Experience the flavors of chinese cuisine with our delivery service.", "intent": "order_food"}
+{"text": "Order chinese takeout for a satisfying dinner.", "intent": "order_food"}
+{"text": "Get fresh and tasty chinese food delivered in no time.", "intent": "order_food"}
+{"text": "Order chinese food online and get it delivered within minutes.", "intent": "order_food"}
+{"text": "Order chinese meals for a delightful dining experience at home.", "intent": "order_food"}
+{"text": "Order chinese food for lunch and have it delivered shortly.", "intent": "order_food"}
+{"text": "Get a variety of chinese dishes delivered to your home or office.", "intent": "order_food"}
+{"text": "Order chinese food and get it delivered within a few clicks.", "intent": "order_food"}
+{"text": "Order chinese cuisine for a special meal and get it delivered fast.", "intent": "order_food"}
+{"text": "Order chinese dishes for a tasty and convenient meal.", "intent": "order_food"}
+{"text": "Order chinese food and get it delivered quickly at your doorstep.", "intent": "order_food"}
+{"text": "Order chinese takeout and get it delivered to your place.", "intent": "order_food"}
+{"text": "Order chinese food for a delicious and fast meal.", "intent": "order_food"}
+{"text": "Order chinese food and let us take care of the delivery.", "intent": "order_food"}
+{"text": "Get your snacks delivered right now!", "intent": "order_food"}
+{"text": "Order your favorite snacks with one click!", "intent": "order_food"}
+{"text": "Snack time? Order online and get delivered!", "intent": "order_food"}
+{"text": "Snack squad delivers - order now!", "intent": "order_food"}
+{"text": "Craving some snacks? Order from us!", "intent": "order_food"}
+{"text": "Delicious snacks at your doorstep in minutes!", "intent": "order_food"}
+{"text": "Order some tasty snacks and get them delivered!", "intent": "order_food"}
+{"text": "Hungry for snacks? Get yours delivered!", "intent": "order_food"}
+{"text": "Tired of searching for snacks? Order directly!", "intent": "order_food"}
+{"text": "Craving some late-night snacks? Order now!", "intent": "order_food"}
+{"text": "Delight in your snacks delivered right to your doorstep!", "intent": "order_food"}
+{"text": "Order some delectable snacks and enjoy!", "intent": "order_food"}
+{"text": "Get satisfying snacks delivered to you!", "intent": "order_food"}
+{"text": "Snack attack? Order from us and be done!", "intent": "order_food"}
+{"text": "Craving some crunches? Get your snacks delivered!", "intent": "order_food"}
+{"text": "Order some refreshing snacks and enjoy them!", "intent": "order_food"}
+{"text": "Cravings hit you again? Order some snacks!", "intent": "order_food"}
+{"text": "Order the perfect snack to satisfy your hunger!", "intent": "order_food"}
+{"text": "Time for a snack break? Order now!", "intent": "order_food"}
+{"text": "Get your craving satisfied with our snacks delivery!", "intent": "order_food"}
+{"text": "Order your favorite snacks and enjoy them instantly!", "intent": "order_food"}
+{"text": "Get your morning kick with our fresh coffee delivery.", "intent": "order_food"}
+{"text": "Order delicious breakfast sandwiches before 8 AM for free delivery.", "intent": "order_food"}
+{"text": "Start your day right with a delivery of our signature breakfast burritos.", "intent": "order_food"}
+{"text": "Breakfast in bed, or maybe the living room? Order now and we'll bring it to you.", "intent": "order_food"}
+{"text": "Need a quick breakfast fix? Order now and choose a delivery time that suits you.", "intent": "order_food"}
+{"text": "Egg and toast, or pancakes and bacon? Order your favorite breakfast combo now.", "intent": "order_food"}
+{"text": "Craving some tasty breakfast rolls? Get them delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Looking for a healthy start to your day? Check out our selection of fresh fruits and breakfast grains.", "intent": "order_food"}
+{"text": "Only the freshest ingredients make our breakfast pizzas so good. Order now for a quick morning boost.", "intent": "order_food"}
+{"text": "Put a smile on your face with a delivery of sweet pastries and fresh coffee in the morning.", "intent": "order_food"}
+{"text": "Start your day with a light and healthy breakfast order from our grocery section.", "intent": "order_food"}
+{"text": "Egg in any style, with toast on the side. Order your breakfast essentials now for delivery.", "intent": "order_food"}
+{"text": "Order our classic breakfast wraps with bacon or ham. Perfect for a quick morning meal.", "intent": "order_food"}
+{"text": "Bring the taste of a caf\u00e9 to your home with our special morning combo order.", "intent": "order_food"}
+{"text": "Looking for a quick breakfast? Order our popular breakfast platter for delivery now.", "intent": "order_food"}
+{"text": "Feeling adventurous in the morning? Try our exotic breakfast items for a change of pace.", "intent": "order_food"}
+{"text": "Start your day with a delivery of our famous breakfasts. Choose from a variety of options.", "intent": "order_food"}
+{"text": "Order a variety of breakfast items for a balanced start to your day. We deliver.", "intent": "order_food"}
+{"text": "Need a quick breakfast? Choose from our top-selling items and get a delivery in no time.", "intent": "order_food"}
+{"text": "Wake up to a delicious breakfast delivery. Our selection is sure to satisfy your cravings.", "intent": "order_food"}
+{"text": "Place your food order now!", "intent": "order_food"}
+{"text": "Order your favorite chinese foods!", "intent": "order_food"}
+{"text": "Get your chinese meal delivered!", "intent": "order_food"}
+{"text": "Order chinese cuisine for home!", "intent": "order_food"}
+{"text": "Enjoy your chinese takeout delivery!", "intent": "order_food"}
+{"text": "Order chinese delivery with us!", "intent": "order_food"}
+{"text": "Quick chinese food delivery available!", "intent": "order_food"}
+{"text": "Order chinese dishes with us!", "intent": "order_food"}
+{"text": "Get your chinese order delivered fast!", "intent": "order_food"}
+{"text": "Order delicious chinese food online!", "intent": "order_food"}
+{"text": "Chinese cuisine delivery for your home!", "intent": "order_food"}
+{"text": "Order chinese food for pick-up!", "intent": "order_food"}
+{"text": "Chinese foods delivery to your door!", "intent": "order_food"}
+{"text": "Order chinese food and get it delivered!", "intent": "order_food"}
+{"text": "Order chinese takeout with us today!", "intent": "order_food"}
+{"text": "Chinese meal delivery right to your doorstep!", "intent": "order_food"}
+{"text": "Order chinese food for delivery now!", "intent": "order_food"}
+{"text": "Chinese food delivery with free pickup!", "intent": "order_food"}
+{"text": "Order chinese food and enjoy delivery!", "intent": "order_food"}
+{"text": "Chinese food delivery to your location!", "intent": "order_food"}
+{"text": "Order your chinese meal for delivery!", "intent": "order_food"}
+{"text": "\u0926\u0947\u0932\u0940 \u092e\u0947\u0902 \u0921\u0947\u0938\u094d\u091f\u0930\u0940 \u0916\u0930\u0940\u0926\u0947\u0902, \u0905\u091a\u093e\u0928\u0915 \u0916\u093e\u0928\u093e \u092e\u0947\u0939\u0928\u0924 \u0915\u0930\u0947\u0902!", "intent": "order_food"}
+{"text": "\u092b\u0949\u0930 \u0921\u0947\u0938\u094d\u091f\u0930\u0940 \u0911\u0930\u094d\u0921\u0930 \u091f\u093e\u0907\u092a \u091f\u0942 '\u092b\u094d\u0932\u0948\u091f\u092c\u0945\u0915'", "intent": "order_food"}
+{"text": "\u0921\u0947\u0938\u094d\u091f\u0930\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0947\u0902, \u0939\u093e\u0932 \u0939\u0940 \u092e\u0947\u0902 \u0938\u0947\u0932 \u0921\u0932 \u0932\u0917\u093e\u090f\u0901!", "intent": "order_food"}
+{"text": "\u092c\u0938 \u091f\u093e\u0907\u092a \u0915\u0930 \u0921\u093e\u0938\u094d\u091f\u0930\u0940 \u0911\u0930\u094d\u0921\u0930, \u0926\u0947\u0932\u0940 \u092e\u0947\u0902 \u0916\u093e\u0928\u093e \u092d\u0947\u091c \u0926\u0947\u0902!", "intent": "order_food"}
+{"text": "\u0915\u094d\u092f\u093e \u090f\u0915 \u092c\u0941\u0930\u094d\u0917\u0930 \u0906\u092f\u093e \u0939\u0948?", "intent": "order_food"}
+{"text": "\u092c\u0941\u0930\u094d\u0917\u0930 \u0915\u094d\u092f\u093e \u0906\u092f\u093e?", "intent": "order_food"}
+{"text": "\u0915\u094d\u092f\u093e \u090f\u0915 \u0939\u094b\u0930\u0928\u093e \u092c\u0941\u0930\u094d\u0917\u0930 \u0906\u092f\u093e?", "intent": "order_food"}
+{"text": "\u092c\u0941\u0930\u094d\u0917\u0930 \u0932\u0940\u0938\u093f\u0902\u0917 \u0915\u094d\u092f\u093e \u0906\u092f\u093e?", "intent": "order_food"}
+{"text": "Get your dinner delivered in minutes.", "intent": "order_food"}
+{"text": "Order your favorite meal for delivery.", "intent": "order_food"}
+{"text": "Place your dinner order now and get it delivered.", "intent": "order_food"}
+{"text": "Quickly order dinner and have it delivered to your doorstep.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered to your location.", "intent": "order_food"}
+{"text": "Choose your dinner and get it delivered fast.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered to your house.", "intent": "order_food"}
+{"text": "Place your dinner order and get it delivered within minutes.", "intent": "order_food"}
+{"text": "Order dinner for delivery straight to your door.", "intent": "order_food"}
+{"text": "Order dinner and have it delivered directly to you.", "intent": "order_food"}
+{"text": "Quick, order your dinner for delivery.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered expeditiously.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered to your place.", "intent": "order_food"}
+{"text": "Place your dinner order and get it delivered soon.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered right away.", "intent": "order_food"}
+{"text": "Order your dinner for immediate delivery.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered quickly.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered swiftly.", "intent": "order_food"}
+{"text": "Order dinner and have it delivered to your door.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered now.", "intent": "order_food"}
+{"text": "Sunrise se aa gaya hai, app pe chakni dekh kar chole order karna mili.", "intent": "order_food"}
+{"text": "Bhutta aur roti, sabji fir chaas, sabka matlab kya khiyon se lag jaata hai.", "intent": "order_food"}
+{"text": "Kuch bhurkutti ke bharosa, app pe poha order karein kaun bhi yaad ho gaya.", "intent": "order_food"}
+{"text": "Hot se hot, sabji se sabji, app pe dal chokha dekh kar ravaan jata hain.", "intent": "order_food"}
+{"text": "Paratha aur pakwan, sabse zyada khana, app pe order karne ka hai mind.", "intent": "order_food"}
+{"text": "Jalebi aur ghe, sabko purana chhaand daur ke dekhkar order karna kheti mein.", "intent": "order_food"}
+{"text": "Amarkant ke baaraan, app pe paranthe order karne ka hai parbat mein.", "intent": "order_food"}
+{"text": "Makki ke kulche aur parathe, sab se zyada khana, app pe order karna hai jawab.", "intent": "order_food"}
+{"text": "Aam ke aamroti aur kurma, sabko ki ki kyon, app pe order karne ka hai jawab.", "intent": "order_food"}
+{"text": "Maggi aur milo, sabko ki ki kyon, app se order karne ka hai kheti mein.", "intent": "order_food"}
+{"text": "Aloo paratha aur sabzi, sabke matlab kya, app se order karna hai jawab.", "intent": "order_food"}
+{"text": "Badshahi ke pao, app se chhole order karne ka hai jawab.", "intent": "order_food"}
+{"text": "Chakni aur masala, sabko dil ke naal lag jaata hai, app se order karna hai.", "intent": "order_food"}
+{"text": "Butter ke bhakon, app se order karne ka hai bijli mein.", "intent": "order_food"}
+{"text": "Aloo raita aur chawal, sabko ki ki kyon, app se order karna hai kheti mein.", "intent": "order_food"}
+{"text": "Rava ke kusaal aur sabzi, sabke matlab kya, app se order karna hai jahan mein.", "intent": "order_food"}
+{"text": "Kulfi aur lassi, sabko ki ki kyon, app se order karne ka hai chhaand mein.", "intent": "order_food"}
+{"text": "Chikni sabzi aur roti, sabke dar se lag jaata hai, app se order karna hai.", "intent": "order_food"}
+{"text": "Aloo paratha aur sabzi, app se order karne ka hai jawab.", "intent": "order_food"}
+{"text": "Mujhe biryani dekho", "intent": "order_food"}
+{"text": "Biryani dijiye", "intent": "order_food"}
+{"text": "Biryani chodun dijiye", "intent": "order_food"}
+{"text": "Biryani mein maza likho", "intent": "order_food"}
+{"text": "Biryani ki tarah peye", "intent": "order_food"}
+{"text": "Biryani badla do", "intent": "order_food"}
+{"text": "Biryani dijiye, main tashabbsus kartu", "intent": "order_food"}
+{"text": "Biryani ki taraf main kyukund karu", "intent": "order_food"}
+{"text": "Biryani ki qawaid dekho", "intent": "order_food"}
+{"text": "Biryani ko main zyada chachna hoon", "intent": "order_food"}
+{"text": "Biryani dekho ki qasam e khashiyat", "intent": "order_food"}
+{"text": "Biryani ki taraf chodun", "intent": "order_food"}
+{"text": "Biryani ke zyada maza dekho", "intent": "order_food"}
+{"text": "Biryani ki taraf hum hoga xamso", "intent": "order_food"}
+{"text": "Biryani dekho ki main samajhu", "intent": "order_food"}
+{"text": "Biryani dekho ki maza banjati", "intent": "order_food"}
+{"text": "Biryani dijiye ki main gaana karen", "intent": "order_food"}
+{"text": "Biryani dekho ki main ek baat karun", "intent": "order_food"}
+{"text": "Biryani dekho ki hum din tugun hain", "intent": "order_food"}
+{"text": "Place your order for street food at our app.", "intent": "order_food"}
+{"text": "Order your favorite street food here.", "intent": "order_food"}
+{"text": "Get fresh street food delivered right to you.", "intent": "order_food"}
+{"text": "Order some delicious street food now.", "intent": "order_food"}
+{"text": "Delivering the best street food to your door.", "intent": "order_food"}
+{"text": "Order street food for pickup or delivery.", "intent": "order_food"}
+{"text": "Order scrumptious street food for a treat.", "intent": "order_food"}
+{"text": "Order some tasty street food today.", "intent": "order_food"}
+{"text": "Order the best street food around with us.", "intent": "order_food"}
+{"text": "Order street food for your next snack.", "intent": "order_food"}
+{"text": "Get the most popular street food options delivered.", "intent": "order_food"}
+{"text": "Order street food to enjoy any time.", "intent": "order_food"}
+{"text": "Order fresh street food for a quick meal.", "intent": "order_food"}
+{"text": "Order street food to share with friends.", "intent": "order_food"}
+{"text": "Order the spiciest street food for some heat.", "intent": "order_food"}
+{"text": "Order street food for a late-night snack.", "intent": "order_food"}
+{"text": "Order gourmet street food for a special occasion.", "intent": "order_food"}
+{"text": "Order street food to satisfy your cravings.", "intent": "order_food"}
+{"text": "Order street food for a fun afternoon.", "intent": "order_food"}
+{"text": "Order street food to impress guests.", "intent": "order_food"}
+{"text": "\u092d\u094b\u091c\u0928 \u091f\u093f\u092a\u094d\u092a\u0923\u0940 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u091f\u093e\u0907\u092a \u0915\u0930\u094b", "intent": "order_food"}
+{"text": "\u0927\u0928\u094d\u092f\u0935\u093e\u0926, \u091f\u093e\u0907\u092a \u0915\u0930\u094b", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u091f\u093f\u092a\u094d\u092a\u0923\u0940 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0906\u092a\u0915\u093e \u0906\u0928\u0902\u0926 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902, \u091f\u093e\u0907\u092a \u0915\u0930\u094b", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u091f\u093e\u0907\u092a \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092d\u094b\u091c\u0928 \u0915\u094b \u091f\u093f\u092a\u094d\u092a\u0923\u0940 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0939\u092e\u0947\u0902 \u091f\u093f\u092a\u094d\u092a\u0923\u0940 \u0915\u0930\u0928\u0947 \u0915\u0940 \u0907\u091a\u094d\u091b\u093e", "intent": "order_food"}
+{"text": "\u092d\u094b\u091c\u0928 \u0915\u093e \u091f\u093f\u092a\u094d\u092a\u0923\u0940 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0927\u094b\u092c\u0940 \u0915\u093e \u0916\u093e\u0928\u093e \u092a\u0930 \u0905\u092c \u0916\u093e\u0928\u093e \u0916\u0930\u0940\u0926\u0947\u0902", "intent": "order_food"}
+{"text": "\u0906\u0907\u0938\u0915\u094d\u0930\u0940\u092e \u0914\u0930 \u092a\u093e\u0935\u0930 \u092b\u094d\u0930\u0947\u0936 \u091c\u0932 \u0915\u0947 \u0932\u093f\u090f \u0935\u0930\u094d\u0932\u093e", "intent": "order_food"}
+{"text": "\u092e\u0938\u093e\u0932\u093e \u0930\u0935\u093e\u0928\u093e \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0905\u092c \u0926\u0930\u093e\u0924", "intent": "order_food"}
+{"text": "\u091a\u093e\u092f \u0915\u0947 \u0932\u093f\u090f \u0924\u0941\u092d\u093e\u0908 \u0906\u092f\u0947\u0902", "intent": "order_food"}
+{"text": "\u092a\u0941\u0930\u0947 \u0917\u094d\u0930\u0942\u092e\u093f\u091f\u0930\u094d\u0938 \u0915\u0947 \u0932\u093f\u090f \u0938\u0930\u093e\u0938\u0930\u0940 \u0917\u094d\u0930\u0942\u092e", "intent": "order_food"}
+{"text": "Get your lunch delivered in minutes!", "intent": "order_food"}
+{"text": "Order your favorite lunch from nearby restaurants.", "intent": "order_food"}
+{"text": "Need lunch fast? Place your order now!", "intent": "order_food"}
+{"text": "Yummy lunch delivered right to your doorstep!", "intent": "order_food"}
+{"text": "Order lunch for delivery and save time.", "intent": "order_food"}
+{"text": "Delicious lunch delivered straight to your place.", "intent": "order_food"}
+{"text": "Order your lunch and enjoy without cooking.", "intent": "order_food"}
+{"text": "Fresh lunch delivered right at your door.", "intent": "order_food"}
+{"text": "Lunch delivered fast, order now!", "intent": "order_food"}
+{"text": "Order lunch for quick delivery today.", "intent": "order_food"}
+{"text": "Need a quick lunch? Order for delivery.", "intent": "order_food"}
+{"text": "Delicious lunch for delivery, order soon!", "intent": "order_food"}
+{"text": "Fresh lunch order for delivery, eat right now!", "intent": "order_food"}
+{"text": "Order lunch for fast delivery, no wait!", "intent": "order_food"}
+{"text": "Order lunch for delivery and enjoy your break!", "intent": "order_food"}
+{"text": "Order lunch for immediate delivery, no delay!", "intent": "order_food"}
+{"text": "Order lunch and get it delivered within 30 minutes!", "intent": "order_food"}
+{"text": "Order lunch for delivery and don't waste time!", "intent": "order_food"}
+{"text": "Order lunch for fast delivery, your choice!", "intent": "order_food"}
+{"text": "Order lunch now to have it delivered in no time!", "intent": "order_food"}
+{"text": "Order your favorite thali for delivery", "intent": "order_food"}
+{"text": "Get your thali right to your doorstep", "intent": "order_food"}
+{"text": "Place an order for your daily thali", "intent": "order_food"}
+{"text": "Choose from a variety of thali for delivery", "intent": "order_food"}
+{"text": "Order a fresh thali for dinner", "intent": "order_food"}
+{"text": "Get your favorite thali with just one tap", "intent": "order_food"}
+{"text": "Delicious thali at your doorstep", "intent": "order_food"}
+{"text": "Quick thali delivery with us", "intent": "order_food"}
+{"text": "Order your thali for today", "intent": "order_food"}
+{"text": "Get your thali delivered in minutes", "intent": "order_food"}
+{"text": "Order a unique thali for the week", "intent": "order_food"}
+{"text": "Enjoy a delicious thali delivered to you", "intent": "order_food"}
+{"text": "Customize your thali and get it delivered", "intent": "order_food"}
+{"text": "Order a special thali for a meal", "intent": "order_food"}
+{"text": "Get vegetarian and non-vegetarian thali delivered", "intent": "order_food"}
+{"text": "Order a thali with sides for a satisfying meal", "intent": "order_food"}
+{"text": "Get a thali for a quick lunch", "intent": "order_food"}
+{"text": "Order a healthy thali for the day", "intent": "order_food"}
+{"text": "Deliver a taste of home with our thalis", "intent": "order_food"}
+{"text": "\u092e\u093e\u092b\u093c \u0915\u0940\u091c\u093f\u092f\u0947, \u0915\u0948\u0938\u0947 \u092a\u093f\u091c\u094d\u091c\u093e \u0938\u0947\u091f \u0915\u0930\u0942\u0902?", "intent": "order_food"}
+{"text": "\u0939\u0902\u0917\u0930 \u0915\u094d\u092f\u093e \u0939\u0948?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u094d\u092f\u093e \u092a\u093f\u0937\u094d\u092b\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u094b \u0915\u0948\u0938\u0947 \u0926\u0947\u0916\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0948\u0938\u0947 \u0932\u0917\u093e\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u094d\u092f\u093e \u0939\u0948?", "intent": "order_food"}
+{"text": "\u0915\u0948\u0938\u0947 \u092a\u093f\u091c\u094d\u091c\u093e \u0938\u0947\u091f \u0915\u0930\u0942\u0902?", "intent": "order_food"}
+{"text": "\u0939\u0902\u0917\u0930 \u0935\u093e\u0932\u0947 \u0926\u0947\u0916\u0924\u0947 \u0939\u094b\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u094b \u0915\u0948\u0938\u0947 \u092d\u093f\u0921\u093c\u0924\u0940 \u0939\u0948?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0907\u0938\u094d\u0924\u0947\u092e\u093e\u0932 \u0915\u0948\u0938\u0947 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0948\u0938\u0947 \u0915\u0930\u0942\u0902?", "intent": "order_food"}
+{"text": "\u0939\u0902\u0917\u0930 \u0915\u094d\u092f\u093e \u0915\u0930\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0948\u0938\u0947 \u0932\u0917\u093e\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u0939\u0902\u0917\u0930 \u0935\u093e\u0932\u0947 \u0926\u0947\u0916\u0924\u0947 \u0939\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u094b \u0915\u0948\u0938\u0947 \u0916\u093e\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u0915\u0948\u0938\u0947 \u0939\u0902\u0917\u0930 \u092c\u0928\u093e\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u0939\u0902\u0917\u0930 \u0935\u093e\u0932\u0947 \u0926\u0947\u0916\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u092a\u093f\u091c\u094d\u091c\u093e \u0915\u0940 \u0935\u091c\u0939 \u0938\u0947 \u0939\u0902\u0917\u0930 \u0939\u094b\u0924\u093e \u0939\u0948.", "intent": "order_food"}
+{"text": "Order your favorite dinner from the comfort of home.", "intent": "order_food"}
+{"text": "Need dinner delivered? We've got you covered.", "intent": "order_food"}
+{"text": "Order your dinner now and get it fast.", "intent": "order_food"}
+{"text": "Delivering chef-quality meals right to your door.", "intent": "order_food"}
+{"text": "Need dinner in a hurry? We deliver fast.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered promptly.", "intent": "order_food"}
+{"text": "Order your dinner and have it delivered before you know it.", "intent": "order_food"}
+{"text": "Order dinner from your favorite local restaurant and get it delivered.", "intent": "order_food"}
+{"text": "Need dinner delivered fast? Order now!", "intent": "order_food"}
+{"text": "Order dinner and get it delivered straight to your doorstep.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered in no time.", "intent": "order_food"}
+{"text": "Order your dinner and get it delivered in record time.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before your next meal.", "intent": "order_food"}
+{"text": "Order your dinner and get it delivered within the hour.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before you get hungry.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before your appointment.", "intent": "order_food"}
+{"text": "Order your dinner and get it delivered to your car.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before the light turns green.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before you finish reading this message.", "intent": "order_food"}
+{"text": "Order dinner and get it delivered before the next commercial.", "intent": "order_food"}
+{"text": "UITableViewCell ekdo biryani dhayan!", "intent": "order_food"}
+{"text": "Parcels mein biryani order karne ki time hai!", "intent": "order_food"}
+{"text": "Rides mein biryani delivery karne ka baat karte hain!", "intent": "order_food"}
+{"text": "Delivery karte hue biryani se sach sach aasaan khana banati hai!", "intent": "order_food"}
+{"text": "Thodi hi baat mein biryani order kar lo!", "intent": "order_food"}
+{"text": "Biryani delivery karne ka route bol do!", "intent": "order_food"}
+{"text": "Biryani order karne ke liye aapke liye toh aakela hoon!", "intent": "order_food"}
+{"text": "Biryani order karne ka time hoga, kya baat hone wala?", "intent": "order_food"}
+{"text": "Biryani ekdo delivery karne ka time hoga!", "intent": "order_food"}
+{"text": "Biryani ekdo se aao, khana pakka padega!", "intent": "order_food"}
+{"text": "Biryani order karne wale ko samajhne ka waqat hai!", "intent": "order_food"}
+{"text": "Ekdo biryani order karen aur phir bahar jao!", "intent": "order_food"}
+{"text": "Biryani order karne ka time mat dekhne wala!", "intent": "order_food"}
+{"text": "Biryani ekdo ke paas hota hai, kuch samne nahi!", "intent": "order_food"}
+{"text": "Ekdo biryani ekdo delivery karne ke baal mein hoon!", "intent": "order_food"}
+{"text": "Biryani ekdo ka ekdo delivery karne ki baat karte hain!", "intent": "order_food"}
+{"text": "Ekdo biryani ekdo delivery karne ka jaris ho gaya!", "intent": "order_food"}
+{"text": "Ekdo biryani ekdo delivery karne ka time mil gaya!", "intent": "order_food"}
+{"text": "Ekdo biryani ekdo delivery karne wale ho aapke saath!", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0938\u092c\u094d\u091c\u093f\u092f\u093e\u0901 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092e\u0947\u091c\u092c\u093e\u0928\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0916\u093e\u0928\u093e \u0938\u094d\u091f\u093e\u0930\u094d\u091f \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u093e \u0938\u092a\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0932\u0941\u092b\u094d\u0924\u093e\u0928\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092d\u094b\u091c\u0928 \u0915\u0947 \u0932\u093f\u090f \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u0939\u093e\u0902 \u0938\u0947 \u091a\u0940\u0928\u0940 \u0915\u0947 \u0916\u093e\u0928\u0947 \u0915\u093e \u0905\u0902\u0924", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092c\u0939\u0941\u0924 \u0916\u093e\u092f\u093e \u091c\u093e\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0932\u0941\u092b\u094d\u0924\u093e\u0928\u0940 \u0914\u0930 \u0917\u0948\u0930 \u0932\u0941\u092b\u094d\u0924\u093e\u0928\u0940", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u091a\u0940\u0928\u0940", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0915\u093e \u090f\u0915 \u0928\u092f\u093e \u091c\u0940\u0935\u0928", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u091a\u0940\u0928\u0940 \u0915\u093e \u0915\u093e\u0909\u0902\u091f", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0938\u092c\u094d\u091c\u093f\u092f\u094b\u0902 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u094d\u092f\u093e \u091a\u0940\u0928\u0940 \u0932\u093f\u090f \u091c\u093e\u0924\u0947 \u0939\u0948\u0902?", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0915\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0932\u0941\u092b\u094d\u0924\u093e\u0928\u0940 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u0916\u093e\u0928\u093e \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092e\u0948\u0902 \u091a\u0940\u0928\u0940 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u091c\u093e \u0930\u0939\u093e \u0939\u0942\u0901", "intent": "order_food"}
+{"text": "\u0906\u0907\u0938 \u0915\u094d\u0930\u0940\u092e \u0915\u093e \u090f\u0928\u094d\u0921\u0930\u0930", "intent": "order_food"}
+{"text": "\u091a\u093e\u0938\u0940 \u0915\u093e \u091f\u0942\u0938\u094d\u0938 \u091c\u093e\u0935\u093e", "intent": "order_food"}
+{"text": "\u092c\u093e\u092c\u093e \u0926\u094d\u0935\u093e\u0930\u093e \u092c\u0928\u093e\u092f\u093e \u0917\u092f\u093e \u0921\u093f\u0938\u094d\u0938\u0928\u0940", "intent": "order_food"}
+{"text": "\u0938\u0942\u091f\u094d\u0938 \u091c\u0948\u0915\u0947\u091f \u092e\u0948\u0915\u0921\u0928\u0932\u094d\u0938", "intent": "order_food"}
+{"text": "\u0930\u0941\u0908 \u0938\u094d\u092a\u0940\u0938 \u0907\u0938\u094d\u0924\u0947\u092e\u093e\u0932", "intent": "order_food"}
+{"text": "\u092b\u094d\u0930\u093e\u0907\u0921 \u0924\u093e\u0938\u0940 \u091c\u093e\u0935\u093e", "intent": "order_food"}
+{"text": "\u0926\u0942\u0927 \u092c\u0947\u0930\u0940 \u092b\u094d\u0930\u0948\u0915", "intent": "order_food"}
+{"text": "\u092a\u094d\u0930\u0947\u092e\u094d\u092b\u0947\u0915\u094d\u091f \u091f\u0942\u0938\u094d\u0938 \u0926\u093f\u0932\u094d\u0932\u0940", "intent": "order_food"}
+{"text": "\u092c\u094d\u0930\u0947\u0915\u092b\u093e\u0938\u094d\u091f \u0921\u093f\u0938\u094d\u0938\u0928\u0940", "intent": "order_food"}
+{"text": "\u092a\u0942\u0930\u0947 \u0926\u093f\u0928 \u0915\u093e \u0935\u093f\u0936\u0947\u0937 \u0935\u094d\u092f\u0902\u091c\u0928", "intent": "order_food"}
+{"text": "\u091a\u093e\u0938\u0940 \u091c\u093e\u0935\u093e \u091f\u0942\u0938\u094d\u0938", "intent": "order_food"}
+{"text": "\u0939\u0940\u0932\u0940 \u092a\u0930\u093f\u0938", "intent": "order_food"}
+{"text": "\u091f\u0942\u0938\u094d\u0938 \u091c\u0948\u0915\u0947\u091f \u092e\u0948\u0915\u0921\u0928\u0932\u094d\u0938", "intent": "order_food"}
+{"text": "\u0939\u0930 \u0926\u093f\u0928 \u0915\u093e \u0935\u093f\u0936\u0947\u0937 \u0935\u094d\u092f\u0902\u091c\u0928", "intent": "order_food"}
+{"text": "\u092c\u094d\u0930\u0947\u0915\u092b\u093e\u0938\u094d\u091f \u091f\u0942\u0938\u094d\u0938", "intent": "order_food"}
+{"text": "\u091a\u093e\u0938\u0940 \u091c\u0940\u0930\u093e \u091f\u0942\u0938\u094d\u0938", "intent": "order_food"}
+{"text": "\u091f\u0942\u0938\u094d\u0938 \u091c\u0948\u0915\u0947\u091f \u0939\u0948\u0926\u0930\u093e\u092c\u093e\u0926", "intent": "order_food"}
+{"text": "\u0926\u0942\u0927 \u0906\u0932\u0942 \u092b\u094d\u0930\u0948\u0915", "intent": "order_food"}
+{"text": "\u091a\u093e\u0938\u0940 \u091c\u093e\u0935\u093e \u092c\u0930\u092c\u093e\u0926", "intent": "order_food"}
+{"text": "\u092a\u0942\u0930\u0947 \u0926\u093f\u0928 \u0915\u093e \u0921\u093f\u0938\u094d\u0938\u0928\u0940", "intent": "order_food"}
+{"text": "Get your sweet fix with our delicious desserts delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Order now and satisfy your craving with our mouth-watering desserts.", "intent": "order_food"}
+{"text": "Cherry pie, chocolate cake, and brownies \u2013 order any dessert from our menu and we'll deliver.", "intent": "order_food"}
+{"text": "Indulge in our heavenly desserts without the wait. Order online and get them delivered.", "intent": "order_food"}
+{"text": "Order your favorite dessert and get it delivered within 30 minutes or it's free.", "intent": "order_food"}
+{"text": "Could you use a dessert break? Order one of our delectable treats and get it delivered.", "intent": "order_food"}
+{"text": "Order our caramel apple pie and get it delivered within 20 minutes.", "intent": "order_food"}
+{"text": "A slice of our cheesecake or a box of our cookies \u2013 order now and get it delivered soon.", "intent": "order_food"}
+{"text": "Order our fresh-baked cookies and get them delivered to your home or office.", "intent": "order_food"}
+{"text": "Need something sweet? Order our brownies and get them delivered right away.", "intent": "order_food"}
+{"text": "Order our artisanal ice cream and get it delivered for a refreshing treat.", "intent": "order_food"}
+{"text": "Order our decadent chocolate brownies and get them delivered to your doorstep.", "intent": "order_food"}
+{"text": "Order our dessert sandwiches and get them delivered for an afternoon snack.", "intent": "order_food"}
+{"text": "Looking for something sweet? Order our chocolate-dipped strawberries and get them delivered.", "intent": "order_food"}
+{"text": "Order our gourmet pastries and get them delivered for a tasty treat.", "intent": "order_food"}
+{"text": "Order our premium ice creams and get them delivered for a cool treat.", "intent": "order_food"}
+{"text": "Order our gourmet donuts and get them delivered for a sweet surprise.", "intent": "order_food"}
+{"text": "Order our gourmet cupcakes and get them delivered for your next party.", "intent": "order_food"}
+{"text": "Order our homemade cookies and get them delivered for a sweet snack.", "intent": "order_food"}
+{"text": "Order our fresh-baked pies and get them delivered for a satisfying dessert.", "intent": "order_food"}
+{"text": "Place your breakfast order now for delivery.", "intent": "order_food"}
+{"text": "Order your favorite breakfast items for delivery.", "intent": "order_food"}
+{"text": "Get your breakfast delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Order breakfast with just a tap for quick delivery.", "intent": "order_food"}
+{"text": "Enjoy your favorite breakfast with hassle-free delivery.", "intent": "order_food"}
+{"text": "Order your morning meal for quick delivery.", "intent": "order_food"}
+{"text": "Order breakfast for delivery and save time.", "intent": "order_food"}
+{"text": "Order your breakfast for delivery without leaving your couch.", "intent": "order_food"}
+{"text": "Place your orders for breakfast delivery today.", "intent": "order_food"}
+{"text": "Order breakfast from our local vendors for fast delivery.", "intent": "order_food"}
+{"text": "Get your morning meal delivered to your door.", "intent": "order_food"}
+{"text": "Order your breakfast now for swift delivery.", "intent": "order_food"}
+{"text": "Get fresh breakfast delivered straight to you.", "intent": "order_food"}
+{"text": "Order breakfast for delivery and wake up happy.", "intent": "order_food"}
+{"text": "Get your breakfast delivered with just one tap.", "intent": "order_food"}
+{"text": "Order your morning meal for delivery now.", "intent": "order_food"}
+{"text": "Order breakfast for delivery and save the day.", "intent": "order_food"}
+{"text": "Order breakfast to your location for delivery.", "intent": "order_food"}
+{"text": "Get your breakfast delivered within minutes.", "intent": "order_food"}
+{"text": "Order your breakfast for delivery and enjoy the day.", "intent": "order_food"}
+{"text": "B\u00fcy\u00fck dessert \u0915\u093e \u092c\u0948\u0915\u094d\u0938 \u0906\u090f\u0901\u0917\u0947!", "intent": "order_food"}
+{"text": "\u091a\u093e\u092f \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u091a\u0940\u091c\u093c order \u0915\u0930\u0928\u093e \u0928\u093e\u092e\u094d\u092c\u0930 2!", "intent": "order_food"}
+{"text": "\u0921\u093e\u092f\u0930\u0947\u0915\u094d\u091f \u091f\u0942 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u091c\u0941\u0921\u093c\u0947 \u092f\u093e\u0930\u094b\u0902 \u0915\u094b dessert \u092d\u0940!", "intent": "order_food"}
+{"text": "\u0926\u093e\u0916\u093f\u0932\u093e dessert \u0909\u092c\u093e\u0932\u0947\u0902\u0917\u0947!", "intent": "order_food"}
+{"text": "\u0917\u0930\u094d\u092e \u0921\u093f\u0938\u094d\u091f\u094d\u0930\u0940 \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u092f\u093e\u091c\u0940 dessert order \u0915\u0930\u093e!", "intent": "order_food"}
+{"text": "\u090f\u0915 \u0928\u0908 \u0936\u0949\u0930\u094d\u091f\u0915\u0941\u091f dessert \u0915\u093e \u092a\u093e\u0938 \u0939\u0948!", "intent": "order_food"}
+{"text": "\u092c\u0935\u093e\u0938\u093f\u092f\u093e dessert \u0906\u090f\u0902\u0917\u0947 \u091c\u092c \u092f\u094b\u0902 \u0939\u094b\u0917\u093e!", "intent": "order_food"}
+{"text": "\u092a\u094d\u092f\u093e\u091c\u0940 dessert \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u092f\u093e\u091c\u0940 \u092b\u093e\u0907\u0902\u0921!", "intent": "order_food"}
+{"text": "\u0935\u093f\u0936\u093e\u0932 dessert \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u0935\u093f\u0936\u093e\u0932 \u0918\u0921\u093c\u0940!", "intent": "order_food"}
+{"text": "\u0928\u090f dessert \u0915\u094d\u092f\u093e \u0939\u094b\u0917\u093e? \u092f\u0939 \u0905\u092a\u0921\u0947\u091f \u0932\u094b!", "intent": "order_food"}
+{"text": "\u091c\u093c\u094b\u0928\u093e dessert \u0916\u093e\u090f\u0902!", "intent": "order_food"}
+{"text": "\u0905\u0902\u0921\u0947 \u0924\u094b \u0928\u0939\u0940\u0902, \u0932\u0947\u0915\u093f\u0928 \u0905\u0902\u0921\u0947 \u0915\u0940 \u092c\u0948\u0915\u094d\u0938 \u0906\u090f\u0902\u0917\u0947!", "intent": "order_food"}
+{"text": "\u0915\u0932\u094d\u0932\u0947 \u0915\u093e desserts \u0916\u093e\u090f\u0901!", "intent": "order_food"}
+{"text": "\u091b\u094b\u091f\u0947 dessert \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u091b\u094b\u091f\u093e dessert!", "intent": "order_food"}
+{"text": "\u0930\u093e\u0924 \u0932\u0917 \u0917\u0908, dessert \u0915\u093e time \u092d\u0940!", "intent": "order_food"}
+{"text": "\u0917\u094b\u0930\u0916\u093e dessert \u0915\u093e \u090f\u0915 \u0938\u0941\u0902\u0926\u0930 \u0905\u0915\u094d\u0938\u0930!", "intent": "order_food"}
+{"text": "\u0906\u0907\u091c \u0938\u0947 \u092c\u0939\u0941\u0924 \u0916\u093e\u0938 dessert order \u0915\u0930\u093e!", "intent": "order_food"}
+{"text": "dessert \u0915\u093e \u0905\u0928\u094d\u092f \u091f\u093e\u0907\u092e \u0932\u0917\u093e!", "intent": "order_food"}
+{"text": "dessert \u0915\u0947 \u0932\u093f\u090f \u0928\u0908 \u091f\u094d\u0930\u0947\u0928 order \u0915\u0930\u093e!", "intent": "order_food"}
+{"text": "Place your order for delicious chinese food", "intent": "order_food"}
+{"text": "Order your favorite chinese dishes now", "intent": "order_food"}
+{"text": "Get fresh chinese cuisine delivered to your doorstep", "intent": "order_food"}
+{"text": "Order chinese food and enjoy delicious flavors", "intent": "order_food"}
+{"text": "Order chinese takeout for your hungry family", "intent": "order_food"}
+{"text": "Get your hands on authentic chinese food", "intent": "order_food"}
+{"text": "Order chinese delivery for a feast", "intent": "order_food"}
+{"text": "Order chinese groceries for your dinner party", "intent": "order_food"}
+{"text": "Order chinese food for your next gathering", "intent": "order_food"}
+{"text": "Place your order for chinese takeout", "intent": "order_food"}
+{"text": "Order chinese food and enjoy the flavors", "intent": "order_food"}
+{"text": "Order chinese delivery to satisfy your cravings", "intent": "order_food"}
+{"text": "Order chinese food for a Chinese New Year celebration", "intent": "order_food"}
+{"text": "Order chinese delivery to enjoy a treat", "intent": "order_food"}
+{"text": "Order chinese food for your evening meal", "intent": "order_food"}
+{"text": "Order chinese delivery and enjoy the tastes", "intent": "order_food"}
+{"text": "Order chinese food for a special occasion", "intent": "order_food"}
+{"text": "Order chinese delivery for your family dinner", "intent": "order_food"}
+{"text": "Order chinese food and indulge in delicious flavors", "intent": "order_food"}
+{"text": "Order chinese delivery for your daily dose of yum", "intent": "order_food"}
+{"text": "Place your order for a juicy burger with us.", "intent": "order_food"}
+{"text": "Order a delicious burger and get it delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Get a crispy burger delivered in minutes.", "intent": "order_food"}
+{"text": "Order a burger now and enjoy hyperlocal delivery.", "intent": "order_food"}
+{"text": "Get your favorite burger delivered straight to your door.", "intent": "order_food"}
+{"text": "Order a burger for a quick and tasty meal.", "intent": "order_food"}
+{"text": "Need a burger delivered fast? Order now!", "intent": "order_food"}
+{"text": "Order a freshly made burger for delivery.", "intent": "order_food"}
+{"text": "Get a burger delivered right to your location.", "intent": "order_food"}
+{"text": "Order a burger and get it delivered in no time.", "intent": "order_food"}
+{"text": "Order a juicy burger and get it delivered quickly.", "intent": "order_food"}
+{"text": "Get your burger delivered with our hyperlocal service.", "intent": "order_food"}
+{"text": "Order a burger for a quick satisfying snack.", "intent": "order_food"}
+{"text": "Order a burger and enjoy it within minutes.", "intent": "order_food"}
+{"text": "Need a burger delivered now? Order it!", "intent": "order_food"}
+{"text": "Order a burger and get it delivered in the shortest time possible.", "intent": "order_food"}
+{"text": "Order a burger and enjoy it without leaving your doorstep.", "intent": "order_food"}
+{"text": "Get your burger delivered with our fast and reliable service.", "intent": "order_food"}
+{"text": "Order a burger and get it delivered directly to your place.", "intent": "order_food"}
+{"text": "Order a burger and experience hyperlocal delivery for yourself.", "intent": "order_food"}
+{"text": "Place your thali order now!", "intent": "order_food"}
+{"text": "Order your favorite thali from local restaurants!", "intent": "order_food"}
+{"text": "Get a delicious thali delivered in minutes!", "intent": "order_food"}
+{"text": "Order a thali and enjoy it at home!", "intent": "order_food"}
+{"text": "Don't cook, order a thali!", "intent": "order_food"}
+{"text": "Get a fresh thali with hyperlocal delivery!", "intent": "order_food"}
+{"text": "Order a thali and surprise your taste buds!", "intent": "order_food"}
+{"text": "Order a thali today and taste something new!", "intent": "order_food"}
+{"text": "Let us deliver your perfect thali!", "intent": "order_food"}
+{"text": "Order a thali for a quick meal!", "intent": "order_food"}
+{"text": "Order a delectable thali for dinner!", "intent": "order_food"}
+{"text": "Make your lunch easy with a thali order!", "intent": "order_food"}
+{"text": "Order a thali and explore local cuisines!", "intent": "order_food"}
+{"text": "Get a hot thali delivered to your doorstep!", "intent": "order_food"}
+{"text": "Order a thali and dine in style!", "intent": "order_food"}
+{"text": "Order a unique thali to impress your guests!", "intent": "order_food"}
+{"text": "Order a thali for a healthy meal!", "intent": "order_food"}
+{"text": "Order a thali and indulge in flavors!", "intent": "order_food"}
+{"text": "Order a thali and enjoy the taste!", "intent": "order_food"}
+{"text": "Order a thali and discover new flavors!", "intent": "order_food"}
+{"text": "Place your lunch order before 12 PM for same-day delivery.", "intent": "order_food"}
+{"text": "Order your lunch from our local favorites for delivery.", "intent": "order_food"}
+{"text": "Grab your lunch order and enjoy fresh food delivered right to you.", "intent": "order_food"}
+{"text": "Order your mid-day meal and we\u2019ll have it delivered by 1 PM.", "intent": "order_food"}
+{"text": "Pick up delicious lunch from our app and get it delivered in no time.", "intent": "order_food"}
+{"text": "Need lunch ASAP? Order now and we\u2019ll deliver it fast.", "intent": "order_food"}
+{"text": "Order your lunch and we\u2019ll deliver it in under an hour.", "intent": "order_food"}
+{"text": "Lunch break in 30 minutes? Order now for quick delivery.", "intent": "order_food"}
+{"text": "Order your lunch and enjoy a stress-free meal time.", "intent": "order_food"}
+{"text": "Get your lunch order placed and enjoy the delicious delivery.", "intent": "order_food"}
+{"text": "Order your lunch and it will be delivered right to your door.", "intent": "order_food"}
+{"text": "Quickly place your lunch order and get fresh delivery within 30 minutes.", "intent": "order_food"}
+{"text": "Order your lunch and enjoy the convenience of delivery right to you.", "intent": "order_food"}
+{"text": "Order lunch for delivery and enjoy a hassle-free meal break.", "intent": "order_food"}
+{"text": "Get your lunch order placed and enjoy a speedy delivery.", "intent": "order_food"}
+{"text": "Order your lunch and get fresh delivery in no time.", "intent": "order_food"}
+{"text": "Place your lunch order for same-day delivery and enjoy your meal.", "intent": "order_food"}
+{"text": "Order your lunch and have it delivered by the time you get there.", "intent": "order_food"}
+{"text": "Need lunch delivered fast? Order now for quick service.", "intent": "order_food"}
+{"text": "Order your lunch and enjoy a timely delivery.", "intent": "order_food"}
+{"text": "Order your lunch and get it delivered as soon as possible.", "intent": "order_food"}
+{"text": "\u092c\u093f\u0928\u093e \u0915\u093f\u0938\u0940 \u0915\u094d\u0932\u0949\u0928, \u092e\u0947\u0930\u093e \u0938\u094d\u091f\u0947\u0921\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u094b", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092a\u0930 \u0915\u094b\u0908 \u0936\u093f\u092e\u094d\u092e\u093e, \u092e\u0947\u0930\u093e \u0911\u0930\u094d\u0921\u0930 \u0921\u0932\u094b", "intent": "order_food"}
+{"text": "\u0939\u093e\u0932 \u0924\u0915 \u092b\u0942\u0921, \u092e\u0947\u0930\u093e \u0906\u0917\u0947 \u092c\u0922\u093c\u094b", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928 \u092e\u0947\u0902 \u0935\u094d\u092f\u093e\u092a\u093e\u0930 \u0936\u0941\u0930\u0942 \u0915\u0930\u0928\u093e, \u092a\u094d\u092f\u093e\u0930\u0947 \u0909\u0921\u0940\u0932 \u0939\u0940 \u092a\u0939\u0932\u0947", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092e\u093f\u0932\u094d\u0915\u0940 \u0921\u094d\u0930\u093f\u0902\u0915, \u092e\u0947\u0930\u093e \u0911\u0930\u094d\u0921\u0930 \u0917\u0941\u092e\u093e\u0928\u093e", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0916\u0930\u094d\u091a\u0947 \u0915\u0948\u0938\u0947 \u0915\u0930\u0942\u0902?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094d\u092f\u093e \u0932\u0947\u0924\u0947?", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0940 \u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094d\u092f\u093e \u091f\u093e\u0907\u092a \u0939\u094b\u0924\u0940 \u0939\u0948?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0940 \u0932\u093f\u0938\u094d\u091f \u0926\u0947\u0916\u0928\u0947 \u0915\u093e \u0938\u093e\u092e\u093e\u092f\u093f\u0915?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094d\u0930\u0947\u0921\u093f\u091f \u0915\u0948\u0938\u0947 \u0914\u0930 \u0915\u094d\u092f\u094b\u0902?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u092a\u0930 \u0914\u0930 \u0909\u091a\u093f\u0924 \u0926\u093f\u0935\u0938?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0916\u0930\u094d\u091a\u0947 \u0915\u0940 \u0932\u093f\u0938\u094d\u091f?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u0932\u093f\u090f \u092c\u0947\u0938\u093f\u0915 \u091f\u093e\u0907\u092a?", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u091c\u0939\u093e\u0902?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094d\u092f\u094b\u0902 \u0906\u0926\u0930\u094d\u0936?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0940 \u0909\u091c\u094d\u091c\u0935\u0932 \u0932\u093f\u0938\u094d\u091f?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u0932\u093f\u090f \u0924\u0948\u092f\u093e\u0930\u0940 \u0915\u0948\u0938\u0947 \u0915\u0930\u0942\u0902?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094b \u0926\u0947\u0916\u0928\u0947 \u0915\u093e \u0938\u093e\u092e\u093e\u092f\u093f\u0915?", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094b \u0915\u0939\u093e\u0901?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u091f\u0948\u0915\u094d\u0938\u0940 \u0915\u0948\u0938\u0947?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u0932\u093f\u090f \u0910\u0938\u093e \u0924\u0948\u092f\u093e\u0930\u0940?", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u0932\u093f\u090f \u0909\u091a\u093f\u0924 \u091f\u093e\u0907\u092a?", "intent": "order_food"}
+{"text": "Place your order for a delicious pizza now!", "intent": "order_food"}
+{"text": "Order your favorite pizza for delivery!", "intent": "order_food"}
+{"text": "Get a fresh pizza delivered straight to your doorstep!", "intent": "order_food"}
+{"text": "Order a juicy pizza and have it delivered in minutes!", "intent": "order_food"}
+{"text": "Order a mouth-watering pizza for dinner!", "intent": "order_food"}
+{"text": "Delivering your pizza to your location right now!", "intent": "order_food"}
+{"text": "Order a tasty pizza and enjoy it in no time!", "intent": "order_food"}
+{"text": "Order a savory pizza direct to your table!", "intent": "order_food"}
+{"text": "Get a piping hot pizza delivered to your address!", "intent": "order_food"}
+{"text": "Order a delicious pizza and have it brought to you!", "intent": "order_food"}
+{"text": "Order a flavorful pizza and eat it now!", "intent": "order_food"}
+{"text": "Get a hot pizza delivered right to your door!", "intent": "order_food"}
+{"text": "Order a pizza now and have it delivered in under 30 minutes!", "intent": "order_food"}
+{"text": "Order a pizza and enjoy a quick bite!", "intent": "order_food"}
+{"text": "Order a pizza for a quick meal delivery!", "intent": "order_food"}
+{"text": "Order a pizza and let it be delivered to you!", "intent": "order_food"}
+{"text": "Order a pizza and have it arrive at your door!", "intent": "order_food"}
+{"text": "Order a pizza now and have it brought to you quickly!", "intent": "order_food"}
+{"text": "Order a pizza and indulge in a tasty treat!", "intent": "order_food"}
+{"text": "Order a pizza for a satisfying dining experience!", "intent": "order_food"}
+{"text": "Place your order for biryani now!", "intent": "order_food"}
+{"text": "Order some delicious biryani with us!", "intent": "order_food"}
+{"text": "Get your biryani delivered in minutes!", "intent": "order_food"}
+{"text": "Order biryani and get free delivery!", "intent": "order_food"}
+{"text": "Order the best biryani from us today!", "intent": "order_food"}
+{"text": "Enjoy a sumptuous biryani delivered to your door!", "intent": "order_food"}
+{"text": "Order biryani and save on delivery fees!", "intent": "order_food"}
+{"text": "Get a freshly made biryani delivered to your location!", "intent": "order_food"}
+{"text": "Order your favorite biryani for pick-up or delivery!", "intent": "order_food"}
+{"text": "Order biryani and get a free soft drink!", "intent": "order_food"}
+{"text": "Order biryani online and get it within the hour!", "intent": "order_food"}
+{"text": "Get your perfect biryani from us!", "intent": "order_food"}
+{"text": "Order biryani and support local businesses!", "intent": "order_food"}
+{"text": "Get a spicy biryani delivered right to your doorstep!", "intent": "order_food"}
+{"text": "Order biryani and enjoy it with friends!", "intent": "order_food"}
+{"text": "Order biryani and get it at your door in no time!", "intent": "order_food"}
+{"text": "Order biryani and get a free starter with your meal!", "intent": "order_food"}
+{"text": "Order biryani and get it fresh from the kitchen!", "intent": "order_food"}
+{"text": "Order biryani for a taste of home!", "intent": "order_food"}
+{"text": "Order biryani and get it within 30 minutes!", "intent": "order_food"}
+{"text": "Place your order for fresh snacks now!", "intent": "order_food"}
+{"text": "Order your favorite snacks for delivery!", "intent": "order_food"}
+{"text": "Get your snacks delivered in minutes!", "intent": "order_food"}
+{"text": "Order delicious snacks straight to your doorstep!", "intent": "order_food"}
+{"text": "Order some yummy snacks right away!", "intent": "order_food"}
+{"text": "Get your snacks delivered quickly and efficiently!", "intent": "order_food"}
+{"text": "Order healthy and tasty snacks for the day!", "intent": "order_food"}
+{"text": "Order your crunchy and chewy snacks now!", "intent": "order_food"}
+{"text": "Get your favorite snacking options delivered fast!", "intent": "order_food"}
+{"text": "Order unique and delicious snacks for a treat!", "intent": "order_food"}
+{"text": "Get your snacks delivered, no wait needed!", "intent": "order_food"}
+{"text": "Order your go-to snacks for the day!", "intent": "order_food"}
+{"text": "Get your snacks delivered within your neighborhood!", "intent": "order_food"}
+{"text": "Order your crunchy, savory snacks right now!", "intent": "order_food"}
+{"text": "Get your snacks delivered before your hunger strikes!", "intent": "order_food"}
+{"text": "Order your favorite snacks for an afternoon snack!", "intent": "order_food"}
+{"text": "Get your snacks delivered and enjoy their crunch!", "intent": "order_food"}
+{"text": "Order your snack box filled with treats!", "intent": "order_food"}
+{"text": "Get your snacks delivered and share with friends!", "intent": "order_food"}
+{"text": "Order your snacks and enjoy a snack session!", "intent": "order_food"}
+{"text": "Place your order for morning croissants and orange juice.", "intent": "order_food"}
+{"text": "Got a craving for pancakes? Order now.", "intent": "order_food"}
+{"text": "Need a quick breakfast? Place your order!", "intent": "order_food"}
+{"text": "Order some bacon and eggs for a hearty breakfast.", "intent": "order_food"}
+{"text": "Looking for vegetarian breakfast options? Place your order.", "intent": "order_food"}
+{"text": "Order some avocado toast and a cup of coffee for breakfast.", "intent": "order_food"}
+{"text": "Start your day with a delicious breakfast sandwich. Order now.", "intent": "order_food"}
+{"text": "Craving some Bagel with cream cheese? Order online.", "intent": "order_food"}
+{"text": "Order some French toast andSide of bacon for the best breakfast.", "intent": "order_food"}
+{"text": "Place your order for a fresh omelette with vegetables.", "intent": "order_food"}
+{"text": "Order some hash browns and a side of sausages for breakfast.", "intent": "order_food"}
+{"text": "Order some toast with mango jam and a glass of milk.", "intent": "order_food"}
+{"text": "Can't wait for a freshly brewed coffee? Order now!", "intent": "order_food"}
+{"text": "Order some sliced mango and yogurt parfait for breakfast.", "intent": "order_food"}
+{"text": "Order some scrambled eggs and a piece of fruit for breakfast.", "intent": "order_food"}
+{"text": "Start your day with a stack of pancakes. Order now.", "intent": "order_food"}
+{"text": "Order some breakfast burrito with your choice of fillings.", "intent": "order_food"}
+{"text": "Place your order for a bowl of oats with nuts and honey.", "intent": "order_food"}
+{"text": "Order some smoked salmon on toast for breakfast.", "intent": "order_food"}
+{"text": "Order some lemon and honey water for breakfast.", "intent": "order_food"}
+{"text": "Order some delicious street food nearby.", "intent": "order_food"}
+{"text": "Get fresh street food delivered to your door.", "intent": "order_food"}
+{"text": "Choose from the best street food in your area.", "intent": "order_food"}
+{"text": "Quick order of street food delivered directly to you.", "intent": "order_food"}
+{"text": "Order street food and enjoy it in moments.", "intent": "order_food"}
+{"text": "Order street food from your favorite local vendors.", "intent": "order_food"}
+{"text": "Get fresh street food from your nearest vendor.", "intent": "order_food"}
+{"text": "Order tasty street food for a quick lunch.", "intent": "order_food"}
+{"text": "Delicious street food is just a tap away.", "intent": "order_food"}
+{"text": "Order street food for a satisfying meal.", "intent": "order_food"}
+{"text": "Fast delivery of your chosen street food.", "intent": "order_food"}
+{"text": "Order street food and get it in minutes.", "intent": "order_food"}
+{"text": "Check out our selection of street food for delivery.", "intent": "order_food"}
+{"text": "Order your favorite street food for delivery.", "intent": "order_food"}
+{"text": "Delight in fresh street food delivered right to you.", "intent": "order_food"}
+{"text": "Order street food for a vibrant culinary experience.", "intent": "order_food"}
+{"text": "Order a variety of street food for a tasty dinner.", "intent": "order_food"}
+{"text": "Order street food and enjoy the flavors.", "intent": "order_food"}
+{"text": "\u092e\u0948\u0902 \u090f\u0915 \u092a\u093f\u091f\u094d\u0938\u094d\u0915\u0930\u094d\u0928 \u092a\u0940\u091c\u093c\u093e \u0914\u0930 \u090f\u0915 \u091a\u0940\u0928\u0940 \u091a\u093e\u0938\u0940 \u0916\u093e\u0928\u093e \u0916\u0930\u094d\u091a\u093e \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0902", "intent": "order_food"}
+{"text": "\u0969\u0966 \u092e\u093f\u0928\u091f \u0915\u0940 \u0917\u0947\u0930 \u0915\u0947 \u092c\u093e\u0926 \u092e\u0947 \u090f\u0915 \u0915\u094d\u0930\u0947\u0938\u094d\u091f\u0932 \u092a\u0940\u091c\u093c\u093e \u0914\u0930 \u0917\u0930\u094d\u092e \u091a\u093e\u0938\u0940 \u0916\u093e\u0928\u093e \u0932\u093e\u090f", "intent": "order_food"}
+{"text": "\u0924\u0941\u092e \u092e\u0947 \u090f\u0915 \u0917\u094d\u0930\u0949\u0938\u0930\u0940 \u0917\u0949\u0930\u094d\u0921\u0928\u0940 \u0939\u0947\u0921 \u0911\u092b \u0915\u094b\u0928\u093e \u0914\u0930 \u090f\u0915 \u0917\u0930\u094d\u092e \u091f\u0942\u0938\u094d\u0924\u093e \u092b\u094d\u0930\u093e\u0909\u0902\u091f \u0915\u0930\u094d\u0928\u0932 \u0915\u093e \u0916\u0947\u0932 \u0915\u0930 \u0926\u094b", "intent": "order_food"}
+{"text": "\u0939\u093e\u0930\u094d\u091f\u0940 \u0932\u0942\u0902\u091a \u092c\u0928\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u0917\u0941\u0932\u093e\u092c\u0940 \u092a\u093e \u0938\u0947 \u092c\u0928\u093e\u090f \u0917\u090f \u092b\u093e\u0938\u093f\u0932 \u0914\u0930 \u091f\u0942\u0938\u094d\u0924\u093e \u091a\u093e\u0938\u0940 \u0916\u093e\u0928\u093e \u0916\u0930\u094d\u091a\u093e \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092e\u0947 \u090f\u0915 \u0915\u094d\u0930\u0947\u0938\u094d\u091f\u0932 \u092a\u0940\u091c\u093c\u093e \u0914\u0930 \u090f\u0915 \u092c\u0940\u092b \u0938\u094d\u091f\u0940\u0915 \u0932\u0949 \u0915\u0930\u094d\u0928\u0932 \u0915\u093e \u0916\u093e\u0928\u093e \u0916\u0930\u094d\u091a\u093e \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0902", "intent": "order_food"}
+{"text": "Get your favorite thali delivered!", "intent": "order_food"}
+{"text": "Order your thali with just one click!", "intent": "order_food"}
+{"text": "Enjoy yummy thalis right at your doorstep!", "intent": "order_food"}
+{"text": "Order a delicious thali for today!", "intent": "order_food"}
+{"text": "Order your tasty thali from our app!", "intent": "order_food"}
+{"text": "Order a mouth-watering thali today!", "intent": "order_food"}
+{"text": "Order your thali for delivery now!", "intent": "order_food"}
+{"text": "Order a delicious thali and have it delivered!", "intent": "order_food"}
+{"text": "Order your thali and get it delivered quickly!", "intent": "order_food"}
+{"text": "Order a fresh thali for delivery!", "intent": "order_food"}
+{"text": "Order your thali and get it delivered fast!", "intent": "order_food"}
+{"text": "Order a delicious thali for a quick delivery!", "intent": "order_food"}
+{"text": "Order your thali for a tasty and fast delivery!", "intent": "order_food"}
+{"text": "Order a thali and get it delivered right away!", "intent": "order_food"}
+{"text": "Order your thali for a speedy delivery!", "intent": "order_food"}
+{"text": "Order a thali and get it delivered swiftly!", "intent": "order_food"}
+{"text": "Order your thali for quick delivery!", "intent": "order_food"}
+{"text": "Order a thali and get it delivered promptly!", "intent": "order_food"}
+{"text": "Order your thali for instant delivery!", "intent": "order_food"}
+{"text": ".sultra, rasam ilayen?", "intent": "order_food"}
+{"text": ".packages innu thalavu order cheen?", "intent": "order_food"}
+{"text": "erala cheen, biryani ilayen?", "intent": "order_food"}
+{"text": "grov[]=keera, parippu, rice illaiyen?", "intent": "order_food"}
+{"text": "parcels=kaden, t shirts ilayen?", "intent": "order_food"}
+{"text": "rides=inu chennai airport van ilayen?", "intent": "order_food"}
+{"text": ".grocery[]=bananas, apples, oranges ilayen?", "intent": "order_food"}
+{"text": "grov[]=atti, rice, vegetables illaiyen?", "intent": "order_food"}
+{"text": "parcels=kitchenware, utensils ilayen?", "intent": "order_food"}
+{"text": "rides=inu chennai palace tour van ilayen?", "intent": "order_food"}
+{"text": ".grocery[]=bread, butter, jam ilayen?", "intent": "order_food"}
+{"text": "parcels=pet supplies, food ilayen?", "intent": "order_food"}
+{"text": "rides=inu madurai temple tour van ilayen?", "intent": "order_food"}
+{"text": "grov[]=mango, coconut, banana ilayen?", "intent": "order_food"}
+{"text": "parcels=flowers, plants ilayen?", "intent": "order_food"}
+{"text": "grov[]=maize, wheat, rice illaiyen?", "intent": "order_food"}
+{"text": "parcels=cargo, boxes ilayen?", "intent": "order_food"}
+{"text": "rides=innu chennai meat market van ilayen?", "intent": "order_food"}
+{"text": ".grocery[]=sugar, salt, rice ilayen?", "intent": "order_food"}
+{"text": "parcels=medicine, health items ilayen?", "intent": "order_food"}
+{"text": ".grocery[]=fish, prawns, rice illaien?", "intent": "order_food"}
+{"text": "\u092b\u0932\u0924\u0902\u0915 \u0906\u0902\u0921\u0947 \u0916\u0930 \u091c\u093e \u0930\u0939\u0947 \u0939\u0948\u0902", "intent": "order_food"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0916\u094b\u0932\u0915\u0930 \u092b\u0932\u0924\u0902\u0915 \u0906\u0902\u0921\u0947 \u092b\u0902\u0915\u0947 \u0926\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u094d\u0930\u0947\ufffdkfast \u0906\u0902\u0921\u0947 \u0924\u0948\u092f\u093e\u0930 \u0915\u0930 \u0930\u0939\u0947 \u0939\u0948\u0902", "intent": "order_food"}
+{"text": "\u0906\u0902\u0921\u0947 \u092d\u092e\u094d\u092c\u093e\u090f \u091c\u093e \u0930\u0939\u0947 \u0939\u0948\u0902, \u092b\u0932\u0924\u0902\u0915 \u0928 \u092c\u0939\u0947", "intent": "order_food"}
+{"text": "\u092d\u094b\u091c\u0928 \u0916\u0930\u094d\u091a\u0947 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0916\u093e\u0928\u0947 \u0915\u093e \u0938\u092c\u094d\u091c\u0940", "intent": "order_food"}
+{"text": "\u092b\u0942\u0921 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0916\u093e\u0928\u0947 \u0915\u0940 \u0938\u092c\u094d\u091c\u0940", "intent": "order_food"}
+{"text": "\u092a\u093f\u091b\u0932\u0947 \u0915\u093e \u0916\u093e\u0928\u0947 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u093e \u092a\u093f\u091b\u0932\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092b\u0942\u0921 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0932\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u093e \u0938\u0930\u094d\u0935\u093f\u0938 \u0932\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0916\u093e\u0928\u0947 \u0915\u093e \u092a\u094d\u092f\u093e\u0938", "intent": "order_food"}
+{"text": "\u092b\u0942\u0921 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0932\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u0940 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092b\u0942\u0921 \u0911\u0930\u094d\u0921\u0930 \u0932\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0932\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u092b\u0942\u0921 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u0947\u0928\u093e", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u093e \u0938\u092c\u094d\u091c\u0940", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u0947 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0938\u092c\u094d\u091c\u0940 \u0915\u093e \u092b\u0942\u0921 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "Get your favorite snacks delivered right to your door.", "intent": "order_food"}
+{"text": "Order delicious snacks with hyperlocal delivery.", "intent": "order_food"}
+{"text": "Snack time! Order now and get it delivered fast.", "intent": "order_food"}
+{"text": "Craving snacks? Order from our selection for quick delivery.", "intent": "order_food"}
+{"text": "Hungry for snacks? Place your order and get it delivered locally.", "intent": "order_food"}
+{"text": "Delicious snacks at your doorstep! Order now.", "intent": "order_food"}
+{"text": "Order snacks for delivery and enjoy tasty treats.", "intent": "order_food"}
+{"text": "Get your yummy snacks delivered in no time with us.", "intent": "order_food"}
+{"text": "Craving some snacks? Order and get them delivered quickly.", "intent": "order_food"}
+{"text": "Order your favorite snacks for a speedy delivery.", "intent": "order_food"}
+{"text": "Need snacks? Order now for hyperlocal delivery.", "intent": "order_food"}
+{"text": "Delight your taste buds with our snacks delivery service.", "intent": "order_food"}
+{"text": "Order snacks and get them delivered straight to your location.", "intent": "order_food"}
+{"text": "Hungry for some snacks? Place your order for delivery.", "intent": "order_food"}
+{"text": "Treat yourself with snacks delivered right to your door.", "intent": "order_food"}
+{"text": "Order snacks and enjoy the convenience of local delivery.", "intent": "order_food"}
+{"text": "Get your cravings satisfied with our snack delivery service.", "intent": "order_food"}
+{"text": "Order snacks and get them delivered within minutes.", "intent": "order_food"}
+{"text": "Order your favorite snacks and enjoy local delivery.", "intent": "order_food"}
+{"text": "Seeking snacks? Place your order for fast delivery.", "intent": "order_food"}
+{"text": "Place your order, we deliver fresh food right to your doorstep.", "intent": "order_food"}
+{"text": "Order some delicious Chinese from your local restaurant.", "intent": "order_food"}
+{"text": "Get your favorite Chinese dishes delivered in minutes.", "intent": "order_food"}
+{"text": "Chinese food delivery, just for you.", "intent": "order_food"}
+{"text": "Order takeout and enjoy a meal at home.", "intent": "order_food"}
+{"text": "Delivering the best Chinese cuisine to your door.", "intent": "order_food"}
+{"text": "Order some yummy Chinese and enjoy without leaving home.", "intent": "order_food"}
+{"text": "Get your Chinese takeaway delivered to your place.", "intent": "order_food"}
+{"text": "Order your favorite Chinese and enjoy at home.", "intent": "order_food"}
+{"text": "Chinese food delivery, fresh and hot.", "intent": "order_food"}
+{"text": "Order your lunch or dinner and let us handle the delivery.", "intent": "order_food"}
+{"text": "Delicious Chinese food, delivered to your door.", "intent": "order_food"}
+{"text": "Order Chinese, we'll bring the feast to you.", "intent": "order_food"}
+{"text": "Get your Chinese food delivered, order now.", "intent": "order_food"}
+{"text": "Order Chinese and enjoy a feast at home.", "intent": "order_food"}
+{"text": "Chinese restaurant delivery, right to your doorstep.", "intent": "order_food"}
+{"text": "Chinese food delivery, enjoy without leaving home.", "intent": "order_food"}
+{"text": "Order some Chinese and let us handle the delivery.", "intent": "order_food"}
+{"text": "Deliveries of Chinese food, right to your door.", "intent": "order_food"}
+{"text": "Order Chinese and we'll bring it to you.", "intent": "order_food"}
+{"text": "Place your pizza order now!", "intent": "order_food"}
+{"text": "Order your favorite pizza for delivery.", "intent": "order_food"}
+{"text": "Get your pizza delivered in minutes.", "intent": "order_food"}
+{"text": "Today's special pizza is on delivery!", "intent": "order_food"}
+{"text": "Order a delicious pizza with free delivery.", "intent": "order_food"}
+{"text": "Order a crispy pizza for home delivery.", "intent": "order_food"}
+{"text": "Get your pizza and more with our delivery service.", "intent": "order_food"}
+{"text": "Quickly order your pizza for pick-up or delivery.", "intent": "order_food"}
+{"text": "Order mouth-watering pizza for fresh delivery.", "intent": "order_food"}
+{"text": "Order your pizza for same-day delivery.", "intent": "order_food"}
+{"text": "Get your pizza delivered by our fastest rider.", "intent": "order_food"}
+{"text": "Order your pizza and get free chips!", "intent": "order_food"}
+{"text": "Quick order your pizza to enjoy the taste.", "intent": "order_food"}
+{"text": "Order the best pizza with no delivery charges.", "intent": "order_food"}
+{"text": "Get your pizza delivered by our trusted fleet.", "intent": "order_food"}
+{"text": "Order your pizza and grab a discount.", "intent": "order_food"}
+{"text": "Order your pizza and enjoy fresh delivery.", "intent": "order_food"}
+{"text": "Order your pizza for doorstep service.", "intent": "order_food"}
+{"text": "Order a hot pizza with free delivery today.", "intent": "order_food"}
+{"text": "Get your pizza delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Place your burger order now!", "intent": "order_food"}
+{"text": "Get your burgers delivered in minutes!", "intent": "order_food"}
+{"text": "Order a delicious burger and more!", "intent": "order_food"}
+{"text": "Need a burger? Order it here!", "intent": "order_food"}
+{"text": "Delicious burgers at your doorstep!", "intent": "order_food"}
+{"text": "Order a fresh burger and enjoy!", "intent": "order_food"}
+{"text": "Order a mouth-watering burger today!", "intent": "order_food"}
+{"text": "Get your favorite burger delivered!", "intent": "order_food"}
+{"text": "Order your perfect burger now!", "intent": "order_food"}
+{"text": "Burgers are on the way!", "intent": "order_food"}
+{"text": "Order a juicy burger for pickup!", "intent": "order_food"}
+{"text": "Order your burger and relax!", "intent": "order_food"}
+{"text": "Burgers delivered right to your door!", "intent": "order_food"}
+{"text": "Order a tasty burger and enjoy!", "intent": "order_food"}
+{"text": "Get your burger order fulfilled!", "intent": "order_food"}
+{"text": "Order a crispy burger and munch!", "intent": "order_food"}
+{"text": "Order a burger and surprise yourself!", "intent": "order_food"}
+{"text": "Get your burger and enjoy the flavors!", "intent": "order_food"}
+{"text": "Order a flavorful burger now!", "intent": "order_food"}
+{"text": "Get a burger and celebrate your day!", "intent": "order_food"}
+{"text": "Get your favorite street food delivered straight to your door.", "intent": "order_food"}
+{"text": "Order some delicious street food with hyperlocal delivery.", "intent": "order_food"}
+{"text": "Need some quick street food? We\u2019ll get it to you fast.", "intent": "order_food"}
+{"text": "Want street food? Order now and we\u2019ll bring it to you.", "intent": "order_food"}
+{"text": "Craving street food? Order now and pick up or have it delivered.", "intent": "order_food"}
+{"text": "Street food craving? Order from us and get it delivered to your house.", "intent": "order_food"}
+{"text": "Love street food? Place your order and enjoy the taste at home.", "intent": "order_food"}
+{"text": "Feeling hungry for some street food? Order now and we\u2019ll bring it to you.", "intent": "order_food"}
+{"text": "Tired of cooking? Order some street food and have it delivered.", "intent": "order_food"}
+{"text": "Order some mouth-watering street food with our delivery service.", "intent": "order_food"}
+{"text": "Craving street food? Place your order now and get it delivered.", "intent": "order_food"}
+{"text": "Looking for fresh street food? Order now and have it delivered quickly.", "intent": "order_food"}
+{"text": "Hunger for street food? Order from us and it will be delivered to you.", "intent": "order_food"}
+{"text": "Need a quick snack? Order some street food for delivery.", "intent": "order_food"}
+{"text": "Craving some delicious street food? Order now and we\u2019ll deliver it to you.", "intent": "order_food"}
+{"text": "Taste the flavors of street food from the comfort of your home with delivery.", "intent": "order_food"}
+{"text": "Order some street food and get it delivered to your doorstep.", "intent": "order_food"}
+{"text": "Thirsty for street food? Order now and it will be delivered to you.", "intent": "order_food"}
+{"text": "Craving street food? Order from us and enjoy the taste at your doorstep.", "intent": "order_food"}
+{"text": "erculane wale masala dosa dekha hai, please order", "intent": "order_food"}
+{"text": "parle gud ney barfi order karna hai", "intent": "order_food"}
+{"text": "vadai order karna hai", "intent": "order_food"}
+{"text": "kolam vada order karna hai", "intent": "order_food"}
+{"text": "rava dosa order karna hai", "intent": "order_food"}
+{"text": "Idli sambhar order karna hai", "intent": "order_food"}
+{"text": "utthapam order karna hai", "intent": "order_food"}
+{"text": "mooli vada order karna hai", "intent": "order_food"}
+{"text": "appam order karna hai", "intent": "order_food"}
+{"text": "masala rice order karna hai", "intent": "order_food"}
+{"text": "thlay order karna hai", "intent": "order_food"}
+{"text": "kappa order karna hai", "intent": "order_food"}
+{"text": "fish fry order karna hai", "intent": "order_food"}
+{"text": "tapioca order karna hai", "intent": "order_food"}
+{"text": "mangos canne order karna hai", "intent": "order_food"}
+{"text": "banana canne order karna hai", "intent": "order_food"}
+{"text": "apples canne order karna hai", "intent": "order_food"}
+{"text": "chikkantas canne order karna hai", "intent": "order_food"}
+{"text": "mangoes canne order karna hai", "intent": "order_food"}
+{"text": "guava canne order karna hai", "intent": "order_food"}
+{"text": "Place your order for fresh street food right away!", "intent": "order_food"}
+{"text": "Order your favorite street food with hyperlocal delivery!", "intent": "order_food"}
+{"text": "Get your street food delivered in minutes!", "intent": "order_food"}
+{"text": "Order street food from your go-to local vendors!", "intent": "order_food"}
+{"text": "Choose from a variety of street food options and get it delivered!", "intent": "order_food"}
+{"text": "Order delicious street food and enjoy it at home!", "intent": "order_food"}
+{"text": "Delivering the best of street food to your doorstep!", "intent": "order_food"}
+{"text": "Order street food for a quick and tasty meal!", "intent": "order_food"}
+{"text": "Get your favorite street food with hyperlocal delivery!", "intent": "order_food"}
+{"text": "Order street food and enjoy the flavors of the city!", "intent": "order_food"}
+{"text": "Order organic street food for a healthier lifestyle!", "intent": "order_food"}
+{"text": "Get your street food delivered right to your door!", "intent": "order_food"}
+{"text": "Order street food and savor the unique flavors!", "intent": "order_food"}
+{"text": "Get your street food delivered faster with hyperlocal services!", "intent": "order_food"}
+{"text": "Order street food and enjoy the best of local cuisine!", "intent": "order_food"}
+{"text": "Order street food for a quick and convenient meal!", "intent": "order_food"}
+{"text": "Get your street food delivered within minutes of placing your order!", "intent": "order_food"}
+{"text": "Order street food and indulge in local flavors!", "intent": "order_food"}
+{"text": "Order street food and enjoy the fresh taste of the city!", "intent": "order_food"}
+{"text": "Order street food and experience the excitement of local flavors!", "intent": "order_food"}
+{"text": "#aaane food order karna hai", "intent": "order_food"}
+{"text": "baaray food delivery app pe order karne ka time aaya", "intent": "order_food"}
+{"text": "dinner time aaya, food order karna hai", "intent": "order_food"}
+{"text": "kolla delivery app, food order karna hai", "intent": "order_food"}
+{"text": "baaray food order karna hai, uppal mein", "intent": "order_food"}
+{"text": "aadat mein food order karne ka time aaya", "intent": "order_food"}
+{"text": "foods order karna hai, eater app par", "intent": "order_food"}
+{"text": "kaalu vade order karna hai, please", "intent": "order_food"}
+{"text": "samosa leke aao, delivery pe", "intent": "order_food"}
+{"text": "aa parvataka food order karna hai", "intent": "order_food"}
+{"text": "vada pav le, order karna hai", "intent": "order_food"}
+{"text": "aadat mein food order karne ka time aaya, please", "intent": "order_food"}
+{"text": "kaanu vada pav order karna hai", "intent": "order_food"}
+{"text": "samosa vada order karna hai, please", "intent": "order_food"}
+{"text": "gulab jamun order karne ka time aaya", "intent": "order_food"}
+{"text": "dosa order karna hai, kindly", "intent": "order_food"}
+{"text": "vadapav order karne ka time aaya", "intent": "order_food"}
+{"text": "paruppu vada order karna hai", "intent": "order_food"}
+{"text": "appi vade order karne ka time aaya", "intent": "order_food"}
+{"text": "appam order karna hai, please", "intent": "order_food"}
+{"text": "\u0915\u094b\u0930\u094b\u0928\u093e \u092e\u0947\u0902 \u0916\u093e\u0928\u0947 \u0915\u093e \u092e\u0941\u0936\u094d\u0915\u093f\u0932 \u0939\u0948, \u0921\u093f\u0932\u093f\u0935\u0930\u0940 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u093f\u0902\u091c \u092b\u0942\u0921 \u0915\u093e \u090f\u0915 \u0905\u0926\u094d\u092d\u0941\u0924 \u092e\u093f\u0932\u093e, \u092a\u0930\u094d\u0938\u093e\u0928\u093e \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092b\u0942\u0921 \u0916\u093e\u0928\u0947 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e, \u0928\u091c\u093c\u0930 \u0930\u0916\u094b\u0964", "intent": "order_food"}
+{"text": "\u091b\u094b\u091f\u093e \u091a\u0940\u0928\u0940 \u092b\u0942\u0921, \u090f\u0915 \u0926\u093f\u0928 \u0915\u093e \u0938\u092b\u0930 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u093f\u0902\u091c \u091a\u093e\u0935\u0932 \u092e\u0947\u0902 \u0932\u0917\u093e, \u0907\u0924\u0928\u093e \u0905\u0902\u0924 \u0928\u0939\u0940\u0902 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u092b\u0942\u0921 \u0916\u093e\u0928\u0947 \u0915\u093e \u0926\u093f\u0932 \u092d\u093e\u0930, \u0930\u093f\u091c\u0947\u0915\u094d\u0936\u0928 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u093f\u0902\u091c \u091a\u093e\u0935\u0932 \u0915\u093e \u0916\u094d\u092f\u093e\u0932, \u090f\u0915 \u091a\u0940\u0928\u0940 \u091a\u093e\u0935\u0932 \u0921\u093f\u0932\u093f\u0935\u0930\u0940 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u091a\u093e\u0935\u0932 \u0916\u093e\u0928\u093e \u091a\u093e\u0939\u094b, \u0915\u0932 \u0921\u093f\u0932\u093f\u0935\u0930\u0940 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u093f\u0902\u091c \u091a\u093e\u0935\u0932 \u0916\u093e\u0928\u093e \u0906\u0930\u0915\u094d\u0937\u093f\u0924, \u0916\u093e\u091f\u093e \u0935\u093f\u0915\u093e\u0938 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u0940\u0928\u0940 \u091a\u093e\u0935\u0932 \u0916\u093e\u0928\u0947 \u0915\u093e \u092e\u0939\u0938\u0942\u0938, \u092a\u0930\u094d\u0936\u0928 \u0915\u0930\u094b!", "intent": "order_food"}
+{"text": "\u091a\u093f\u0902\u091c \u091a\u093e\u0935\u0932 \u0916\u093e\u0928\u0947 \u0915\u0940 \u0938\u093e\u092e\u0917\u094d\u0930\u0940, \u0928\u091c\u093c\u0930 \u0930\u0916\u094b.", "intent": "order_food"}
+{"text": "Get your sweet fix with our delicious pastries!", "intent": "order_food"}
+{"text": "Order now for fresh cupcakes and cookies!", "intent": "order_food"}
+{"text": "Indulge in our assortment of gourmet chocolates.", "intent": "order_food"}
+{"text": "Looking for something sweet? Order our best-selling brownies!", "intent": "order_food"}
+{"text": "Dessert delivery at your doorstep. Order now!", "intent": "order_food"}
+{"text": "Craving something sweet? We got you covered!", "intent": "order_food"}
+{"text": "Order our decadent ice cream cakes for a celebration.", "intent": "order_food"}
+{"text": "Fresh and frosted cookies delivered to your door.", "intent": "order_food"}
+{"text": "Delivering the most mouth-watering desserts to your home.", "intent": "order_food"}
+{"text": "Order our artisanal chocolates for a delightful snack.", "intent": "order_food"}
+{"text": "Sweeten your day with our selection of desserts!", "intent": "order_food"}
+{"text": "Indulge yourself with our delicious desserts. Order now!", "intent": "order_food"}
+{"text": "Order our luscious cakes for any occasion.", "intent": "order_food"}
+{"text": "Order our premium pastries for a delicious treat.", "intent": "order_food"}
+{"text": "Elevate your dessert game with our gourmet options.", "intent": "order_food"}
+{"text": "Satisfy your sweet tooth with our selection of desserts.", "intent": "order_food"}
+{"text": "Order our delectable desserts for a sweet treat.", "intent": "order_food"}
+{"text": "Order our ice cream sandwiches for a cooling treat.", "intent": "order_food"}
+{"text": "Order our specialty cakes for a special occasion.", "intent": "order_food"}
+{"text": "Order our caramel layer cakes for a sweet surprise!", "intent": "order_food"}
+{"text": "Order your favorite thali for delivery.", "intent": "order_food"}
+{"text": "Get your thali delivered in minutes!", "intent": "order_food"}
+{"text": "Order a delicious thali for dinner.", "intent": "order_food"}
+{"text": "Delicious thali just a click away!", "intent": "order_food"}
+{"text": "Get your thali and more delivered right to your door.", "intent": "order_food"}
+{"text": "Order your thali and explore our menu.", "intent": "order_food"}
+{"text": "Enjoy your thali from the comfort of your home.", "intent": "order_food"}
+{"text": "Order a veg thali for a healthy dinner.", "intent": "order_food"}
+{"text": "Order a non-veg thali for a sumptuous meal.", "intent": "order_food"}
+{"text": "Delicious thali delivered to your doorstep.", "intent": "order_food"}
+{"text": "Order a special thali for a festive occasion.", "intent": "order_food"}
+{"text": "Indulge in a thali without leaving your house.", "intent": "order_food"}
+{"text": "Order a thali for a quick and yummy meal.", "intent": "order_food"}
+{"text": "Get a thali customized to your taste.", "intent": "order_food"}
+{"text": "Order a thali with a variety of dishes.", "intent": "order_food"}
+{"text": "Get your thali with the best ingredients.", "intent": "order_food"}
+{"text": "Order a thali for a hassle-free dining experience.", "intent": "order_food"}
+{"text": "Enjoy a curated thali with every order.", "intent": "order_food"}
+{"text": "-orders me some ice cream", "intent": "order_food"}
+{"text": "wanna order some brownies?", "intent": "order_food"}
+{"text": "gets me a chocolate cake", "intent": "order_food"}
+{"text": "-delivers me some pastries", "intent": "order_food"}
+{"text": "orders a vanilla cake for me", "intent": "order_food"}
+{"text": "gets me some cookies and cream cupcakes", "intent": "order_food"}
+{"text": "-delivers some red velvet cupcakes to me", "intent": "order_food"}
+{"text": "orders me a giant donut", "intent": "order_food"}
+{"text": "gets some peanut butter cookies for me", "intent": "order_food"}
+{"text": "-delivers me some chocolate chip cookies", "intent": "order_food"}
+{"text": "orders me some gelato", "intent": "order_food"}
+{"text": "gets me some ice cream sandwiches", "intent": "order_food"}
+{"text": "delivers me some frozen yogurt", "intent": "order_food"}
+{"text": "orders me some custard pies", "intent": "order_food"}
+{"text": "gets me some mango pudding", "intent": "order_food"}
+{"text": "-delivers me some chocolate mousse", "intent": "order_food"}
+{"text": "orders me some tiramisu", "intent": "order_food"}
+{"text": "gets me some lemon meringue pie", "intent": "order_food"}
+{"text": "delivers me some cheesecake", "intent": "order_food"}
+{"text": "orders me some pudding", "intent": "order_food"}
+{"text": "gets me some custard tarts", "intent": "order_food"}
+{"text": "Get your favorite south indian snacks delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Order authentic south indian meals from local vendors.", "intent": "order_food"}
+{"text": "Need groceries? We deliver south indian staples right away.", "intent": "order_food"}
+{"text": "Looking for something spicy? Order south indian curries with just one click.", "intent": "order_food"}
+{"text": "Order fresh fruits and vegetables for your south indian cooking.", "intent": "order_food"}
+{"text": "Delivering the best south indian parotta and dosa to your home.", "intent": "order_food"}
+{"text": "Need kuzhambu and rasam? Order them now for a delicious meal.", "intent": "order_food"}
+{"text": "Order south indian breakfast essentials for a healthy start.", "intent": "order_food"}
+{"text": "Get your daily essentials from south indian stores with just one order.", "intent": "order_food"}
+{"text": "Order south indian snacks for your next party or get-together.", "intent": "order_food"}
+{"text": "Delivering fresh and delicious south indian dosas and vadas to your doorstep.", "intent": "order_food"}
+{"text": "Order south indian sweets for your family or friends.", "intent": "order_food"}
+{"text": "Need a quick snack? Order south indian chips or namakars for a moment.", "intent": "order_food"}
+{"text": "Get your hands on the best south indian desserts for a sweet treat.", "intent": "order_food"}
+{"text": "Order fresh south indian filter coffee for your morning routine.", "intent": "order_food"}
+{"text": "Delivering the best south indian snacks for movie nights.", "intent": "order_food"}
+{"text": "Get south indian pappads for your next meal or appetizer.", "intent": "order_food"}
+{"text": "Order south indian snacks for your kids' school lunch.", "intent": "order_food"}
+{"text": "Delivering the freshest south indian greens and vegetables.", "intent": "order_food"}
+{"text": "Order south indian drinks for a refreshing beverage.", "intent": "order_food"}
+{"text": "Place your order for south indian delicacies now", "intent": "order_food"}
+{"text": "Order tasty south indian snacks for delivery", "intent": "order_food"}
+{"text": "Get fresh south indian dishes at your doorstep", "intent": "order_food"}
+{"text": "Order a variety of south indian meals for pickup", "intent": "order_food"}
+{"text": "Order mouth-watering south indian breakfast from us", "intent": "order_food"}
+{"text": "Order tasty south indian curries for dinner", "intent": "order_food"}
+{"text": "Order delicious south indian snacks for evening", "intent": "order_food"}
+{"text": "Order healthy south indian dishes for lunch", "intent": "order_food"}
+{"text": "Get south indian thalis for a quick order", "intent": "order_food"}
+{"text": "Order south indian biryani and enjoy", "intent": "order_food"}
+{"text": "Order south indian appam and sambar", "intent": "order_food"}
+{"text": "Order south indian vada and dosa for breakfast", "intent": "order_food"}
+{"text": "Order south indian rava idli for a light snack", "intent": "order_food"}
+{"text": "Order traditional south indian rasam and rice", "intent": "order_food"}
+{"text": "Get fresh south indian filter coffee for morning", "intent": "order_food"}
+{"text": "Order south indian korma and vegetables", "intent": "order_food"}
+{"text": "Order fresh south indian omelette for breakfast", "intent": "order_food"}
+{"text": "Order south indian parotta and fish curry", "intent": "order_food"}
+{"text": "Order south indian dosai and sambar for a snack", "intent": "order_food"}
+{"text": "\u0915\u0948\u0938\u0947 \u0916\u093e\u0928\u0947 \u0915\u093e \u0905\u0902\u0926\u093e\u091c \u0932\u093e\u0913?", "intent": "order_food"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0932\u0947\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u091c\u094b\u0921\u093c\u093f\u090f \u0905\u092a\u0928\u093e \u0928\u093e\u092e", "intent": "order_food"}
+{"text": "\u0916\u093e\u0928\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0915\u0948\u0938\u0947 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902?", "intent": "order_food"}
+{"text": "\u092d\u093e\u0917\u0940\u0926\u093e\u0930\u094b\u0902, \u0930\u093e\u0939\u0924 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0905\u092a\u0928\u0947 \u0916\u093e\u0928\u0947 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0930\u093e\u0924 \u0924\u0915 \u0916\u093e\u0928\u093e \u091c\u0941\u092e\u094d\u092e\u093e \u0915\u0947 \u0932\u093f\u090f \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "Order your favorite snacks with one tap!", "intent": "order_food"}
+{"text": "Need snacks? We deliver!", "intent": "order_food"}
+{"text": "Order some tasty snacks for the evening!", "intent": "order_food"}
+{"text": "Tired of waiting? Order snacks for delivery!", "intent": "order_food"}
+{"text": "Snack time? Order now!", "intent": "order_food"}
+{"text": "Quick delivery of delicious snacks!", "intent": "order_food"}
+{"text": "Order gourmet snacks for home delivery!", "intent": "order_food"}
+{"text": "Order your snacks for a quick fix!", "intent": "order_food"}
+{"text": "Hungry for snacks? Order now, delivered!", "intent": "order_food"}
+{"text": "Treat yourself with delivered snacks!", "intent": "order_food"}
+{"text": "Need a snack fix? Order now!", "intent": "order_food"}
+{"text": "Order delicious and fresh snacks for delivery!", "intent": "order_food"}
+{"text": "Snack cravings? Order them delivered!", "intent": "order_food"}
+{"text": "Order fresh snacks for immediate delivery!", "intent": "order_food"}
+{"text": "Craving snacks? Order them delivered!", "intent": "order_food"}
+{"text": "Order the best snacks for quick delivery!", "intent": "order_food"}
+{"text": "Order your favorite snacks for swift delivery!", "intent": "order_food"}
+{"text": "Order gourmet snacks for speedy delivery!", "intent": "order_food"}
+{"text": "Craving something sweet? Order snacks for delivery!", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0938\u0902\u0917\u094d\u0930\u0939 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u092c\u0917\u0940\u091a\u0947 \u0926\u0947\u0916\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0906\u0926\u093e\u0928-\u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u092b\u094b\u091f\u094b \u091c\u0932\u093e\u090f\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u092d\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u091f\u0948\u0915\u094d\u0938\u0940 \u0938\u0935\u093e\u0932 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0906\u0926\u093e\u0928-\u092a\u094d\u0930\u0926\u093e\u0928 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0921\u093e\u0932\u0928\u093e \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u092c\u0947\u0917\u093f\u0928", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u091a\u0932\u093e\u090f\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0940 \u0916\u093f\u091a\u0921\u093c\u0940 \u0915\u093e \u0938\u0902\u0917\u094d\u0930\u0939 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u091f\u093e\u0909\u0930\u093f\u0928\u094d\u0917 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0926\u093e\u0916\u093f\u0932\u093e \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0940 \u091f\u094d\u0930\u0948\u0915 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0947 \u092a\u0939\u0932\u0947 \u091f\u0948\u092a \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u094b \u0921\u094d\u0930\u093e\u0907\u0935 \u0915\u0930\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u0940 \u0930\u093e\u0938\u094d\u0924\u0947 \u0915\u093e \u091a\u0932\u093e\u0928\u093e", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u091c\u0932\u093e\u0928\u093e", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0915\u094b\u0921 \u0926\u0947\u0902", "intent": "order_food"}
+{"text": "\u092c\u093f\u0930\u092f\u093e\u0928\u0940 \u0915\u093e \u0906\u0926\u093e\u0928-\u092a\u094d\u0930\u0926\u093e\u0928 \u0938\u094d\u091f\u0948\u0902\u0921\u0930\u094d\u0921", "intent": "order_food"}
+{"text": "Get your thali delivered right to your doorstep.", "intent": "order_food"}
+{"text": "Order your favorite thali for home delivery.", "intent": "order_food"}
+{"text": "Delicious thali, fresh delivery.", "intent": "order_food"}
+{"text": "Choose from our best thalis, delivered quickly.", "intent": "order_food"}
+{"text": "Need a thali urgently? We'll deliver it quickly.", "intent": "order_food"}
+{"text": "Order a mouth-watering thali for delivery now.", "intent": "order_food"}
+{"text": "Hungry? Order a thali for guaranteed delivery.", "intent": "order_food"}
+{"text": "Order a special thali for your next meal.", "intent": "order_food"}
+{"text": "Feast on a delectable thali with speedy delivery.", "intent": "order_food"}
+{"text": "Delivering happiness, one thali at a time.", "intent": "order_food"}
+{"text": "Indulge in a sumptuous thali, delivered straight to you.", "intent": "order_food"}
+{"text": "Experience the taste of a hot thali delivered to your door.", "intent": "order_food"}
+{"text": "Order a hot thali for immediate delivery.", "intent": "order_food"}
+{"text": "Enjoy a fresh thali delivered to your location.", "intent": "order_food"}
+{"text": "Order a delicious thali, guaranteed delivery.", "intent": "order_food"}
+{"text": "Order a thali for a delightful dining experience.", "intent": "order_food"}
+{"text": "Taste the flavor of a freshly delivered thali.", "intent": "order_food"}
+{"text": "Order a thali for a thrilling dining adventure.", "intent": "order_food"}
+{"text": "Order a thali, experience the delivery difference.", "intent": "order_food"}
+{"text": "Place your order for a juicy burger now!", "intent": "order_food"}
+{"text": "Get your delicious burger delivered in minutes!", "intent": "order_food"}
+{"text": "Order a burger and enjoy free delivery!", "intent": "order_food"}
+{"text": "Add a yummy burger to your order today!", "intent": "order_food"}
+{"text": "Your perfect burger is just a tap away!", "intent": "order_food"}
+{"text": "Order a burger now and get $5 off!", "intent": "order_food"}
+{"text": "Indulge in a tasty burger and free delivery!", "intent": "order_food"}
+{"text": "Dine-in or order out, our burgers are waiting!", "intent": "order_food"}
+{"text": "Get crispy burgers and choose your toppings!", "intent": "order_food"}
+{"text": "Order a burger and get free sides with delivery!", "intent": "order_food"}
+{"text": "Add a juicy burger to your order now!", "intent": "order_food"}
+{"text": "Order your burger with bacon and pick up!", "intent": "order_food"}
+{"text": "Customize your burger and order it now!", "intent": "order_food"}
+{"text": "Your favorite burger is only a swipe away!", "intent": "order_food"}
+{"text": "Order a burger and enjoy personalized delivery service!", "intent": "order_food"}
+{"text": "Get your burger with guaranteed delivery time!", "intent": "order_food"}
+{"text": "Order a burger and get free delivery within 30 minutes!", "intent": "order_food"}
+{"text": "Add a juicy burger to your order for free delivery!", "intent": "order_food"}
+{"text": "Order a gourmet burger and enjoy free delivery!", "intent": "order_food"}
+{"text": "Your burger is on its way, order now!", "intent": "order_food"}
+{"text": "Place your parcel order and it'll be delivered directly to your parents' door.", "intent": "parcel_booking"}
+{"text": "Order your parcel now and we'll ensure it reaches your parents safely.", "intent": "parcel_booking"}
+{"text": "Want your parcel delivered to your parents? Place your order and we'll handle the rest.", "intent": "parcel_booking"}
+{"text": "Order your parcel for delivery to your parents. Easy and convenient.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery to your parents. Quick and reliable.", "intent": "parcel_booking"}
+{"text": "Need a parcel delivered to your parents? Click to order now.", "intent": "parcel_booking"}
+{"text": "Order your parcel and we'll deliver it straight to your parents.", "intent": "parcel_booking"}
+{"text": "Place your parcel order for delivery to your parents. Simple one-click.", "intent": "parcel_booking"}
+{"text": "Order a parcel for your parents. We deliver right to their doorstep.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery to your parents. Convenient and fast.", "intent": "parcel_booking"}
+{"text": "Order a parcel for your parents and we'll handle the delivery.", "intent": "parcel_booking"}
+{"text": "Order your parcel for delivery to your parents. Quick and secure.", "intent": "parcel_booking"}
+{"text": "Need a parcel delivered to your parents? Place your order now.", "intent": "parcel_booking"}
+{"text": "Order your parcel and we'll deliver it directly to your parents.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery to your parents. Easy and reliable.", "intent": "parcel_booking"}
+{"text": "Order a parcel for your parents. We'll deliver it right to their doorstep.", "intent": "parcel_booking"}
+{"text": "Place your parcel order for delivery to your parents. Fast and efficient.", "intent": "parcel_booking"}
+{"text": "Order a parcel for your parents. We'll handle the delivery.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery to your parents. Simple and hassle-free.", "intent": "parcel_booking"}
+{"text": "Order your parcel and we'll deliver it to your parents. Convenient service.", "intent": "parcel_booking"}
+{"text": "\u092a\u0930\u0938\u0932 \u092c\u0941\u0915\u093f\u0902\u0917 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0930\u0938\u0932 \u091f\u094d\u0930\u093f\u0917 \u0939\u094b\u0924\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092c\u0941\u0915 \u0915\u0930\u0947", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0940\u0915\u0947\u091c \u091f\u094d\u0930\u093f\u0917 \u0939\u094b \u091c\u093e\u090f", "intent": "parcel_booking"}
+{"text": "\u092a\u0930\u0938\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0932\u093f\u090f", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u091f\u094d\u0930\u093f\u0917 \u092e\u0947\u0902 \u091c\u093e \u0930\u0939\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092a\u0930\u0938\u0932 \u091f\u094d\u0930\u093f\u0917", "intent": "parcel_booking"}
+{"text": "\u092a\u0930\u0938\u0932 \u091f\u094d\u0930\u093f\u0917\u093f\u0902\u0917 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915\u093f\u0902\u0917 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092a\u0930\u0938\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u092a\u0930\u0938\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0926\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915\u093f\u0902\u0917 \u0928 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u0947 \u092c\u0947\u0925\u0947 \u092a\u0930\u0938\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u091f\u094d\u0930\u093f\u0917 \u092e\u0947\u0902 \u091c\u093e\u090f", "intent": "parcel_booking"}
+{"text": "\u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u0947\u0924\u0947 \u092a\u0930\u0938\u0932 \u091f\u094d\u0930\u093f\u0917", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915\u093f\u0902\u0917 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "Place your parcel booking now.", "intent": "parcel_booking"}
+{"text": "Need to ship a package? Book now.", "intent": "parcel_booking"}
+{"text": "Quick parcel booking in just a few clicks.", "intent": "parcel_booking"}
+{"text": "Schedule your parcel pickup and delivery.", "intent": "parcel_booking"}
+{"text": "Enter your parcel details to book.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery to your door.", "intent": "parcel_booking"}
+{"text": "Make your parcel booking in seconds.", "intent": "parcel_booking"}
+{"text": "Parcel booking made easy.", "intent": "parcel_booking"}
+{"text": "Pick up and delivery of parcels made simple.", "intent": "parcel_booking"}
+{"text": "Book your parcel with us today.", "intent": "parcel_booking"}
+{"text": "Fast parcel booking with our app.", "intent": "parcel_booking"}
+{"text": "Choose your parcel booking time now.", "intent": "parcel_booking"}
+{"text": "Track your parcel with ease.", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery for free.", "intent": "parcel_booking"}
+{"text": "Quick parcel booking for your convenience.", "intent": "parcel_booking"}
+{"text": "Parcel booking available 24/7.", "intent": "parcel_booking"}
+{"text": "Order your parcel delivery quickly.", "intent": "parcel_booking"}
+{"text": "Book your parcel today for guaranteed delivery.", "intent": "parcel_booking"}
+{"text": "Make your next parcel booking now.", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery with us.", "intent": "parcel_booking"}
+{"text": "Easy parcel booking for all your needs.", "intent": "parcel_booking"}
+{"text": "Send a parcel to a friend who just moved in.", "intent": "parcel_booking"}
+{"text": "Gift a small package to a neighbor.", "intent": "parcel_booking"}
+{"text": "Deliver a care package to a friend across town.", "intent": "parcel_booking"}
+{"text": "Ship a gift for a birthday celebration.", "intent": "parcel_booking"}
+{"text": "Send a surprise parcel to a friend.", "intent": "parcel_booking"}
+{"text": "Package a small gift and send it to a colleague.", "intent": "parcel_booking"}
+{"text": "Send a care package to a friend in need.", "intent": "parcel_booking"}
+{"text": "Deliver a surprise gift to a friend.", "intent": "parcel_booking"}
+{"text": "Ship a gift to a friend for their birthday.", "intent": "parcel_booking"}
+{"text": "Gift a small package to a distant friend.", "intent": "parcel_booking"}
+{"text": "Send a gift for a friend's anniversary.", "intent": "parcel_booking"}
+{"text": "Deliver a gift to a friend for a special occasion.", "intent": "parcel_booking"}
+{"text": "Package a small gift and send it to a friend.", "intent": "parcel_booking"}
+{"text": "Send a surprise parcel to a friend on their birthday.", "intent": "parcel_booking"}
+{"text": "Gift a small package to a friend who is sick.", "intent": "parcel_booking"}
+{"text": "Package a gift for a friend's anniversary and send it.", "intent": "parcel_booking"}
+{"text": "Send a care package to a friend who just started a new job.", "intent": "parcel_booking"}
+{"text": "Deliver a gift for a friend's surprise party.", "intent": "parcel_booking"}
+{"text": "Ship a small parcel to a friend in another city.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery for your lunch box", "intent": "parcel_booking"}
+{"text": "Need to send your lunch box? We can help", "intent": "parcel_booking"}
+{"text": "Order parcel delivery for your lunch box", "intent": "parcel_booking"}
+{"text": "Parcels including lunch boxes. Book now", "intent": "parcel_booking"}
+{"text": "Lunch box delivery? We got you covered", "intent": "parcel_booking"}
+{"text": "Send your lunch box with us. Easy booking", "intent": "parcel_booking"}
+{"text": "Order a lunch box delivery. Book today", "intent": "parcel_booking"}
+{"text": "Delivering lunch boxes. Book your parcel", "intent": "parcel_booking"}
+{"text": "Lunch box not arriving? Book a delivery", "intent": "parcel_booking"}
+{"text": "Parcel booking for lunch box. Get it delivered", "intent": "parcel_booking"}
+{"text": "Order your lunch box. Book a delivery", "intent": "parcel_booking"}
+{"text": "Lunch box delivery. Book a parcel", "intent": "parcel_booking"}
+{"text": "Need a lunch box? Book delivery", "intent": "parcel_booking"}
+{"text": "Book your lunch box. Fast delivery guaranteed", "intent": "parcel_booking"}
+{"text": "Lunch box not available? Book a delivery", "intent": "parcel_booking"}
+{"text": "Lunch box order. Book a parcel delivery", "intent": "parcel_booking"}
+{"text": "Order lunch box delivery. Book a parcel", "intent": "parcel_booking"}
+{"text": "Lunch box pickup. Book a delivery", "intent": "parcel_booking"}
+{"text": "Parcels, including lunch boxes. Book delivery", "intent": "parcel_booking"}
+{"text": "Book a parcel for your lunch box delivery.", "intent": "parcel_booking"}
+{"text": "Need a parcel delivered with your lunch? Book now.", "intent": "parcel_booking"}
+{"text": "Order your lunch and book a parcel for delivery.", "intent": "parcel_booking"}
+{"text": "Quick! Book a lunch box parcel for today.", "intent": "parcel_booking"}
+{"text": "Need a lunch box delivered? Book a parcel.", "intent": "parcel_booking"}
+{"text": "Book a special lunch box parcel delivery for today.", "intent": "parcel_booking"}
+{"text": "Order your lunch and book a parcel for same-day delivery.", "intent": "parcel_booking"}
+{"text": "Need a lunch box parcel delivered? Book it now.", "intent": "parcel_booking"}
+{"text": "Book a lunch box parcel for your office delivery.", "intent": "parcel_booking"}
+{"text": "Order lunch and book a parcel for quick delivery.", "intent": "parcel_booking"}
+{"text": "Book a parcel to get your lunch box delivered.", "intent": "parcel_booking"}
+{"text": "Need a lunch box? Book a parcel for delivery.", "intent": "parcel_booking"}
+{"text": "Book a lunch box parcel for your daily delivery.", "intent": "parcel_booking"}
+{"text": "Order lunch and book a parcel for same-day service.", "intent": "parcel_booking"}
+{"text": "Book a lunch box parcel for your office pick-up.", "intent": "parcel_booking"}
+{"text": "Need a lunch box delivered? Book a parcel today.", "intent": "parcel_booking"}
+{"text": "Book a special lunch box parcel for your delivery.", "intent": "parcel_booking"}
+{"text": "Need a lunch box? Book a parcel for delivery now.", "intent": "parcel_booking"}
+{"text": "Order lunch and book a parcel for same-day delivery.", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0921ycin \u092e\u0947\u0902 \u092d\u0947\u091c\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u091c \u092a\u094d\u0932\u0947\u0938\u094d\u0921\u0930", "intent": "parcel_booking"}
+{"text": "\u0932\u0948\u092a\u091f\u094b\u092a \u092a\u0930 \u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0947\u0902 \u0905\u092a\u094d\u0932\u093f\u0915\u0947\u0936\u0928 \u092e\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0932\u0948\u092a\u091f\u094b\u092a \u092a\u0930 \u092a\u0948\u0915\u0947\u091c \u0921ycin \u092e\u0947\u0902 \u092d\u0947\u091c\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u091c \u092d\u0947\u091c\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u091c \u0915\u094b \u092d\u0947\u091c\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0932\u0948\u092a\u091f\u094b\u092a \u092a\u0930 \u092a\u0948\u0915\u0947\u091c \u0915\u094b \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0932\u0948\u092a\u091f\u094b\u092a \u092a\u0930 \u092a\u0948\u0915\u0947\u091c \u092e\u0947\u0902 \u092d\u0947\u091c\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u091c \u090f\u0915\u094d\u0938\u092a\u094d\u0930\u0947\u0938 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "Track my parcel please.", "intent": "parcel_booking"}
+{"text": "Can you book a delivery for my clothes?", "intent": "parcel_booking"}
+{"text": "I need to book a parcel for clothes.", "intent": "parcel_booking"}
+{"text": "Please book a delivery for my clothes parcel.", "intent": "parcel_booking"}
+{"text": "I want to book a parcel for my clothes.", "intent": "parcel_booking"}
+{"text": "Book a delivery for my clothes parcel.", "intent": "parcel_booking"}
+{"text": "I need to book a parcel for my clothes items.", "intent": "parcel_booking"}
+{"text": "Please book a delivery for my clothes parcel today.", "intent": "parcel_booking"}
+{"text": "Can you book a delivery for my clothes parcel?", "intent": "parcel_booking"}
+{"text": "I need to book a parcel for my clothes now.", "intent": "parcel_booking"}
+{"text": "Book a delivery for my clothes.", "intent": "parcel_booking"}
+{"text": "Please book a delivery for my clothes parcel as soon as possible.", "intent": "parcel_booking"}
+{"text": "Book a parcel for my clothes delivery.", "intent": "parcel_booking"}
+{"text": "I need to book a delivery for my clothes parcel urgently.", "intent": "parcel_booking"}
+{"text": "Can you book a delivery for my clothes parcel today?", "intent": "parcel_booking"}
+{"text": "I want to book a parcel for my clothes delivery.", "intent": "parcel_booking"}
+{"text": "Please book a delivery for my clothes parcel right away.", "intent": "parcel_booking"}
+{"text": "Can you book a delivery for my clothes parcel as soon as possible?", "intent": "parcel_booking"}
+{"text": "I need to book a parcel for my clothes delivery today.", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092e\u0947\u0930\u093e \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0928\u0908 \u092c\u094b\u0928\u094d\u0938 \u0932\u093f\u090f \u092a\u0947\u0928\u094d\u091c\u0932", "intent": "parcel_booking"}
+{"text": "\u0924\u0941\u092e\u094d\u0939\u093e\u0930\u093e \u0936\u0939\u0930\u0940 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0914\u0930 \u092a\u0939\u0941\u0901\u091a \u0905\u091a\u094d\u091b\u0940", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0914\u0930 \u0916\u093e\u0901\u0938\u0940 \u0928\u0939\u0940\u0902 \u0915\u0930", "intent": "parcel_booking"}
+{"text": "\u092c\u0938 \u0915\u094d\u0932\u093f\u0915 \u0915\u0930 \u0914\u0930 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u0938\u0930\u094d\u0935\u094b\u092a\u0930\u093f \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0914\u0930 \u0905\u092a\u0928\u093e\u0928\u0947 \u091c\u093e", "intent": "parcel_booking"}
+{"text": "\u091f\u0942\u091f\u0947 \u091c\u093e\u0928\u0947 \u0915\u0940 \u0928\u0939\u0940\u0902, \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u092c\u0938 \u0932\u0948\u092a\u091f\u0949\u092a \u092a\u0930 \u0914\u0930 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u0905\u092a\u0928\u093e \u092a\u0947\u0928\u094d\u091c\u0932 \u0939\u0930 \u0938\u092e\u092f \u092c\u0941\u0915 \u0915\u0930", "intent": "parcel_booking"}
+{"text": "\u092e\u0947\u0930\u0940 \u0917\u094d\u0930\u0942\u0938\u0940\u0930\u0940 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930", "intent": "parcel_booking"}
+{"text": "\u0935\u093e\u0939! \u0905\u091a\u094d\u091b\u093e \u0905\u092a\u0928\u0947 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u092c\u0938 \u090f\u0915 \u0915\u094d\u0932\u093f\u0915 \u0914\u0930 \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915", "intent": "parcel_booking"}
+{"text": "\u0938\u0930\u094d\u0935\u094b\u092a\u0930\u093f \u092a\u0947\u0928\u094d\u091c\u0932 \u092c\u0941\u0915 \u0915\u0930, \u0914\u0930 \u0905\u092a\u0928\u093e \u0916\u093e\u0928\u093e \u0916\u093e\u0913", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u092a\u094d\u0932\u094d\u092f\u093e\u0938\u094d\u091f", "intent": "parcel_booking"}
+{"text": "\u0930\u093f\u0915\u0935\u0930\u0940 \u0915\u0947 \u0932\u093f\u090f \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0939\u093e\u0909 \u091f\u0942 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0911\u092b\u093f\u0938 \u0915\u094b \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0939\u093e\u0909 \u091f\u0942 \u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u0905\u092a\u094d\u0932\u093e\u0938\u094d\u091f", "intent": "parcel_booking"}
+{"text": "\u0911\u092b\u093f\u0938 \u0924\u0915 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "Confirm your parcel details.", "intent": "parcel_booking"}
+{"text": "Ready to book your parcel?", "intent": "parcel_booking"}
+{"text": "What\u2019s the destination for your parcel?", "intent": "parcel_booking"}
+{"text": "When do you need your parcel delivered?", "intent": "parcel_booking"}
+{"text": "Enter the dimensions of your parcel.", "intent": "parcel_booking"}
+{"text": "Parcel pick-up confirmed.", "intent": "parcel_booking"}
+{"text": "What is the weight of your parcel?", "intent": "parcel_booking"}
+{"text": "Choose a delivery date for your parcel.", "intent": "parcel_booking"}
+{"text": "Enter the size of your parcel.", "intent": "parcel_booking"}
+{"text": "How big is your parcel?", "intent": "parcel_booking"}
+{"text": "Select a time for parcel delivery.", "intent": "parcel_booking"}
+{"text": "Provide details for your parcel.", "intent": "parcel_booking"}
+{"text": "When would you like to book your parcel?", "intent": "parcel_booking"}
+{"text": "Specify your parcel dimensions.", "intent": "parcel_booking"}
+{"text": "Set a delivery date for your parcel.", "intent": "parcel_booking"}
+{"text": "Choose a delivery time for your parcel.", "intent": "parcel_booking"}
+{"text": "Confirm the delivery address for your parcel.", "intent": "parcel_booking"}
+{"text": "Choose a pick-up time for your parcel.", "intent": "parcel_booking"}
+{"text": "Enter the weight of your parcel.", "intent": "parcel_booking"}
+{"text": "What is the size of your parcel?", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Schedule a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Order a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Arrange a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Place a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Set up a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Send a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Get a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Pick up a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Choose a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Select a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Confirm a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Finalize a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Complete a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Customize a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Personalize a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Specify a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Detail a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Describe a parcel delivery for your gift", "intent": "parcel_booking"}
+{"text": "Need to send some clothes tomorrow? We've got you covered.", "intent": "parcel_booking"}
+{"text": "Got some clothes to send? Easy peasy with our app.", "intent": "parcel_booking"}
+{"text": "Looking to send some outfits? Quick and reliable shipping here.", "intent": "parcel_booking"}
+{"text": "Time to ship your wardrobe? Click to book now.", "intent": "parcel_booking"}
+{"text": "Quick question: How to send clothes through the app?", "intent": "parcel_booking"}
+{"text": "Have some clothes to send? Let's book a parcel.", "intent": "parcel_booking"}
+{"text": "Delivery time for clothes? Check out our parcel booking service.", "intent": "parcel_booking"}
+{"text": "Need to ship clothes today? Book now.", "intent": "parcel_booking"}
+{"text": "Clothes to ship? Easy with our parcel booking service.", "intent": "parcel_booking"}
+{"text": "Ready to ship clothes? Book your parcel here.", "intent": "parcel_booking"}
+{"text": "Got some clothes you need to send? Book a parcel.", "intent": "parcel_booking"}
+{"text": "Shipping clothes? Quick and easy through our app.", "intent": "parcel_booking"}
+{"text": "Time to send those clothes? Book a parcel now.", "intent": "parcel_booking"}
+{"text": "Got some clothes to send? We simplify the process.", "intent": "parcel_booking"}
+{"text": "Need to ship clothes? Our parcel booking is here.", "intent": "parcel_booking"}
+{"text": "Time to send your clothes? Quick booking just for you.", "intent": "parcel_booking"}
+{"text": "Ready to ship those outfits? Use our parcel booking service.", "intent": "parcel_booking"}
+{"text": "Clothes need to ship? Fast and easy with us.", "intent": "parcel_booking"}
+{"text": "Got some clothes to send? Book a quick parcel.", "intent": "parcel_booking"}
+{"text": "Schedule a parcel pickup for my clothes", "intent": "parcel_booking"}
+{"text": "Can I book a parcel delivery for my laundry?", "intent": "parcel_booking"}
+{"text": "I need to ship some clothes from downtown", "intent": "parcel_booking"}
+{"text": "Book a parcel service to deliver my clothes", "intent": "parcel_booking"}
+{"text": "Pick up and drop off service for my clothes", "intent": "parcel_booking"}
+{"text": "Arrange for the delivery of my clothes", "intent": "parcel_booking"}
+{"text": "Need to book a parcel for my work outfit", "intent": "parcel_booking"}
+{"text": "Looking to book a parcel delivery for my formal wear", "intent": "parcel_booking"}
+{"text": "Can you book a parcel service for my clothes?", "intent": "parcel_booking"}
+{"text": "I want to book a parcel pickup for my clothes", "intent": "parcel_booking"}
+{"text": "Book a parcel service to deliver my clothes to the office", "intent": "parcel_booking"}
+{"text": "Need to book a parcel for my weekend clothes", "intent": "parcel_booking"}
+{"text": "Arrange for the pickup and delivery of my clothes", "intent": "parcel_booking"}
+{"text": "Can you book a parcel service to deliver my clothes?", "intent": "parcel_booking"}
+{"text": "I need to book a parcel for my street style outfit", "intent": "parcel_booking"}
+{"text": "Book a parcel service for my casual clothes", "intent": "parcel_booking"}
+{"text": "Need to book a parcel service for my clothes", "intent": "parcel_booking"}
+{"text": "Looking to book a parcel pickup for my clothes", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery now", "intent": "parcel_booking"}
+{"text": "Need to send a parcel? Click here", "intent": "parcel_booking"}
+{"text": "Parcel booking service available", "intent": "parcel_booking"}
+{"text": "Quickly book your parcel delivery", "intent": "parcel_booking"}
+{"text": "Order your parcel delivery now", "intent": "parcel_booking"}
+{"text": "Send a parcel with just a click", "intent": "parcel_booking"}
+{"text": "Parcel booking made easy", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery online", "intent": "parcel_booking"}
+{"text": "Easy parcel booking for you", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery today", "intent": "parcel_booking"}
+{"text": "Quick parcel booking service", "intent": "parcel_booking"}
+{"text": "Parcel booking for your convenience", "intent": "parcel_booking"}
+{"text": "Book a delivery for your parcel", "intent": "parcel_booking"}
+{"text": "Fast parcel booking process", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery effortlessly", "intent": "parcel_booking"}
+{"text": "Parcel booking with just a few clicks", "intent": "parcel_booking"}
+{"text": "Safe and reliable parcel booking", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery for free", "intent": "parcel_booking"}
+{"text": "Instant parcel booking for your convenience", "intent": "parcel_booking"}
+{"text": "Order your parcel delivery without a hassle", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for your friend.", "intent": "parcel_booking"}
+{"text": "Need to send a surprise gift? Book now.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for your loved one.", "intent": "parcel_booking"}
+{"text": "Send a gift parcel to a friend on their birthday.", "intent": "parcel_booking"}
+{"text": "Gift parcel booking done in minutes.", "intent": "parcel_booking"}
+{"text": "Send a surprise gift with a quick parcel booking.", "intent": "parcel_booking"}
+{"text": "Gift a parcel today, get it tomorrow.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for a special occasion.", "intent": "parcel_booking"}
+{"text": "Let's send a gift parcel to spread happiness.", "intent": "parcel_booking"}
+{"text": "Gift parcel booking for your next surprise delivery.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel to send something special.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for a friend\u2019s anniversary.", "intent": "parcel_booking"}
+{"text": "Send a gift parcel to someone without missing a beat.", "intent": "parcel_booking"}
+{"text": "Gift parcel booking made easy for you.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel to say thank you.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for someone's birthday.", "intent": "parcel_booking"}
+{"text": "Send a gift parcel to brighten someone's day.", "intent": "parcel_booking"}
+{"text": "Gift parcel booking to surprise a friend.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for that special someone.", "intent": "parcel_booking"}
+{"text": "Send a gift parcel to make someone smile today.", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u0915\u0948\u0938\u0947 \u092c\u0949\u0915\u094d\u0938 \u0915\u0930\u0942\u0902?", "intent": "parcel_booking"}
+{"text": "\u092d\u093e\u0921\u093c\u093e \u0915\u094d\u092f\u093e \u0939\u0948?", "intent": "parcel_booking"}
+{"text": "\u0915\u0948\u0938\u0947 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0942\u0902?", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u0915\u094d\u092f\u093e \u0939\u0948?", "intent": "parcel_booking"}
+{"text": "\u091a\u0941\u0928\u094c\u0924\u0940 \u0939\u0948 \u0915\u093f \u092a\u0948\u0915\u0947\u0932 \u0915\u0948\u0938\u0947 \u092c\u0941\u0915 \u0915\u0930\u0942\u0902?", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u0947 \u0915\u093e \u091f\u0942\u0932", "intent": "parcel_booking"}
+{"text": "Katherine \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0932\u0940", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0932\u094b", "intent": "parcel_booking"}
+{"text": "\u091a\u093e\u0930 \u091a\u0930\u0923 \u0907\u0902\u091f\u0930\u092b\u0947\u04af\u0938 \u0926\u0947\u0916\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092d\u093e\u0921\u093c\u093e \u0936\u0941\u0930\u0942 \u0915\u0930\u0928\u0947 \u0915\u093e \u091f\u0941\u0915\u0921\u093c\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0930\u0939\u0947 \u0939\u0948\u0902", "intent": "parcel_booking"}
+{"text": "\u092d\u093e\u0921\u093c\u093e \u0915\u094d\u092f\u093e \u0926\u0947\u0924\u0947 \u0939\u0948\u0902?", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u0947 \u0915\u093e \u0924\u0930\u0940\u0915\u093e", "intent": "parcel_booking"}
+{"text": "\u090b\u0917\u094d\u092f\u093e \u091a\u093e\u0930 \u091a\u0930\u0923 \u0907\u0902\u091f\u0930\u092b\u0947\u092f\u0938 \u091a\u0941\u0928\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0915\u0948\u0938\u0947 \u092d\u093e\u0921\u093c\u093e \u0917\u0923\u0928\u093e \u0915\u0930\u0942\u0902?", "intent": "parcel_booking"}
+{"text": "\u0911\u0928\u0932\u093e\u0907\u0928 \u092a\u0948\u0915\u0947\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for a friend", "intent": "parcel_booking"}
+{"text": "Order a gift parcel delivery", "intent": "parcel_booking"}
+{"text": "Package a gift for delivery", "intent": "parcel_booking"}
+{"text": "Send a gift parcel quickly", "intent": "parcel_booking"}
+{"text": "Arrange a gift parcel for delivery", "intent": "parcel_booking"}
+{"text": "Choose a gift parcel for delivery", "intent": "parcel_booking"}
+{"text": "Select a gift parcel to send", "intent": "parcel_booking"}
+{"text": "Pick a gift parcel for delivery", "intent": "parcel_booking"}
+{"text": "Get a gift parcel delivered", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for delivery", "intent": "parcel_booking"}
+{"text": "Schedule a gift parcel delivery", "intent": "parcel_booking"}
+{"text": "Book a gift for delivery", "intent": "parcel_booking"}
+{"text": "Order a gift for delivery as a parcel", "intent": "parcel_booking"}
+{"text": "Package a gift parcel for delivery", "intent": "parcel_booking"}
+{"text": "Send a gift parcel to a friend", "intent": "parcel_booking"}
+{"text": "Arrange a gift parcel delivery for a friend", "intent": "parcel_booking"}
+{"text": "Select a gift parcel for sending", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for delivery now", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for a friend today", "intent": "parcel_booking"}
+{"text": ".Book your urgent parcel delivery now.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel? Book fast.", "intent": "parcel_booking"}
+{"text": ".Hurry up, book your parcel now.", "intent": "parcel_booking"}
+{"text": ".Urgent package? Book it quickly.", "intent": "parcel_booking"}
+{"text": ".Need your parcel delivered urgently? Book now.", "intent": "parcel_booking"}
+{"text": ".Book an urgent parcel delivery instantly.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel delivery? Book it now.", "intent": "parcel_booking"}
+{"text": ".Why wait? Book your urgent parcel delivery.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel booking required.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel delivery? Book swiftly.", "intent": "parcel_booking"}
+{"text": ".Don't delay, book urgent parcel delivery.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel? Book it quickly.", "intent": "parcel_booking"}
+{"text": ".Urgent package delivery? Book now.", "intent": "parcel_booking"}
+{"text": ".Need it fast? Book urgent parcel delivery.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel booking needed.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel? Book it now.", "intent": "parcel_booking"}
+{"text": ".Don't miss out, book urgent parcel delivery.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel delivery? Book fast.", "intent": "parcel_booking"}
+{"text": ".Urgent package? Book delivery now.", "intent": "parcel_booking"}
+{"text": ".Urgent parcel? Book it immediately.", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0932\u0947\u0928-\u10d3\u0947\u0928 \u0915\u0948\u0938\u0947 \u0915\u0930\u0942\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u093e \u0926\u093f\u0928\u093e\u0902\u0915 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0926\u093f\u0935\u093e\u0932\u0940 \u0926\u093f\u0928 \u092e\u0947\u0902 \u0921\u0932\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0926\u0947\u0930\u0940 \u0915\u0930\u0928\u0947 \u0915\u093e \u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0906\u0928\u0947 \u0915\u093e \u091f\u093e\u0907\u092e \u0938\u0948\u0928\u094d\u0921 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0917IFT \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0926\u093f\u0935\u093e\u0932\u0940 \u0915\u0947 \u0926\u093f\u0928 \u092a\u0939\u0941\u0902\u091a\u093e\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0909\u0926\u093e\u0938\u0940\u0928 \u0915\u0947 \u0918\u0930 \u0921\u0932\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u093e \u091f\u093e\u0907\u092e \u0938\u0948\u0928\u094d\u0921 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0926\u093f\u0928\u093e\u0902\u0915 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u0947 \u0926\u093f\u0928\u093e\u0902\u0915 \u092a\u0930 \u0921\u0932\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930 \u0917IFT \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u0926\u093f\u0928\u093e\u0902\u0915 \u0915\u094b \u092c\u0926\u0932 \u0915\u0930 \u092a\u0948\u0915\u0947\u091c \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u0947 \u092c\u0941\u0915\u093f\u0902\u0917 \u091f\u093e\u0907\u092e \u092a\u0930 \u0921\u0932\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u094b \u0926\u093f\u0935\u093e\u0932\u0940 \u0926\u093f\u0928 \u092a\u0930 \u0921\u0932\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0915\u093e \u091f\u093e\u0907\u092e \u0938\u0948\u0928\u094d\u0921 \u0915\u0930 \u0917IFT \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0932\u0947\u0928-\u0921\u0947\u0928 \u0915\u093e \u091f\u093e\u0907\u092e \u0938\u0948\u0928\u094d\u0921 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "Need to send a parcel? Let's do it", "intent": "parcel_booking"}
+{"text": "Quick parcel booking for you", "intent": "parcel_booking"}
+{"text": "Send your parcel with ease", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery instantly", "intent": "parcel_booking"}
+{"text": "Parcel booking made simple", "intent": "parcel_booking"}
+{"text": "Send a parcel, get it delivered", "intent": "parcel_booking"}
+{"text": "Book your parcel delivery quickly", "intent": "parcel_booking"}
+{"text": "Speedy parcel booking for you", "intent": "parcel_booking"}
+{"text": "Parcels booked, deliveries on the way", "intent": "parcel_booking"}
+{"text": "Parcels booking service activated", "intent": "parcel_booking"}
+{"text": "Send your parcel, we deliver", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery today", "intent": "parcel_booking"}
+{"text": "Parcels booking, deliveries assured", "intent": "parcel_booking"}
+{"text": "Send your parcel, get it tomorrow", "intent": "parcel_booking"}
+{"text": "Parcels booked, deliveries confirmed", "intent": "parcel_booking"}
+{"text": "Quick parcel booking process", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery effortlessly", "intent": "parcel_booking"}
+{"text": "Parcel booking, delivery assured", "intent": "parcel_booking"}
+{"text": "Can you book a parcel for me?", "intent": "parcel_booking"}
+{"text": "I need to order some clothes, when will it arrive?", "intent": "parcel_booking"}
+{"text": "How do I book a parcel for my clothes?", "intent": "parcel_booking"}
+{"text": "I want to book a parcel for my new clothes.", "intent": "parcel_booking"}
+{"text": "Can you help me book a parcel for my order?", "intent": "parcel_booking"}
+{"text": "When will my parcel with the clothes arrive?", "intent": "parcel_booking"}
+{"text": "How can I book a parcel for my delivery?", "intent": "parcel_booking"}
+{"text": "I just ordered clothes, how do I track my parcel?", "intent": "parcel_booking"}
+{"text": "Book a parcel for my clothes order please.", "intent": "parcel_booking"}
+{"text": "When will the parcel with my clothes arrive?", "intent": "parcel_booking"}
+{"text": "Can you help me with booking a parcel for my clothes order?", "intent": "parcel_booking"}
+{"text": "How long will it take for my parcel with clothes to arrive?", "intent": "parcel_booking"}
+{"text": "I placed an order for clothes, how do I track the parcel?", "intent": "parcel_booking"}
+{"text": "Can you assist in booking a parcel for my clothes order?", "intent": "parcel_booking"}
+{"text": "I ordered some clothes, when will the parcel arrive?", "intent": "parcel_booking"}
+{"text": "Can you help me book a parcel for my clothes order right now?", "intent": "parcel_booking"}
+{"text": "When will my parcel with clothes be delivered?", "intent": "parcel_booking"}
+{"text": "How do I book a parcel for the clothes I ordered?", "intent": "parcel_booking"}
+{"text": "How can I track the parcel with my clothes order?", "intent": "parcel_booking"}
+{"text": "Send a parcel as a gift and surprise them with your thoughtfulness.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel to spread joy and cheer to loved ones.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for that special someone and brighten their day.", "intent": "parcel_booking"}
+{"text": "Use the chatbot to book a gift parcel and make someone's day.", "intent": "parcel_booking"}
+{"text": "Get a gift parcel delivered and add a smile to their face.", "intent": "parcel_booking"}
+{"text": "Use the app to book a gift parcel and show your appreciation.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel now and send a message of love and care.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel for a friend or family member and bring a smile.", "intent": "parcel_booking"}
+{"text": "Make delivery a gift with our parcel booking service.", "intent": "parcel_booking"}
+{"text": "Send a gift parcel through the app and surprise them with your kindness.", "intent": "parcel_booking"}
+{"text": "Use the chatbot to book a gift parcel and add a joyous touch to their life.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for a loved one and spread positivity.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel and give someone a pleasant surprise.", "intent": "parcel_booking"}
+{"text": "Use the app to send a gift parcel and uplift someone's spirits.", "intent": "parcel_booking"}
+{"text": "Get a gift parcel delivered and share your happiness with others.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel for someone and bring a smile to their face.", "intent": "parcel_booking"}
+{"text": "Book a gift parcel through the chatbot and make someone happy.", "intent": "parcel_booking"}
+{"text": "Use the app to send a gift parcel and spread some joy.", "intent": "parcel_booking"}
+{"text": "Order a gift parcel now and show your affection through delivery.", "intent": "parcel_booking"}
+{"text": "Confirm your parcel details for delivery.", "intent": "parcel_booking"}
+{"text": "Your grocery parcel is ready for pickup.", "intent": "parcel_booking"}
+{"text": "Placing your parcel order now, thanks!", "intent": "parcel_booking"}
+{"text": "Parcels to parents are free of charge.", "intent": "parcel_booking"}
+{"text": "Your grocery parcel will be delivered tomorrow.", "intent": "parcel_booking"}
+{"text": "Order confirmation for grocery parcel delivery.", "intent": "parcel_booking"}
+{"text": "Grocery parcel booked, expecting you at the doorstep.", "intent": "parcel_booking"}
+{"text": "Delivery arranged for your grocery parcel, thanks!", "intent": "parcel_booking"}
+{"text": "Your grocery parcel will arrive on time.", "intent": "parcel_booking"}
+{"text": "Parcel booking successful, expect delivery soon.", "intent": "parcel_booking"}
+{"text": "Grocery parcel ordered, ready for pickup.", "intent": "parcel_booking"}
+{"text": "Your grocery parcel is being prepared for delivery.", "intent": "parcel_booking"}
+{"text": "Grocery parcel booked, enjoy your order.", "intent": "parcel_booking"}
+{"text": "Delivery scheduled for your grocery parcel, thanks!", "intent": "parcel_booking"}
+{"text": "Your grocery parcel will be delivered shortly.", "intent": "parcel_booking"}
+{"text": "Parcel booking for groceries made successfully.", "intent": "parcel_booking"}
+{"text": "Grocery parcel ordered, expecting you at home.", "intent": "parcel_booking"}
+{"text": "Your grocery parcel is on the way, thanks!", "intent": "parcel_booking"}
+{"text": "Parcels to parents booked, delivery underway.", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery", "intent": "parcel_booking"}
+{"text": "Request a parcel pickup", "intent": "parcel_booking"}
+{"text": "Schedule your parcel delivery", "intent": "parcel_booking"}
+{"text": "Order parcel delivery", "intent": "parcel_booking"}
+{"text": "Parcels to your doorstep", "intent": "parcel_booking"}
+{"text": "Convenient parcel booking", "intent": "parcel_booking"}
+{"text": "Fast parcel delivery booking", "intent": "parcel_booking"}
+{"text": "Track your parcel online", "intent": "parcel_booking"}
+{"text": "Choose from available delivery times", "intent": "parcel_booking"}
+{"text": "Set up regular parcel delivery", "intent": "parcel_booking"}
+{"text": "Pick a drop-off location for parcel", "intent": "parcel_booking"}
+{"text": "Select delivery date for parcel", "intent": "parcel_booking"}
+{"text": "Get real-time parcel updates", "intent": "parcel_booking"}
+{"text": "Manage your parcel deliveries", "intent": "parcel_booking"}
+{"text": "Parcel booking services", "intent": "parcel_booking"}
+{"text": "Personalized parcel delivery options", "intent": "parcel_booking"}
+{"text": "Book a ride with parcel", "intent": "parcel_booking"}
+{"text": "Schedule a parcel pickup at home", "intent": "parcel_booking"}
+{"text": "Make a parcel delivery appointment", "intent": "parcel_booking"}
+{"text": "Quick parcel delivery booking", "intent": "parcel_booking"}
+{"text": "Send a delicious cake to your friend across town!", "intent": "parcel_booking"}
+{"text": "Book a package for gifting fresh flowers to your loved ones!", "intent": "parcel_booking"}
+{"text": "We deliver gifts! Book a small toy box for your niece.", "intent": "parcel_booking"}
+{"text": "Gift a box of chocolates to a friend near you!", "intent": "parcel_booking"}
+{"text": "Book a local gift basket for a friend visiting tomorrow.", "intent": "parcel_booking"}
+{"text": "Order a care package for your out-of-town friend.", "intent": "parcel_booking"}
+{"text": "Deliver a homemade ham to your friend's doorstep!", "intent": "parcel_booking"}
+{"text": "Gift a fresh bouquet to a friend in the neighborhood.", "intent": "parcel_booking"}
+{"text": "Book a package of gourmet snacks for your friend's birthday.", "intent": "parcel_booking"}
+{"text": "Send a bouquet of flowers for a friend in town.", "intent": "parcel_booking"}
+{"text": "Order a gift box of local wines for your friend who loves wine.", "intent": "parcel_booking"}
+{"text": "Deliver a packed lunch for a friend\u2019s business meeting!", "intent": "parcel_booking"}
+{"text": "Gift a handmade scarf to your friend coming from the cold climate.", "intent": "parcel_booking"}
+{"text": "Ship a box of cookies to a friend who misses home flavors.", "intent": "parcel_booking"}
+{"text": "Send a package of artisanal cheeses for a friend\u2019s dinner party.", "intent": "parcel_booking"}
+{"text": "Book a package of personalized gifts for your friend\u2019s birthday.", "intent": "parcel_booking"}
+{"text": "Deliver a care package of local specialties for a friend\u2019s surprise birthday.", "intent": "parcel_booking"}
+{"text": "Order a package of local chocolates for a friend\u2019s office gift.", "intent": "parcel_booking"}
+{"text": "Gift a bouquet of seasonal flowers for a friend\u2019s anniversary.", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0915\u0947\u091c \u0926\u0947\u0916 \u0930\u0939\u093e \u0939\u0942\u0901", "intent": "parcel_booking"}
+{"text": "\u0927\u094b\u0916\u093e \u0928\u0939\u0940\u0902, \u092a\u0948\u0915\u0947\u091c \u0928\u093f\u0915\u093e\u0932 \u0930\u0939\u093e \u0939\u0942\u0901", "intent": "parcel_booking"}
+{"text": "\u092e\u0947\u0930\u0947 \u092a\u093e\u0938 \u092a\u0948\u0915\u0947\u091c \u0939\u0948", "intent": "parcel_booking"}
+{"text": "\u0916\u094b\u091c \u0930\u0939\u093e \u0939\u0942\u0901, \u092a\u0948\u0915\u0947\u091c \u092b\u093e\u0907\u0902\u0921 \u0939\u094b \u0917\u092f\u093e", "intent": "parcel_booking"}
+{"text": "Need an urgent parcel delivery ASAP!", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery now please!", "intent": "parcel_booking"}
+{"text": "Can you hurry with the parcel delivery?", "intent": "parcel_booking"}
+{"text": "Urgent: Can you speed up parcel delivery?", "intent": "parcel_booking"}
+{"text": "Noticed my parcel. Need it urgently delivered.", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery by afternoon", "intent": "parcel_booking"}
+{"text": "Can you prioritize my urgent parcel delivery?", "intent": "parcel_booking"}
+{"text": "Parcel delivery urgent - as soon as possible", "intent": "parcel_booking"}
+{"text": "Urgent - need my parcel delivered by evening", "intent": "parcel_booking"}
+{"text": "Parcel delivery urgent - please expedite", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery needed by tomorrow morning", "intent": "parcel_booking"}
+{"text": "Can you get my parcel delivered urgently?", "intent": "parcel_booking"}
+{"text": "Urgent: My parcel needs to be delivered quickly", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery - today only", "intent": "parcel_booking"}
+{"text": "Need urgent pickup and delivery for my parcel", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery - absolutely crucial", "intent": "parcel_booking"}
+{"text": "Can you do urgent pickup and delivery for my parcel?", "intent": "parcel_booking"}
+{"text": "Urgent: Need it delivered by next hour", "intent": "parcel_booking"}
+{"text": "Urgent parcel delivery - don't delay", "intent": "parcel_booking"}
+{"text": "Urgent: Can you get my parcel delivered asap?", "intent": "parcel_booking"}
+{"text": "Track my parcel please", "intent": "parcel_booking"}
+{"text": "Where is my package?", "intent": "parcel_booking"}
+{"text": "When will my delivery arrive?", "intent": "parcel_booking"}
+{"text": "Parcel details needed", "intent": "parcel_booking"}
+{"text": "Update my parcel status", "intent": "parcel_booking"}
+{"text": "Parcel tracking status", "intent": "parcel_booking"}
+{"text": "Parcel delivery confirmation", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery update required", "intent": "parcel_booking"}
+{"text": "Parcel delivery in progress", "intent": "parcel_booking"}
+{"text": "(Parcel) Current location", "intent": "parcel_booking"}
+{"text": "(Parcel) Estimated time of arrival", "intent": "parcel_booking"}
+{"text": "(Parcel) Contact number", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery address", "intent": "parcel_booking"}
+{"text": "(Parcel) Tracking number", "intent": "parcel_booking"}
+{"text": "(Parcel) Pickup time", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery status", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery timeline", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery charges", "intent": "parcel_booking"}
+{"text": "(Parcel) Delivery options", "intent": "parcel_booking"}
+{"text": "Track your parcel easily with our delivery app.", "intent": "parcel_booking"}
+{"text": "Need to book a new parcel? Quick and easy!", "intent": "parcel_booking"}
+{"text": "Order your clothes and book a parcel delivery at once.", "intent": "parcel_booking"}
+{"text": "We deliver parcels right to your doorstep. Book now!", "intent": "parcel_booking"}
+{"text": "Clothes ordered? Book a parcel delivery in under 2 minutes.", "intent": "parcel_booking"}
+{"text": "Quick parcel booking for your new clothes. Ready to go!", "intent": "parcel_booking"}
+{"text": "Book your parcel for your latest online order. Easy!", "intent": "parcel_booking"}
+{"text": "Deliver your new clothes with our parcel booking service.", "intent": "parcel_booking"}
+{"text": "Need a new outfit? Book a parcel delivery in just a few clicks.", "intent": "parcel_booking"}
+{"text": "Order your clothes and book a delivery in one step.", "intent": "parcel_booking"}
+{"text": "New clothes ordered? Book a parcel delivery now.", "intent": "parcel_booking"}
+{"text": "Easily book a parcel for your latest online purchase. Perfect for clothes shopping!", "intent": "parcel_booking"}
+{"text": "Clothes ordered? Book a parcel delivery with one tap.", "intent": "parcel_booking"}
+{"text": "Quickly book a parcel for your online clothing order.", "intent": "parcel_booking"}
+{"text": "Order your clothes and book a delivery in seconds.", "intent": "parcel_booking"}
+{"text": "New clothes? Book a parcel delivery right here.", "intent": "parcel_booking"}
+{"text": "Order your clothes and book a delivery in no time.", "intent": "parcel_booking"}
+{"text": "Order your clothes and book a parcel in just a few taps.", "intent": "parcel_booking"}
+{"text": "Clothes ordered? Book a parcel delivery with ease.", "intent": "parcel_booking"}
+{"text": "Easily book a parcel for your online clothing order. Simple and fast.", "intent": "parcel_booking"}
+{"text": "\u0930\u093f\u0915\u094d\u0938 \u092c\u0941\u0915\u093f\u0902\u0917 \u0915\u0930\u0928\u093e \u0906\u0930\u092e\u094d\u0939 \u0906\u0930 \u0939\u0948", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0930\u0932 \u092c\u0941\u0915 \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0915\u094d\u092f\u093e \u0915\u0930\u0928\u093e \u0939\u0948", "intent": "parcel_booking"}
+{"text": "\u092a\u0948\u0930\u0932 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902, \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0924\u0948\u092f\u093e\u0930", "intent": "parcel_booking"}
+{"text": "\u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0915\u0947 \u0932\u093f\u090f \u092a\u0948\u0930\u0932 \u0915\u094d\u092f\u094b\u0902 \u092c\u0941\u0915 \u0915\u0930\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u0930\u093f\u0915\u094d\u0938 \u092c\u0941\u0915\u093f\u0902\u0917 \u0915\u0947 \u0932\u093f\u090f \u0915\u094d\u092f\u093e \u091a\u093e\u0939\u093f\u090f", "intent": "parcel_booking"}
+{"text": "Book a parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Can we schedule a parcel delivery to my parents' place?", "intent": "parcel_booking"}
+{"text": "Need to book a parcel for my parents. Anytime?", "intent": "parcel_booking"}
+{"text": "Arrange a parcel delivery to my parents' address.", "intent": "parcel_booking"}
+{"text": "Do a parcel delivery to my parents ASAP.", "intent": "parcel_booking"}
+{"text": "My parents need a parcel delivery. When can we do it?", "intent": "parcel_booking"}
+{"text": "Will you book a parcel delivery for my parents?", "intent": "parcel_booking"}
+{"text": "Let's book a parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Could you do a parcel delivery for my parents?", "intent": "parcel_booking"}
+{"text": "My parents are expecting a package. Can you deliver it?", "intent": "parcel_booking"}
+{"text": "Need help booking a parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Do a quick parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Booking a parcel for my parents. When will it be done?", "intent": "parcel_booking"}
+{"text": "Arrange a timely parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Can we confirm a parcel delivery for my parents?", "intent": "parcel_booking"}
+{"text": "My parents need a timely parcel delivery. Can you do it?", "intent": "parcel_booking"}
+{"text": "Can you book a parcel delivery for my parents right away?", "intent": "parcel_booking"}
+{"text": "Do a special parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Need to book a last-minute parcel delivery for my parents.", "intent": "parcel_booking"}
+{"text": "Arrange a parcel delivery for my parents' upcoming event.", "intent": "parcel_booking"}

@@ -1,0 +1,193 @@
+{"text": "get me 3 missal from tushar", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "3"}, {"start": 9, "end": 15, "label": "FOOD", "text": "missal"}, {"start": 21, "end": 27, "label": "STORE", "text": "tushar"}]}
+{"text": "2 misal pav from tushar misal", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 11, "label": "FOOD", "text": "misal pav"}, {"start": 17, "end": 30, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order 1 vada pav from green bakes", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "1"}, {"start": 8, "end": 16, "label": "FOOD", "text": "vada pav"}, {"start": 22, "end": 33, "label": "STORE", "text": "green bakes"}]}
+{"text": "paneer tikka mangwao rajabhau se", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "paneer tikka"}, {"start": 22, "end": 30, "label": "STORE", "text": "rajabhau"}]}
+{"text": "misal hai kya tushar pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "misal"}, {"start": 14, "end": 20, "label": "STORE", "text": "tushar"}]}
+{"text": "tushar misal se misal pav dedo", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "tushar misal"}, {"start": 16, "end": 25, "label": "FOOD", "text": "misal pav"}]}
+{"text": "4 samosa chahiye green bakes se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 8, "label": "FOOD", "text": "samosa"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}
+{"text": "get 5 pav bhaji from vaishali", "entities": [{"start": 4, "end": 5, "label": "QTY", "text": "5"}, {"start": 6, "end": 15, "label": "FOOD", "text": "pav bhaji"}, {"start": 21, "end": 29, "label": "STORE", "text": "vaishali"}]}
+{"text": "rajabhau ka chole bhature 2", "entities": [{"start": 0, "end": 8, "label": "STORE", "text": "rajabhau"}, {"start": 12, "end": 25, "label": "FOOD", "text": "chole bhature"}, {"start": 26, "end": 27, "label": "QTY", "text": "2"}]}
+{"text": "3 biryani lao prakash se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 9, "label": "FOOD", "text": "biryani"}, {"start": 14, "end": 21, "label": "STORE", "text": "prakash"}]}
+{"text": "order biryani from hotel prakash", "entities": [{"start": 6, "end": 13, "label": "FOOD", "text": "biryani"}, {"start": 19, "end": 33, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "sadhana misal se special misal", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "sadhana misal"}, {"start": 17, "end": 30, "label": "FOOD", "text": "special misal"}]}
+{"text": "mujhe pizza chahiye dominos se", "entities": [{"start": 6, "end": 11, "label": "FOOD", "text": "pizza"}, {"start": 20, "end": 27, "label": "STORE", "text": "dominos"}]}
+{"text": "bring 10 idli from south cafe", "entities": [{"start": 6, "end": 8, "label": "QTY", "text": "10"}, {"start": 9, "end": 13, "label": "FOOD", "text": "idli"}, {"start": 19, "end": 29, "label": "STORE", "text": "south cafe"}]}
+{"text": "i want dosa from udipi", "entities": [{"start": 7, "end": 11, "label": "FOOD", "text": "dosa"}, {"start": 17, "end": 22, "label": "STORE", "text": "udipi"}]}
+{"text": "pizza hut ka pepperoni pizza", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 13, "end": 28, "label": "FOOD", "text": "pepperoni pizza"}]}
+{"text": "tushar misal hai kya", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}, {"start": 7, "end": 12, "label": "FOOD", "text": "misal"}]}
+{"text": "green bakes ka sandwich", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "green bakes"}, {"start": 15, "end": 23, "label": "FOOD", "text": "sandwich"}]}
+{"text": "missal pav tushar", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "missal pav"}, {"start": 11, "end": 17, "label": "STORE", "text": "tushar"}]}
+{"text": "only misal tushar misal", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "only misal"}, {"start": 11, "end": 23, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order 2 butter naan from punjabi dhaba", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "2"}, {"start": 8, "end": 19, "label": "FOOD", "text": "butter naan"}, {"start": 25, "end": 38, "label": "STORE", "text": "punjabi dhaba"}]}
+{"text": "chai lao 3 cup rajabhau se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "chai"}, {"start": 9, "end": 10, "label": "QTY", "text": "3"}, {"start": 15, "end": 23, "label": "STORE", "text": "rajabhau"}]}
+{"text": "kfc se 6 piece chicken wings", "entities": [{"start": 0, "end": 3, "label": "STORE", "text": "kfc"}, {"start": 7, "end": 8, "label": "QTY", "text": "6"}, {"start": 15, "end": 28, "label": "FOOD", "text": "chicken wings"}]}
+{"text": "burger king ka whopper", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "burger king"}, {"start": 15, "end": 22, "label": "FOOD", "text": "whopper"}]}
+{"text": "mujhe manchurian chahiye china gate se", "entities": [{"start": 6, "end": 16, "label": "FOOD", "text": "manchurian"}, {"start": 25, "end": 35, "label": "STORE", "text": "china gate"}]}
+{"text": "momos lao 4 plate", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "momos"}, {"start": 10, "end": 11, "label": "QTY", "text": "4"}]}
+{"text": "order spring roll from chinese corner", "entities": [{"start": 6, "end": 17, "label": "FOOD", "text": "spring roll"}, {"start": 23, "end": 37, "label": "STORE", "text": "chinese corner"}]}
+{"text": "get misal from sadhana", "entities": [{"start": 4, "end": 9, "label": "FOOD", "text": "misal"}, {"start": 15, "end": 22, "label": "STORE", "text": "sadhana"}]}
+{"text": "2 plate misal sadhana", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 8, "end": 13, "label": "FOOD", "text": "misal"}, {"start": 14, "end": 21, "label": "STORE", "text": "sadhana"}]}
+{"text": "1 missal tushar se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 8, "label": "FOOD", "text": "missal"}, {"start": 9, "end": 15, "label": "STORE", "text": "tushar"}]}
+{"text": "lassi sweet mujhe chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "lassi"}, {"start": 6, "end": 11, "label": "PREF", "text": "sweet"}]}
+{"text": "extra spicy missal dena", "entities": [{"start": 0, "end": 11, "label": "PREF", "text": "extra spicy"}, {"start": 12, "end": 18, "label": "FOOD", "text": "missal"}]}
+{"text": "veg biryani green hotel", "entities": [{"start": 0, "end": 3, "label": "PREF", "text": "veg"}, {"start": 4, "end": 11, "label": "FOOD", "text": "biryani"}, {"start": 12, "end": 23, "label": "STORE", "text": "green hotel"}]}
+{"text": "3 anda bhurji from mamta", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 13, "label": "FOOD", "text": "anda bhurji"}, {"start": 19, "end": 24, "label": "STORE", "text": "mamta"}]}
+{"text": "hot coffee 2 cup barista", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "hot coffee"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}, {"start": 17, "end": 24, "label": "STORE", "text": "barista"}]}
+{"text": "mujhe nasik nashik pe kuch chahiye", "entities": [{"start": 6, "end": 11, "label": "LOC", "text": "nasik"}, {"start": 12, "end": 18, "label": "LOC", "text": "nashik"}]}
+{"text": "sadar me restaurants dikha", "entities": [{"start": 0, "end": 5, "label": "LOC", "text": "sadar"}]}
+{"text": "college road pe khana mil jaega", "entities": [{"start": 0, "end": 12, "label": "LOC", "text": "college road"}]}
+{"text": "tidke colony me best misal", "entities": [{"start": 0, "end": 12, "label": "LOC", "text": "tidke colony"}, {"start": 18, "end": 26, "label": "FOOD", "text": "best misal"}]}
+{"text": "garma garam samosa 5", "entities": [{"start": 0, "end": 10, "label": "PREF", "text": "garma garam"}, {"start": 11, "end": 17, "label": "FOOD", "text": "samosa"}, {"start": 18, "end": 19, "label": "QTY", "text": "5"}]}
+{"text": "thanda cold coffee lao", "entities": [{"start": 0, "end": 6, "label": "PREF", "text": "thanda"}, {"start": 7, "end": 18, "label": "FOOD", "text": "cold coffee"}]}
+{"text": "missal pav from tushar misal", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "missal pav"}, {"start": 16, "end": 28, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order food from green bakes tidke colony", "entities": [{"start": 16, "end": 27, "label": "STORE", "text": "green bakes"}, {"start": 28, "end": 40, "label": "LOC", "text": "tidke colony"}]}
+{"text": "rajabhau restaurant se dal makhani", "entities": [{"start": 0, "end": 20, "label": "STORE", "text": "rajabhau restaurant"}, {"start": 24, "end": 35, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "get 2 plate chole bhature", "entities": [{"start": 4, "end": 5, "label": "QTY", "text": "2"}, {"start": 12, "end": 25, "label": "FOOD", "text": "chole bhature"}]}
+{"text": "special misal pav tushar se", "entities": [{"start": 0, "end": 17, "label": "FOOD", "text": "special misal pav"}, {"start": 18, "end": 24, "label": "STORE", "text": "tushar"}]}
+{"text": "order from tushar", "entities": [{"start": 11, "end": 17, "label": "STORE", "text": "tushar"}]}
+{"text": "tushar ka menu dikha", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}]}
+{"text": "missal available hai kya", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "missal"}]}
+{"text": "order 3 plate missal from tushar misal pav center", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "3"}, {"start": 14, "end": 20, "label": "FOOD", "text": "missal"}, {"start": 26, "end": 49, "label": "STORE", "text": "tushar misal pav center"}]}
+{"text": "lao mujhe paneer butter masala 1", "entities": [{"start": 10, "end": 30, "label": "FOOD", "text": "paneer butter masala"}, {"start": 31, "end": 32, "label": "QTY", "text": "1"}]}
+{"text": "5 roti hotel prakash", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "roti"}, {"start": 7, "end": 20, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "green bakes ka menu", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "green bakes"}]}
+{"text": "sadhana chulivarchi se misal bhakri", "entities": [{"start": 0, "end": 19, "label": "STORE", "text": "sadhana chulivarchi"}, {"start": 23, "end": 35, "label": "FOOD", "text": "misal bhakri"}]}
+{"text": "do misal pav tushar", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "do"}, {"start": 3, "end": 12, "label": "FOOD", "text": "misal pav"}, {"start": 13, "end": 19, "label": "STORE", "text": "tushar"}]}
+{"text": "teen samosa green bakes", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "text": "samosa"}, {"start": 12, "end": 23, "label": "STORE", "text": "green bakes"}]}
+{"text": "char plate biryani prakash hotel", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 11, "end": 18, "label": "FOOD", "text": "biryani"}, {"start": 19, "end": 32, "label": "STORE", "text": "prakash hotel"}]}
+{"text": "ek chai rajabhau", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 7, "label": "FOOD", "text": "chai"}, {"start": 8, "end": 16, "label": "STORE", "text": "rajabhau"}]}
+{"text": "paanch puri bhel green bakes", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 16, "label": "FOOD", "text": "puri bhel"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}
+{"text": "paneer tikka masala order karo", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "paneer tikka masala"}]}
+{"text": "butter chicken lao mujhe", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "butter chicken"}]}
+{"text": "kadai paneer chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "kadai paneer"}]}
+{"text": "shahi paneer with naan", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "shahi paneer"}, {"start": 18, "end": 22, "label": "FOOD", "text": "naan"}]}
+{"text": "palak paneer aur roti", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "palak paneer"}, {"start": 17, "end": 21, "label": "FOOD", "text": "roti"}]}
+{"text": "dal tadka with jeera rice", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "dal tadka"}, {"start": 16, "end": 26, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "chicken biryani dum style", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "chicken biryani"}, {"start": 16, "end": 25, "label": "PREF", "text": "dum style"}]}
+{"text": "mutton biryani hotel prakash", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "mutton biryani"}, {"start": 15, "end": 28, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "veg thali chahiye full", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "veg thali"}, {"start": 18, "end": 22, "label": "PREF", "text": "full"}]}
+{"text": "non veg thali mangwao", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "non veg thali"}]}
+{"text": "south indian thali dedo", "entities": [{"start": 0, "end": 18, "label": "FOOD", "text": "south indian thali"}]}
+{"text": "masala dosa crispy", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "masala dosa"}, {"start": 12, "end": 18, "label": "PREF", "text": "crispy"}]}
+{"text": "rava dosa 2 plate", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "rava dosa"}, {"start": 10, "end": 11, "label": "QTY", "text": "2"}]}
+{"text": "paper dosa south cafe se", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "paper dosa"}, {"start": 11, "end": 21, "label": "STORE", "text": "south cafe"}]}
+{"text": "uttapam plain", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "uttapam"}, {"start": 8, "end": 13, "label": "PREF", "text": "plain"}]}
+{"text": "onion uttapam with sambar", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "onion uttapam"}, {"start": 19, "end": 25, "label": "FOOD", "text": "sambar"}]}
+{"text": "medu vada 3", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "medu vada"}, {"start": 10, "end": 11, "label": "QTY", "text": "3"}]}
+{"text": "filter coffee hot", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "filter coffee"}, {"start": 14, "end": 17, "label": "PREF", "text": "hot"}]}
+{"text": "pongal with chutney", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "pongal"}, {"start": 12, "end": 19, "label": "FOOD", "text": "chutney"}]}
+{"text": "upma plain chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "upma"}, {"start": 5, "end": 10, "label": "PREF", "text": "plain"}]}
+{"text": "poha jalebi nashik style", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "poha jalebi"}, {"start": 12, "end": 24, "label": "PREF", "text": "nashik style"}]}
+{"text": "kanda poha aur chai", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "kanda poha"}, {"start": 15, "end": 19, "label": "FOOD", "text": "chai"}]}
+{"text": "batata poha 2 plate", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "batata poha"}, {"start": 12, "end": 13, "label": "QTY", "text": "2"}]}
+{"text": "sabudana khichdi", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "sabudana khichdi"}]}
+{"text": "sabudana vada 4", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "sabudana vada"}, {"start": 14, "end": 15, "label": "QTY", "text": "4"}]}
+{"text": "thalipeeth with butter", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "thalipeeth"}, {"start": 16, "end": 22, "label": "FOOD", "text": "butter"}]}
+{"text": "puran poli sweet", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "puran poli"}, {"start": 11, "end": 16, "label": "PREF", "text": "sweet"}]}
+{"text": "ukdiche modak 10", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "ukdiche modak"}, {"start": 14, "end": 16, "label": "QTY", "text": "10"}]}
+{"text": "shreekhand with puri", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "shreekhand"}, {"start": 16, "end": 20, "label": "FOOD", "text": "puri"}]}
+{"text": "basundi katori", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "basundi"}]}
+{"text": "gulab jamun 5 piece", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "gulab jamun"}, {"start": 12, "end": 13, "label": "QTY", "text": "5"}]}
+{"text": "rasgulla 6", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "rasgulla"}, {"start": 9, "end": 10, "label": "QTY", "text": "6"}]}
+{"text": "jalebi crispy hot", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 7, "end": 13, "label": "PREF", "text": "crispy"}, {"start": 14, "end": 17, "label": "PREF", "text": "hot"}]}
+{"text": "gajar ka halwa warm", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "gajar ka halwa"}, {"start": 15, "end": 19, "label": "PREF", "text": "warm"}]}
+{"text": "rabdi malai", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "rabdi malai"}]}
+{"text": "lassi meethi thandi", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "lassi"}, {"start": 6, "end": 12, "label": "PREF", "text": "meethi"}, {"start": 13, "end": 19, "label": "PREF", "text": "thandi"}]}
+{"text": "chaas namkeen", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "chaas"}, {"start": 6, "end": 13, "label": "PREF", "text": "namkeen"}]}
+{"text": "nimbu pani 2 glass", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "nimbu pani"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}]}
+{"text": "mango shake thick", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "mango shake"}, {"start": 12, "end": 17, "label": "PREF", "text": "thick"}]}
+{"text": "banana shake with ice cream", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "banana shake"}, {"start": 18, "end": 27, "label": "FOOD", "text": "ice cream"}]}
+{"text": "cold coffee without sugar", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "cold coffee"}, {"start": 12, "end": 25, "label": "PREF", "text": "without sugar"}]}
+{"text": "green tea honey wala", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "green tea"}, {"start": 10, "end": 20, "label": "PREF", "text": "honey wala"}]}
+{"text": "black coffee strong", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "black coffee"}, {"start": 13, "end": 19, "label": "PREF", "text": "strong"}]}
+{"text": "cappuccino large barista", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "cappuccino"}, {"start": 11, "end": 16, "label": "PREF", "text": "large"}, {"start": 17, "end": 24, "label": "STORE", "text": "barista"}]}
+{"text": "espresso shot double", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "espresso shot"}, {"start": 14, "end": 20, "label": "PREF", "text": "double"}]}
+{"text": "masala chai kadak", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "masala chai"}, {"start": 12, "end": 17, "label": "PREF", "text": "kadak"}]}
+{"text": "ginger tea 3 cup", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "ginger tea"}, {"start": 11, "end": 12, "label": "QTY", "text": "3"}]}
+{"text": "irani chai double glass", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "irani chai"}, {"start": 11, "end": 17, "label": "PREF", "text": "double"}]}
+{"text": "cutting chai 5", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "cutting chai"}, {"start": 13, "end": 14, "label": "QTY", "text": "5"}]}
+{"text": "pani puri 2 plate tikha", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pani puri"}, {"start": 10, "end": 11, "label": "QTY", "text": "2"}, {"start": 18, "end": 23, "label": "PREF", "text": "tikha"}]}
+{"text": "bhel puri dry", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "bhel puri"}, {"start": 10, "end": 13, "label": "PREF", "text": "dry"}]}
+{"text": "sev puri extra meetha chutney", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "sev puri"}, {"start": 9, "end": 29, "label": "PREF", "text": "extra meetha chutney"}]}
+{"text": "dahi puri 1 plate", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "dahi puri"}, {"start": 10, "end": 11, "label": "QTY", "text": "1"}]}
+{"text": "ragda pattice hot", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "ragda pattice"}, {"start": 14, "end": 17, "label": "PREF", "text": "hot"}]}
+{"text": "dabeli 3 spicy", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "dabeli"}, {"start": 7, "end": 8, "label": "QTY", "text": "3"}, {"start": 9, "end": 14, "label": "PREF", "text": "spicy"}]}
+{"text": "kachori with aloo sabzi", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "kachori"}, {"start": 13, "end": 23, "label": "FOOD", "text": "aloo sabzi"}]}
+{"text": "pyaaz kachori jaipur style", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "pyaaz kachori"}, {"start": 14, "end": 26, "label": "PREF", "text": "jaipur style"}]}
+{"text": "aloo tikki chaat", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "aloo tikki chaat"}]}
+{"text": "papdi chaat tangy", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "papdi chaat"}, {"start": 12, "end": 17, "label": "PREF", "text": "tangy"}]}
+{"text": "dahi bhalla 2 plate", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dahi bhalla"}, {"start": 12, "end": 13, "label": "QTY", "text": "2"}]}
+{"text": "gol gappe extra pani", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "gol gappe"}, {"start": 11, "end": 20, "label": "PREF", "text": "extra pani"}]}
+{"text": "aloo paratha 2 butter wala", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "aloo paratha"}, {"start": 13, "end": 14, "label": "QTY", "text": "2"}, {"start": 15, "end": 26, "label": "PREF", "text": "butter wala"}]}
+{"text": "gobi paratha with curd", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "gobi paratha"}, {"start": 18, "end": 22, "label": "FOOD", "text": "curd"}]}
+{"text": "paneer paratha stuffed", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "paneer paratha"}, {"start": 15, "end": 22, "label": "PREF", "text": "stuffed"}]}
+{"text": "methi paratha plain", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "methi paratha"}, {"start": 14, "end": 19, "label": "PREF", "text": "plain"}]}
+{"text": "lachha paratha ghee wala", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "lachha paratha"}, {"start": 15, "end": 24, "label": "PREF", "text": "ghee wala"}]}
+{"text": "rumali roti 4", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "rumali roti"}, {"start": 12, "end": 13, "label": "QTY", "text": "4"}]}
+{"text": "tandoori roti 6", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "tandoori roti"}, {"start": 14, "end": 15, "label": "QTY", "text": "6"}]}
+{"text": "garlic naan 2", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "garlic naan"}, {"start": 12, "end": 13, "label": "QTY", "text": "2"}]}
+{"text": "cheese naan butter wala", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "cheese naan"}, {"start": 12, "end": 23, "label": "PREF", "text": "butter wala"}]}
+{"text": "kulcha amritsari", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "kulcha"}, {"start": 7, "end": 16, "label": "PREF", "text": "amritsari"}]}
+{"text": "stuffed kulcha with chole", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "stuffed kulcha"}, {"start": 20, "end": 25, "label": "FOOD", "text": "chole"}]}
+{"text": "bhature 4 fluffy", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "bhature"}, {"start": 8, "end": 9, "label": "QTY", "text": "4"}, {"start": 10, "end": 16, "label": "PREF", "text": "fluffy"}]}
+{"text": "puri 8 hot", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "puri"}, {"start": 5, "end": 6, "label": "QTY", "text": "8"}, {"start": 7, "end": 10, "label": "PREF", "text": "hot"}]}
+{"text": "plain rice 2 plate", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "plain rice"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}]}
+{"text": "jeera rice ghee wala", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "jeera rice"}, {"start": 11, "end": 20, "label": "PREF", "text": "ghee wala"}]}
+{"text": "pulao with raita", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pulao"}, {"start": 11, "end": 16, "label": "FOOD", "text": "raita"}]}
+{"text": "veg pulao large portion", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "veg pulao"}, {"start": 10, "end": 23, "label": "PREF", "text": "large portion"}]}
+{"text": "fried rice spicy", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "fried rice"}, {"start": 11, "end": 16, "label": "PREF", "text": "spicy"}]}
+{"text": "schezwan rice extra hot", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "schezwan rice"}, {"start": 14, "end": 23, "label": "PREF", "text": "extra hot"}]}
+{"text": "hakka noodles veg", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "hakka noodles"}, {"start": 14, "end": 17, "label": "PREF", "text": "veg"}]}
+{"text": "chow mein dry", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "chow mein"}, {"start": 10, "end": 13, "label": "PREF", "text": "dry"}]}
+{"text": "chicken noodles gravy", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "chicken noodles"}, {"start": 16, "end": 21, "label": "PREF", "text": "gravy"}]}
+{"text": "egg noodles 2 plate", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "egg noodles"}, {"start": 12, "end": 13, "label": "QTY", "text": "2"}]}
+{"text": "veg manchurian dry", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "veg manchurian"}, {"start": 15, "end": 18, "label": "PREF", "text": "dry"}]}
+{"text": "chicken manchurian gravy wala", "entities": [{"start": 0, "end": 18, "label": "FOOD", "text": "chicken manchurian"}, {"start": 19, "end": 29, "label": "PREF", "text": "gravy wala"}]}
+{"text": "gobi manchurian crispy", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "gobi manchurian"}, {"start": 15, "end": 22, "label": "PREF", "text": "crispy"}]}
+{"text": "baby corn chilli", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "baby corn chilli"}]}
+{"text": "paneer chilli dry", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "paneer chilli"}, {"start": 14, "end": 17, "label": "PREF", "text": "dry"}]}
+{"text": "chicken chilli spicy", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "chicken chilli"}, {"start": 15, "end": 20, "label": "PREF", "text": "spicy"}]}
+{"text": "honey chilli potato", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "honey chilli potato"}]}
+{"text": "french fries large", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "french fries"}, {"start": 13, "end": 18, "label": "PREF", "text": "large"}]}
+{"text": "peri peri fries", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "peri peri fries"}]}
+{"text": "loaded fries cheese wala", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "loaded fries"}, {"start": 13, "end": 24, "label": "PREF", "text": "cheese wala"}]}
+{"text": "potato wedges 2 plate", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "potato wedges"}, {"start": 14, "end": 15, "label": "QTY", "text": "2"}]}
+{"text": "onion rings crispy", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "onion rings"}, {"start": 12, "end": 18, "label": "PREF", "text": "crispy"}]}
+{"text": "nachos with cheese dip", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "nachos"}, {"start": 12, "end": 22, "label": "FOOD", "text": "cheese dip"}]}
+{"text": "veg burger mcdonalds", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "veg burger"}, {"start": 11, "end": 20, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "chicken burger spicy", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "chicken burger"}, {"start": 15, "end": 20, "label": "PREF", "text": "spicy"}]}
+{"text": "double patty burger", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "double patty burger"}]}
+{"text": "cheese burger extra cheese", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "cheese burger"}, {"start": 14, "end": 26, "label": "PREF", "text": "extra cheese"}]}
+{"text": "aloo tikki burger 2", "entities": [{"start": 0, "end": 17, "label": "FOOD", "text": "aloo tikki burger"}, {"start": 18, "end": 19, "label": "QTY", "text": "2"}]}
+{"text": "paneer tikka burger", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "paneer tikka burger"}]}
+{"text": "hot dog 2", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "hot dog"}, {"start": 8, "end": 9, "label": "QTY", "text": "2"}]}
+{"text": "corn dog with ketchup", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "corn dog"}, {"start": 14, "end": 21, "label": "FOOD", "text": "ketchup"}]}
+{"text": "veg wrap 2", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "veg wrap"}, {"start": 9, "end": 10, "label": "QTY", "text": "2"}]}
+{"text": "chicken wrap spicy mayo", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "chicken wrap"}, {"start": 13, "end": 23, "label": "PREF", "text": "spicy mayo"}]}
+{"text": "paneer wrap tandoori", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "paneer wrap"}, {"start": 12, "end": 20, "label": "PREF", "text": "tandoori"}]}
+{"text": "frankie chicken keema", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "frankie"}, {"start": 8, "end": 21, "label": "PREF", "text": "chicken keema"}]}
+{"text": "egg roll kolkata style", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "egg roll"}, {"start": 9, "end": 22, "label": "PREF", "text": "kolkata style"}]}
+{"text": "kathi roll 2 mutton", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "kathi roll"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}, {"start": 13, "end": 19, "label": "PREF", "text": "mutton"}]}
+{"text": "shawarma chicken", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "shawarma"}, {"start": 9, "end": 16, "label": "PREF", "text": "chicken"}]}
+{"text": "falafel wrap veg", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "falafel wrap"}, {"start": 13, "end": 16, "label": "PREF", "text": "veg"}]}
+{"text": "cheese pizza dominos", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "cheese pizza"}, {"start": 13, "end": 20, "label": "STORE", "text": "dominos"}]}
+{"text": "margherita pizza medium", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "margherita pizza"}, {"start": 17, "end": 23, "label": "PREF", "text": "medium"}]}
+{"text": "pepperoni pizza large", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "pepperoni pizza"}, {"start": 16, "end": 21, "label": "PREF", "text": "large"}]}
+{"text": "farmhouse pizza extra cheese", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "farmhouse pizza"}, {"start": 17, "end": 28, "label": "PREF", "text": "extra cheese"}]}
+{"text": "paneer tikka pizza", "entities": [{"start": 0, "end": 18, "label": "FOOD", "text": "paneer tikka pizza"}]}
+{"text": "chicken tikka pizza spicy", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "chicken tikka pizza"}, {"start": 20, "end": 25, "label": "PREF", "text": "spicy"}]}
+{"text": "bbq chicken pizza", "entities": [{"start": 0, "end": 17, "label": "FOOD", "text": "bbq chicken pizza"}]}
+{"text": "hawaiian pizza pineapple wala", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "hawaiian pizza"}, {"start": 15, "end": 29, "label": "PREF", "text": "pineapple wala"}]}
+{"text": "veggie supreme pizza", "entities": [{"start": 0, "end": 20, "label": "FOOD", "text": "veggie supreme pizza"}]}
+{"text": "meat lovers pizza", "entities": [{"start": 0, "end": 17, "label": "FOOD", "text": "meat lovers pizza"}]}
+{"text": "garlic bread 2", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "garlic bread"}, {"start": 13, "end": 14, "label": "QTY", "text": "2"}]}
+{"text": "cheese garlic bread", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "cheese garlic bread"}]}
+{"text": "stuffed garlic bread", "entities": [{"start": 0, "end": 20, "label": "FOOD", "text": "stuffed garlic bread"}]}
+{"text": "pasta white sauce", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pasta"}, {"start": 6, "end": 17, "label": "PREF", "text": "white sauce"}]}
+{"text": "penne arrabiata spicy", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "penne arrabiata"}, {"start": 17, "end": 22, "label": "PREF", "text": "spicy"}]}
+{"text": "alfredo pasta creamy", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "alfredo pasta"}, {"start": 14, "end": 20, "label": "PREF", "text": "creamy"}]}
+{"text": "spaghetti bolognese", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "spaghetti bolognese"}]}
+{"text": "mac and cheese 2", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "mac and cheese"}, {"start": 15, "end": 16, "label": "QTY", "text": "2"}]}
+{"text": "lasagna veg", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "lasagna"}, {"start": 8, "end": 11, "label": "PREF", "text": "veg"}]}
+{"text": "chicken lasagna", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "chicken lasagna"}]}
+{"text": "ravioli cheese filled", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "ravioli"}, {"start": 8, "end": 21, "label": "PREF", "text": "cheese filled"}]}

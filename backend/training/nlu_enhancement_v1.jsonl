@@ -1,0 +1,218 @@
+{"text":"use my details","intent":"use_my_details"}
+{"text":"my details","intent":"use_my_details"}
+{"text":"same as me","intent":"use_my_details"}
+{"text":"same details","intent":"use_my_details"}
+{"text":"apna number","intent":"use_my_details"}
+{"text":"mere details","intent":"use_my_details"}
+{"text":"mera address use karo","intent":"use_my_details"}
+{"text":"mera number use karo","intent":"use_my_details"}
+{"text":"apne details use karo","intent":"use_my_details"}
+{"text":"use my address","intent":"use_my_details"}
+{"text":"use my number","intent":"use_my_details"}
+{"text":"use my info","intent":"use_my_details"}
+{"text":"use my information","intent":"use_my_details"}
+{"text":"same as sender","intent":"use_my_details"}
+{"text":"same address as me","intent":"use_my_details"}
+{"text":"use saved details","intent":"use_my_details"}
+{"text":"use saved address","intent":"use_my_details"}
+{"text":"use profile","intent":"use_my_details"}
+{"text":"apna profile use karo","intent":"use_my_details"}
+{"text":"mere saved details","intent":"use_my_details"}
+{"text":"khud ka number","intent":"use_my_details"}
+{"text":"mujhe hi bhejdo","intent":"use_my_details"}
+{"text":"myself","intent":"use_my_details"}
+{"text":"self","intent":"use_my_details"}
+{"text":"me only","intent":"use_my_details"}
+{"text":"same","intent":"use_my_details"}
+{"text":"same person","intent":"use_my_details"}
+{"text":"apne aap","intent":"use_my_details"}
+{"text":"khud","intent":"use_my_details"}
+{"text":"mera hi","intent":"use_my_details"}
+{"text":"thanks","intent":"thanks"}
+{"text":"thank you","intent":"thanks"}
+{"text":"thanks a lot","intent":"thanks"}
+{"text":"thank you so much","intent":"thanks"}
+{"text":"dhanyawad","intent":"thanks"}
+{"text":"shukriya","intent":"thanks"}
+{"text":"धन्यवाद","intent":"thanks"}
+{"text":"bahut shukriya","intent":"thanks"}
+{"text":"thankyou","intent":"thanks"}
+{"text":"thnx","intent":"thanks"}
+{"text":"thx","intent":"thanks"}
+{"text":"ty","intent":"thanks"}
+{"text":"appreciated","intent":"thanks"}
+{"text":"great thanks","intent":"thanks"}
+{"text":"ok thanks","intent":"thanks"}
+{"text":"got it thanks","intent":"thanks"}
+{"text":"perfect thanks","intent":"thanks"}
+{"text":"thanks for help","intent":"thanks"}
+{"text":"thanks for your help","intent":"thanks"}
+{"text":"that was helpful thanks","intent":"thanks"}
+{"text":"bye","intent":"chitchat"}
+{"text":"goodbye","intent":"chitchat"}
+{"text":"see you","intent":"chitchat"}
+{"text":"later","intent":"chitchat"}
+{"text":"alvida","intent":"chitchat"}
+{"text":"chalo bye","intent":"chitchat"}
+{"text":"ok bye","intent":"chitchat"}
+{"text":"bye bye","intent":"chitchat"}
+{"text":"take care","intent":"chitchat"}
+{"text":"good night","intent":"chitchat"}
+{"text":"good day","intent":"chitchat"}
+{"text":"cya","intent":"chitchat"}
+{"text":"ttyl","intent":"chitchat"}
+{"text":"talk later","intent":"chitchat"}
+{"text":"phir milte hai","intent":"chitchat"}
+{"text":"baad me baat karte hai","intent":"chitchat"}
+{"text":"feedback","intent":"complaint"}
+{"text":"give feedback","intent":"complaint"}
+{"text":"feedback dena hai","intent":"complaint"}
+{"text":"complaint","intent":"complaint"}
+{"text":"i have a complaint","intent":"complaint"}
+{"text":"shikayat hai","intent":"complaint"}
+{"text":"issue","intent":"complaint"}
+{"text":"i have an issue","intent":"complaint"}
+{"text":"problem","intent":"complaint"}
+{"text":"there is a problem","intent":"complaint"}
+{"text":"dikkat hai","intent":"complaint"}
+{"text":"problem hai","intent":"complaint"}
+{"text":"kuch galat hai","intent":"complaint"}
+{"text":"something is wrong","intent":"complaint"}
+{"text":"not working","intent":"complaint"}
+{"text":"kaam nahi kar raha","intent":"complaint"}
+{"text":"bad experience","intent":"complaint"}
+{"text":"unhappy","intent":"complaint"}
+{"text":"not satisfied","intent":"complaint"}
+{"text":"disappointed","intent":"complaint"}
+{"text":"order wrong","intent":"complaint"}
+{"text":"wrong order","intent":"complaint"}
+{"text":"late delivery","intent":"complaint"}
+{"text":"delivery late","intent":"complaint"}
+{"text":"food cold","intent":"complaint"}
+{"text":"missing items","intent":"complaint"}
+{"text":"item missing","intent":"complaint"}
+{"text":"support","intent":"help"}
+{"text":"need support","intent":"help"}
+{"text":"customer support","intent":"help"}
+{"text":"contact support","intent":"help"}
+{"text":"help please","intent":"help"}
+{"text":"help me","intent":"help"}
+{"text":"i need help","intent":"help"}
+{"text":"madad chahiye","intent":"help"}
+{"text":"madad karo","intent":"help"}
+{"text":"help karo","intent":"help"}
+{"text":"can you help","intent":"help"}
+{"text":"kya kar sakte ho","intent":"help"}
+{"text":"assist me","intent":"help"}
+{"text":"assistance","intent":"help"}
+{"text":"sahayata","intent":"help"}
+{"text":"support chahiye","intent":"help"}
+{"text":"help me please","intent":"help"}
+{"text":"i am stuck","intent":"help"}
+{"text":"confused","intent":"help"}
+{"text":"what should i do","intent":"help"}
+{"text":"kya karu","intent":"help"}
+{"text":"what can you do","intent":"service_inquiry"}
+{"text":"what do you do","intent":"service_inquiry"}
+{"text":"kya kar sakte ho","intent":"service_inquiry"}
+{"text":"what services","intent":"service_inquiry"}
+{"text":"services available","intent":"service_inquiry"}
+{"text":"what all can you do","intent":"service_inquiry"}
+{"text":"tell me what you do","intent":"service_inquiry"}
+{"text":"how can you help me","intent":"service_inquiry"}
+{"text":"your capabilities","intent":"service_inquiry"}
+{"text":"features","intent":"service_inquiry"}
+{"text":"menu","intent":"service_inquiry"}
+{"text":"options","intent":"service_inquiry"}
+{"text":"what are the options","intent":"service_inquiry"}
+{"text":"kya kya hota hai","intent":"service_inquiry"}
+{"text":"bata kya kya kar sakte ho","intent":"service_inquiry"}
+{"text":"show stores","intent":"browse_menu"}
+{"text":"show restaurants","intent":"browse_menu"}
+{"text":"list restaurants","intent":"browse_menu"}
+{"text":"nearby restaurants","intent":"browse_menu"}
+{"text":"restaurants near me","intent":"browse_menu"}
+{"text":"kaunse restaurants hai","intent":"browse_menu"}
+{"text":"which stores","intent":"browse_menu"}
+{"text":"available stores","intent":"browse_menu"}
+{"text":"show menu","intent":"browse_menu"}
+{"text":"menu dikho","intent":"browse_menu"}
+{"text":"browse menu","intent":"browse_menu"}
+{"text":"see menu","intent":"browse_menu"}
+{"text":"what is available","intent":"browse_menu"}
+{"text":"kya available hai","intent":"browse_menu"}
+{"text":"show options","intent":"browse_menu"}
+{"text":"options dikhao","intent":"browse_menu"}
+{"text":"store list","intent":"browse_menu"}
+{"text":"restaurant list","intent":"browse_menu"}
+{"text":"best restaurants","intent":"browse_menu"}
+{"text":"top rated","intent":"browse_menu"}
+{"text":"reorder","intent":"repeat_order"}
+{"text":"order again","intent":"repeat_order"}
+{"text":"same order","intent":"repeat_order"}
+{"text":"repeat order","intent":"repeat_order"}
+{"text":"previous order","intent":"repeat_order"}
+{"text":"last order","intent":"repeat_order"}
+{"text":"same as last time","intent":"repeat_order"}
+{"text":"pichle wala order","intent":"repeat_order"}
+{"text":"wahi order karo","intent":"repeat_order"}
+{"text":"same order again","intent":"repeat_order"}
+{"text":"order wahi jo last time kiya tha","intent":"repeat_order"}
+{"text":"repeat last order","intent":"repeat_order"}
+{"text":"dobara wahi","intent":"repeat_order"}
+{"text":"phir se wahi","intent":"repeat_order"}
+{"text":"fir se wahi","intent":"repeat_order"}
+{"text":"contact someone","intent":"contact_search"}
+{"text":"find contact","intent":"contact_search"}
+{"text":"search contact","intent":"contact_search"}
+{"text":"call someone","intent":"contact_search"}
+{"text":"phone number","intent":"contact_search"}
+{"text":"contact number","intent":"contact_search"}
+{"text":"ka number chahiye","intent":"contact_search"}
+{"text":"ka phone number","intent":"contact_search"}
+{"text":"contact karo","intent":"contact_search"}
+{"text":"number do","intent":"contact_search"}
+{"text":"find number","intent":"contact_search"}
+{"text":"search number","intent":"contact_search"}
+{"text":"remove from cart","intent":"remove_from_cart"}
+{"text":"delete from cart","intent":"remove_from_cart"}
+{"text":"cart se hatao","intent":"remove_from_cart"}
+{"text":"nikal do cart se","intent":"remove_from_cart"}
+{"text":"remove item","intent":"remove_from_cart"}
+{"text":"take out from cart","intent":"remove_from_cart"}
+{"text":"don't want this","intent":"remove_from_cart"}
+{"text":"yeh nahi chahiye","intent":"remove_from_cart"}
+{"text":"cancel item","intent":"remove_from_cart"}
+{"text":"item hatao","intent":"remove_from_cart"}
+{"text":"clear cart","intent":"remove_from_cart"}
+{"text":"empty cart","intent":"remove_from_cart"}
+{"text":"talk to human","intent":"human_takeover"}
+{"text":"real person","intent":"human_takeover"}
+{"text":"connect to agent","intent":"human_takeover"}
+{"text":"speak to someone","intent":"human_takeover"}
+{"text":"insaan se baat karo","intent":"human_takeover"}
+{"text":"agent se connect karo","intent":"human_takeover"}
+{"text":"human please","intent":"human_takeover"}
+{"text":"actual person","intent":"human_takeover"}
+{"text":"live agent","intent":"human_takeover"}
+{"text":"customer care","intent":"human_takeover"}
+{"text":"call center","intent":"human_takeover"}
+{"text":"executive se baat","intent":"human_takeover"}
+{"text":"manager se baat","intent":"human_takeover"}
+{"text":"kisi se baat karo","intent":"human_takeover"}
+{"text":"robot nahi chahiye","intent":"human_takeover"}
+{"text":"login","intent":"login"}
+{"text":"sign in","intent":"login"}
+{"text":"log in","intent":"login"}
+{"text":"register","intent":"login"}
+{"text":"sign up","intent":"login"}
+{"text":"create account","intent":"login"}
+{"text":"mera account","intent":"login"}
+{"text":"account banana hai","intent":"login"}
+{"text":"login karna hai","intent":"login"}
+{"text":"otp bhejo","intent":"login"}
+{"text":"send otp","intent":"login"}
+{"text":"verify phone","intent":"login"}
+{"text":"phone verify karo","intent":"login"}
+{"text":"enter phone number","intent":"login"}
+{"text":"my phone number is","intent":"login"}

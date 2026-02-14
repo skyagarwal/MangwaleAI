@@ -1,0 +1,18 @@
+{
+  "status": "ok",
+  "timestamp": "2026-01-14T11:16:18.523Z",
+  "services": {
+    "php_backend": {
+      "status": "up",
+      "latency": 1400,
+      "cached": true,
+      "cacheAge": 49
+    },
+    "database": {
+      "status": "up"
+    },
+    "redis": {
+      "status": "up"
+    }
+  }
+}

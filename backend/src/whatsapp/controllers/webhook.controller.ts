@@ -1,0 +1,371 @@
+import { Controller, Get, Post, Body, Query, Logger, HttpCode, Param, Delete, Headers, UnauthorizedException, RawBodyRequest, Req } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
+import { SessionService } from '../../session/session.service';
+import { MessageService } from '../services/message.service';
+import { AgentOrchestratorService } from '../../agents/services/agent-orchestrator.service';
+import { ConversationLoggerService } from '../../database/conversation-logger.service';
+import { ConfigService } from '@nestjs/config';
+import { Platform } from '../../common/enums/platform.enum';
+import { AsrService } from '../../asr/services/asr.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { MessageGatewayService } from '../../messaging/services/message-gateway.service';
+import { WhatsAppCloudService } from '../services/whatsapp-cloud.service';
+import * as crypto from 'crypto';
+
+@Controller('webhook/whatsapp')
+export class WebhookController {
+  private readonly logger = new Logger(WebhookController.name);
+  private readonly verifyToken: string;
+  private readonly accessToken: string;
+  private readonly graphApiVersion: string;
+  private readonly appSecret: string;
+
+  constructor(
+    private sessionService: SessionService,
+    private messageService: MessageService,
+    private agentOrchestratorService: AgentOrchestratorService,
+    private conversationLogger: ConversationLoggerService,
+    private configService: ConfigService,
+    private asrService: AsrService,
+    private httpService: HttpService,
+    private messageGateway: MessageGatewayService,
+    private whatsappCloudService: WhatsAppCloudService,
+  ) {
+    this.verifyToken = this.configService.get('whatsapp.verifyToken');
+    this.accessToken = this.configService.get('whatsapp.accessToken');
+    this.graphApiVersion = this.configService.get('whatsapp.apiVersion') || 'v24.0';
+    this.appSecret = this.configService.get('WHATSAPP_APP_SECRET', '');
+    this.logger.log(`✅ Webhook Controller initialized (API ${this.graphApiVersion}, Voice Support)`);
+  }
+
+  @Get('session/:phoneNumber')
+  async getSession(@Param('phoneNumber') phoneNumber: string): Promise<any> {
+    const session = await this.sessionService.getSession(phoneNumber);
+    return session || { message: 'No session found' };
+  }
+
+  @Delete('session/:phoneNumber')
+  async deleteSession(@Param('phoneNumber') phoneNumber: string): Promise<any> {
+    await this.sessionService.deleteSession(phoneNumber);
+    this.logger.log(`🗑️ Session deleted for ${phoneNumber}`);
+    return { status: 'ok', message: 'Session deleted', phoneNumber };
+  }
+
+  @Get('messages/:phoneNumber')
+  async getBotMessages(@Param('phoneNumber') phoneNumber: string): Promise<any> {
+    const messages = await this.sessionService.getBotMessages(phoneNumber);
+    return { phoneNumber, messages, count: messages.length };
+  }
+
+  @Get('sessions')
+  async getAllSessions(): Promise<any> {
+    const sessions = await this.sessionService.getAllSessions();
+    return { total: sessions.length, sessions };
+  }
+
+  @Get()
+  async verify(
+    @Query('hub.mode') mode: string,
+    @Query('hub.verify_token') token: string,
+    @Query('hub.challenge') challenge: string,
+  ): Promise<string> {
+    this.logger.log(`🔐 Webhook verification: mode=${mode}`);
+
+    if (mode === 'subscribe' && token === this.verifyToken) {
+      this.logger.log('✅ Webhook verified successfully');
+      return challenge;
+    }
+
+    this.logger.warn('❌ Webhook verification failed');
+    throw new Error('Forbidden');
+  }
+
+  @Post()
+  @HttpCode(200)
+  @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 requests per minute per IP
+  async receive(
+    @Body() payload: any,
+    @Headers('x-hub-signature-256') hubSignature: string,
+  ): Promise<{ status: string }> {
+    try {
+      // Verify WhatsApp webhook signature (HMAC-SHA256)
+      // When WHATSAPP_APP_SECRET is configured, ALL requests MUST have valid signature
+      if (this.appSecret) {
+        if (!hubSignature) {
+          this.logger.warn('⚠️ Missing WhatsApp webhook signature - rejecting');
+          throw new UnauthorizedException('Missing webhook signature');
+        }
+
+        const expectedSignature = 'sha256=' + crypto
+          .createHmac('sha256', this.appSecret)
+          .update(JSON.stringify(payload))
+          .digest('hex');
+
+        if (!crypto.timingSafeEqual(
+          Buffer.from(expectedSignature),
+          Buffer.from(hubSignature),
+        )) {
+          this.logger.warn('⚠️ Invalid WhatsApp webhook signature - rejecting');
+          throw new UnauthorizedException('Invalid webhook signature');
+        }
+      }
+
+      this.logger.debug('📨 Webhook received');
+      this.logger.debug(`📋 Payload structure: ${JSON.stringify(payload, null, 2)}`);
+
+      if (!payload.entry?.[0]?.changes?.[0]?.value) {
+        this.logger.warn('Invalid webhook payload structure');
+        return { status: 'ignored' };
+      }
+
+      const value = payload.entry[0].changes[0].value;
+      this.logger.debug(`📋 Value: ${JSON.stringify(value, null, 2)}`);
+
+      if (value.messages) {
+        this.logger.log(`📩 Found ${value.messages.length} messages`);
+        for (const message of value.messages) {
+          await this.handleIncomingMessage(message);
+        }
+      } else {
+        this.logger.warn('No messages found in webhook payload');
+      }
+
+      return { status: 'ok' };
+    } catch (error) {
+      this.logger.error('Error processing webhook:', error);
+      return { status: 'error' };
+    }
+  }
+
+  private async handleIncomingMessage(message: any): Promise<void> {
+    try {
+      const messageId = message.id;
+      const from = message.from;
+      const type = message.type;
+
+      this.logger.log(`📩 Message from ${from}: ${type}`);
+
+      // Mark as read via Cloud API (shows blue ticks immediately)
+      this.whatsappCloudService.markAsRead(messageId).catch(() => {});
+      
+      // Show typing indicator while processing
+      this.whatsappCloudService.sendTypingIndicator(from, true).catch(() => {});
+
+      let session = await this.sessionService.getSession(from);
+      if (!session) {
+        session = await this.sessionService.createSession(from);
+      }
+
+      // Set platform for this session to WhatsApp for channel-aware replies
+      await this.sessionService.setData(from, 'platform', Platform.WHATSAPP);
+
+      await this.routeMessage(from, type, message, session.currentStep);
+    } catch (error) {
+      this.logger.error(`Error handling message:`, error);
+    }
+  }
+
+  private async routeMessage(from: string, type: string, message: any, currentStep: string): Promise<void> {
+    try {
+      let messageText = '';
+      let locationData: { latitude: number; longitude: number } | null = null;
+      
+      // Handle different message types
+      if (type === 'audio') {
+        // 🎤 VOICE MESSAGE - Transcribe using ASR
+        this.logger.log(`🎤 Voice message from ${from} - transcribing...`);
+        messageText = await this.handleVoiceMessage(message, from);
+        if (!messageText) {
+          await this.messageService.sendTextMessage(from, "🎤 Sorry, I couldn't understand your voice message. Please try again or type your message.");
+          return;
+        }
+        this.logger.log(`🎤 Transcribed: "${messageText}"`);
+      } else if (type === 'location') {
+        // 📍 LOCATION MESSAGE - Extract coordinates
+        locationData = {
+          latitude: message.location?.latitude,
+          longitude: message.location?.longitude,
+        };
+        messageText = `LOCATION:${locationData.latitude},${locationData.longitude}`;
+        this.logger.log(`📍 Location from ${from}: ${locationData.latitude}, ${locationData.longitude}`);
+      } else if (type === 'interactive') {
+        // 🔘 INTERACTIVE MESSAGE - Button or List selection
+        const interactive = message.interactive;
+        if (interactive?.type === 'button_reply') {
+          // Button click - use ID as action, title as display
+          const buttonId = interactive.button_reply?.id || '';
+          const buttonTitle = interactive.button_reply?.title || '';
+          messageText = buttonTitle || buttonId;
+          // Store button ID for proper routing (action & value metadata)
+          (message as any)._buttonAction = buttonId;
+          (message as any)._buttonValue = buttonId;
+          this.logger.log(`🔘 Button click: id="${buttonId}", title="${buttonTitle}"`);
+        } else if (interactive?.type === 'list_reply') {
+          // List selection - use ID for item matching, title as fallback
+          const listId = interactive.list_reply?.id || '';
+          const listTitle = interactive.list_reply?.title || '';
+          // Store list ID for proper routing
+          (message as any)._buttonAction = listId;
+          (message as any)._buttonValue = listId;
+          // For food items, ID contains item_id or actual item ID
+          // Check if ID starts with 'item_' (our format) or is numeric
+          if (listId.startsWith('item_') || /^\d+$/.test(listId)) {
+            // Pass as "Add [title] to cart" for selection executor
+            messageText = `Add ${listTitle} to cart`;
+            this.logger.log(`📋 List selection (item): id="${listId}", title="${listTitle}"`);
+          } else {
+            // For regular list options (like menu choices), use title
+            messageText = listTitle || listId;
+            this.logger.log(`📋 List selection (option): id="${listId}", title="${listTitle}"`);
+          }
+        } else {
+          messageText = interactive?.button_reply?.title || interactive?.list_reply?.title || '';
+        }
+      } else {
+        // Extract text from other message types
+        messageText = message.text?.body || '';
+      }
+      
+      this.logger.log(`💬 WhatsApp message from ${from}: "${messageText}"`);
+
+      // Get session data for user info
+      const session = await this.sessionService.getSession(from);
+      const userId = session?.data?.user_id;
+      
+      // 📍 Save location to session if it's a location message
+      if (locationData) {
+        await this.sessionService.setData(from, 'location', {
+          lat: locationData.latitude,
+          lng: locationData.longitude,
+        });
+        await this.sessionService.setData(from, 'lastLocationUpdate', Date.now());
+        this.logger.log(`📍 Saved location to session: ${locationData.latitude}, ${locationData.longitude}`);
+      }
+      
+      // Log user message to PostgreSQL (for continuous learning)
+      await this.conversationLogger.logUserMessage({
+        phone: from,
+        userId,
+        messageText,
+        platform: 'whatsapp',
+        sessionId: from,
+        // Voice messages are logged the same way - ASR transcription becomes the message
+      });
+      
+      this.logger.log(`✅ User message logged to database`);
+
+      // 🎯 UNIFIED ARCHITECTURE: Route through MessageGateway (Phase 1 refactor)
+      this.logger.log(`🚀 Processing WhatsApp message through MessageGateway`);
+      const result = await this.messageGateway.handleWhatsAppMessage(from, messageText, {
+        messageId: message.id,
+        // Map WhatsApp 'interactive' type → 'button_click' so ContextRouter skips NLU
+        type: type === 'interactive' ? 'button_click' : message.type,
+        isVoice: type === 'audio',
+        location: locationData, // Pass location data to message gateway
+        // Forward button/list IDs as action & value for proper ContextRouter routing
+        action: (message as any)._buttonAction,
+        value: (message as any)._buttonValue,
+      });
+      
+      this.logger.log(`✅ MessageGateway result: ${JSON.stringify(result)}`);
+
+      // Response is handled by ContextRouter → MessagingService
+      // No manual sending required anymore
+      if (!result.success) {
+        this.logger.error(`❌ Message processing failed: ${result.error}`);
+      }
+    } catch (error) {
+      this.logger.error(`Error routing message:`, error);
+      await this.messageService.sendTextMessage(
+        from,
+        "❌ Something went wrong. Please try again.",
+      );
+    }
+  }
+
+  /**
+   * Handle voice message from WhatsApp
+   * Downloads audio from Meta API and transcribes using ASR
+   */
+  private async handleVoiceMessage(message: any, from: string): Promise<string> {
+    try {
+      const audioId = message.audio?.id;
+      if (!audioId) {
+        this.logger.warn(`No audio ID in voice message`);
+        return '';
+      }
+
+      // 1. Get media URL from Meta API
+      const mediaUrl = await this.getWhatsAppMediaUrl(audioId);
+      if (!mediaUrl) {
+        this.logger.error(`Failed to get media URL for audio: ${audioId}`);
+        return '';
+      }
+
+      // 2. Download audio from Meta (requires auth header)
+      const audioBuffer = await this.downloadWhatsAppMedia(mediaUrl);
+      if (!audioBuffer) {
+        this.logger.error(`Failed to download audio: ${audioId}`);
+        return '';
+      }
+
+      // 3. Transcribe using ASR service
+      const transcription = await this.asrService.transcribe({
+        audioData: audioBuffer,
+        language: 'auto', // Auto-detect Hindi or English
+        provider: 'auto',
+      });
+
+      this.logger.log(`🎤 Transcription complete: "${transcription.text}" (confidence: ${transcription.confidence}, language: ${transcription.language})`);
+      
+      return transcription.text || '';
+    } catch (error) {
+      this.logger.error(`Voice message handling failed: ${error.message}`, error.stack);
+      return '';
+    }
+  }
+
+  /**
+   * Get media URL from WhatsApp Media API
+   */
+  private async getWhatsAppMediaUrl(mediaId: string): Promise<string | null> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(
+          `https://graph.facebook.com/${this.graphApiVersion}/${mediaId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.accessToken}`,
+            },
+          },
+        ),
+      );
+      return response.data?.url || null;
+    } catch (error) {
+      this.logger.error(`Failed to get media URL: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Download media from WhatsApp CDN (requires auth)
+   */
+  private async downloadWhatsAppMedia(url: string): Promise<Buffer | null> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(url, {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+          responseType: 'arraybuffer',
+        }),
+      );
+      return Buffer.from(response.data);
+    } catch (error) {
+      this.logger.error(`Failed to download media: ${error.message}`);
+      return null;
+    }
+  }
+}
+

@@ -1,0 +1,217 @@
+{"text": "ek pizza add karo", "intent": "add_to_cart"}
+{"text": "cart mein samosa daal do", "intent": "add_to_cart"}
+{"text": "yeh wala add kar do", "intent": "add_to_cart"}
+{"text": "2 burger cart mein rakho", "intent": "add_to_cart"}
+{"text": "momos bhi add karna hai", "intent": "add_to_cart"}
+{"text": "isko cart mein daalo", "intent": "add_to_cart"}
+{"text": "add this to my cart", "intent": "add_to_cart"}
+{"text": "cart mein chole bhature bhi daal do", "intent": "add_to_cart"}
+{"text": "yeh item add karo please", "intent": "add_to_cart"}
+{"text": "thali add kar do cart mein", "intent": "add_to_cart"}
+{"text": "isko add karo na", "intent": "add_to_cart"}
+{"text": "biryani add kar do", "intent": "add_to_cart"}
+{"text": "dosa add karna hai cart mein", "intent": "add_to_cart"}
+{"text": "paav bhaji cart mein", "intent": "add_to_cart"}
+{"text": "add one more paneer tikka", "intent": "add_to_cart"}
+{"text": "frankie bhi add karo", "intent": "add_to_cart"}
+{"text": "idli add kar dijiye", "intent": "add_to_cart"}
+{"text": "spring roll add karo cart mein", "intent": "add_to_cart"}
+{"text": "isko cart mein add kar do bhai", "intent": "add_to_cart"}
+{"text": "noodles add karo please", "intent": "add_to_cart"}
+{"text": "chowmein bhi daal do", "intent": "add_to_cart"}
+{"text": "checkout karna hai", "intent": "checkout"}
+{"text": "order place karo", "intent": "checkout"}
+{"text": "payment karna hai", "intent": "checkout"}
+{"text": "bill pay karo", "intent": "checkout"}
+{"text": "proceed to checkout", "intent": "checkout"}
+{"text": "order confirm karo", "intent": "checkout"}
+{"text": "pay karna hai", "intent": "checkout"}
+{"text": "ab checkout kar do", "intent": "checkout"}
+{"text": "final order karo", "intent": "checkout"}
+{"text": "payment process karo", "intent": "checkout"}
+{"text": "order place kar do bhai", "intent": "checkout"}
+{"text": "checkout kar dijiye", "intent": "checkout"}
+{"text": "bill bana do", "intent": "checkout"}
+{"text": "payment page pe le jao", "intent": "checkout"}
+{"text": "order finalize karo", "intent": "checkout"}
+{"text": "bas checkout karo ab", "intent": "checkout"}
+{"text": "pay karna hai mujhe", "intent": "checkout"}
+{"text": "proceed karo payment ke liye", "intent": "checkout"}
+{"text": "checkout please", "intent": "checkout"}
+{"text": "order complete karo", "intent": "checkout"}
+{"text": "payment kar do", "intent": "checkout"}
+{"text": "pehla wala", "intent": "select_item"}
+{"text": "teesra option do", "intent": "select_item"}
+{"text": "doosra wala chahiye", "intent": "select_item"}
+{"text": "number 2", "intent": "select_item"}
+{"text": "yeh wala", "intent": "select_item"}
+{"text": "woh jo pehle bataya", "intent": "select_item"}
+{"text": "second one", "intent": "select_item"}
+{"text": "last wala do", "intent": "select_item"}
+{"text": "first option", "intent": "select_item"}
+{"text": "beech wala", "intent": "select_item"}
+{"text": "sabse sasta wala", "intent": "select_item"}
+{"text": "sabse mehnga wala", "intent": "select_item"}
+{"text": "option A", "intent": "select_item"}
+{"text": "jo 100 rupay ka hai woh", "intent": "select_item"}
+{"text": "veg wala", "intent": "select_item"}
+{"text": "cheese wala option", "intent": "select_item"}
+{"text": "large size wala", "intent": "select_item"}
+{"text": "regular wala do", "intent": "select_item"}
+{"text": "medium size", "intent": "select_item"}
+{"text": "jo photo mein hai woh", "intent": "select_item"}
+{"text": "number 1", "intent": "select_item"}
+{"text": "pehla option select karo", "intent": "select_item"}
+{"text": "third option", "intent": "select_item"}
+{"text": "chautha wala", "intent": "select_item"}
+{"text": "aakhri wala", "intent": "select_item"}
+{"text": "kitne ka hai", "intent": "ask_price"}
+{"text": "price kya hai", "intent": "ask_price"}
+{"text": "rate batao", "intent": "ask_price"}
+{"text": "kitna lagega", "intent": "ask_price"}
+{"text": "cost kya hogi", "intent": "ask_price"}
+{"text": "pizza ka price", "intent": "ask_price"}
+{"text": "total kitna hua", "intent": "ask_price"}
+{"text": "bill kitna aayega", "intent": "ask_price"}
+{"text": "samosa kitne ka hai", "intent": "ask_price"}
+{"text": "burger ki price batao", "intent": "ask_price"}
+{"text": "yeh kitne mein milega", "intent": "ask_price"}
+{"text": "kya rate hai", "intent": "ask_price"}
+{"text": "kitne paise lagenge", "intent": "ask_price"}
+{"text": "daam kya hai iska", "intent": "ask_price"}
+{"text": "what's the price", "intent": "ask_price"}
+{"text": "kitna time lagega", "intent": "ask_time"}
+{"text": "delivery time kya hai", "intent": "ask_time"}
+{"text": "kab tak aayega", "intent": "ask_time"}
+{"text": "timing batao", "intent": "ask_time"}
+{"text": "kitni der mein milega", "intent": "ask_time"}
+{"text": "order kab tak pahunchega", "intent": "ask_time"}
+{"text": "delivery kitni der mein", "intent": "ask_time"}
+{"text": "time lagega kitna", "intent": "ask_time"}
+{"text": "expected time kya hai", "intent": "ask_time"}
+{"text": "kab deliver hoga", "intent": "ask_time"}
+{"text": "wait karna padega kitna", "intent": "ask_time"}
+{"text": "ETA kya hai", "intent": "ask_time"}
+{"text": "approximately kitna time", "intent": "ask_time"}
+{"text": "average delivery time", "intent": "ask_time"}
+{"text": "jaldi aa jayega kya", "intent": "ask_time"}
+{"text": "address change karna hai", "intent": "manage_address"}
+{"text": "naya address add karo", "intent": "manage_address"}
+{"text": "delivery location badlo", "intent": "manage_address"}
+{"text": "ghar ka address dena hai", "intent": "manage_address"}
+{"text": "office mein deliver karo", "intent": "manage_address"}
+{"text": "address update karna hai", "intent": "manage_address"}
+{"text": "location change", "intent": "manage_address"}
+{"text": "doosre address pe bhejo", "intent": "manage_address"}
+{"text": "saved address use karo", "intent": "manage_address"}
+{"text": "new address add karna hai", "intent": "manage_address"}
+{"text": "address edit karo", "intent": "manage_address"}
+{"text": "different location pe chahiye", "intent": "manage_address"}
+{"text": "home address pe deliver karo", "intent": "manage_address"}
+{"text": "work pe bhejo", "intent": "manage_address"}
+{"text": "address delete karo", "intent": "manage_address"}
+{"text": "order cancel karo", "intent": "cancel_order"}
+{"text": "mujhe order nahi chahiye", "intent": "cancel_order"}
+{"text": "cancel kar do", "intent": "cancel_order"}
+{"text": "order band karo", "intent": "cancel_order"}
+{"text": "nahi chahiye ab", "intent": "cancel_order"}
+{"text": "cancel my order", "intent": "cancel_order"}
+{"text": "order cancel karna hai", "intent": "cancel_order"}
+{"text": "order ruk jao", "intent": "cancel_order"}
+{"text": "mat bhejo ab", "intent": "cancel_order"}
+{"text": "order hatao", "intent": "cancel_order"}
+{"text": "cancel please", "intent": "cancel_order"}
+{"text": "order ko cancel kar dijiye", "intent": "cancel_order"}
+{"text": "nahi lena hai ab", "intent": "cancel_order"}
+{"text": "order cancel", "intent": "cancel_order"}
+{"text": "mera order cancel karo", "intent": "cancel_order"}
+{"text": "login karna hai", "intent": "login"}
+{"text": "sign in karo", "intent": "login"}
+{"text": "account mein enter karo", "intent": "login"}
+{"text": "mera account", "intent": "login"}
+{"text": "login please", "intent": "login"}
+{"text": "account access karna hai", "intent": "login"}
+{"text": "sign in kar do", "intent": "login"}
+{"text": "apna account open karo", "intent": "login"}
+{"text": "mera phone number 9876543210", "intent": "login"}
+{"text": "login with phone", "intent": "login"}
+{"text": "mobile number se login", "intent": "login"}
+{"text": "OTP bhejo", "intent": "login"}
+{"text": "verification code chahiye", "intent": "login"}
+{"text": "number verify karo", "intent": "login"}
+{"text": "account mein login karna hai", "intent": "login"}
+{"text": "saved address use karo", "intent": "use_saved"}
+{"text": "pehle wala address", "intent": "use_saved"}
+{"text": "ghar ka address", "intent": "use_saved"}
+{"text": "office address", "intent": "use_saved"}
+{"text": "home address use karo", "intent": "use_saved"}
+{"text": "same address", "intent": "use_saved"}
+{"text": "last time wala address", "intent": "use_saved"}
+{"text": "purana address hi rehne do", "intent": "use_saved"}
+{"text": "saved location pe", "intent": "use_saved"}
+{"text": "my saved addresses", "intent": "use_saved"}
+{"text": "default address", "intent": "use_saved"}
+{"text": "pehle se saved hai address", "intent": "use_saved"}
+{"text": "work address pe bhejo", "intent": "use_saved"}
+{"text": "registered address", "intent": "use_saved"}
+{"text": "primary address use karo", "intent": "use_saved"}
+{"text": "koi offer hai", "intent": "ask_offers"}
+{"text": "discount milega", "intent": "ask_offers"}
+{"text": "coupon code hai koi", "intent": "ask_offers"}
+{"text": "aaj ka special offer", "intent": "ask_offers"}
+{"text": "promo code lagao", "intent": "ask_offers"}
+{"text": "cashback milega kya", "intent": "ask_offers"}
+{"text": "combo offer hai kya", "intent": "ask_offers"}
+{"text": "koi deal chal rahi hai", "intent": "ask_offers"}
+{"text": "first order discount", "intent": "ask_offers"}
+{"text": "free delivery offer", "intent": "ask_offers"}
+{"text": "today's special deal", "intent": "ask_offers"}
+{"text": "koi code hai apply karne ke liye", "intent": "ask_offers"}
+{"text": "student discount milega kya", "intent": "ask_offers"}
+{"text": "paytm offer hai kya", "intent": "ask_offers"}
+{"text": "credit card offer", "intent": "ask_offers"}
+{"text": "sasta kaise karu", "intent": "ask_offers"}
+{"text": "best deal batao", "intent": "ask_offers"}
+{"text": "kuch free milega kya", "intent": "ask_offers"}
+{"text": "membership benefits", "intent": "ask_offers"}
+{"text": "loyalty points hai kya", "intent": "ask_offers"}
+{"text": "extra cheese dalna", "intent": "customize_order"}
+{"text": "less spicy banana", "intent": "customize_order"}
+{"text": "pyaaz mat dalna", "intent": "customize_order"}
+{"text": "extra mirchi", "intent": "customize_order"}
+{"text": "no onion no garlic", "intent": "customize_order"}
+{"text": "jain banana", "intent": "customize_order"}
+{"text": "sugar free chahiye", "intent": "customize_order"}
+{"text": "extra mayo add karo", "intent": "customize_order"}
+{"text": "without cream", "intent": "customize_order"}
+{"text": "double cheese", "intent": "customize_order"}
+{"text": "thoda kam namak", "intent": "customize_order"}
+{"text": "extra sauce dena", "intent": "customize_order"}
+{"text": "crispy banana", "intent": "customize_order"}
+{"text": "gravy alag se dena", "intent": "customize_order"}
+{"text": "toppings extra dena", "intent": "customize_order"}
+{"text": "crust thin chahiye", "intent": "customize_order"}
+{"text": "no ice please", "intent": "customize_order"}
+{"text": "hot serve karna", "intent": "customize_order"}
+{"text": "packing alag alag karna", "intent": "customize_order"}
+{"text": "extra green chutney", "intent": "customize_order"}
+{"text": "payment fail ho gaya", "intent": "payment_issue"}
+{"text": "paisa kat gaya order nahi hua", "intent": "payment_issue"}
+{"text": "double payment ho gaya", "intent": "payment_issue"}
+{"text": "transaction stuck hai", "intent": "payment_issue"}
+{"text": "UPI se nahi ho raha", "intent": "payment_issue"}
+{"text": "card decline ho gaya", "intent": "payment_issue"}
+{"text": "OTP nahi aa raha", "intent": "payment_issue"}
+{"text": "payment pending hai", "intent": "payment_issue"}
+{"text": "refund nahi aaya", "intent": "payment_issue"}
+{"text": "wrong amount kata", "intent": "payment_issue"}
+{"text": "payment error aa raha", "intent": "payment_issue"}
+{"text": "net banking fail", "intent": "payment_issue"}
+{"text": "wallet se pay nahi ho raha", "intent": "payment_issue"}
+{"text": "paytm se nahi ho raha", "intent": "payment_issue"}
+{"text": "phonepe error", "intent": "payment_issue"}
+{"text": "gpay se problem", "intent": "payment_issue"}
+{"text": "COD available hai kya", "intent": "payment_issue"}
+{"text": "payment retry karo", "intent": "payment_issue"}
+{"text": "amount deducted order failed", "intent": "payment_issue"}
+{"text": "bank se paise wapas nahi aaye", "intent": "payment_issue"}

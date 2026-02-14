@@ -1,0 +1,206 @@
+{"text": "yes proceed", "intent": "confirm_action", "language": "en"}
+{"text": "haan karo", "intent": "confirm_action", "language": "hi"}
+{"text": "yes", "intent": "confirm_action", "language": "en"}
+{"text": "haan", "intent": "confirm_action", "language": "hi"}
+{"text": "ok", "intent": "confirm_action", "language": "en"}
+{"text": "okay", "intent": "confirm_action", "language": "en"}
+{"text": "theek hai", "intent": "confirm_action", "language": "hi"}
+{"text": "thik hai", "intent": "confirm_action", "language": "hi"}
+{"text": "sahi hai", "intent": "confirm_action", "language": "hi"}
+{"text": "acha", "intent": "confirm_action", "language": "hi"}
+{"text": "bilkul", "intent": "confirm_action", "language": "hi"}
+{"text": "zaroor", "intent": "confirm_action", "language": "hi"}
+{"text": "sure", "intent": "confirm_action", "language": "en"}
+{"text": "definitely", "intent": "confirm_action", "language": "en"}
+{"text": "absolutely", "intent": "confirm_action", "language": "en"}
+{"text": "of course", "intent": "confirm_action", "language": "en"}
+{"text": "go ahead", "intent": "confirm_action", "language": "en"}
+{"text": "aage badho", "intent": "confirm_action", "language": "hi"}
+{"text": "confirm order", "intent": "confirm_checkout", "language": "en"}
+{"text": "checkout karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "place order", "intent": "confirm_checkout", "language": "en"}
+{"text": "order place karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "checkout please", "intent": "confirm_checkout", "language": "en"}
+{"text": "final order karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "proceed to checkout", "intent": "confirm_checkout", "language": "en"}
+{"text": "payment karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "pay karna hai", "intent": "confirm_checkout", "language": "hi"}
+{"text": "payment pe le jao", "intent": "confirm_checkout", "language": "hi"}
+{"text": "complete order", "intent": "confirm_checkout", "language": "en"}
+{"text": "finalize order", "intent": "confirm_checkout", "language": "en"}
+{"text": "order confirm karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "book kar do", "intent": "confirm_checkout", "language": "hi"}
+{"text": "booking confirm karo", "intent": "confirm_checkout", "language": "hi"}
+{"text": "modify my cart", "intent": "modify_cart", "language": "en"}
+{"text": "cart mein change karo", "intent": "modify_cart", "language": "hi"}
+{"text": "cart edit karo", "intent": "modify_cart", "language": "hi"}
+{"text": "change my order", "intent": "modify_cart", "language": "en"}
+{"text": "order change karna hai", "intent": "modify_cart", "language": "hi"}
+{"text": "item change karo", "intent": "modify_cart", "language": "hi"}
+{"text": "quantity change karo", "intent": "modify_cart", "language": "hi"}
+{"text": "update cart", "intent": "modify_cart", "language": "en"}
+{"text": "cart update karo", "intent": "modify_cart", "language": "hi"}
+{"text": "modify items", "intent": "modify_cart", "language": "en"}
+{"text": "kuch change karna hai", "intent": "modify_cart", "language": "hi"}
+{"text": "thoda modify karo", "intent": "modify_cart", "language": "hi"}
+{"text": "add more items", "intent": "add_more_items", "language": "en"}
+{"text": "aur kuch add karo", "intent": "add_more_items", "language": "hi"}
+{"text": "aur chahiye", "intent": "add_more_items", "language": "hi"}
+{"text": "more items add karo", "intent": "add_more_items", "language": "hi"}
+{"text": "kuch aur bhi chahiye", "intent": "add_more_items", "language": "hi"}
+{"text": "ek aur item", "intent": "add_more_items", "language": "hi"}
+{"text": "one more item", "intent": "add_more_items", "language": "en"}
+{"text": "add something else", "intent": "add_more_items", "language": "en"}
+{"text": "aur kuch lena hai", "intent": "add_more_items", "language": "hi"}
+{"text": "add one more", "intent": "add_more_items", "language": "en"}
+{"text": "thoda aur add karo", "intent": "add_more_items", "language": "hi"}
+{"text": "extras add karo", "intent": "add_more_items", "language": "hi"}
+{"text": "clear cart", "intent": "clear_cart", "language": "en"}
+{"text": "cart khali karo", "intent": "clear_cart", "language": "hi"}
+{"text": "empty cart", "intent": "clear_cart", "language": "en"}
+{"text": "cart empty karo", "intent": "clear_cart", "language": "hi"}
+{"text": "sab hata do", "intent": "clear_cart", "language": "hi"}
+{"text": "remove all items", "intent": "clear_cart", "language": "en"}
+{"text": "sab delete karo", "intent": "clear_cart", "language": "hi"}
+{"text": "cart clear kar do", "intent": "clear_cart", "language": "hi"}
+{"text": "start fresh cart", "intent": "clear_cart", "language": "en"}
+{"text": "naya cart chahiye", "intent": "clear_cart", "language": "hi"}
+{"text": "ghar pe bhejo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "home address pe deliver karo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "home pe", "intent": "use_saved_address", "language": "en", "entities": {"address_type": "home"}}
+{"text": "ghar par", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "mera ghar wala address", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "send to home", "intent": "use_saved_address", "language": "en", "entities": {"address_type": "home"}}
+{"text": "home address use karo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "mere ghar pe bhej do", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "deliver to my home", "intent": "use_saved_address", "language": "en", "entities": {"address_type": "home"}}
+{"text": "ghar ka address lelo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "home"}}
+{"text": "office pe bhejo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "work address use karo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "office address pe", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "daftar pe bhejo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "karyalay pe deliver karo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "send to office", "intent": "use_saved_address", "language": "en", "entities": {"address_type": "office"}}
+{"text": "workplace pe bhejo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "office wala address", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "mera office address use karo", "intent": "use_saved_address", "language": "hi", "entities": {"address_type": "office"}}
+{"text": "work location pe", "intent": "use_saved_address", "language": "en", "entities": {"address_type": "office"}}
+{"text": "cancel", "intent": "cancel_flow", "language": "en"}
+{"text": "nahi chahiye", "intent": "cancel_flow", "language": "hi"}
+{"text": "stop", "intent": "cancel_flow", "language": "en"}
+{"text": "band karo", "intent": "cancel_flow", "language": "hi"}
+{"text": "ruk jao", "intent": "cancel_flow", "language": "hi"}
+{"text": "mat karo", "intent": "cancel_flow", "language": "hi"}
+{"text": "abort", "intent": "cancel_flow", "language": "en"}
+{"text": "quit", "intent": "cancel_flow", "language": "en"}
+{"text": "exit", "intent": "cancel_flow", "language": "en"}
+{"text": "chod do", "intent": "cancel_flow", "language": "hi"}
+{"text": "rehne do", "intent": "cancel_flow", "language": "hi"}
+{"text": "nahi nahi", "intent": "cancel_flow", "language": "hi"}
+{"text": "no thanks", "intent": "cancel_flow", "language": "en"}
+{"text": "not now", "intent": "cancel_flow", "language": "en"}
+{"text": "abhi nahi", "intent": "cancel_flow", "language": "hi"}
+{"text": "go back", "intent": "go_back", "language": "en"}
+{"text": "peeche jao", "intent": "go_back", "language": "hi"}
+{"text": "back", "intent": "go_back", "language": "en"}
+{"text": "wapas", "intent": "go_back", "language": "hi"}
+{"text": "previous", "intent": "go_back", "language": "en"}
+{"text": "pehle wala", "intent": "go_back", "language": "hi"}
+{"text": "undo", "intent": "go_back", "language": "en"}
+{"text": "wapas jao", "intent": "go_back", "language": "hi"}
+{"text": "peeche le jao", "intent": "go_back", "language": "hi"}
+{"text": "go to previous step", "intent": "go_back", "language": "en"}
+{"text": "main menu", "intent": "go_main_menu", "language": "en"}
+{"text": "start se", "intent": "go_main_menu", "language": "hi"}
+{"text": "home", "intent": "go_main_menu", "language": "en"}
+{"text": "shuru se", "intent": "go_main_menu", "language": "hi"}
+{"text": "beginning", "intent": "go_main_menu", "language": "en"}
+{"text": "menu dikha", "intent": "go_main_menu", "language": "hi"}
+{"text": "main options", "intent": "go_main_menu", "language": "en"}
+{"text": "mukhya menu", "intent": "go_main_menu", "language": "hi"}
+{"text": "first one", "intent": "select_item", "language": "en", "entities": {"selection_index": 1}}
+{"text": "pehla wala", "intent": "select_item", "language": "hi", "entities": {"selection_index": 1}}
+{"text": "number 1", "intent": "select_item", "language": "en", "entities": {"selection_index": 1}}
+{"text": "ek number", "intent": "select_item", "language": "hi", "entities": {"selection_index": 1}}
+{"text": "option 1", "intent": "select_item", "language": "en", "entities": {"selection_index": 1}}
+{"text": "pahla option", "intent": "select_item", "language": "hi", "entities": {"selection_index": 1}}
+{"text": "second one", "intent": "select_item", "language": "en", "entities": {"selection_index": 2}}
+{"text": "dusra", "intent": "select_item", "language": "hi", "entities": {"selection_index": 2}}
+{"text": "number 2", "intent": "select_item", "language": "en", "entities": {"selection_index": 2}}
+{"text": "do number", "intent": "select_item", "language": "hi", "entities": {"selection_index": 2}}
+{"text": "option 2", "intent": "select_item", "language": "en", "entities": {"selection_index": 2}}
+{"text": "dusra option", "intent": "select_item", "language": "hi", "entities": {"selection_index": 2}}
+{"text": "third one", "intent": "select_item", "language": "en", "entities": {"selection_index": 3}}
+{"text": "teesra", "intent": "select_item", "language": "hi", "entities": {"selection_index": 3}}
+{"text": "number 3", "intent": "select_item", "language": "en", "entities": {"selection_index": 3}}
+{"text": "teen number", "intent": "select_item", "language": "hi", "entities": {"selection_index": 3}}
+{"text": "option 3", "intent": "select_item", "language": "en", "entities": {"selection_index": 3}}
+{"text": "fourth one", "intent": "select_item", "language": "en", "entities": {"selection_index": 4}}
+{"text": "chautha", "intent": "select_item", "language": "hi", "entities": {"selection_index": 4}}
+{"text": "number 4", "intent": "select_item", "language": "en", "entities": {"selection_index": 4}}
+{"text": "fifth one", "intent": "select_item", "language": "en", "entities": {"selection_index": 5}}
+{"text": "paanchwa", "intent": "select_item", "language": "hi", "entities": {"selection_index": 5}}
+{"text": "ye wala", "intent": "select_item", "language": "hi", "entities": {"selection_index": 1}}
+{"text": "this one", "intent": "select_item", "language": "en", "entities": {"selection_index": 1}}
+{"text": "last one", "intent": "select_item", "language": "en", "entities": {"selection_index": -1}}
+{"text": "last wala", "intent": "select_item", "language": "hi", "entities": {"selection_index": -1}}
+{"text": "aakhri wala", "intent": "select_item", "language": "hi", "entities": {"selection_index": -1}}
+{"text": "show more options", "intent": "show_more", "language": "en"}
+{"text": "aur dikhao", "intent": "show_more", "language": "hi"}
+{"text": "more options", "intent": "show_more", "language": "en"}
+{"text": "aur options", "intent": "show_more", "language": "hi"}
+{"text": "kuch aur dikhao", "intent": "show_more", "language": "hi"}
+{"text": "show alternatives", "intent": "show_more", "language": "en"}
+{"text": "doosre options", "intent": "show_more", "language": "hi"}
+{"text": "next page", "intent": "show_more", "language": "en"}
+{"text": "agla page", "intent": "show_more", "language": "hi"}
+{"text": "view cart", "intent": "view_cart", "language": "en"}
+{"text": "cart dikhao", "intent": "view_cart", "language": "hi"}
+{"text": "show my cart", "intent": "view_cart", "language": "en"}
+{"text": "mera cart", "intent": "view_cart", "language": "hi"}
+{"text": "what's in my cart", "intent": "view_cart", "language": "en"}
+{"text": "cart mein kya hai", "intent": "view_cart", "language": "hi"}
+{"text": "check cart", "intent": "view_cart", "language": "en"}
+{"text": "cart check karo", "intent": "view_cart", "language": "hi"}
+{"text": "remove this", "intent": "remove_item", "language": "en"}
+{"text": "ye hata do", "intent": "remove_item", "language": "hi"}
+{"text": "delete this item", "intent": "remove_item", "language": "en"}
+{"text": "item hata do", "intent": "remove_item", "language": "hi"}
+{"text": "remove from cart", "intent": "remove_item", "language": "en"}
+{"text": "cart se nikalo", "intent": "remove_item", "language": "hi"}
+{"text": "nahi chahiye ye", "intent": "remove_item", "language": "hi"}
+{"text": "don't want this", "intent": "remove_item", "language": "en"}
+{"text": "increase quantity", "intent": "increase_qty", "language": "en"}
+{"text": "quantity badhao", "intent": "increase_qty", "language": "hi"}
+{"text": "add one more", "intent": "increase_qty", "language": "en"}
+{"text": "ek aur", "intent": "increase_qty", "language": "hi"}
+{"text": "plus one", "intent": "increase_qty", "language": "en"}
+{"text": "aur ek", "intent": "increase_qty", "language": "hi"}
+{"text": "double it", "intent": "increase_qty", "language": "en"}
+{"text": "double kar do", "intent": "increase_qty", "language": "hi"}
+{"text": "decrease quantity", "intent": "decrease_qty", "language": "en"}
+{"text": "quantity kam karo", "intent": "decrease_qty", "language": "hi"}
+{"text": "remove one", "intent": "decrease_qty", "language": "en"}
+{"text": "ek kam karo", "intent": "decrease_qty", "language": "hi"}
+{"text": "minus one", "intent": "decrease_qty", "language": "en"}
+{"text": "thoda kam", "intent": "decrease_qty", "language": "hi"}
+{"text": "apply coupon", "intent": "apply_coupon", "language": "en"}
+{"text": "coupon lagao", "intent": "apply_coupon", "language": "hi"}
+{"text": "discount code", "intent": "apply_coupon", "language": "en"}
+{"text": "promo code hai", "intent": "apply_coupon", "language": "hi"}
+{"text": "apply offer", "intent": "apply_coupon", "language": "en"}
+{"text": "offer lagao", "intent": "apply_coupon", "language": "hi"}
+{"text": "cash on delivery", "intent": "select_payment_cod", "language": "en"}
+{"text": "COD", "intent": "select_payment_cod", "language": "en"}
+{"text": "cash pe", "intent": "select_payment_cod", "language": "hi"}
+{"text": "delivery pe payment", "intent": "select_payment_cod", "language": "hi"}
+{"text": "haath mein paisa dunga", "intent": "select_payment_cod", "language": "hi"}
+{"text": "pay at delivery", "intent": "select_payment_cod", "language": "en"}
+{"text": "online payment", "intent": "select_payment_online", "language": "en"}
+{"text": "UPI se", "intent": "select_payment_online", "language": "hi"}
+{"text": "paytm se", "intent": "select_payment_online", "language": "hi"}
+{"text": "phonepe se", "intent": "select_payment_online", "language": "hi"}
+{"text": "gpay se", "intent": "select_payment_online", "language": "hi"}
+{"text": "card se", "intent": "select_payment_online", "language": "hi"}
+{"text": "net banking", "intent": "select_payment_online", "language": "en"}
+{"text": "pay online", "intent": "select_payment_online", "language": "en"}

@@ -1,0 +1,115 @@
+{"text": "I need a mobile phone cover", "intent": "search_product"}
+{"text": "I want to buy shoes", "intent": "search_product"}
+{"text": "search for headphones", "intent": "search_product"}
+{"text": "looking for a laptop bag", "intent": "search_product"}
+{"text": "show me watches", "intent": "search_product"}
+{"text": "I need a phone case", "intent": "search_product"}
+{"text": "buy earphones online", "intent": "search_product"}
+{"text": "I want to purchase a shirt", "intent": "search_product"}
+{"text": "find me a good backpack", "intent": "search_product"}
+{"text": "where can I buy a charger", "intent": "search_product"}
+{"text": "show me the latest phones", "intent": "search_product"}
+{"text": "I need new sneakers", "intent": "search_product"}
+{"text": "looking for sunglasses", "intent": "search_product"}
+{"text": "buy a water bottle", "intent": "search_product"}
+{"text": "I want a power bank", "intent": "search_product"}
+{"text": "search for bluetooth speaker", "intent": "search_product"}
+{"text": "show me wallets", "intent": "search_product"}
+{"text": "I need a screen protector", "intent": "search_product"}
+{"text": "looking for a nice dress", "intent": "search_product"}
+{"text": "buy kurta online", "intent": "search_product"}
+{"text": "I want sandals", "intent": "search_product"}
+{"text": "find jeans for me", "intent": "search_product"}
+{"text": "show me jewellery", "intent": "search_product"}
+{"text": "I need a tablet cover", "intent": "search_product"}
+{"text": "looking for electronics", "intent": "search_product"}
+{"text": "mobile cover chahiye", "intent": "search_product"}
+{"text": "shoes dikhao", "intent": "search_product"}
+{"text": "mujhe headphone chahiye", "intent": "search_product"}
+{"text": "laptop bag dhundo", "intent": "search_product"}
+{"text": "watch dikhao", "intent": "search_product"}
+{"text": "phone case lena hai", "intent": "search_product"}
+{"text": "earphone chahiye", "intent": "search_product"}
+{"text": "shirt buy karna hai", "intent": "search_product"}
+{"text": "backpack dikhao", "intent": "search_product"}
+{"text": "charger kahan milega", "intent": "search_product"}
+{"text": "naya phone chahiye", "intent": "search_product"}
+{"text": "sports shoes chahiye", "intent": "search_product"}
+{"text": "sunglasses dikhao yaar", "intent": "search_product"}
+{"text": "water bottle milegi kya", "intent": "search_product"}
+{"text": "power bank lena hai", "intent": "search_product"}
+{"text": "speaker bluetooth wala", "intent": "search_product"}
+{"text": "wallet dikhao", "intent": "search_product"}
+{"text": "screen guard chahiye", "intent": "search_product"}
+{"text": "dress dikhao party ke liye", "intent": "search_product"}
+{"text": "kurta pajama chahiye", "intent": "search_product"}
+{"text": "sandal dikhao", "intent": "search_product"}
+{"text": "jeans chahiye mujhe", "intent": "search_product"}
+{"text": "jewellery dekhni hai", "intent": "search_product"}
+{"text": "tablet cover milega kya", "intent": "search_product"}
+{"text": "koi electronics product dikhao", "intent": "search_product"}
+{"text": "checkout", "intent": "checkout"}
+{"text": "proceed to checkout", "intent": "checkout"}
+{"text": "I want to checkout", "intent": "checkout"}
+{"text": "place my order", "intent": "checkout"}
+{"text": "confirm my order", "intent": "checkout"}
+{"text": "complete my order", "intent": "checkout"}
+{"text": "pay now", "intent": "checkout"}
+{"text": "I am ready to pay", "intent": "checkout"}
+{"text": "let me pay", "intent": "checkout"}
+{"text": "proceed to payment", "intent": "checkout"}
+{"text": "finalize order", "intent": "checkout"}
+{"text": "done ordering", "intent": "checkout"}
+{"text": "that is all I want", "intent": "checkout"}
+{"text": "ready to order", "intent": "checkout"}
+{"text": "submit my order", "intent": "checkout"}
+{"text": "checkout karo", "intent": "checkout"}
+{"text": "order place karo", "intent": "checkout"}
+{"text": "payment kar do", "intent": "checkout"}
+{"text": "order confirm kar do", "intent": "checkout"}
+{"text": "pay kar do", "intent": "checkout"}
+{"text": "bill de do", "intent": "checkout"}
+{"text": "order de do", "intent": "checkout"}
+{"text": "check out kar do", "intent": "checkout"}
+{"text": "order finalize karo", "intent": "checkout"}
+{"text": "bas itna hi order confirm karo", "intent": "checkout"}
+{"text": "show my cart", "intent": "view_cart"}
+{"text": "what is in my cart", "intent": "view_cart"}
+{"text": "view my cart", "intent": "view_cart"}
+{"text": "cart items", "intent": "view_cart"}
+{"text": "open cart", "intent": "view_cart"}
+{"text": "let me see my cart", "intent": "view_cart"}
+{"text": "check my cart", "intent": "view_cart"}
+{"text": "what did I add to cart", "intent": "view_cart"}
+{"text": "mera cart kya hai", "intent": "view_cart"}
+{"text": "cart me kya kya hai", "intent": "view_cart"}
+{"text": "my order so far", "intent": "view_cart"}
+{"text": "items in my basket", "intent": "view_cart"}
+{"text": "show basket", "intent": "view_cart"}
+{"text": "cart summary dikhao", "intent": "view_cart"}
+{"text": "order list dikhao", "intent": "view_cart"}
+{"text": "add this to cart", "intent": "add_to_cart"}
+{"text": "add to my cart", "intent": "add_to_cart"}
+{"text": "put this in my cart", "intent": "add_to_cart"}
+{"text": "I want this one", "intent": "add_to_cart"}
+{"text": "add 2 of these", "intent": "add_to_cart"}
+{"text": "isko cart mein daal do", "intent": "add_to_cart"}
+{"text": "ye bhi add karo", "intent": "add_to_cart"}
+{"text": "ek aur daal do", "intent": "add_to_cart"}
+{"text": "cart mein add kar do", "intent": "add_to_cart"}
+{"text": "ye lena hai", "intent": "add_to_cart"}
+{"text": "add one more", "intent": "add_to_cart"}
+{"text": "include this item", "intent": "add_to_cart"}
+{"text": "select this", "intent": "add_to_cart"}
+{"text": "ye bhi le lo", "intent": "add_to_cart"}
+{"text": "mujhe ye bhi dena", "intent": "add_to_cart"}
+{"text": "yes confirm my order", "intent": "confirm_checkout"}
+{"text": "haan order confirm karo", "intent": "confirm_checkout"}
+{"text": "yes place the order", "intent": "confirm_checkout"}
+{"text": "confirm checkout", "intent": "confirm_checkout"}
+{"text": "yes proceed with payment", "intent": "confirm_checkout"}
+{"text": "haan payment karo", "intent": "confirm_checkout"}
+{"text": "order pakka karo", "intent": "confirm_checkout"}
+{"text": "final order confirm", "intent": "confirm_checkout"}
+{"text": "ha order kar do", "intent": "confirm_checkout"}
+{"text": "proceed with order", "intent": "confirm_checkout"}

@@ -1,0 +1,880 @@
+import { Injectable, Logger, Optional } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PhpOrderService } from '../../php-integration/services/php-order.service';
+import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
+import { SessionService } from '../../session/session.service';
+import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
+import { SentimentAnalysisService } from '../../agents/services/sentiment-analysis.service';
+import { AdvancedLearningService } from '../../agents/services/advanced-learning.service';
+import { OrderLearningService } from '../../order/services/order-learning.service';
+import { PricingValidatorService } from '../../common/validators/pricing.validator';
+import { AuthValidatorService } from '../../common/validators/auth.validator';
+
+/**
+ * Order Executor
+ * 
+ * Creates orders in PHP backend
+ */
+@Injectable()
+export class OrderExecutor implements ActionExecutor {
+  readonly name = 'order';
+  private readonly logger = new Logger(OrderExecutor.name);
+  private readonly trackingBaseUrl: string;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly phpOrderService: PhpOrderService,
+    private readonly phpPaymentService: PhpPaymentService,
+    private readonly sessionService: SessionService,
+    private readonly sentimentAnalysis: SentimentAnalysisService,
+    private readonly advancedLearning: AdvancedLearningService,
+    private readonly pricingValidator: PricingValidatorService,
+    private readonly authValidator: AuthValidatorService,
+    @Optional() private readonly orderLearning?: OrderLearningService,
+  ) {
+    this.trackingBaseUrl = this.configService.get('tracking.baseUrl') || process.env.TRACKING_BASE_URL || 'https://track.mangwale.in';
+  }
+
+  async execute(
+    config: Record<string, any>,
+    context: FlowContext
+  ): Promise<ActionExecutionResult> {
+    try {
+      const orderType = config.type as 'food' | 'parcel' | 'ecommerce' | 'multi_store' || 'food';
+
+      // 🔒 CRITICAL SECURITY FIX: Validate user authentication
+      // Get session for auth token
+      const session = await this.sessionService.getSession(context._system.sessionId);
+      const authToken = session?.data?.auth_token;
+      const userId = session?.data?.user_id || context.data.user_id;
+
+      if (!userId) {
+        this.logger.error('❌ User ID is missing - authentication required');
+        return {
+          success: false,
+          error: 'Authentication required to place order. Please login.',
+        };
+      }
+
+      // Validate that user_id matches auth_token or session
+      // This prevents user impersonation attacks
+      try {
+        const validation = await this.authValidator.validateUser(
+          authToken,
+          userId,
+          context._system.sessionId,
+        );
+        this.logger.log(`✅ User authenticated: user_id=${validation.userId}, phone=${validation.profile?.phone}`);
+      } catch (error) {
+        this.logger.error(`❌ Authentication validation failed: ${error.message}`);
+        return {
+          success: false,
+          error: error.message || 'Authentication validation failed',
+        };
+      }
+
+      let result: any;
+
+      if (orderType === 'parcel') {
+        result = await this.createParcelOrder(config, context, authToken || null, userId);
+      } else if (orderType === 'multi_store') {
+        result = await this.createMultiStoreOrder(config, context, authToken || null, userId);
+      } else if (orderType === 'food') {
+        result = await this.createFoodOrder(config, context, authToken || null, userId);
+      } else {
+        result = await this.createEcommerceOrder(config, context, authToken || null, userId);
+      }
+
+      if (result.success) {
+        this.logger.log(`✅ Order created: ${result.orderId}`);
+        
+        // Phase 2: Record successful order
+        await this.recordOrderInteraction(context, orderType, true);
+
+        return {
+          success: true,
+          output: result,
+          event: 'success',
+        };
+      } else {
+        this.logger.error(`Order creation failed: ${result.message}`);
+        
+        // Phase 2: Record failed order
+        await this.recordOrderInteraction(context, orderType, false);
+
+        return {
+          success: false,
+          error: result.message,
+        };
+      }
+    } catch (error) {
+      this.logger.error(`Order executor failed: ${error.message}`, error.stack);
+
+      // Handle auth token expiry - signal flow to re-authenticate
+      if (error.requiresReAuth || error.code === 'auth_expired' || error.statusCode === 401) {
+        this.logger.warn('⚠️ Auth token expired during order placement - triggering re-auth');
+        return {
+          success: false,
+          error: 'Your session has expired. Please log in again to place your order.',
+          event: 'auth_expired',
+          output: { requiresReAuth: true },
+        };
+      }
+
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  private resolveValueFromPath(path: string | undefined, context: FlowContext): any {
+    if (!path) return undefined;
+    return path.split('.').reduce((o, i) => (o ? o[i] : undefined), context.data);
+  }
+
+  private normalizePaymentMethod(method: any): string | undefined {
+    if (!method) return undefined;
+
+    const raw = String(method).trim();
+    if (!raw) return undefined;
+
+    const normalized = raw.toLowerCase();
+
+    // Already in PHP expected IDs
+    if (normalized === 'cash_on_delivery' || normalized === 'digital_payment' || normalized === 'wallet' || normalized === 'partial_payment') {
+      return normalized;
+    }
+
+    // Common aliases
+    if (normalized === 'cod' || normalized === 'cash' || normalized.includes('cash')) {
+      return 'cash_on_delivery';
+    }
+    if (
+      normalized === 'online' ||
+      normalized === 'card' ||
+      normalized === 'upi' ||
+      normalized.includes('digital') ||
+      normalized.includes('online')
+    ) {
+      return 'digital_payment';
+    }
+
+    return raw;
+  }
+
+  private resolvePaymentMethod(config: any, context: FlowContext, fallback: string): string {
+    // Priority order: explicit config fields -> config paymentPath -> context fields -> context payment_details
+    const fromConfig =
+      config.payment_method ??
+      config.paymentMethod ??
+      config.payment_method_id ??
+      config.paymentMethodId;
+
+    const fromPaymentPath = this.resolveValueFromPath(config.paymentPath, context);
+    const fromPaymentPathMethod =
+      typeof fromPaymentPath === 'object' ? fromPaymentPath?.method ?? fromPaymentPath?.id : fromPaymentPath;
+
+    const fromContext = context.data.payment_method ?? context.data.paymentMethod;
+    const fromContextDetails =
+      context.data.payment_details?.id ??
+      context.data.payment_details?.method ??
+      context.data.paymentDetails?.id ??
+      context.data.paymentDetails?.method;
+
+    return (
+      this.normalizePaymentMethod(fromConfig) ||
+      this.normalizePaymentMethod(fromPaymentPathMethod) ||
+      this.normalizePaymentMethod(fromContext) ||
+      this.normalizePaymentMethod(fromContextDetails) ||
+      fallback
+    );
+  }
+
+  private async createParcelOrder(
+    config: any,
+    context: FlowContext,
+    authToken: string | null,
+    userId?: number
+  ): Promise<any> {
+    // ⚠️ CRITICAL: PHP requires JWT auth token for ALL orders (no guest orders)
+    // For WhatsApp users verified via MySQL, we use user_id if auth_token is not available
+    if (!authToken && !userId) {
+      this.logger.error('❌ Authentication required - need auth_token or user_id');
+      return {
+        success: false,
+        message: 'Authentication required. Please login before placing an order.',
+      };
+    }
+
+    // Get session for user info
+    const session = await this.sessionService.getSession(context._system.sessionId);
+    
+    // Resolve paths if provided, otherwise fallback to direct config or default context keys
+    const resolve = (path: string, defaultKey: string) => {
+      if (!path) return context.data[defaultKey];
+      return path.split('.').reduce((o, i) => o?.[i], context.data);
+    };
+
+    const pickupAddress = resolve(config.pickupAddressPath, 'sender_address') || resolve(config.pickupAddressPath, 'pickup_address') || config.pickup_address;
+    const deliveryAddress = resolve(config.deliveryAddressPath, 'receiver_address') || resolve(config.deliveryAddressPath, 'delivery_address') || config.delivery_address;
+    const recipientDetails = resolve(config.recipientPath, 'recipient_details');
+    const distance = resolve(config.distancePath, 'distance') || config.distance;
+    const pricing = resolve(config.pricingPath, 'pricing');
+    const parcelDetails = resolve(config.detailsPath, 'parcel_details');
+    
+    const parcelCategoryId = config.parcel_category_id || context.data.parcel_category_id || 5;
+    const paymentMethod = this.resolvePaymentMethod(config, context, 'cash_on_delivery');
+
+    // Map recipient details if available
+    const receiverName = recipientDetails?.name || deliveryAddress?.contact_person_name;
+    const receiverPhone = recipientDetails?.phone || deliveryAddress?.contact_person_number;
+
+    // Get sender (logged in user) info from session
+    const senderName = session?.data?.user_name || pickupAddress?.contact_person_name || 'Customer';
+    const senderPhone = session?.data?.phone || pickupAddress?.contact_person_number;
+    const sessionUserId = session?.data?.user_id || userId;
+
+    this.logger.log(`📦 Creating parcel order - Sender: ${senderName} (${senderPhone}), Receiver: ${receiverName} (${receiverPhone}), PaymentMethod: ${paymentMethod}`);
+
+    // 🔒 CRITICAL SECURITY FIX: Server-side pricing validation
+    // PHP does NOT compute order_amount for parcel orders server-side
+    // We MUST validate the submitted amount to prevent manipulation
+    const submittedAmount = pricing?.total_charge || pricing?.total || pricing?.delivery_charge || 0;
+
+    if (!distance || distance <= 0) {
+      this.logger.error(`❌ Invalid distance for parcel order: ${distance}`);
+      return {
+        success: false,
+        message: 'Invalid delivery distance. Please select pickup and delivery addresses.',
+      };
+    }
+
+    // Validate submitted amount against server-side calculation
+    const validation = this.pricingValidator.validateParcelOrderAmount(submittedAmount, distance);
+
+    if (!validation.valid) {
+      this.logger.error(`❌ Parcel order amount validation failed: ${validation.message}`);
+      this.logger.error(`   Submitted: ₹${submittedAmount}, Expected: ₹${validation.expected?.totalAmount}`);
+      return {
+        success: false,
+        message: `Order amount validation failed: ${validation.message}. Please refresh and try again.`,
+      };
+    }
+
+    // Use server-calculated amount (not frontend-submitted) for maximum security
+    const totalAmount = validation.expected.totalAmount;
+
+    this.logger.log(`✅ Parcel order amount validated: ₹${totalAmount}`);
+    this.logger.log(`   Distance: ${distance}km, Base: ₹${validation.expected.baseCharge}, Distance charge: ₹${validation.expected.distanceCharge}, Platform fee: ₹${validation.expected.platformFee}`);
+
+    // 🔒 CRITICAL SECURITY FIX: Validate wallet balance for wallet/partial payments
+    if (paymentMethod === 'wallet' || paymentMethod === 'partial_payment') {
+      const walletBalance = context.data.wallet_balance || session?.data?.wallet_balance || 0;
+      const walletDeduction = context.data.wallet_deduction ||
+                            (paymentMethod === 'wallet' ? totalAmount : 0);
+
+      this.logger.log(`💰 Wallet payment detected: balance=₹${walletBalance}, deduction=₹${walletDeduction}`);
+
+      const walletValidation = this.pricingValidator.validateWalletBalance(
+        walletBalance,
+        walletDeduction,
+        totalAmount,
+      );
+
+      if (!walletValidation.valid) {
+        this.logger.error(`❌ Wallet balance validation failed: ${walletValidation.message}`);
+        return {
+          success: false,
+          message: walletValidation.message,
+        };
+      }
+
+      this.logger.log(`✅ Wallet balance validated: sufficient funds for order`);
+    }
+
+    const orderResult = await this.phpOrderService.createOrder(authToken, {
+      pickupAddress: {
+        address: pickupAddress.address || pickupAddress.formatted,
+        latitude: pickupAddress.lat || pickupAddress.latitude,
+        longitude: pickupAddress.lng || pickupAddress.longitude,
+        landmark: pickupAddress.landmark || '',
+      },
+      deliveryAddress: {
+        address: deliveryAddress.address || deliveryAddress.formatted,
+        latitude: deliveryAddress.lat || deliveryAddress.latitude,
+        longitude: deliveryAddress.lng || deliveryAddress.longitude,
+        landmark: deliveryAddress.landmark || '',
+      },
+      receiverName,
+      receiverPhone,
+      senderName,
+      senderPhone,
+      userId,
+      paymentMethod,
+      totalAmount,
+      // Build order note from parcel details with defaults
+      orderNote: config.order_note || context.data.order_note || this.buildParcelNote(parcelDetails),
+      distance,
+      parcelCategoryId,
+      senderZoneId: pickupAddress?.zone_id || context.data.sender_zone_id || context.data.zone_id,
+      deliveryZoneId: deliveryAddress?.zone_id || context.data.delivery_zone_id || context.data.zone_id,
+    });
+
+    // 💳 For digital payments, create Razorpay order
+    if (orderResult.success && paymentMethod === 'digital_payment') {
+      const totalAmount = pricing?.total_charge || pricing?.total || 49; // Default to minimum
+      const customerId = orderResult.rawResponse?.user_id || sessionUserId;
+      this.logger.log(`💳 Creating Razorpay payment link for parcel #${orderResult.orderId}, amount: ₹${totalAmount}, customerId: ${customerId}`);
+      
+      try {
+        const razorpayResult = await this.phpPaymentService.initializeRazorpay(
+          authToken,
+          orderResult.orderId,
+          totalAmount,
+          customerId,
+        );
+        
+        if (razorpayResult.success && razorpayResult.razorpayOrderId) {
+          orderResult.razorpayOrderId = razorpayResult.razorpayOrderId;
+          orderResult.paymentRequestId = razorpayResult.paymentRequestId;
+          orderResult.paymentLink = razorpayResult.paymentLink;
+          this.logger.log(`✅ Razorpay order created: ${razorpayResult.razorpayOrderId}, paymentLink: ${razorpayResult.paymentLink}`);
+        } else {
+          this.logger.warn(`⚠️ Razorpay order creation failed, using fallback`);
+        }
+      } catch (error) {
+        this.logger.error(`❌ Razorpay initialization failed: ${error.message}`);
+        // Don't fail the order, just log the error
+      }
+    }
+
+    // Generate tracking URL
+    if (orderResult.success && orderResult.orderId) {
+      const cleanReceiverPhone = String(receiverPhone || '').replace(/\D/g, '').slice(-10);
+      orderResult.trackingUrl = `${this.trackingBaseUrl}/track/${orderResult.orderId}${cleanReceiverPhone ? '/' + cleanReceiverPhone : ''}`;
+
+      // Track order for learning/personalization
+      this.trackOrderForLearning(context, 'parcel', orderResult).catch(() => {});
+    }
+
+    return orderResult;
+  }
+
+  /**
+   * Build order note from parcel details with sensible defaults
+   */
+  private buildParcelNote(parcelDetails: any): string {
+    if (!parcelDetails) {
+      return 'Standard parcel delivery';
+    }
+    
+    const parts = [];
+    if (parcelDetails.description) {
+      parts.push(parcelDetails.description);
+    }
+    if (parcelDetails.weight) {
+      parts.push(`Weight: ${parcelDetails.weight}kg`);
+    }
+    if (parcelDetails.size) {
+      parts.push(`Size: ${parcelDetails.size}`);
+    }
+    
+    return parts.length > 0 ? parts.join(', ') : 'Standard parcel delivery';
+  }
+
+  private async createFoodOrder(
+    config: any,
+    context: FlowContext,
+    authToken: string | null,
+    userId?: number
+  ): Promise<any> {
+    // ⚠️ CRITICAL: PHP requires JWT auth token for ALL orders (no guest orders)
+    // For WhatsApp users verified via MySQL, we use user_id if auth_token is not available
+    if (!authToken && !userId) {
+      this.logger.error('❌ Authentication required - need auth_token or user_id');
+      return {
+        success: false,
+        message: 'Authentication required. Please login before placing an order.',
+      };
+    }
+
+    const items = config.items || context.data.selected_items;
+    const deliveryAddress = config.delivery_address || context.data.delivery_address;
+    // PHP food ordering currently forces digital payment in PhpOrderService,
+    // but we still record/forward user preference when available.
+    const paymentMethod = this.resolvePaymentMethod(config, context, 'digital_payment');
+    // Check order_note from config, context data, or extracted_food special_instructions
+    const orderNote = config.order_note || context.data.order_note || context.data.extracted_food?.special_instructions;
+
+    if (!items || items.length === 0) {
+      return {
+        success: false,
+        message: 'No items selected for order',
+      };
+    }
+
+    if (!deliveryAddress) {
+      return {
+        success: false,
+        message: 'Delivery address is required',
+      };
+    }
+
+    // Get moduleId from first item (all items should be from same module)
+    // Derive moduleId from item data — PHP module IDs: 3=Parcel, 4=Food, 5=E-commerce
+    const moduleId = items[0]?.moduleId || items[0]?.module_id || context.data.module_id;
+
+    // 🔒 SECURITY: Validate food order amount (sanity check)
+    // Note: PHP is the source of truth for food orders, but we add validation
+    // to prevent gross manipulation attempts
+    const estimatedAmount = context.data.total_amount || context.data.order_amount || 0;
+    if (estimatedAmount > 0) {
+      const itemsForValidation = items.map((item: any) => ({
+        price: item.price || item.rawPrice || 0,
+        quantity: item.quantity || 1,
+      }));
+
+      const foodValidation = this.pricingValidator.validateFoodOrderAmount(
+        estimatedAmount,
+        itemsForValidation,
+        20, // 20% tolerance since PHP calculates actual amount
+      );
+
+      if (!foodValidation.valid) {
+        this.logger.warn(`⚠️ Food order amount validation failed: ${foodValidation.message}`);
+        this.logger.warn(`   This is a sanity check - proceeding with order but logging discrepancy`);
+        // Don't fail the order, just log the warning for monitoring
+        // PHP will calculate the correct amount anyway
+      } else {
+        this.logger.log(`✅ Food order amount sanity check passed: ₹${estimatedAmount}`);
+      }
+    }
+
+    // 🔒 Validate wallet balance for wallet/partial payments (food orders)
+    if (paymentMethod === 'wallet' || paymentMethod === 'partial_payment') {
+      const session = await this.sessionService.getSession(context._system.sessionId);
+      const walletBalance = context.data.wallet_balance || session?.data?.wallet_balance || 0;
+      const walletDeduction = context.data.wallet_deduction ||
+                            context.data.payment_details?.wallet_amount ||
+                            (paymentMethod === 'wallet' ? estimatedAmount : 0);
+
+      this.logger.log(`💰 Wallet payment detected: balance=₹${walletBalance}, deduction=₹${walletDeduction}`);
+
+      const walletValidation = this.pricingValidator.validateWalletBalance(
+        walletBalance,
+        walletDeduction,
+        estimatedAmount || 100, // Minimum order amount if not provided
+      );
+
+      if (!walletValidation.valid) {
+        this.logger.error(`❌ Wallet balance validation failed: ${walletValidation.message}`);
+        return {
+          success: false,
+          message: walletValidation.message,
+        };
+      }
+
+      this.logger.log(`✅ Wallet balance validated: sufficient funds for order`);
+    }
+
+    const orderResult = await this.phpOrderService.createFoodOrder(authToken, {
+      items,
+      deliveryAddress: {
+        address: deliveryAddress.address,
+        latitude: deliveryAddress.lat || deliveryAddress.latitude,
+        longitude: deliveryAddress.lng || deliveryAddress.longitude,
+        contact_person_name: deliveryAddress.contact_person_name || context.data.user_name,
+        contact_person_number: deliveryAddress.contact_person_number || context.data.user_phone,
+      },
+      paymentMethod,
+      orderNote,
+      moduleId, // Pass moduleId from item data
+      userId,   // Pass userId for WhatsApp verified users without auth_token
+    });
+
+    // 💳 For digital payments or partial payments, create Razorpay order
+    if (orderResult.success && (paymentMethod === 'digital_payment' || paymentMethod === 'partial_payment')) {
+      // Calculate total from items
+      let totalAmount = items.reduce((sum: number, item: any) => {
+        const price = item.price || item.rawPrice || 0;
+        const qty = item.quantity || 1;
+        return sum + (price * qty);
+      }, 0) || 100; // Default minimum
+      
+      // For partial payment, Razorpay only charges the remaining amount (after wallet deduction)
+      if (paymentMethod === 'partial_payment' && context.data.payment_details?.online_amount) {
+        totalAmount = parseFloat(context.data.payment_details.online_amount) || totalAmount;
+        this.logger.log(`💳 Partial payment: wallet covers ₹${context.data.payment_details.wallet_amount}, Razorpay charging ₹${totalAmount}`);
+      }
+      
+      const customerId = orderResult.rawResponse?.user_id || userId;
+      this.logger.log(`💳 Creating Razorpay payment link for food order #${orderResult.orderId}, amount: ₹${totalAmount}, customerId: ${customerId}`);
+      
+      try {
+        const razorpayResult = await this.phpPaymentService.initializeRazorpay(
+          authToken,
+          orderResult.orderId,
+          totalAmount,
+          customerId,
+        );
+        
+        if (razorpayResult.success && razorpayResult.razorpayOrderId) {
+          orderResult.razorpayOrderId = razorpayResult.razorpayOrderId;
+          orderResult.paymentRequestId = razorpayResult.paymentRequestId;
+          orderResult.paymentLink = razorpayResult.paymentLink;
+          this.logger.log(`✅ Razorpay order created: ${razorpayResult.razorpayOrderId}, paymentLink: ${razorpayResult.paymentLink}`);
+        } else {
+          this.logger.warn(`⚠️ Razorpay order creation failed, using fallback`);
+        }
+      } catch (error) {
+        this.logger.error(`❌ Razorpay initialization failed: ${error.message}`);
+        // Don't fail the order, just log the error
+      }
+    }
+
+    // Generate tracking URL for food orders
+    if (orderResult.success && orderResult.orderId) {
+      const customerPhone = context.data.user_phone || context._system?.phoneNumber || '';
+      const cleanPhone = String(customerPhone).replace(/\D/g, '').slice(-10);
+      orderResult.trackingUrl = `${this.trackingBaseUrl}/track/${orderResult.orderId}${cleanPhone ? '/' + cleanPhone : ''}`;
+
+      // Track order for learning/personalization
+      this.trackOrderForLearning(context, 'food', orderResult).catch(() => {});
+    }
+
+    return orderResult;
+  }
+
+  /**
+   * Place separate orders for each store in a multi-store cart
+   * PHP API only supports single store_id per order, so we split and place sequentially
+   */
+  private async createMultiStoreOrder(
+    config: any,
+    context: FlowContext,
+    authToken: string | null,
+    userId?: number
+  ): Promise<any> {
+    if (!authToken && !userId) {
+      return {
+        success: false,
+        message: 'Authentication required. Please login before placing an order.',
+      };
+    }
+
+    // Get order groups from cart validation (grouped by store)
+    const orderGroups = config.orderGroups || context.data.cart_validation?.orderGroups || [];
+    const deliveryAddress = config.delivery_address || context.data.delivery_address;
+    const paymentMethod = this.resolvePaymentMethod(config, context, 'digital_payment');
+    const orderNote = config.order_note || context.data.order_note || context.data.extracted_food?.special_instructions;
+
+    if (!orderGroups || orderGroups.length === 0) {
+      return {
+        success: false,
+        message: 'No store groups found for multi-store order',
+      };
+    }
+
+    if (!deliveryAddress) {
+      return {
+        success: false,
+        message: 'Delivery address is required',
+      };
+    }
+
+    this.logger.log(`🏪 Placing multi-store order: ${orderGroups.length} stores`);
+
+    const results: any[] = [];
+    const orderIds: number[] = [];
+    let totalAmount = 0;
+    let hasFailure = false;
+
+    // Place orders sequentially per store
+    for (const group of orderGroups) {
+      this.logger.log(`📦 Placing order for store: ${group.storeName} (${group.storeId}) - ${group.items.length} items`);
+
+      const storeResult = await this.phpOrderService.createFoodOrder(authToken, {
+        items: group.items,
+        deliveryAddress: {
+          address: deliveryAddress.address,
+          latitude: deliveryAddress.lat || deliveryAddress.latitude,
+          longitude: deliveryAddress.lng || deliveryAddress.longitude,
+          contact_person_name: deliveryAddress.contact_person_name || context.data.user_name,
+          contact_person_number: deliveryAddress.contact_person_number || context.data.user_phone,
+        },
+        paymentMethod,
+        orderNote,
+        moduleId: group.items[0]?.moduleId || group.items[0]?.module_id || context.data.module_id,
+        userId,
+      });
+
+      results.push({
+        storeId: group.storeId,
+        storeName: group.storeName,
+        ...storeResult,
+      });
+
+      if (storeResult.success) {
+        orderIds.push(storeResult.orderId);
+        totalAmount += group.total;
+        this.logger.log(`✅ Order #${storeResult.orderId} placed for ${group.storeName}`);
+      } else {
+        hasFailure = true;
+        this.logger.error(`❌ Failed for ${group.storeName}: ${storeResult.message}`);
+      }
+    }
+
+    // 🐛 FIX: Multi-store partial success handling
+    // Remove successfully ordered items from cart, keep failed items for retry
+    const successfulStoreIds = results.filter(r => r.success).map(r => r.storeId);
+    const failedResults = results.filter(r => !r.success);
+
+    // Update cart in context - remove successful items
+    if (successfulStoreIds.length > 0 && context.data.cart) {
+      const updatedCart = context.data.cart.filter((item: any) => {
+        const itemStoreId = item.store_id || item.storeId;
+        return !successfulStoreIds.includes(itemStoreId);
+      });
+
+      context.data.cart = updatedCart;
+      this.logger.log(`🛒 Cart updated: removed ${context.data.cart.length - updatedCart.length} items from successful stores`);
+    }
+
+    // Build combined result
+    const successCount = results.filter(r => r.success).length;
+
+    // Build detailed error message for failed stores
+    let detailedMessage = '';
+    if (hasFailure && successCount > 0) {
+      const successStores = results.filter(r => r.success).map(r => r.storeName).join(', ');
+      const failedStores = failedResults.map(r => `${r.storeName}: ${r.message || 'Order failed'}`).join('; ');
+      detailedMessage = `✅ ${successCount}/${orderGroups.length} orders placed successfully (${successStores}).\n\n` +
+                       `❌ Failed stores: ${failedStores}\n\n` +
+                       `The failed items remain in your cart. You can retry ordering them.`;
+    } else if (hasFailure && successCount === 0) {
+      const failedStores = failedResults.map(r => `${r.storeName}: ${r.message || 'Order failed'}`).join('; ');
+      detailedMessage = `❌ All orders failed:\n${failedStores}\n\nPlease check and try again.`;
+    } else {
+      detailedMessage = `✅ All ${successCount} orders placed successfully!`;
+    }
+
+    const combinedResult: any = {
+      success: successCount > 0, // At least one order succeeded
+      isMultiStore: true,
+      totalOrders: orderGroups.length,
+      successfulOrders: successCount,
+      failedOrders: orderGroups.length - successCount,
+      orderIds,
+      orderId: orderIds[0], // Primary order ID for compatibility
+      results,
+      message: detailedMessage,
+      // Store failed results for potential retry logic
+      failedStores: failedResults.map(r => ({
+        storeId: r.storeId,
+        storeName: r.storeName,
+        error: r.message,
+      })),
+    };
+
+    // Generate Razorpay for digital/partial payment
+    if (combinedResult.success && (paymentMethod === 'digital_payment' || paymentMethod === 'partial_payment')) {
+      let chargeAmount = totalAmount;
+      if (paymentMethod === 'partial_payment' && context.data.payment_details?.online_amount) {
+        chargeAmount = parseFloat(context.data.payment_details.online_amount) || totalAmount;
+      }
+
+      // Use the first order for Razorpay (PHP will apply wallet deduction across orders)
+      try {
+        const razorpayResult = await this.phpPaymentService.initializeRazorpay(
+          authToken,
+          orderIds[0],
+          chargeAmount,
+          userId,
+        );
+        if (razorpayResult.success && razorpayResult.razorpayOrderId) {
+          combinedResult.razorpayOrderId = razorpayResult.razorpayOrderId;
+          combinedResult.paymentLink = razorpayResult.paymentLink;
+          combinedResult.paymentRequestId = razorpayResult.paymentRequestId;
+        }
+      } catch (error) {
+        this.logger.error(`❌ Razorpay for multi-store failed: ${error.message}`);
+      }
+    }
+
+    // Generate tracking URLs
+    const customerPhone = context.data.user_phone || context._system?.phoneNumber || '';
+    const cleanPhone = String(customerPhone).replace(/\D/g, '').slice(-10);
+    combinedResult.trackingUrls = orderIds.map(id => 
+      `${this.trackingBaseUrl}/track/${id}${cleanPhone ? '/' + cleanPhone : ''}`
+    );
+    combinedResult.trackingUrl = combinedResult.trackingUrls[0];
+
+    return combinedResult;
+  }
+
+  /**
+   * Track order completion for learning/personalization
+   */
+  private async trackOrderForLearning(
+    context: FlowContext,
+    orderType: string,
+    orderResult: any,
+  ): Promise<void> {
+    if (!this.orderLearning) return;
+    try {
+      const userId = context.data.user_id || context._system?.phoneNumber || 'unknown';
+      await this.orderLearning.trackInteraction({
+        userId: String(userId),
+        sessionId: context._system?.sessionId || '',
+        timestamp: new Date(),
+        originalMessage: context.data._user_message || '',
+        classifiedIntent: orderType === 'food' ? 'order_food' : 'send_parcel',
+        intentConfidence: 1.0,
+        recommendationsShown: (context.data.selected_items || []).map((item: any, idx: number) => ({
+          id: String(item.id || idx),
+          name: item.name || item.title || 'item',
+          position: idx,
+          reason: 'user_selected',
+          matchScore: 1.0,
+        })),
+        selectedOption: {
+          id: String(orderResult.orderId),
+          name: `${orderType}_order_${orderResult.orderId}`,
+          position: 0,
+        },
+        orderPlaced: true,
+        orderId: String(orderResult.orderId),
+        orderValue: orderResult.orderValue || context.data.total_amount || 0,
+      });
+      this.logger.log(`📊 Order tracked for learning: ${orderType} #${orderResult.orderId}`);
+    } catch (err) {
+      this.logger.warn(`Failed to track order for learning: ${err.message}`);
+    }
+  }
+
+  /**
+   * Phase 2: Detect language of user message for training data
+   */
+  private detectLanguage(message: string): 'en' | 'hi' | 'hinglish' {
+    const hindiPattern = /[\u0900-\u097F]/;
+    const hinglishKeywords = /\b(kya|hai|ho|ji|bhai|dost|acha|thik|sahi|nahi|haan|accha|theek|bolo|batao|samjha)\b/i;
+
+    if (hindiPattern.test(message)) {
+      return 'hi';
+    } else if (hinglishKeywords.test(message)) {
+      return 'hinglish';
+    }
+    return 'en';
+  }
+
+  /**
+   * Phase 2: Record order interaction for training
+   */
+  private async recordOrderInteraction(context: FlowContext, orderType: string, success: boolean): Promise<void> {
+    try {
+      const userMessage = context.data._user_message || '';
+      if (!userMessage) return;
+
+      const sentiment = await this.sentimentAnalysis.analyze(userMessage, {
+        conversation_history: context.data._conversation_history || [],
+        flow_stage: 'order_creation',
+      });
+
+      await this.advancedLearning.recordTrainingData({
+        message: userMessage,
+        questionType: `order_${orderType}`,
+        actualClassification: success,
+        predictedClassification: success,
+        confidence: success ? 0.95 : 0.2,
+        flowContext: 'order_placement',
+        language: this.detectLanguage(userMessage),
+        userId: context._system?.userId || 'unknown',
+        sessionId: context._system?.sessionId || 'unknown',
+      });
+
+      if (success) {
+        this.logger.log(`✅ Order placed successfully (${orderType}) - sentiment: ${sentiment.emotion}`);
+      } else if (sentiment.frustration_score > 0.7) {
+        this.logger.log(`😤 Order failed with high frustration: ${sentiment.frustration_score.toFixed(2)}`);
+      }
+    } catch (error) {
+      this.logger.warn(`Phase 2 order tracking failed: ${error.message}`);
+    }
+  }
+
+  private async createEcommerceOrder(
+    config: any,
+    context: FlowContext,
+    authToken: string | null,
+    userId?: number
+  ): Promise<any> {
+    // ⚠️ CRITICAL: PHP requires JWT auth token for ALL orders (no guest orders)
+    // For WhatsApp users verified via MySQL, we use user_id if auth_token is not available
+    if (!authToken && !userId) {
+      this.logger.error('❌ Authentication required - need auth_token or user_id');
+      return {
+        success: false,
+        message: 'Authentication required. Please login before placing an order.',
+      };
+    }
+
+    const items = config.items || context.data.selected_items || context.data.cart_items;
+    const deliveryAddress = config.delivery_address || context.data.delivery_address;
+    // Use user-selected payment method (should be set by flow before reaching this executor)
+    const paymentMethod = config.payment_method || context.data.payment_method;
+    
+    if (!paymentMethod) {
+      this.logger.error('❌ Payment method not selected before creating ecommerce order');
+      return {
+        success: false,
+        message: 'Payment method is required. Please select a payment method before placing the order.',
+      };
+    }
+    const orderNote = config.order_note || context.data.order_note;
+
+    if (!items || items.length === 0) {
+      return {
+        success: false,
+        message: 'No items selected for order',
+      };
+    }
+
+    if (!deliveryAddress) {
+      return {
+        success: false,
+        message: 'Delivery address is required',
+      };
+    }
+
+    this.logger.log(`🛒 Creating e-commerce order with ${items.length} items, userId: ${userId || 'using authToken'}`);
+
+    // E-commerce orders use the same food order flow but with module_id for ecommerce
+    // The PHP backend handles both through the same cart/order endpoints
+    return this.phpOrderService.createFoodOrder(authToken, {
+      items: items.map((item: any) => ({
+        item_id: item.item_id || item.id,
+        quantity: item.quantity || 1,
+        store_id: item.store_id || item.storeId,
+        price: item.price || item.rawPrice || item.item_price || 0,
+        variant: item.variant || [],
+        addon_ids: item.addon_ids || [],
+        addon_quantities: item.addon_quantities || [],
+      })),
+      deliveryAddress: {
+        address: deliveryAddress.address,
+        latitude: deliveryAddress.lat || deliveryAddress.latitude,
+        longitude: deliveryAddress.lng || deliveryAddress.longitude,
+        contact_person_name: deliveryAddress.contact_person_name || context.data.user_name,
+        contact_person_number: deliveryAddress.contact_person_number || context.data.user_phone,
+      },
+      paymentMethod,
+      orderNote: orderNote || 'E-commerce order',
+      moduleId: 1, // Module ID 1 = E-commerce/Grocery
+    });
+  }
+
+  validate(config: Record<string, any>): boolean {
+    return !!config.type;
+  }
+}

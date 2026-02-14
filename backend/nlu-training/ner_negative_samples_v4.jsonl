@@ -1,0 +1,50 @@
+{"text": "how are you", "entities": []}
+{"text": "what can you do", "entities": []}
+{"text": "hello", "entities": []}
+{"text": "hi there", "entities": []}
+{"text": "thank you so much", "entities": []}
+{"text": "goodbye", "entities": []}
+{"text": "cancel karo", "entities": []}
+{"text": "help me please", "entities": []}
+{"text": "kaise ho", "entities": []}
+{"text": "main theek hun", "entities": []}
+{"text": "yes", "entities": []}
+{"text": "no", "entities": []}
+{"text": "haan karo", "entities": []}
+{"text": "nahi chahiye", "entities": []}
+{"text": "ok", "entities": []}
+{"text": "check wallet balance", "entities": []}
+{"text": "track my order", "entities": []}
+{"text": "show my cart", "entities": []}
+{"text": "repeat last order", "entities": []}
+{"text": "i want refund", "entities": []}
+{"text": "complaint hai", "entities": []}
+{"text": "support chahiye", "entities": []}
+{"text": "i am good", "entities": []}
+{"text": "what is mangwale", "entities": []}
+{"text": "bore ho raha hun", "entities": []}
+{"text": "tell me a joke", "entities": []}
+{"text": "nice to meet you", "entities": []}
+{"text": "kya haal hai", "entities": []}
+{"text": "feedback dena hai", "entities": []}
+{"text": "rating dena hai", "entities": []}
+{"text": "login karo", "entities": []}
+{"text": "logout karo", "entities": []}
+{"text": "account delete karo", "entities": []}
+{"text": "password change karo", "entities": []}
+{"text": "otp nahi aa raha", "entities": []}
+{"text": "payment failed", "entities": []}
+{"text": "app crash ho raha hai", "entities": []}
+{"text": "restart karo", "entities": []}
+{"text": "start over", "entities": []}
+{"text": "cancel everything", "entities": []}
+{"text": "Bhujbal chowk", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "Bhujbal chowk"}]}
+{"text": "Farm Road area", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "Farm Road area"}]}
+{"text": "Sunderban Colony", "entities": [{"start": 0, "end": 16, "label": "LOC", "entity": "Sunderban Colony"}]}
+{"text": "Chintamani Colony", "entities": [{"start": 0, "end": 17, "label": "LOC", "entity": "Chintamani Colony"}]}
+{"text": "Gangapur road", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Gangapur road"}]}
+{"text": "Panchavati area", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "Panchavati area"}]}
+{"text": "College road nashik", "entities": [{"start": 0, "end": 19, "label": "LOC", "entity": "College road nashik"}]}
+{"text": "CIDCO nashik", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "CIDCO nashik"}]}
+{"text": "Nashik road", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "Nashik road"}]}
+{"text": "Dwarka circle", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Dwarka circle"}]}

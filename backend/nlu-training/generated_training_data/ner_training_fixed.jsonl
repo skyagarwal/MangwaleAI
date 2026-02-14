@@ -1,0 +1,555 @@
+{"text": "add 3 butter chicken and 2 naan to my cart from the nearest location to my house and i need it quickly", "entities": [{"start": 4, "end": 20, "label": "QTY|FOOD", "text": "3 butter chicken"}, {"start": 25, "end": 31, "label": "QTY|FOOD", "text": "2 naan"}, {"start": 52, "end": 80, "label": "LOC", "text": "nearest location to my house"}, {"start": 95, "end": 102, "label": "PREF", "text": "quickly"}]}
+{"text": "inayat cafe egg rice + jeera rice from inayat we are two people", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 12, "end": 20, "label": "FOOD", "text": "egg rice"}, {"start": 23, "end": 33, "label": "FOOD", "text": "jeera rice"}, {"start": 0, "end": 6, "label": "STORE", "text": "inayat"}, {"start": 53, "end": 56, "label": "QTY", "text": "two"}]}
+{"text": "gulkand big size from dagu teli", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "gulkand"}, {"start": 8, "end": 16, "label": "PREF", "text": "big size"}, {"start": 22, "end": 31, "label": "STORE", "text": "dagu teli"}]}
+{"text": "one fried rice deliver karo nashik road", "entities": [{"start": 0, "end": 14, "label": "FOOD|QTY", "text": "one fried rice"}, {"start": 28, "end": 39, "label": "LOC", "text": "nashik road"}]}
+{"text": "two vada pav aur 4 fried rice hotel prakash se", "entities": [{"start": 0, "end": 12, "label": "FOOD|QTY", "text": "two vada pav"}, {"start": 17, "end": 29, "label": "FOOD|QTY", "text": "4 fried rice"}, {"start": 30, "end": 43, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "do fish fry deliver karo college road", "entities": [{"start": 0, "end": 2, "label": "FOOD", "text": "do"}, {"start": 3, "end": 11, "label": "FOOD", "text": "fish fry"}, {"start": 25, "end": 32, "label": "FOOD", "text": "college"}, {"start": 33, "end": 37, "label": "FOOD", "text": "road"}]}
+{"text": "three thali small portion", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "three"}, {"start": 6, "end": 11, "label": "FOOD", "text": "thali"}, {"start": 12, "end": 17, "label": "FOOD", "text": "small"}]}
+{"text": "paanch paneer tikka fast", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "paanch paneer"}, {"start": 20, "end": 24, "label": "FOOD", "text": "fast"}]}
+{"text": "inayat cafe se tandoori chicken", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 31, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "prawn curry manga do", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "prawn curry"}, {"start": 12, "end": 17, "label": "STORE", "text": "manga"}, {"start": 18, "end": 20, "label": "QTY", "text": "do"}]}
+{"text": "naan order karo", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "naan"}]}
+{"text": "yaar ratanji mithaiwale ka jeera rice laga de", "entities": [{"start": 5, "end": 23, "label": "STORE", "text": "ratanji mithaiwale"}, {"start": 27, "end": 37, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "4 paratha extra spicy", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}, {"start": 10, "end": 21, "label": "PREF", "text": "extra spicy"}]}
+{"text": "gangapur deliver karo roti", "entities": [{"start": 22, "end": 26, "label": "FOOD", "text": "roti"}, {"start": 0, "end": 8, "label": "LOC", "text": "gangapur"}]}
+{"text": "mujhe do fried rice chahiye", "entities": [{"start": 6, "end": 8, "label": "QTY", "text": "do"}, {"start": 9, "end": 19, "label": "FOOD", "text": "fried rice"}]}
+{"text": "aaj pulao khane ka mann hai", "entities": [{"start": 4, "end": 9, "label": "FOOD", "text": "pulao"}]}
+{"text": "get me paratha hot", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "get"}, {"start": 15, "end": 18, "label": "FOOD", "text": "hot"}]}
+{"text": "idli manga do", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "idli"}, {"start": 5, "end": 13, "label": "QTY", "text": "manga do"}]}
+{"text": "2 idli chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 6, "label": "FOOD", "text": "idli"}]}
+{"text": "ek pav bhaji order karo", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 12, "label": "FOOD", "text": "pav bhaji"}]}
+{"text": "kadhi manga do", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "kadhi"}, {"start": 6, "end": 11, "label": "STORE", "text": "manga"}, {"start": 12, "end": 14, "label": "QTY", "text": "do"}]}
+{"text": "mujhe 1 thali chahiye", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "1"}, {"start": 8, "end": 13, "label": "FOOD", "text": "thali"}]}
+{"text": "hotel parth se samosa", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "hotel parth"}, {"start": 15, "end": 21, "label": "FOOD", "text": "samosa"}]}
+{"text": "kadhi jaldi", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "kadhi"}, {"start": 6, "end": 11, "label": "PREF", "text": "jaldi"}]}
+{"text": "char roti aur ek seekh kebab", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "char roti"}, {"start": 14, "end": 28, "label": "FOOD", "text": "ek seekh kebab"}]}
+{"text": "add 1 burger to my cart", "entities": [{"start": 6, "end": 12, "label": "FOOD", "text": "burger"}]}
+{"text": "butter chicken from dagu teli", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "butter chicken"}, {"start": 20, "end": 29, "label": "STORE", "text": "dagu teli"}]}
+{"text": "nashik city deliver karo hakka noodles", "entities": [{"start": 0, "end": 11, "label": "LOC", "text": "nashik city"}, {"start": 25, "end": 38, "label": "FOOD", "text": "hakka noodles"}]}
+{"text": "mujhe chicken biryani no onion chahiye kaka ka dhaba se", "entities": [{"start": 6, "end": 21, "label": "FOOD", "text": "chicken biryani"}, {"start": 22, "end": 30, "label": "PREF", "text": "no onion"}, {"start": 39, "end": 52, "label": "STORE", "text": "kaka ka dhaba"}]}
+{"text": "cart mein three idli add karo", "entities": [{"start": 10, "end": 15, "label": "FOOD", "text": "three"}, {"start": 16, "end": 20, "label": "FOOD", "text": "idli"}, {"start": 21, "end": 24, "label": "FOOD", "text": "add"}]}
+{"text": "3 paratha fast", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}]}
+{"text": "paanch misal order karo", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 12, "label": "FOOD", "text": "misal"}]}
+{"text": "aaj fried rice khane ka mann hai", "entities": [{"start": 4, "end": 14, "label": "FOOD", "text": "fried rice"}]}
+{"text": "thali from hotel raj darbar", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "thali"}, {"start": 11, "end": 27, "label": "STORE", "text": "hotel raj darbar"}]}
+{"text": "aaj korma khane ka mann hai", "entities": [{"start": 4, "end": 9, "label": "FOOD", "text": "korma"}, {"start": 10, "end": 27, "label": "PREF", "text": "khane ka mann hai"}]}
+{"text": "pav bhaji cart mein daal do", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}]}
+{"text": "pizza mere home pe pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pizza"}, {"start": 11, "end": 15, "label": "LOC", "text": "home"}]}
+{"text": "char misal order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 5, "end": 10, "label": "FOOD", "text": "misal"}]}
+{"text": "do fried rice the spice yard se lao", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "do"}, {"start": 3, "end": 13, "label": "FOOD", "text": "fried rice"}, {"start": 14, "end": 28, "label": "STORE", "text": "the spice yard"}]}
+{"text": "1 paratha order karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}]}
+{"text": "add 2 chole bhature to my cart", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "add"}, {"start": 4, "end": 19, "label": "FOOD", "text": "2 chole bhature"}]}
+{"text": "get me tandoori chicken fast", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "get"}, {"start": 16, "end": 23, "label": "FOOD", "text": "chicken"}, {"start": 24, "end": 28, "label": "FOOD", "text": "fast"}]}
+{"text": "yaar hotel raj darbar ka butter chicken laga de", "entities": [{"start": 5, "end": 21, "label": "STORE", "text": "hotel raj darbar"}, {"start": 25, "end": 39, "label": "FOOD", "text": "butter chicken"}]}
+{"text": "two roti chahiye", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 8, "label": "FOOD", "text": "roti"}]}
+{"text": "paratha cart mein daal do", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "paratha"}, {"start": 18, "end": 22, "label": "FOOD", "text": "daal"}]}
+{"text": "fish fry order karo", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "fish fry"}, {"start": 9, "end": 19, "label": "PREF", "text": "order karo"}]}
+{"text": "cart mein 1 pulao add karo", "entities": [{"start": 12, "end": 17, "label": "FOOD", "text": "pulao"}]}
+{"text": "get me misal jaldi", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "get"}, {"start": 7, "end": 12, "label": "FOOD", "text": "misal"}]}
+{"text": "paanch burger quickly", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 13, "label": "FOOD", "text": "burger"}]}
+{"text": "ek fish fry deliver karo college road", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 11, "label": "FOOD", "text": "fish fry"}, {"start": 25, "end": 37, "label": "LOC", "text": "college road"}]}
+{"text": "aaj samosa khane ka mann hai", "entities": [{"start": 4, "end": 10, "label": "FOOD", "text": "samosa"}]}
+{"text": "samosa from tushar", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "samosa"}, {"start": 12, "end": 18, "label": "STORE", "text": "tushar"}]}
+{"text": "get me dosa hot", "entities": [{"start": 7, "end": 11, "label": "FOOD", "text": "dosa"}, {"start": 12, "end": 15, "label": "PREF", "text": "hot"}]}
+{"text": "butter chicken small portion wala", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "butter chicken"}, {"start": 15, "end": 28, "label": "PREF", "text": "small portion"}]}
+{"text": "hume 3 log hai, seekh kebab order karo", "entities": [{"start": 5, "end": 6, "label": "FOOD", "text": "3"}]}
+{"text": "idli order karo", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "idli"}]}
+{"text": "bhai 2 rajma chawal manga de", "entities": [{"start": 5, "end": 6, "label": "FOOD", "text": "2"}]}
+{"text": "naan from hotel parth", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "naan"}, {"start": 10, "end": 21, "label": "STORE", "text": "hotel parth"}]}
+{"text": "manchurian manga do", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "manchurian"}, {"start": 11, "end": 16, "label": "STORE", "text": "manga"}, {"start": 17, "end": 19, "label": "QTY", "text": "do"}]}
+{"text": "teen naan kokni darbar se lao", "entities": [{"start": 0, "end": 9, "label": "QTY|FOOD", "text": "teen naan"}, {"start": 10, "end": 22, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "4 pulao deliver karo nashik city", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 7, "label": "FOOD", "text": "pulao"}, {"start": 21, "end": 32, "label": "LOC", "text": "nashik city"}]}
+{"text": "hotel parth se tandoori chicken", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "hotel parth"}, {"start": 15, "end": 31, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "pulao milega kya dagu teli pe?", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pulao"}, {"start": 17, "end": 26, "label": "STORE", "text": "dagu teli"}]}
+{"text": "dosa without garlic", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "dosa"}, {"start": 5, "end": 19, "label": "PREF", "text": "without garlic"}]}
+{"text": "manchurian mere panchavati pe", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "manchurian"}, {"start": 16, "end": 26, "label": "LOC", "text": "panchavati"}]}
+{"text": "do misal deliver karo office pe", "entities": [{"start": 3, "end": 8, "label": "FOOD", "text": "misal"}, {"start": 22, "end": 28, "label": "LOC", "text": "office"}]}
+{"text": "misal lao please", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "misal"}]}
+{"text": "cidco deliver karo manchurian", "entities": [{"start": 19, "end": 29, "label": "FOOD", "text": "manchurian"}]}
+{"text": "korma gangapur bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "korma"}, {"start": 6, "end": 14, "label": "STORE", "text": "gangapur"}]}
+{"text": "seekh kebab order karo", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "seekh kebab"}]}
+{"text": "5 seekh kebab dagu teli se lao", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 13, "label": "FOOD", "text": "seekh kebab"}, {"start": 14, "end": 23, "label": "STORE", "text": "dagu teli"}]}
+{"text": "pav bhaji less spicy wala", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}, {"start": 10, "end": 20, "label": "PREF", "text": "less spicy"}]}
+{"text": "mujhe chicken biryani chahiye", "entities": [{"start": 6, "end": 21, "label": "FOOD", "text": "chicken biryani"}]}
+{"text": "inayat cafe se chicken biryani", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 30, "label": "FOOD", "text": "chicken biryani"}]}
+{"text": "vada pav manga do", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "vada pav"}, {"start": 9, "end": 17, "label": "PREF", "text": "manga do"}]}
+{"text": "cidco deliver karo tandoori chicken", "entities": [{"start": 19, "end": 35, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "kadhi cold", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "kadhi"}, {"start": 6, "end": 10, "label": "PREF", "text": "cold"}]}
+{"text": "panchavati deliver karo jeera rice", "entities": [{"start": 0, "end": 10, "label": "LOC", "text": "panchavati"}, {"start": 24, "end": 34, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "ganesh sweet mart se ek paratha nashik city", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 21, "end": 31, "label": "FOOD|QTY", "text": "ek paratha"}]}
+{"text": "rajma chawal panchavati bhejo", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "rajma chawal"}, {"start": 13, "end": 23, "label": "LOC", "text": "panchavati"}]}
+{"text": "teen fish fry order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 13, "label": "FOOD", "text": "fish fry"}]}
+{"text": "mujhe fried rice fresh chahiye star boys se", "entities": [{"start": 6, "end": 16, "label": "FOOD", "text": "fried rice"}, {"start": 31, "end": 40, "label": "STORE", "text": "star boys"}]}
+{"text": "kokni darbar ka thali chahiye", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}, {"start": 16, "end": 21, "label": "FOOD", "text": "thali"}]}
+{"text": "dosa gangapur bhejo", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "dosa"}, {"start": 5, "end": 13, "label": "STORE", "text": "gangapur"}]}
+{"text": "i want one hakka noodles", "entities": [{"start": 11, "end": 24, "label": "FOOD", "text": "hakka noodles"}]}
+{"text": "add do dal makhani to my cart", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "add"}]}
+{"text": "teen hakka noodles aur char manchurian ratanji mithaiwale se", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 18, "label": "FOOD", "text": "hakka noodles"}, {"start": 23, "end": 27, "label": "QTY", "text": "char"}, {"start": 28, "end": 38, "label": "FOOD", "text": "manchurian"}, {"start": 39, "end": 57, "label": "STORE", "text": "ratanji mithaiwale"}]}
+{"text": "egg rice hot", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "egg rice"}, {"start": 9, "end": 12, "label": "FOOD", "text": "hot"}]}
+{"text": "tandoori chicken without garlic wala", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "tandoori chicken"}, {"start": 25, "end": 31, "label": "FOOD", "text": "garlic"}]}
+{"text": "4 momos aur 3 seekh kebab", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "4 momos"}, {"start": 12, "end": 13, "label": "FOOD", "text": "3"}]}
+{"text": "ratanji mithaiwale ka hakka noodles chahiye", "entities": [{"start": 22, "end": 35, "label": "FOOD", "text": "hakka noodles"}, {"start": 0, "end": 18, "label": "STORE", "text": "ratanji mithaiwale"}]}
+{"text": "kadhi order karo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "kadhi"}]}
+{"text": "tushar ka jeera rice chahiye", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}, {"start": 10, "end": 20, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "hume paanch log hai, egg rice order karo", "entities": [{"start": 5, "end": 11, "label": "QTY", "text": "paanch"}, {"start": 21, "end": 29, "label": "FOOD", "text": "egg rice"}]}
+{"text": "mujhe paneer tikka extra spicy chahiye the spice yard se", "entities": [{"start": 6, "end": 18, "label": "FOOD", "text": "paneer tikka"}, {"start": 19, "end": 30, "label": "PREF", "text": "extra spicy"}, {"start": 39, "end": 53, "label": "STORE", "text": "the spice yard"}]}
+{"text": "kokni darbar ka samosa chahiye", "entities": [{"start": 16, "end": 22, "label": "FOOD", "text": "samosa"}, {"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "mujhe hakka noodles quickly chahiye tushar se", "entities": [{"start": 6, "end": 19, "label": "FOOD", "text": "hakka noodles"}, {"start": 36, "end": 42, "label": "STORE", "text": "tushar"}, {"start": 20, "end": 27, "label": "PREF", "text": "quickly"}]}
+{"text": "two idli less spicy", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "two"}, {"start": 4, "end": 8, "label": "FOOD", "text": "idli"}, {"start": 9, "end": 13, "label": "FOOD", "text": "less"}, {"start": 14, "end": 19, "label": "FOOD", "text": "spicy"}]}
+{"text": "ganesh sweet mart se dosa", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 21, "end": 25, "label": "FOOD", "text": "dosa"}]}
+{"text": "5 idli hotel raj darbar se lao", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "idli"}, {"start": 7, "end": 23, "label": "STORE", "text": "hotel raj darbar"}]}
+{"text": "i want ek naan", "entities": [{"start": 7, "end": 14, "label": "QTY|FOOD", "text": "ek naan"}]}
+{"text": "idli mere gangapur pe", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "idli"}, {"start": 10, "end": 18, "label": "LOC", "text": "gangapur"}]}
+{"text": "add 3 butter chicken and 2 naan to my cart from the nearest location to my house and i need it quickly", "entities": [{"start": 4, "end": 20, "label": "QTY|FOOD", "text": "3 butter chicken"}, {"start": 25, "end": 31, "label": "QTY|FOOD", "text": "2 naan"}, {"start": 52, "end": 80, "label": "LOC", "text": "nearest location to my house"}, {"start": 95, "end": 102, "label": "PREF", "text": "quickly"}]}
+{"text": "inayat cafe egg rice + jeera rice from inayat we are two people", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 12, "end": 20, "label": "FOOD", "text": "egg rice"}, {"start": 23, "end": 33, "label": "FOOD", "text": "jeera rice"}, {"start": 0, "end": 6, "label": "STORE", "text": "inayat"}, {"start": 53, "end": 56, "label": "QTY", "text": "two"}]}
+{"text": "gulkand big size from dagu teli", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "gulkand"}, {"start": 8, "end": 16, "label": "PREF", "text": "big size"}, {"start": 22, "end": 31, "label": "STORE", "text": "dagu teli"}]}
+{"text": "jalebi order karo kokni darbar se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 18, "end": 30, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "the spice yard ka vada pav", "entities": [{"start": 0, "end": 14, "label": "STORE", "text": "the spice yard"}, {"start": 18, "end": 26, "label": "FOOD", "text": "vada pav"}]}
+{"text": "mujhe 5 gulab jamun chahiye", "entities": [{"start": 8, "end": 19, "label": "FOOD", "text": "gulab jamun"}, {"start": 6, "end": 7, "label": "QTY", "text": "5"}]}
+{"text": "1 misal aur ek fish fry", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 7, "label": "FOOD", "text": "misal"}, {"start": 15, "end": 23, "label": "FOOD", "text": "fish fry"}]}
+{"text": "1 fried rice chahiye", "entities": [{"start": 0, "end": 12, "label": "QTY|FOOD", "text": "1 fried rice"}, {"start": 13, "end": 20, "label": "PREF", "text": "chahiye"}]}
+{"text": "naan order karo dagu teli se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "naan"}, {"start": 16, "end": 25, "label": "STORE", "text": "dagu teli"}]}
+{"text": "char rajma chawal aur 1 kadhi", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "char rajma"}, {"start": 11, "end": 17, "label": "FOOD", "text": "chawal"}, {"start": 22, "end": 29, "label": "QTY|FOOD", "text": "1 kadhi"}]}
+{"text": "dominos ka tea", "entities": [{"start": 0, "end": 7, "label": "STORE", "text": "dominos"}, {"start": 11, "end": 14, "label": "FOOD", "text": "tea"}]}
+{"text": "do curd chahiye", "entities": [{"start": 3, "end": 7, "label": "FOOD", "text": "curd"}]}
+{"text": "tushar ka ghee", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}, {"start": 10, "end": 14, "label": "FOOD", "text": "ghee"}]}
+{"text": "teen jeera rice aur 5 prawn curry", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "teen jeera rice"}, {"start": 20, "end": 21, "label": "QTY", "text": "5"}]}
+{"text": "do atta dominos se", "entities": [{"start": 3, "end": 7, "label": "FOOD", "text": "atta"}, {"start": 8, "end": 15, "label": "STORE", "text": "dominos"}]}
+{"text": "paanch gulkand dominos se", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 14, "label": "FOOD", "text": "gulkand"}, {"start": 15, "end": 22, "label": "STORE", "text": "dominos"}]}
+{"text": "fried rice order karo pizza hut se", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "fried rice"}, {"start": 22, "end": 31, "label": "STORE", "text": "pizza hut"}]}
+{"text": "vada pav near me", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "vada pav"}, {"start": 9, "end": 16, "label": "LOC", "text": "near me"}]}
+{"text": "char coffee aur 1 manchurian", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 5, "end": 11, "label": "FOOD", "text": "coffee"}, {"start": 16, "end": 17, "label": "QTY", "text": "1"}, {"start": 18, "end": 28, "label": "FOOD", "text": "manchurian"}]}
+{"text": "mujhe 2 chole bhature chahiye", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "2"}, {"start": 8, "end": 21, "label": "FOOD", "text": "chole bhature"}]}
+{"text": "add 2 dal makhani to cart", "entities": [{"start": 6, "end": 17, "label": "FOOD", "text": "dal makhani"}, {"start": 4, "end": 5, "label": "QTY", "text": "2"}]}
+{"text": "add 2 ghee to cart", "entities": [{"start": 6, "end": 10, "label": "FOOD", "text": "ghee"}, {"start": 4, "end": 5, "label": "QTY", "text": "2"}]}
+{"text": "3 roti chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 6, "label": "FOOD", "text": "roti"}]}
+{"text": "tea order karo hotel prakash se", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "tea"}, {"start": 15, "end": 28, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "pizza hut se 5 thali lao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 13, "end": 14, "label": "QTY", "text": "5"}]}
+{"text": "idli near me", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "idli"}, {"start": 5, "end": 12, "label": "LOC", "text": "near me"}]}
+{"text": "paanch dal makhani aur 4 dal makhani", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 18, "label": "FOOD", "text": "dal makhani"}, {"start": 23, "end": 24, "label": "QTY", "text": "4"}]}
+{"text": "do korma hotel prakash se", "entities": [{"start": 0, "end": 8, "label": "FOOD|QTY", "text": "do korma"}, {"start": 9, "end": 22, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "add char milk to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "char"}, {"start": 9, "end": 13, "label": "FOOD", "text": "milk"}]}
+{"text": "coffee order karo subway se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "coffee"}, {"start": 18, "end": 24, "label": "STORE", "text": "subway"}]}
+{"text": "3 vada pav aur 2 pav bhaji", "entities": [{"start": 2, "end": 10, "label": "FOOD", "text": "vada pav"}, {"start": 17, "end": 26, "label": "FOOD", "text": "pav bhaji"}, {"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 15, "end": 16, "label": "QTY", "text": "2"}]}
+{"text": "ek paneer tikka jaldi chahiye", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "paneer tikka"}, {"start": 16, "end": 21, "label": "PREF", "text": "jaldi"}]}
+{"text": "hotel prakash ka seekh kebab", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "hotel prakash"}, {"start": 17, "end": 28, "label": "FOOD", "text": "seekh kebab"}]}
+{"text": "3 dosa chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 6, "label": "FOOD", "text": "dosa"}]}
+{"text": "paanch paratha chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 14, "label": "FOOD", "text": "paratha"}]}
+{"text": "manchurian near me", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "manchurian"}, {"start": 11, "end": 18, "label": "LOC", "text": "near me"}]}
+{"text": "add char coffee to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "char"}, {"start": 9, "end": 15, "label": "FOOD", "text": "coffee"}]}
+{"text": "char gulkand chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "char gulkand"}, {"start": 0, "end": 4, "label": "QTY", "text": "char"}]}
+{"text": "paanch gulab jamun jaldi chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 18, "label": "FOOD", "text": "gulab jamun"}, {"start": 19, "end": 24, "label": "PREF", "text": "jaldi"}]}
+{"text": "4 paratha kaka ka dhaba se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}, {"start": 10, "end": 23, "label": "STORE", "text": "kaka ka dhaba"}]}
+{"text": "add teen milk to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "teen"}, {"start": 9, "end": 13, "label": "FOOD", "text": "milk"}]}
+{"text": "5 curd aur 5 korma", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "curd"}, {"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 13, "end": 18, "label": "FOOD", "text": "korma"}]}
+{"text": "teen momos aur 5 momos", "entities": [{"start": 0, "end": 10, "label": "QTY|FOOD", "text": "teen momos"}, {"start": 15, "end": 22, "label": "QTY|FOOD", "text": "5 momos"}]}
+{"text": "hotel raj darbar ka sugar", "entities": [{"start": 20, "end": 25, "label": "FOOD", "text": "sugar"}]}
+{"text": "hotel raj darbar ka kadhi", "entities": [{"start": 0, "end": 16, "label": "STORE", "text": "hotel raj darbar"}, {"start": 20, "end": 25, "label": "FOOD", "text": "kadhi"}]}
+{"text": "5 kadhi chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 7, "label": "FOOD", "text": "kadhi"}]}
+{"text": "hotel parth ka ghee", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "hotel parth"}, {"start": 15, "end": 19, "label": "FOOD", "text": "ghee"}]}
+{"text": "paanch jeera rice chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 17, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "1 samosa aur 5 chole bhature", "entities": [{"start": 2, "end": 8, "label": "FOOD", "text": "samosa"}, {"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 13, "end": 14, "label": "QTY", "text": "5"}]}
+{"text": "add 1 misal to cart", "entities": [{"start": 6, "end": 11, "label": "FOOD", "text": "misal"}]}
+{"text": "naan near me", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "naan"}, {"start": 5, "end": 12, "label": "LOC", "text": "near me"}]}
+{"text": "add paanch rajma chawal to cart", "entities": [{"start": 4, "end": 10, "label": "QTY", "text": "paanch"}, {"start": 11, "end": 23, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "1 paratha chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}]}
+{"text": "mujhe do dal tadka chahiye", "entities": [{"start": 6, "end": 8, "label": "QTY", "text": "do"}, {"start": 9, "end": 18, "label": "FOOD", "text": "dal tadka"}]}
+{"text": "mcdonalds se kuch mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "5 plate tandoori chicken", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 8, "end": 24, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "ghee ka order", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "ghee"}]}
+{"text": "char laddu the spice yard se", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "char laddu"}, {"start": 11, "end": 25, "label": "STORE", "text": "the spice yard"}]}
+{"text": "bread aur roti chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "bread"}, {"start": 10, "end": 14, "label": "FOOD", "text": "roti"}]}
+{"text": "kaka ka dhaba se rajma chawal laga de", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 17, "end": 29, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "10 seekh kebab satpur deliver karo", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "10"}, {"start": 3, "end": 14, "label": "FOOD", "text": "seekh kebab"}, {"start": 15, "end": 21, "label": "LOC", "text": "satpur"}]}
+{"text": "jalebi aur chips chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 11, "end": 16, "label": "FOOD", "text": "chips"}]}
+{"text": "ek palak paneer order karo hot", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "palak paneer"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "7 plate kadhi", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 8, "end": 13, "label": "FOOD", "text": "kadhi"}]}
+{"text": "butter jaldi wala aditya mutton bhakri se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "butter"}, {"start": 18, "end": 38, "label": "STORE", "text": "aditya mutton bhakri"}, {"start": 7, "end": 12, "label": "PREF", "text": "jaldi"}]}
+{"text": "2 milk + 8 butter chicken mcdonalds se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 6, "label": "FOOD", "text": "milk"}, {"start": 9, "end": 10, "label": "QTY", "text": "8"}, {"start": 11, "end": 25, "label": "FOOD", "text": "butter chicken"}, {"start": 26, "end": 35, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "dal makhani ka order", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "mcdonalds ka chicken curry", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}, {"start": 13, "end": 26, "label": "FOOD", "text": "chicken curry"}]}
+{"text": "ek fried rice aur ek momos", "entities": [{"start": 0, "end": 13, "label": "QTY|FOOD", "text": "ek fried rice"}, {"start": 18, "end": 26, "label": "QTY|FOOD", "text": "ek momos"}]}
+{"text": "the spice yard se kuch mangwao", "entities": [{"start": 0, "end": 14, "label": "STORE", "text": "the spice yard"}]}
+{"text": "add 1 chips to cart", "entities": [{"start": 6, "end": 11, "label": "FOOD", "text": "chips"}]}
+{"text": "pav bhaji less spicy wala dagu teli se", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}, {"start": 10, "end": 20, "label": "PREF", "text": "less spicy"}, {"start": 26, "end": 35, "label": "STORE", "text": "dagu teli"}]}
+{"text": "four pulao extra spicy", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "four"}, {"start": 5, "end": 10, "label": "FOOD", "text": "pulao"}, {"start": 11, "end": 22, "label": "PREF", "text": "extra spicy"}]}
+{"text": "chinese hangama ka paratha", "entities": [{"start": 8, "end": 26, "label": "FOOD", "text": "hangama ka paratha"}]}
+{"text": "five cheese nashik road deliver karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "five"}, {"start": 5, "end": 11, "label": "FOOD", "text": "cheese"}, {"start": 12, "end": 23, "label": "LOC", "text": "nashik road"}]}
+{"text": "ek thali aur ek fish curry", "entities": [{"start": 0, "end": 8, "label": "QTY", "text": "ek thali"}, {"start": 13, "end": 26, "label": "FOOD", "text": "ek fish curry"}]}
+{"text": "saat paneer chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD|QTY", "text": "saat paneer"}]}
+{"text": "ek curd aur ek naan", "entities": [{"start": 0, "end": 7, "label": "QTY|FOOD", "text": "ek curd"}, {"start": 12, "end": 19, "label": "QTY|FOOD", "text": "ek naan"}]}
+{"text": "kfc se paneer tikka laga de", "entities": [{"start": 0, "end": 3, "label": "STORE", "text": "kfc"}, {"start": 7, "end": 19, "label": "FOOD", "text": "paneer tikka"}]}
+{"text": "mcdonalds se atta laga de", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}, {"start": 13, "end": 17, "label": "FOOD", "text": "atta"}]}
+{"text": "saat plate fried rice", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "saat"}, {"start": 11, "end": 21, "label": "FOOD", "text": "fried rice"}]}
+{"text": "ek sugar aur ek biscuit", "entities": [{"start": 3, "end": 8, "label": "FOOD", "text": "sugar"}, {"start": 16, "end": 23, "label": "FOOD", "text": "biscuit"}]}
+{"text": "jalebi aur paneer tikka chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 11, "end": 23, "label": "FOOD", "text": "paneer tikka"}]}
+{"text": "10 dal tadka big size", "entities": [{"start": 0, "end": 21, "label": "QTY|FOOD|PREF", "text": "10 dal tadka big size"}]}
+{"text": "char coffee + 3 kadhi star boys se", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 5, "end": 11, "label": "FOOD", "text": "coffee"}, {"start": 14, "end": 15, "label": "QTY", "text": "3"}, {"start": 16, "end": 21, "label": "FOOD", "text": "kadhi"}, {"start": 22, "end": 31, "label": "STORE", "text": "star boys"}]}
+{"text": "coffee order karo star boys se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "coffee"}, {"start": 18, "end": 27, "label": "STORE", "text": "star boys"}]}
+{"text": "star boys ka fish curry", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "star boys"}, {"start": 13, "end": 23, "label": "FOOD", "text": "fish curry"}]}
+{"text": "dagu teli se butter chicken laga de", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "dagu teli"}, {"start": 13, "end": 27, "label": "FOOD", "text": "butter chicken"}]}
+{"text": "jalebi milega kya maharashtra darbar pe", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 18, "end": 36, "label": "STORE", "text": "maharashtra darbar"}]}
+{"text": "ghee aur atta chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "ghee"}, {"start": 9, "end": 13, "label": "FOOD", "text": "atta"}]}
+{"text": "dominos ka saat egg rice extra cheese", "entities": [{"start": 11, "end": 24, "label": "FOOD", "text": "saat egg rice"}, {"start": 25, "end": 37, "label": "PREF", "text": "extra cheese"}]}
+{"text": "6 mutton curry home pe deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "6"}, {"start": 2, "end": 14, "label": "FOOD", "text": "mutton curry"}]}
+{"text": "teen samosa chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "text": "samosa"}]}
+{"text": "biryani ka order", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "biryani"}]}
+{"text": "2 curd + four paneer hotel parth se", "entities": [{"start": 0, "end": 6, "label": "QTY|FOOD", "text": "2 curd"}, {"start": 9, "end": 20, "label": "QTY|FOOD", "text": "four paneer"}, {"start": 21, "end": 32, "label": "STORE", "text": "hotel parth"}]}
+{"text": "barfi aur pulao chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "barfi"}, {"start": 10, "end": 15, "label": "FOOD", "text": "pulao"}]}
+{"text": "bhagat tarachand se pizza laga de", "entities": [{"start": 0, "end": 16, "label": "STORE", "text": "bhagat tarachand"}, {"start": 20, "end": 25, "label": "FOOD", "text": "pizza"}]}
+{"text": "four manchurian chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "four"}, {"start": 5, "end": 15, "label": "FOOD", "text": "manchurian"}]}
+{"text": "10 ghee + five tandoori chicken kfc se", "entities": [{"start": 3, "end": 7, "label": "FOOD", "text": "ghee"}, {"start": 15, "end": 31, "label": "FOOD", "text": "tandoori chicken"}, {"start": 32, "end": 35, "label": "STORE", "text": "kfc"}, {"start": 0, "end": 2, "label": "QTY", "text": "10"}, {"start": 10, "end": 14, "label": "QTY", "text": "five"}]}
+{"text": "mcdonalds se 9 butter lao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}, {"start": 13, "end": 14, "label": "QTY", "text": "9"}, {"start": 15, "end": 25, "label": "FOOD", "text": "butter lao"}]}
+{"text": "four seekh kebab hotel raj darbar se", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "four"}, {"start": 5, "end": 16, "label": "FOOD", "text": "seekh kebab"}, {"start": 17, "end": 33, "label": "STORE", "text": "hotel raj darbar"}]}
+{"text": "the spice yard ka 8 tea fresh", "entities": [{"start": 0, "end": 14, "label": "STORE", "text": "the spice yard"}, {"start": 18, "end": 23, "label": "FOOD", "text": "8 tea"}, {"start": 24, "end": 29, "label": "PREF", "text": "fresh"}]}
+{"text": "add aath dosa to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "aath"}, {"start": 9, "end": 13, "label": "FOOD", "text": "dosa"}]}
+{"text": "jalebi small portion wala the cloud kitchen se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 7, "end": 12, "label": "PREF", "text": "small"}, {"start": 26, "end": 43, "label": "STORE", "text": "the cloud kitchen"}]}
+{"text": "7 gulkand the cloud kitchen se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 9, "label": "FOOD", "text": "gulkand"}, {"start": 10, "end": 27, "label": "STORE", "text": "the cloud kitchen"}]}
+{"text": "i want paanch chole bhature", "entities": [{"start": 7, "end": 13, "label": "QTY", "text": "paanch"}, {"start": 14, "end": 27, "label": "FOOD", "text": "chole bhature"}]}
+{"text": "curd milega kya green bakes pe", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "curd"}, {"start": 16, "end": 27, "label": "STORE", "text": "green bakes"}]}
+{"text": "4 plate chicken biryani", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 8, "end": 23, "label": "FOOD", "text": "chicken biryani"}]}
+{"text": "roti ambad bhejo", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "roti"}, {"start": 5, "end": 10, "label": "STORE", "text": "ambad"}]}
+{"text": "i want 8 atta", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "8"}, {"start": 9, "end": 13, "label": "FOOD", "text": "atta"}]}
+{"text": "get me aath pulao from mcdonalds", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "aath"}, {"start": 12, "end": 17, "label": "FOOD", "text": "pulao"}, {"start": 23, "end": 32, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "i want 2 mutton curry", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "2"}, {"start": 9, "end": 21, "label": "FOOD", "text": "mutton curry"}]}
+{"text": "10 maggi + 8 chips kaka ka dhaba se", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "10 maggi"}, {"start": 11, "end": 18, "label": "QTY|FOOD", "text": "8 chips"}, {"start": 19, "end": 32, "label": "STORE", "text": "kaka ka dhaba"}]}
+{"text": "thali ka order", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "thali"}]}
+{"text": "three atta order karo jaldi", "entities": [{"start": 0, "end": 10, "label": "FOOD|QTY", "text": "three atta"}, {"start": 22, "end": 27, "label": "PREF", "text": "jaldi"}]}
+{"text": "8 gulkand + 10 misal tushar se", "entities": [{"start": 2, "end": 9, "label": "FOOD", "text": "gulkand"}, {"start": 0, "end": 1, "label": "QTY", "text": "8"}, {"start": 15, "end": 20, "label": "FOOD", "text": "misal"}, {"start": 21, "end": 27, "label": "STORE", "text": "tushar"}]}
+{"text": "1 plate tandoori chicken", "entities": [{"start": 0, "end": 24, "label": "QTY|FOOD", "text": "1 plate tandoori chicken"}]}
+{"text": "maharashtra darbar se kuch mangwao", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "maharashtra darbar"}]}
+{"text": "ek cheese aur ek fish curry", "entities": [{"start": 3, "end": 9, "label": "FOOD", "text": "cheese"}, {"start": 17, "end": 27, "label": "FOOD", "text": "fish curry"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "get me aath jeera rice from aditya mutton bhakri", "entities": [{"start": 7, "end": 22, "label": "FOOD", "text": "aath jeera rice"}, {"start": 28, "end": 48, "label": "STORE", "text": "aditya mutton bhakri"}]}
+{"text": "burger aur seekh kebab chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "burger"}]}
+{"text": "ek dal tadka aur ek naan", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "ek dal tadka"}, {"start": 17, "end": 24, "label": "FOOD", "text": "ek naan"}]}
+{"text": "mujhe 8 pizza chahiye", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "8"}, {"start": 8, "end": 13, "label": "FOOD", "text": "pizza"}]}
+{"text": "inayat cafe ka 2 ghee extra spicy", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 16, "label": "QTY", "text": "2"}, {"start": 17, "end": 21, "label": "FOOD", "text": "ghee"}, {"start": 22, "end": 33, "label": "PREF", "text": "extra spicy"}]}
+{"text": "jalebi nashik road bhejo", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 7, "end": 18, "label": "LOC", "text": "nashik road"}]}
+{"text": "4 shahi paneer order karo jaldi", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 14, "label": "FOOD", "text": "shahi paneer"}, {"start": 26, "end": 31, "label": "PREF", "text": "jaldi"}]}
+{"text": "mujhe paanch chicken curry chahiye", "entities": [{"start": 6, "end": 12, "label": "QTY", "text": "paanch"}, {"start": 13, "end": 26, "label": "FOOD", "text": "chicken curry"}]}
+{"text": "1 milk chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY|FOOD", "text": "1 milk"}]}
+{"text": "do plate palak paneer", "entities": [{"start": 3, "end": 8, "label": "PREF", "text": "plate"}, {"start": 9, "end": 21, "label": "FOOD", "text": "palak paneer"}]}
+{"text": "1 roti near station deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 6, "label": "FOOD", "text": "roti"}, {"start": 7, "end": 19, "label": "LOC", "text": "near station"}]}
+{"text": "one fish curry aur 4 fish curry", "entities": [{"start": 0, "end": 14, "label": "FOOD", "text": "one fish curry"}, {"start": 19, "end": 31, "label": "QTY|FOOD", "text": "4 fish curry"}]}
+{"text": "dagdu teli se kuch mangwao", "entities": [{"start": 0, "end": 10, "label": "STORE", "text": "dagdu teli"}]}
+{"text": "korma gangapur bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "korma"}, {"start": 6, "end": 14, "label": "STORE", "text": "gangapur"}]}
+{"text": "chips order karo hotel samarth se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "chips"}, {"start": 17, "end": 30, "label": "STORE", "text": "hotel samarth"}]}
+{"text": "dal makhani aur pav bhaji chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dal makhani"}, {"start": 16, "end": 25, "label": "FOOD", "text": "pav bhaji"}]}
+{"text": "tea extra cheese wala aditya mutton bhakri se", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "tea"}, {"start": 4, "end": 21, "label": "PREF", "text": "extra cheese wala"}, {"start": 22, "end": 28, "label": "STORE", "text": "aditya"}, {"start": 29, "end": 42, "label": "FOOD", "text": "mutton bhakri"}]}
+{"text": "mujhe 2 atta chahiye", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "2"}, {"start": 8, "end": 12, "label": "FOOD", "text": "atta"}]}
+{"text": "5 jeera rice near station deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 12, "label": "FOOD", "text": "jeera rice"}, {"start": 13, "end": 25, "label": "LOC", "text": "near station"}]}
+{"text": "ganesh sweet mart ka saat barfi extra cheese", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 21, "end": 31, "label": "FOOD", "text": "saat barfi"}, {"start": 32, "end": 44, "label": "PREF", "text": "extra cheese"}]}
+{"text": "korma gangapur bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "korma"}, {"start": 6, "end": 14, "label": "STORE", "text": "gangapur"}]}
+{"text": "chhe butter chicken aur paanch fried rice", "entities": [{"start": 0, "end": 19, "label": "FOOD", "text": "chhe butter chicken"}, {"start": 24, "end": 30, "label": "QTY", "text": "paanch"}]}
+{"text": "tandoori chicken milega kya tushar pe", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "tandoori chicken"}, {"start": 28, "end": 34, "label": "STORE", "text": "tushar"}]}
+{"text": "roti ka order", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "roti"}]}
+{"text": "i want 1 pizza", "entities": [{"start": 9, "end": 14, "label": "FOOD", "text": "pizza"}]}
+{"text": "burger milega kya dagdu teli pe", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "burger"}, {"start": 18, "end": 28, "label": "STORE", "text": "dagdu teli"}]}
+{"text": "chole bhature small portion wala pizza hut se", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "chole bhature"}, {"start": 14, "end": 19, "label": "PREF", "text": "small"}, {"start": 33, "end": 42, "label": "STORE", "text": "pizza hut"}]}
+{"text": "bhai 8 biscuit manga de", "entities": [{"start": 0, "end": 4, "label": "PREF", "text": "bhai"}, {"start": 5, "end": 6, "label": "QTY", "text": "8"}, {"start": 7, "end": 14, "label": "FOOD", "text": "biscuit"}, {"start": 15, "end": 20, "label": "STORE", "text": "manga"}]}
+{"text": "gulkand aur chips chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "gulkand"}, {"start": 12, "end": 17, "label": "FOOD", "text": "chips"}]}
+{"text": "chicken curry fast wala ratanji mithaiwale se", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "chicken curry"}, {"start": 24, "end": 42, "label": "STORE", "text": "ratanji mithaiwale"}, {"start": 14, "end": 18, "label": "PREF", "text": "fast"}]}
+{"text": "dagdu teli ka three naan quickly", "entities": [{"start": 0, "end": 10, "label": "STORE", "text": "dagdu teli"}, {"start": 14, "end": 19, "label": "QTY", "text": "three"}, {"start": 20, "end": 24, "label": "FOOD", "text": "naan"}]}
+{"text": "ganesh sweet mart se 7 thali lao", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 21, "end": 22, "label": "QTY", "text": "7"}]}
+{"text": "hotel prakash se kuch mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "tushar se kuch mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}]}
+{"text": "get me 8 dal tadka from pizza hut", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "8"}, {"start": 9, "end": 18, "label": "FOOD", "text": "dal tadka"}, {"start": 24, "end": 33, "label": "STORE", "text": "pizza hut"}]}
+{"text": "5 milk aur 2 bread", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "milk"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}, {"start": 13, "end": 18, "label": "FOOD", "text": "bread"}]}
+{"text": "6 paneer tikka ganesh sweet mart se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "6"}, {"start": 2, "end": 14, "label": "FOOD", "text": "paneer tikka"}, {"start": 15, "end": 32, "label": "STORE", "text": "ganesh sweet mart"}]}
+{"text": "barfi fast wala subway se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "barfi"}, {"start": 16, "end": 22, "label": "STORE", "text": "subway"}, {"start": 6, "end": 10, "label": "PREF", "text": "fast"}]}
+{"text": "two paratha + 7 samosa green bakes se", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 11, "label": "FOOD", "text": "paratha"}, {"start": 12, "end": 13, "label": "", "text": "+"}, {"start": 14, "end": 15, "label": "QTY", "text": "7"}, {"start": 16, "end": 22, "label": "FOOD", "text": "samosa"}, {"start": 23, "end": 34, "label": "STORE", "text": "green bakes"}]}
+{"text": "7 pav bhaji chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 11, "label": "FOOD", "text": "pav bhaji"}]}
+{"text": "four bread near station deliver karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "four"}, {"start": 5, "end": 10, "label": "FOOD", "text": "bread"}, {"start": 11, "end": 23, "label": "LOC", "text": "near station"}, {"start": 24, "end": 36, "label": "PREF", "text": "deliver karo"}]}
+{"text": "ek paneer tikka aur ek thali", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "paneer tikka"}, {"start": 23, "end": 28, "label": "FOOD", "text": "thali"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "paanch paratha panchavati deliver karo", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 14, "label": "FOOD", "text": "paratha"}, {"start": 15, "end": 25, "label": "LOC", "text": "panchavati"}]}
+{"text": "seekh kebab aur idli chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "seekh kebab"}, {"start": 16, "end": 20, "label": "FOOD", "text": "idli"}]}
+{"text": "6 chips aur 7 naan", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "6"}, {"start": 2, "end": 7, "label": "FOOD", "text": "chips"}, {"start": 12, "end": 13, "label": "QTY", "text": "7"}, {"start": 14, "end": 18, "label": "FOOD", "text": "naan"}]}
+{"text": "3 bread quickly", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 7, "label": "FOOD", "text": "bread"}]}
+{"text": "bhai 9 naan manga de", "entities": [{"start": 5, "end": 11, "label": "QTY|FOOD", "text": "9 naan"}]}
+{"text": "ek coffee + 10 fried rice dominos se", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 9, "label": "FOOD", "text": "coffee"}, {"start": 12, "end": 14, "label": "QTY", "text": "10"}, {"start": 15, "end": 25, "label": "FOOD", "text": "fried rice"}, {"start": 26, "end": 33, "label": "STORE", "text": "dominos"}]}
+{"text": "do mutton curry chahiye", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "mutton curry"}, {"start": 0, "end": 2, "label": "QTY", "text": "do"}]}
+{"text": "kfc ka 6 barfi extra cheese", "entities": [{"start": 0, "end": 3, "label": "STORE", "text": "kfc"}, {"start": 7, "end": 8, "label": "QTY", "text": "6"}, {"start": 9, "end": 14, "label": "FOOD", "text": "barfi"}, {"start": 15, "end": 27, "label": "PREF", "text": "extra cheese"}]}
+{"text": "misal order karo kfc se", "entities": [{"start": 17, "end": 20, "label": "STORE", "text": "kfc"}]}
+{"text": "maharashtra darbar se misal laga de", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "maharashtra darbar"}, {"start": 22, "end": 27, "label": "FOOD", "text": "misal"}]}
+{"text": "dal tadka milega kya dominos pe", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "dal tadka"}, {"start": 21, "end": 28, "label": "STORE", "text": "dominos"}]}
+{"text": "gulkand order karo chinese hangama se", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "gulkand"}, {"start": 19, "end": 26, "label": "PREF", "text": "chinese"}, {"start": 27, "end": 34, "label": "STORE", "text": "hangama"}]}
+{"text": "four idli ghar pe deliver karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "four"}, {"start": 5, "end": 9, "label": "FOOD", "text": "idli"}, {"start": 10, "end": 14, "label": "LOC", "text": "ghar"}]}
+{"text": "pav bhaji quickly wala kaka ka dhaba se", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}, {"start": 23, "end": 36, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 10, "end": 17, "label": "PREF", "text": "quickly"}]}
+{"text": "bhagat tarachand se misal laga de", "entities": [{"start": 0, "end": 16, "label": "STORE", "text": "bhagat tarachand"}, {"start": 20, "end": 25, "label": "FOOD", "text": "misal"}]}
+{"text": "three paneer college road deliver karo", "entities": [{"start": 0, "end": 5, "label": "QTY", "text": "three"}, {"start": 6, "end": 12, "label": "FOOD", "text": "paneer"}, {"start": 13, "end": 25, "label": "LOC", "text": "college road"}]}
+{"text": "subway se malai kofta laga de", "entities": [{"start": 10, "end": 21, "label": "FOOD", "text": "malai kofta"}, {"start": 0, "end": 6, "label": "STORE", "text": "subway"}]}
+{"text": "kaka ka dhaba se 9 pulao lao", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 19, "end": 24, "label": "FOOD", "text": "pulao"}, {"start": 17, "end": 18, "label": "QTY", "text": "9"}]}
+{"text": "chhe coffee quickly", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "chhe coffee"}, {"start": 12, "end": 19, "label": "PREF", "text": "quickly"}]}
+{"text": "two plate chicken curry", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 23, "label": "FOOD", "text": "plate chicken curry"}]}
+{"text": "two rajma chawal aur char palak paneer", "entities": [{"start": 0, "end": 3, "label": "FOOD", "text": "two"}, {"start": 4, "end": 9, "label": "FOOD", "text": "rajma"}, {"start": 32, "end": 38, "label": "FOOD", "text": "paneer"}]}
+{"text": "star boys se atta laga de", "entities": [{"start": 13, "end": 17, "label": "FOOD", "text": "atta"}, {"start": 0, "end": 9, "label": "STORE", "text": "star boys"}]}
+{"text": "hotel samarth se samosa laga de", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "hotel samarth"}, {"start": 17, "end": 23, "label": "FOOD", "text": "samosa"}]}
+{"text": "kaka ka dhaba se 10 rajma chawal lao", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 17, "end": 19, "label": "QTY", "text": "10"}, {"start": 20, "end": 32, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "pizza hut ka three coffee hot", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 13, "end": 18, "label": "QTY", "text": "three"}, {"start": 19, "end": 25, "label": "FOOD", "text": "coffee"}]}
+{"text": "one rajma chawal aur 8 momos", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "one rajma chawal"}, {"start": 21, "end": 28, "label": "QTY|FOOD", "text": "8 momos"}]}
+{"text": "8 chicken curry + 10 coffee green bakes se", "entities": [{"start": 0, "end": 15, "label": "QTY|FOOD", "text": "8 chicken curry"}, {"start": 18, "end": 27, "label": "QTY|FOOD", "text": "10 coffee"}, {"start": 28, "end": 39, "label": "STORE", "text": "green bakes"}]}
+{"text": "ganesh sweet mart ka four samosa extra cheese", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 26, "end": 32, "label": "FOOD", "text": "samosa"}, {"start": 33, "end": 45, "label": "PREF", "text": "extra cheese"}]}
+{"text": "pav bhaji ka order", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}]}
+{"text": "2 idli + 7 momos hotel samarth se", "entities": [{"start": 0, "end": 6, "label": "QTY|FOOD", "text": "2 idli"}, {"start": 9, "end": 16, "label": "QTY|FOOD", "text": "7 momos"}, {"start": 17, "end": 30, "label": "STORE", "text": "hotel samarth"}]}
+{"text": "add do prawn curry to cart", "entities": [{"start": 4, "end": 6, "label": "QTY", "text": "do"}, {"start": 7, "end": 18, "label": "FOOD", "text": "prawn curry"}]}
+{"text": "mujhe char coffee chahiye", "entities": [{"start": 6, "end": 10, "label": "QTY", "text": "char"}, {"start": 11, "end": 17, "label": "FOOD", "text": "coffee"}]}
+{"text": "biryani aur ghee chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "biryani"}, {"start": 12, "end": 16, "label": "FOOD", "text": "ghee"}]}
+{"text": "teen prawn curry aur 2 milk", "entities": [{"start": 0, "end": 16, "label": "FOOD", "text": "teen prawn curry"}, {"start": 21, "end": 27, "label": "QTY|FOOD", "text": "2 milk"}]}
+{"text": "one pav bhaji satpur deliver karo", "entities": [{"start": 4, "end": 13, "label": "FOOD", "text": "pav bhaji"}, {"start": 14, "end": 20, "label": "LOC", "text": "satpur"}, {"start": 0, "end": 3, "label": "QTY", "text": "one"}]}
+{"text": "add 4 milk to cart", "entities": [{"start": 6, "end": 10, "label": "FOOD", "text": "milk"}, {"start": 4, "end": 5, "label": "QTY", "text": "4"}]}
+{"text": "10 kadhi chahiye", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "10 kadhi"}]}
+{"text": "2 plate pizza", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 13, "label": "FOOD", "text": "plate pizza"}]}
+{"text": "aath kadhi big size", "entities": [{"start": 0, "end": 19, "label": "FOOD|PREF", "text": "aath kadhi big size"}]}
+{"text": "7 plate dal tadka", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 17, "label": "FOOD", "text": "plate dal tadka"}]}
+{"text": "5 gulkand chahiye", "entities": [{"start": 2, "end": 9, "label": "FOOD", "text": "gulkand"}, {"start": 0, "end": 1, "label": "QTY", "text": "5"}]}
+{"text": "seekh kebab aur laddu chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "seekh kebab"}, {"start": 16, "end": 21, "label": "FOOD", "text": "laddu"}]}
+{"text": "fish fry ka order", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "fish fry"}]}
+{"text": "pizza hut ka thali", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 13, "end": 18, "label": "FOOD", "text": "thali"}]}
+{"text": "one egg rice chahiye", "entities": [{"start": 4, "end": 12, "label": "FOOD", "text": "egg rice"}, {"start": 0, "end": 3, "label": "QTY", "text": "one"}]}
+{"text": "chhe plate egg rice", "entities": [{"start": 0, "end": 10, "label": "PREF", "text": "chhe plate"}, {"start": 11, "end": 19, "label": "FOOD", "text": "egg rice"}]}
+{"text": "4 chicken biryani home pe deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 17, "label": "FOOD", "text": "chicken biryani"}, {"start": 18, "end": 22, "label": "LOC", "text": "home"}]}
+{"text": "fish fry aur paneer tikka chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "fish fry"}, {"start": 13, "end": 25, "label": "FOOD", "text": "paneer tikka"}]}
+{"text": "mujhe char prawn curry chahiye", "entities": [{"start": 6, "end": 10, "label": "QTY", "text": "char"}, {"start": 11, "end": 22, "label": "FOOD", "text": "prawn curry"}]}
+{"text": "saat gulab jamun aur 5 curd", "entities": [{"start": 5, "end": 16, "label": "FOOD", "text": "gulab jamun"}, {"start": 23, "end": 27, "label": "FOOD", "text": "curd"}]}
+{"text": "6 plate maggi", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "6"}, {"start": 2, "end": 13, "label": "FOOD", "text": "plate maggi"}]}
+{"text": "aath plate tandoori chicken", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "aath"}, {"start": 11, "end": 27, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "add four tea to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "four"}, {"start": 9, "end": 12, "label": "FOOD", "text": "tea"}]}
+{"text": "char fish fry order karo big size", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 5, "end": 13, "label": "FOOD", "text": "fish fry"}, {"start": 25, "end": 33, "label": "PREF", "text": "big size"}]}
+{"text": "3 shahi paneer chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 14, "label": "FOOD", "text": "shahi paneer"}]}
+{"text": "rajma chawal order karo kfc se", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "rajma chawal"}, {"start": 24, "end": 27, "label": "STORE", "text": "kfc"}]}
+{"text": "three seekh kebab aur 8 idli", "entities": [{"start": 0, "end": 5, "label": "QTY", "text": "three"}, {"start": 6, "end": 17, "label": "FOOD", "text": "seekh kebab"}, {"start": 24, "end": 28, "label": "FOOD", "text": "idli"}]}
+{"text": "4 jeera rice + ek paratha aditya mutton bhakri se", "entities": [{"start": 2, "end": 12, "label": "FOOD", "text": "jeera rice"}, {"start": 18, "end": 25, "label": "FOOD", "text": "paratha"}, {"start": 26, "end": 46, "label": "STORE", "text": "aditya mutton bhakri"}, {"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 15, "end": 17, "label": "QTY", "text": "ek"}]}
+{"text": "ratanji mithaiwale se kuch mangwao", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "ratanji mithaiwale"}]}
+{"text": "5 jalebi hot", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 8, "label": "FOOD", "text": "jalebi"}]}
+{"text": "barfi order karo dagu teli se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "barfi"}, {"start": 17, "end": 26, "label": "STORE", "text": "dagu teli"}]}
+{"text": "hotel parth se burger laga de", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "hotel parth"}, {"start": 15, "end": 21, "label": "FOOD", "text": "burger"}]}
+{"text": "butter quickly wala ratanji mithaiwale se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "butter"}, {"start": 7, "end": 14, "label": "PREF", "text": "quickly"}, {"start": 20, "end": 38, "label": "STORE", "text": "ratanji mithaiwale"}]}
+{"text": "add 10 atta to cart", "entities": [{"start": 7, "end": 11, "label": "FOOD", "text": "atta"}]}
+{"text": "ratanji mithaiwale se kuch mangwao", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "ratanji mithaiwale"}]}
+{"text": "add 6 chicken biryani to cart", "entities": [{"start": 6, "end": 21, "label": "FOOD", "text": "chicken biryani"}, {"start": 4, "end": 5, "label": "QTY", "text": "6"}]}
+{"text": "one dosa + do pulao green bakes se", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "one dosa"}, {"start": 11, "end": 19, "label": "QTY|FOOD", "text": "do pulao"}, {"start": 20, "end": 31, "label": "STORE", "text": "green bakes"}]}
+{"text": "biscuit satpur bhejo", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "biscuit"}, {"start": 8, "end": 14, "label": "STORE", "text": "satpur"}, {"start": 15, "end": 20, "label": "PREF", "text": "bhejo"}]}
+{"text": "hakka noodles aur butter chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "hakka noodles"}, {"start": 18, "end": 24, "label": "FOOD", "text": "butter"}]}
+{"text": "i want do tandoori chicken", "entities": [{"start": 7, "end": 9, "label": "QTY", "text": "do"}, {"start": 10, "end": 26, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "2 rajma chawal chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 14, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "ek mutton curry aur ek fish curry", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "mutton curry"}, {"start": 23, "end": 33, "label": "FOOD", "text": "fish curry"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "bhai 1 jalebi manga de", "entities": [{"start": 7, "end": 13, "label": "FOOD", "text": "jalebi"}, {"start": 5, "end": 6, "label": "QTY", "text": "1"}]}
+{"text": "ek jalebi aur ek malai kofta", "entities": [{"start": 3, "end": 9, "label": "FOOD", "text": "jalebi"}, {"start": 17, "end": 28, "label": "FOOD", "text": "malai kofta"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "8 samosa less spicy", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "8"}, {"start": 2, "end": 8, "label": "FOOD", "text": "samosa"}, {"start": 9, "end": 19, "label": "PREF", "text": "less spicy"}]}
+{"text": "pulao ka order", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pulao"}]}
+{"text": "ek gulab jamun aur ek thali", "entities": [{"start": 3, "end": 14, "label": "FOOD", "text": "gulab jamun"}, {"start": 22, "end": 27, "label": "FOOD", "text": "thali"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "add 7 seekh kebab to cart", "entities": [{"start": 6, "end": 17, "label": "FOOD", "text": "seekh kebab"}]}
+{"text": "the cloud kitchen ka five butter big size", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "the cloud kitchen"}, {"start": 21, "end": 25, "label": "QTY", "text": "five"}, {"start": 26, "end": 32, "label": "FOOD", "text": "butter"}, {"start": 33, "end": 41, "label": "PREF", "text": "big size"}]}
+{"text": "five chicken biryani + 5 kadhi kokni darbar se", "entities": [{"start": 0, "end": 20, "label": "FOOD|QTY", "text": "five chicken biryani"}, {"start": 25, "end": 30, "label": "FOOD", "text": "kadhi"}, {"start": 31, "end": 43, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "three prawn curry quickly", "entities": [{"start": 0, "end": 5, "label": "QTY", "text": "three"}, {"start": 6, "end": 17, "label": "FOOD", "text": "prawn curry"}, {"start": 18, "end": 25, "label": "PREF", "text": "quickly"}]}
+{"text": "inayat cafe ka paanch maggi quickly", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 21, "label": "QTY", "text": "paanch"}, {"start": 22, "end": 27, "label": "FOOD", "text": "maggi"}, {"start": 28, "end": 35, "label": "PREF", "text": "quickly"}]}
+{"text": "i want 7 thali", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "7"}, {"start": 9, "end": 14, "label": "FOOD", "text": "thali"}]}
+{"text": "mujhe 7 dal makhani chahiye", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "7"}, {"start": 8, "end": 19, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "inayat cafe se idli laga de", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 19, "label": "FOOD", "text": "idli"}]}
+{"text": "ganesh sweet mart ka dal tadka", "entities": [{"start": 0, "end": 17, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 21, "end": 30, "label": "FOOD", "text": "dal tadka"}]}
+{"text": "i want one vada pav", "entities": [{"start": 11, "end": 19, "label": "FOOD", "text": "vada pav"}]}
+{"text": "two pizza chahiye", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 9, "label": "FOOD", "text": "pizza"}]}
+{"text": "9 maggi aur do kadhi", "entities": [{"start": 0, "end": 7, "label": "QTY|FOOD", "text": "9 maggi"}, {"start": 12, "end": 20, "label": "QTY|FOOD", "text": "do kadhi"}]}
+{"text": "1 coffee + 6 mutton curry subway se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 8, "label": "FOOD", "text": "coffee"}, {"start": 11, "end": 12, "label": "QTY", "text": "6"}, {"start": 13, "end": 25, "label": "FOOD", "text": "mutton curry"}, {"start": 26, "end": 32, "label": "STORE", "text": "subway"}]}
+{"text": "add chhe atta to cart", "entities": [{"start": 4, "end": 13, "label": "FOOD", "text": "chhe atta"}]}
+{"text": "chhe fish fry gangapur deliver karo", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "chhe fish fry"}, {"start": 14, "end": 22, "label": "LOC", "text": "gangapur"}]}
+{"text": "chicken biryani big size wala hotel samarth se", "entities": [{"start": 0, "end": 15, "label": "FOOD", "text": "chicken biryani"}, {"start": 16, "end": 24, "label": "PREF", "text": "big size"}, {"start": 30, "end": 43, "label": "STORE", "text": "hotel samarth"}]}
+{"text": "misal order karo green bakes se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "misal"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}
+{"text": "barfi milega kya the cloud kitchen pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "barfi"}, {"start": 17, "end": 34, "label": "STORE", "text": "the cloud kitchen"}]}
+{"text": "kokni darbar se biryani laga de", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}, {"start": 16, "end": 23, "label": "FOOD", "text": "biryani"}]}
+{"text": "ek momos aur ek egg rice", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 8, "label": "FOOD", "text": "momos"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 16, "end": 24, "label": "FOOD", "text": "egg rice"}]}
+{"text": "2 plate dosa", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 8, "end": 12, "label": "FOOD", "text": "dosa"}]}
+{"text": "five vada pav aur two shahi paneer", "entities": [{"start": 5, "end": 13, "label": "FOOD", "text": "vada pav"}, {"start": 22, "end": 34, "label": "FOOD", "text": "shahi paneer"}, {"start": 0, "end": 4, "label": "QTY", "text": "five"}, {"start": 18, "end": 21, "label": "QTY", "text": "two"}]}
+{"text": "chhe paratha near station deliver karo", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "chhe paratha"}, {"start": 13, "end": 25, "label": "LOC", "text": "near station"}]}
+{"text": "paanch plate samosa", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 13, "end": 19, "label": "FOOD", "text": "samosa"}]}
+{"text": "hotel prakash se 8 cheese lao", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "hotel prakash"}, {"start": 17, "end": 18, "label": "QTY", "text": "8"}, {"start": 19, "end": 29, "label": "FOOD", "text": "cheese lao"}]}
+{"text": "get me 6 burger from tushar", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "6"}, {"start": 9, "end": 15, "label": "FOOD", "text": "burger"}, {"start": 21, "end": 27, "label": "STORE", "text": "tushar"}]}
+{"text": "get me 9 manchurian from dominos", "entities": [{"start": 9, "end": 19, "label": "FOOD", "text": "manchurian"}, {"start": 25, "end": 32, "label": "STORE", "text": "dominos"}, {"start": 7, "end": 8, "label": "QTY", "text": "9"}]}
+{"text": "malai kofta ka order", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "malai kofta"}]}
+{"text": "shahi paneer milega kya the cloud kitchen pe", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "shahi paneer"}, {"start": 24, "end": 41, "label": "STORE", "text": "the cloud kitchen"}]}
+{"text": "8 tea + aath malai kofta the spice yard se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "8"}, {"start": 2, "end": 5, "label": "FOOD", "text": "tea"}, {"start": 8, "end": 24, "label": "FOOD", "text": "aath malai kofta"}, {"start": 25, "end": 39, "label": "STORE", "text": "the spice yard"}]}
+{"text": "6 idli chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY|FOOD", "text": "6 idli"}]}
+{"text": "atta order karo mcdonalds se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "atta"}, {"start": 16, "end": 25, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "mujhe 6 paneer chahiye", "entities": [{"start": 6, "end": 14, "label": "QTY|FOOD", "text": "6 paneer"}]}
+{"text": "burger ka order", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "burger"}]}
+{"text": "get me 10 fish curry from dagdu teli", "entities": [{"start": 7, "end": 9, "label": "QTY", "text": "10"}, {"start": 10, "end": 20, "label": "FOOD", "text": "fish curry"}, {"start": 26, "end": 36, "label": "STORE", "text": "dagdu teli"}]}
+{"text": "dal makhani ghar pe bhejo", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dal makhani"}, {"start": 12, "end": 25, "label": "PREF", "text": "ghar pe bhejo"}]}
+{"text": "inayat cafe se 6 tandoori chicken lao", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 16, "label": "QTY", "text": "6"}, {"start": 17, "end": 33, "label": "FOOD", "text": "tandoori chicken"}]}
+{"text": "aath paneer tikka satpur deliver karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "aath"}, {"start": 5, "end": 17, "label": "FOOD", "text": "paneer tikka"}, {"start": 18, "end": 24, "label": "LOC", "text": "satpur"}]}
+{"text": "sugar milega kya inayat cafe pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "sugar"}, {"start": 17, "end": 28, "label": "STORE", "text": "inayat cafe"}]}
+{"text": "shahi paneer milega kya star boys pe", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "shahi paneer"}, {"start": 24, "end": 33, "label": "STORE", "text": "star boys"}]}
+{"text": "shahi paneer cidco bhejo", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "shahi paneer"}, {"start": 13, "end": 18, "label": "LOC", "text": "cidco"}]}
+{"text": "5 atta jaldi", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "atta"}, {"start": 7, "end": 12, "label": "PREF", "text": "jaldi"}]}
+{"text": "five samosa aur five gulab jamun", "entities": [{"start": 0, "end": 11, "label": "QTY|FOOD", "text": "five samosa"}, {"start": 16, "end": 32, "label": "QTY|FOOD", "text": "five gulab jamun"}]}
+{"text": "8 biscuit extra spicy", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "8"}, {"start": 2, "end": 9, "label": "FOOD", "text": "biscuit"}, {"start": 10, "end": 21, "label": "PREF", "text": "extra spicy"}]}
+{"text": "coffee hot wala ganesh sweet mart se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "coffee"}, {"start": 16, "end": 33, "label": "STORE", "text": "ganesh sweet mart"}, {"start": 7, "end": 10, "label": "PREF", "text": "hot"}]}
+{"text": "aath chicken curry order karo extra cheese", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "aath"}, {"start": 5, "end": 18, "label": "FOOD", "text": "chicken curry"}, {"start": 30, "end": 42, "label": "PREF", "text": "extra cheese"}]}
+{"text": "gulab jamun small portion wala the spice yard se", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "gulab jamun"}, {"start": 12, "end": 17, "label": "PREF", "text": "small"}, {"start": 31, "end": 45, "label": "STORE", "text": "the spice yard"}]}
+{"text": "2 jeera rice without garlic", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 12, "label": "FOOD", "text": "jeera rice"}, {"start": 13, "end": 27, "label": "PREF", "text": "without garlic"}]}
+{"text": "mujhe do dosa chahiye", "entities": [{"start": 9, "end": 13, "label": "FOOD", "text": "dosa"}, {"start": 6, "end": 8, "label": "QTY", "text": "do"}]}
+{"text": "pizza hut se maggi laga de", "entities": [{"start": 13, "end": 18, "label": "FOOD", "text": "maggi"}, {"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}]}
+{"text": "2 fish fry order karo fresh", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 10, "label": "FOOD", "text": "fish fry"}]}
+{"text": "4 hakka noodles aur char butter chicken", "entities": [{"start": 0, "end": 15, "label": "QTY|FOOD", "text": "4 hakka noodles"}, {"start": 20, "end": 39, "label": "QTY|FOOD", "text": "char butter chicken"}]}
+{"text": "pizza hut se kuch mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 18, "end": 25, "label": "ACTION", "text": "mangwao"}]}
+{"text": "momos near station bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "momos"}, {"start": 6, "end": 18, "label": "LOC", "text": "near station"}, {"start": 19, "end": 24, "label": "PREF", "text": "bhejo"}]}
+{"text": "do shahi paneer aur five egg curry", "entities": [{"start": 3, "end": 15, "label": "FOOD", "text": "shahi paneer"}, {"start": 20, "end": 34, "label": "FOOD", "text": "five egg curry"}]}
+{"text": "i want char idli", "entities": [{"start": 7, "end": 11, "label": "PREF", "text": "char"}, {"start": 12, "end": 16, "label": "FOOD", "text": "idli"}]}
+{"text": "8 milk aur paanch egg rice", "entities": [{"start": 0, "end": 6, "label": "QTY|FOOD", "text": "8 milk"}, {"start": 11, "end": 26, "label": "QTY|FOOD", "text": "paanch egg rice"}]}
+{"text": "4 sugar + 7 paratha pizza hut se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 7, "label": "FOOD", "text": "sugar"}, {"start": 10, "end": 11, "label": "QTY", "text": "7"}, {"start": 12, "end": 19, "label": "FOOD", "text": "paratha"}, {"start": 20, "end": 29, "label": "STORE", "text": "pizza hut"}]}
+{"text": "get me teen jalebi from bhagat tarachand", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "teen"}, {"start": 12, "end": 18, "label": "FOOD", "text": "jalebi"}, {"start": 24, "end": 40, "label": "STORE", "text": "bhagat tarachand"}]}
+{"text": "jeera rice ka order", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "butter quickly wala dagu teli se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "butter"}, {"start": 7, "end": 14, "label": "PREF", "text": "quickly"}, {"start": 20, "end": 29, "label": "STORE", "text": "dagu teli"}]}
+{"text": "biscuit milega kya the spice yard pe", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "biscuit"}, {"start": 19, "end": 33, "label": "STORE", "text": "the spice yard"}]}
+{"text": "paanch momos less spicy", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 12, "label": "FOOD", "text": "momos"}, {"start": 13, "end": 23, "label": "PREF", "text": "less spicy"}]}
+{"text": "pav bhaji aur shahi paneer chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "pav bhaji"}, {"start": 14, "end": 26, "label": "FOOD", "text": "shahi paneer"}]}
+{"text": "hotel prakash ka hakka noodles", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "hotel prakash"}, {"start": 17, "end": 30, "label": "FOOD", "text": "hakka noodles"}]}
+{"text": "mujhe two curd chahiye", "entities": [{"start": 6, "end": 9, "label": "QTY", "text": "two"}, {"start": 10, "end": 14, "label": "FOOD", "text": "curd"}]}
+{"text": "mujhe three pizza chahiye", "entities": [{"start": 6, "end": 11, "label": "QTY", "text": "three"}, {"start": 12, "end": 17, "label": "FOOD", "text": "pizza"}]}
+{"text": "kokni darbar ka palak paneer", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}, {"start": 16, "end": 28, "label": "FOOD", "text": "palak paneer"}]}
+{"text": "i want 3 prawn curry", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "3"}, {"start": 9, "end": 20, "label": "FOOD", "text": "prawn curry"}]}
+{"text": "2 dal tadka order karo fresh", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 11, "label": "FOOD", "text": "dal tadka"}]}
+{"text": "get me three shahi paneer from mcdonalds", "entities": [{"start": 7, "end": 12, "label": "QTY", "text": "three"}, {"start": 13, "end": 25, "label": "FOOD", "text": "shahi paneer"}, {"start": 31, "end": 40, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "i want 5 samosa", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "5"}, {"start": 9, "end": 15, "label": "FOOD", "text": "samosa"}]}
+{"text": "aditya mutton bhakri ka fried rice", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "aditya"}, {"start": 7, "end": 34, "label": "FOOD", "text": "mutton bhakri ka fried rice"}]}
+{"text": "five chicken biryani fresh", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "five"}, {"start": 5, "end": 20, "label": "FOOD", "text": "chicken biryani"}, {"start": 21, "end": 26, "label": "PREF", "text": "fresh"}]}
+{"text": "8 misal + one roti ganesh sweet mart se", "entities": [{"start": 0, "end": 7, "label": "QTY|FOOD", "text": "8 misal"}, {"start": 10, "end": 18, "label": "QTY|FOOD", "text": "one roti"}, {"start": 19, "end": 36, "label": "STORE", "text": "ganesh sweet mart"}]}
+{"text": "gulkand order karo mcdonalds se", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "gulkand"}, {"start": 19, "end": 28, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "dagu teli ka 2 ghee small portion", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "dagu teli"}, {"start": 15, "end": 19, "label": "FOOD", "text": "ghee"}, {"start": 13, "end": 14, "label": "QTY", "text": "2"}]}
+{"text": "ek sugar aur ek chole bhature", "entities": [{"start": 3, "end": 8, "label": "FOOD", "text": "sugar"}, {"start": 16, "end": 29, "label": "FOOD", "text": "chole bhature"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "5 butter chicken dagu teli se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 16, "label": "FOOD", "text": "butter chicken"}, {"start": 17, "end": 26, "label": "STORE", "text": "dagu teli"}]}
+{"text": "i want 8 prawn curry", "entities": [{"start": 9, "end": 20, "label": "FOOD", "text": "prawn curry"}, {"start": 7, "end": 8, "label": "QTY", "text": "8"}]}
+{"text": "ek misal aur ek palak paneer", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "ek misal"}, {"start": 16, "end": 28, "label": "FOOD", "text": "palak paneer"}]}
+{"text": "10 seekh kebab gangapur deliver karo", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "10"}, {"start": 3, "end": 14, "label": "FOOD", "text": "seekh kebab"}, {"start": 15, "end": 23, "label": "LOC", "text": "gangapur"}]}
+{"text": "ek burger aur ek naan", "entities": [{"start": 0, "end": 9, "label": "QTY|FOOD", "text": "ek burger"}, {"start": 14, "end": 21, "label": "QTY|FOOD", "text": "ek naan"}]}
+{"text": "the spice yard ka saat butter big size", "entities": [{"start": 0, "end": 14, "label": "STORE", "text": "the spice yard"}, {"start": 18, "end": 29, "label": "FOOD", "text": "saat butter"}, {"start": 30, "end": 33, "label": "PREF", "text": "big"}]}
+{"text": "teen samosa aur 6 dal makhani", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "text": "samosa"}, {"start": 16, "end": 17, "label": "QTY", "text": "6"}, {"start": 18, "end": 29, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "1 atta college road deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 6, "label": "FOOD", "text": "atta"}, {"start": 7, "end": 19, "label": "LOC", "text": "college road"}]}
+{"text": "maharashtra darbar ka atta", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "maharashtra darbar"}, {"start": 22, "end": 26, "label": "FOOD", "text": "atta"}]}
+{"text": "the cloud kitchen se bread laga de", "entities": [{"start": 21, "end": 26, "label": "FOOD", "text": "bread"}]}
+{"text": "kaka ka dhaba ka laddu", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 17, "end": 22, "label": "FOOD", "text": "laddu"}]}
+{"text": "paanch plate misal", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 13, "end": 18, "label": "FOOD", "text": "misal"}]}
+{"text": "mujhe 9 gulab jamun chahiye", "entities": [{"start": 8, "end": 19, "label": "FOOD", "text": "gulab jamun"}, {"start": 6, "end": 7, "label": "QTY", "text": "9"}]}
+{"text": "10 plate curd", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "10"}, {"start": 3, "end": 13, "label": "FOOD", "text": "plate curd"}]}
+{"text": "maharashtra darbar se three barfi lao", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "maharashtra darbar"}, {"start": 22, "end": 27, "label": "QTY", "text": "three"}]}
+{"text": "kokni darbar ka teen pav bhaji small portion", "entities": [{"start": 16, "end": 20, "label": "QTY", "text": "teen"}, {"start": 21, "end": 30, "label": "FOOD", "text": "pav bhaji"}, {"start": 31, "end": 36, "label": "PREF", "text": "small"}, {"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "1 coffee cidco deliver karo", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "1 coffee"}, {"start": 9, "end": 14, "label": "LOC", "text": "cidco"}]}
+{"text": "sugar milega kya mcdonalds pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "sugar"}, {"start": 17, "end": 26, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "dagu teli se kuch mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "dagu teli"}]}
+{"text": "one thali quickly", "entities": [{"start": 0, "end": 9, "label": "QTY|FOOD", "text": "one thali"}]}
+{"text": "3 korma aur aath dal makhani", "entities": [{"start": 0, "end": 7, "label": "QTY|FOOD", "text": "3 korma"}, {"start": 12, "end": 28, "label": "FOOD", "text": "aath dal makhani"}]}
+{"text": "mujhe one samosa chahiye", "entities": [{"start": 6, "end": 16, "label": "QTY|FOOD", "text": "one samosa"}]}
+{"text": "rajma chawal ka order", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "jeera rice ka order", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "jeera rice"}]}
+{"text": "aath cheese fresh", "entities": [{"start": 0, "end": 17, "label": "QTY|FOOD", "text": "aath cheese fresh"}]}
+{"text": "teen dosa chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "teen dosa"}, {"start": 5, "end": 7, "label": "QTY", "text": "do"}]}
+{"text": "mujhe 8 laddu chahiye", "entities": [{"start": 6, "end": 13, "label": "QTY|FOOD", "text": "8 laddu"}]}
+{"text": "bhai 8 butter manga de", "entities": [{"start": 7, "end": 19, "label": "FOOD", "text": "butter manga"}, {"start": 5, "end": 6, "label": "QTY", "text": "8"}]}
+{"text": "chhe coffee + saat chicken curry kfc se", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "chhe coffee"}, {"start": 14, "end": 32, "label": "FOOD", "text": "saat chicken curry"}, {"start": 33, "end": 36, "label": "STORE", "text": "kfc"}]}
+{"text": "ek butter chicken aur ek shahi paneer", "entities": [{"start": 0, "end": 17, "label": "QTY|FOOD", "text": "ek butter chicken"}, {"start": 22, "end": 37, "label": "QTY|FOOD", "text": "ek shahi paneer"}]}
+{"text": "biscuit college road bhejo", "entities": [{"start": 0, "end": 7, "label": "FOOD", "text": "biscuit"}, {"start": 8, "end": 20, "label": "LOC", "text": "college road"}]}
+{"text": "kokni darbar se mutton curry laga de", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}, {"start": 16, "end": 28, "label": "FOOD", "text": "mutton curry"}]}
+{"text": "jalebi order karo inayat cafe se", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "jalebi"}, {"start": 18, "end": 29, "label": "STORE", "text": "inayat cafe"}]}
+{"text": "paneer ka order", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "paneer"}]}
+{"text": "2 maggi order karo fresh", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 7, "label": "FOOD", "text": "maggi"}, {"start": 19, "end": 24, "label": "PREF", "text": "fresh"}]}
+{"text": "inayat cafe ka jalebi", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 21, "label": "FOOD", "text": "jalebi"}]}
+{"text": "ek gulab jamun aur ek chole bhature", "entities": [{"start": 3, "end": 14, "label": "FOOD", "text": "gulab jamun"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "7 vada pav fast", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 10, "label": "FOOD", "text": "vada pav"}, {"start": 11, "end": 15, "label": "PREF", "text": "fast"}]}
+{"text": "bhai 3 ghee manga de", "entities": [{"start": 7, "end": 17, "label": "FOOD", "text": "ghee manga"}, {"start": 5, "end": 6, "label": "QTY", "text": "3"}]}
+{"text": "char vada pav panchavati deliver karo", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "char vada pav"}, {"start": 14, "end": 24, "label": "LOC", "text": "panchavati"}]}
+{"text": "shahi paneer milega kya pizza hut pe", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "shahi paneer"}, {"start": 24, "end": 33, "label": "STORE", "text": "pizza hut"}]}
+{"text": "dagdu teli se do kadhi lao", "entities": [{"start": 0, "end": 10, "label": "STORE", "text": "dagdu teli"}, {"start": 14, "end": 16, "label": "QTY", "text": "do"}]}
+{"text": "mcdonalds ka momos", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}, {"start": 13, "end": 18, "label": "FOOD", "text": "momos"}]}
+{"text": "get me 2 ghee from star boys", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "2"}, {"start": 9, "end": 13, "label": "FOOD", "text": "ghee"}, {"start": 19, "end": 28, "label": "STORE", "text": "star boys"}]}
+{"text": "get me saat cheese from hotel raj darbar", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "saat"}, {"start": 12, "end": 18, "label": "FOOD", "text": "cheese"}, {"start": 24, "end": 40, "label": "STORE", "text": "hotel raj darbar"}]}
+{"text": "palak paneer without garlic wala hotel samarth se", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "palak paneer"}, {"start": 13, "end": 27, "label": "PREF", "text": "without garlic"}, {"start": 33, "end": 46, "label": "STORE", "text": "hotel samarth"}]}
+{"text": "paanch ghee + 6 tandoori chicken pizza hut se", "entities": [{"start": 0, "end": 11, "label": "QTY|FOOD", "text": "paanch ghee"}, {"start": 14, "end": 32, "label": "QTY|FOOD", "text": "6 tandoori chicken"}, {"start": 33, "end": 42, "label": "STORE", "text": "pizza hut"}]}
+{"text": "inayat cafe se chicken biryani laga de", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}, {"start": 15, "end": 30, "label": "FOOD", "text": "chicken biryani"}]}
+{"text": "ek fish curry aur ek hakka noodles", "entities": [{"start": 3, "end": 13, "label": "FOOD", "text": "fish curry"}, {"start": 21, "end": 34, "label": "FOOD", "text": "hakka noodles"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 0, "end": 2, "label": "QTY", "text": "ek"}]}
+{"text": "two chicken curry chahiye", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 17, "label": "FOOD", "text": "chicken curry"}]}
+{"text": "dal makhani less spicy wala inayat cafe se", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dal makhani"}, {"start": 12, "end": 22, "label": "PREF", "text": "less spicy"}, {"start": 28, "end": 39, "label": "STORE", "text": "inayat cafe"}]}
+{"text": "idli order karo subway se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "idli"}, {"start": 16, "end": 22, "label": "STORE", "text": "subway"}]}
+{"text": "atta milega kya maharashtra darbar pe", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "atta"}, {"start": 16, "end": 34, "label": "STORE", "text": "maharashtra darbar"}]}
+{"text": "pulao big size wala star boys se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pulao"}, {"start": 20, "end": 29, "label": "STORE", "text": "star boys"}, {"start": 6, "end": 14, "label": "PREF", "text": "big size"}]}
+{"text": "ek misal aur ek bread", "entities": [{"start": 0, "end": 8, "label": "QTY|FOOD", "text": "ek misal"}, {"start": 13, "end": 21, "label": "QTY|FOOD", "text": "ek bread"}]}
+{"text": "mujhe three idli chahiye", "entities": [{"start": 6, "end": 11, "label": "QTY", "text": "three"}, {"start": 12, "end": 16, "label": "FOOD", "text": "idli"}]}
+{"text": "7 paratha pizza hut se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}, {"start": 10, "end": 19, "label": "STORE", "text": "pizza hut"}]}
+{"text": "chhe sugar chahiye", "entities": [{"start": 0, "end": 10, "label": "QTY|FOOD", "text": "chhe sugar"}]}
+{"text": "kaka ka dhaba se ek laddu lao", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "kaka ka dhaba"}, {"start": 20, "end": 25, "label": "FOOD", "text": "laddu"}, {"start": 17, "end": 19, "label": "QTY", "text": "ek"}]}
+{"text": "five vada pav satpur deliver karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "five"}, {"start": 5, "end": 13, "label": "FOOD", "text": "vada pav"}, {"start": 14, "end": 20, "label": "LOC", "text": "satpur"}]}
+{"text": "bhai five mutton curry manga de", "entities": [{"start": 5, "end": 9, "label": "QTY", "text": "five"}, {"start": 10, "end": 22, "label": "FOOD", "text": "mutton curry"}]}
+{"text": "aath plate prawn curry", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "aath"}, {"start": 11, "end": 22, "label": "FOOD", "text": "prawn curry"}]}
+{"text": "3 curd dagu teli se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 6, "label": "FOOD", "text": "curd"}, {"start": 7, "end": 16, "label": "STORE", "text": "dagu teli"}]}
+{"text": "bhai one milk manga de", "entities": [{"start": 9, "end": 13, "label": "FOOD", "text": "milk"}]}
+{"text": "3 maggi chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 7, "label": "FOOD", "text": "maggi"}]}
+{"text": "two palak paneer home pe deliver karo", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 16, "label": "FOOD", "text": "palak paneer"}]}
+{"text": "mcdonalds ka mutton curry", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "mcdonalds"}, {"start": 13, "end": 25, "label": "FOOD", "text": "mutton curry"}]}
+{"text": "mujhe four fish curry chahiye", "entities": [{"start": 6, "end": 21, "label": "FOOD", "text": "four fish curry"}, {"start": 6, "end": 10, "label": "QTY", "text": "four"}]}
+{"text": "chhe milk aur aath momos", "entities": [{"start": 0, "end": 9, "label": "QTY|FOOD", "text": "chhe milk"}, {"start": 14, "end": 24, "label": "QTY|FOOD", "text": "aath momos"}]}
+{"text": "mujhe 4 sugar chahiye", "entities": [{"start": 6, "end": 13, "label": "QTY|FOOD", "text": "4 sugar"}]}
+{"text": "chicken curry ka order", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "chicken curry"}]}
+{"text": "two naan chahiye", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 8, "label": "FOOD", "text": "naan"}]}
+{"text": "sugar ka order", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "sugar"}]}
+{"text": "i want 3 chicken curry", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "3"}, {"start": 9, "end": 22, "label": "FOOD", "text": "chicken curry"}]}
+{"text": "inayat cafe se kuch mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "inayat cafe"}]}
+{"text": "pizza hut se kuch mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 18, "end": 25, "label": "ACTION", "text": "mangwao"}]}
+{"text": "teen fish curry order karo quickly", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 15, "label": "FOOD", "text": "fish curry"}]}
+{"text": "five sugar aur 6 shahi paneer", "entities": [{"start": 0, "end": 10, "label": "QTY|FOOD", "text": "five sugar"}, {"start": 15, "end": 29, "label": "QTY|FOOD", "text": "6 shahi paneer"}]}
+{"text": "10 chole bhature + char chicken curry chinese hangama se", "entities": [{"start": 0, "end": 16, "label": "QTY|FOOD", "text": "10 chole bhature"}, {"start": 19, "end": 37, "label": "QTY|FOOD", "text": "char chicken curry"}, {"start": 38, "end": 45, "label": "STORE", "text": "chinese"}]}
+{"text": "ek plate laddu", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 9, "end": 14, "label": "FOOD", "text": "laddu"}]}
+{"text": "maharashtra darbar se teen butter chicken lao", "entities": [{"start": 0, "end": 18, "label": "STORE", "text": "maharashtra darbar"}, {"start": 22, "end": 41, "label": "FOOD", "text": "teen butter chicken"}]}
+{"text": "aath chicken biryani + teen misal hotel prakash se", "entities": [{"start": 0, "end": 20, "label": "FOOD", "text": "aath chicken biryani"}, {"start": 23, "end": 33, "label": "FOOD", "text": "teen misal"}, {"start": 34, "end": 47, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "pulao ka order", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "pulao"}]}
+{"text": "bhai 4 roti manga de", "entities": [{"start": 7, "end": 11, "label": "FOOD", "text": "roti"}, {"start": 5, "end": 6, "label": "QTY", "text": "4"}]}
+{"text": "the spice yard se kuch mangwao", "entities": [{"start": 0, "end": 14, "label": "STORE", "text": "the spice yard"}]}
+{"text": "chhe biryani chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "chhe biryani"}, {"start": 0, "end": 4, "label": "QTY", "text": "chhe"}]}
+{"text": "bhai 5 paneer tikka manga de", "entities": [{"start": 5, "end": 6, "label": "QTY", "text": "5"}, {"start": 7, "end": 19, "label": "FOOD", "text": "paneer tikka"}, {"start": 20, "end": 28, "label": "PREF", "text": "manga de"}]}
+{"text": "five palak paneer aur chhe pulao", "entities": [{"start": 5, "end": 17, "label": "FOOD", "text": "palak paneer"}, {"start": 22, "end": 32, "label": "FOOD", "text": "chhe pulao"}, {"start": 0, "end": 4, "label": "QTY", "text": "five"}]}
+{"text": "three kadhi extra cheese", "entities": [{"start": 0, "end": 5, "label": "QTY", "text": "three"}, {"start": 6, "end": 11, "label": "FOOD", "text": "kadhi"}, {"start": 12, "end": 24, "label": "PREF", "text": "extra cheese"}]}
+{"text": "char tandoori chicken order karo without garlic", "entities": [{"start": 0, "end": 21, "label": "FOOD", "text": "char tandoori chicken"}, {"start": 33, "end": 47, "label": "PREF", "text": "without garlic"}]}
+{"text": "get me char pav bhaji from dominos", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "char"}, {"start": 12, "end": 21, "label": "FOOD", "text": "pav bhaji"}, {"start": 27, "end": 34, "label": "STORE", "text": "dominos"}]}
+{"text": "aath plate barfi", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "aath"}, {"start": 11, "end": 16, "label": "FOOD", "text": "barfi"}]}
+{"text": "samosa aur malai kofta chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "samosa"}]}
+{"text": "get me ek naan from aditya mutton bhakri", "entities": [{"start": 7, "end": 14, "label": "QTY|FOOD", "text": "ek naan"}, {"start": 20, "end": 40, "label": "STORE", "text": "aditya mutton bhakri"}]}
+{"text": "burger gangapur bhejo", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "burger"}, {"start": 7, "end": 15, "label": "STORE", "text": "gangapur"}]}
+{"text": "kfc se samosa laga de", "entities": [{"start": 0, "end": 3, "label": "STORE", "text": "kfc"}, {"start": 7, "end": 13, "label": "FOOD", "text": "samosa"}]}
+{"text": "curd ka order", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "curd"}]}
+{"text": "saat ghee + 6 jalebi dagdu teli se", "entities": [{"start": 0, "end": 9, "label": "FOOD|QTY", "text": "saat ghee"}, {"start": 12, "end": 20, "label": "QTY|FOOD", "text": "6 jalebi"}, {"start": 21, "end": 31, "label": "STORE", "text": "dagdu teli"}]}
+{"text": "dal makhani ka order", "entities": [{"start": 0, "end": 11, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "chhe hakka noodles chahiye", "entities": [{"start": 0, "end": 18, "label": "FOOD", "text": "chhe hakka noodles"}]}
+{"text": "i want chhe mutton curry", "entities": [{"start": 7, "end": 24, "label": "FOOD", "text": "chhe mutton curry"}]}
+{"text": "vada pav ka order", "entities": [{"start": 0, "end": 8, "label": "FOOD", "text": "vada pav"}]}
+{"text": "3 biscuit quickly", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 9, "label": "FOOD", "text": "biscuit"}]}
+{"text": "i want five egg rice", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "five"}, {"start": 12, "end": 20, "label": "FOOD", "text": "egg rice"}]}
+{"text": "two chicken biryani order karo jaldi", "entities": [{"start": 0, "end": 3, "label": "QTY", "text": "two"}, {"start": 4, "end": 19, "label": "FOOD", "text": "chicken biryani"}, {"start": 31, "end": 36, "label": "PREF", "text": "jaldi"}]}
+{"text": "teen chicken biryani tushar se", "entities": [{"start": 0, "end": 20, "label": "FOOD", "text": "teen chicken biryani"}, {"start": 21, "end": 27, "label": "STORE", "text": "tushar"}]}
+{"text": "saat chips panchavati deliver karo", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "saat chips"}, {"start": 11, "end": 21, "label": "LOC", "text": "panchavati"}]}
+{"text": "bhai chhe naan manga de", "entities": [{"start": 5, "end": 14, "label": "FOOD", "text": "chhe naan"}, {"start": 10, "end": 14, "label": "FOOD", "text": "naan"}]}
+{"text": "chhe thali aur teen tea", "entities": [{"start": 0, "end": 10, "label": "QTY|FOOD", "text": "chhe thali"}, {"start": 15, "end": 23, "label": "QTY|FOOD", "text": "teen tea"}]}
+{"text": "7 plate coffee", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 14, "label": "FOOD", "text": "plate coffee"}]}
+{"text": "add 3 egg curry to cart", "entities": [{"start": 6, "end": 15, "label": "FOOD", "text": "egg curry"}, {"start": 4, "end": 5, "label": "QTY", "text": "3"}]}
+{"text": "maggi ka order", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "maggi"}]}
+{"text": "i want four palak paneer", "entities": [{"start": 7, "end": 11, "label": "QTY", "text": "four"}, {"start": 12, "end": 24, "label": "FOOD", "text": "palak paneer"}]}
+{"text": "three idli + teen tandoori chicken the spice yard se", "entities": [{"start": 0, "end": 10, "label": "QTY|FOOD", "text": "three idli"}, {"start": 13, "end": 34, "label": "QTY|FOOD", "text": "teen tandoori chicken"}, {"start": 35, "end": 49, "label": "STORE", "text": "the spice yard"}]}
+{"text": "char rajma chawal chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 5, "end": 17, "label": "FOOD", "text": "rajma chawal"}]}
+{"text": "3 roti order karo quickly", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 6, "label": "FOOD", "text": "roti"}, {"start": 18, "end": 25, "label": "PREF", "text": "quickly"}]}
+{"text": "mutton curry order karo hotel prakash se", "entities": [{"start": 0, "end": 12, "label": "FOOD", "text": "mutton curry"}, {"start": 24, "end": 37, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "prawn curry no onion wala subway se", "entities": [{"start": 0, "end": 25, "label": "FOOD", "text": "prawn curry no onion wala"}, {"start": 26, "end": 32, "label": "STORE", "text": "subway"}]}
+{"text": "teen chole bhature + saat idli maharashtra darbar se", "entities": [{"start": 0, "end": 18, "label": "FOOD", "text": "teen chole bhature"}, {"start": 21, "end": 30, "label": "FOOD", "text": "saat idli"}, {"start": 31, "end": 49, "label": "STORE", "text": "maharashtra darbar"}]}
+{"text": "hotel parth se seekh kebab laga de", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "hotel parth"}, {"start": 15, "end": 26, "label": "FOOD", "text": "seekh kebab"}]}
+{"text": "kokni darbar se chips laga de", "entities": [{"start": 16, "end": 21, "label": "FOOD", "text": "chips"}, {"start": 0, "end": 12, "label": "STORE", "text": "kokni darbar"}]}
+{"text": "7 paratha + 1 chicken biryani hotel parth se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "7"}, {"start": 2, "end": 9, "label": "FOOD", "text": "paratha"}, {"start": 10, "end": 11, "label": "", "text": "+"}, {"start": 12, "end": 13, "label": "QTY", "text": "1"}, {"start": 14, "end": 29, "label": "FOOD", "text": "chicken biryani"}, {"start": 30, "end": 41, "label": "STORE", "text": "hotel parth"}]}
+{"text": "add 6 kadhi to cart", "entities": [{"start": 6, "end": 11, "label": "FOOD", "text": "kadhi"}, {"start": 4, "end": 5, "label": "QTY", "text": "6"}]}
+{"text": "4 milk kfc se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 6, "label": "FOOD", "text": "milk"}, {"start": 7, "end": 10, "label": "STORE", "text": "kfc"}]}
+{"text": "add teen fish fry to cart", "entities": [{"start": 4, "end": 8, "label": "QTY", "text": "teen"}, {"start": 9, "end": 17, "label": "FOOD", "text": "fish fry"}]}
+{"text": "roti order karo mcdonalds se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "roti"}, {"start": 16, "end": 25, "label": "STORE", "text": "mcdonalds"}]}
+{"text": "maggi gangapur bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "maggi"}, {"start": 6, "end": 14, "label": "STORE", "text": "gangapur"}]}
+{"text": "mujhe 9 gulkand chahiye", "entities": [{"start": 8, "end": 15, "label": "FOOD", "text": "gulkand"}, {"start": 6, "end": 7, "label": "QTY", "text": "9"}]}
+{"text": "hakka noodles ka order", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "hakka noodles"}]}
+{"text": "milk quickly wala chinese hangama se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "milk"}, {"start": 5, "end": 12, "label": "PREF", "text": "quickly"}, {"start": 18, "end": 25, "label": "PREF", "text": "chinese"}, {"start": 26, "end": 33, "label": "STORE", "text": "hangama"}]}
+{"text": "8 gulab jamun jaldi", "entities": [{"start": 2, "end": 13, "label": "FOOD", "text": "gulab jamun"}, {"start": 0, "end": 1, "label": "QTY", "text": "8"}, {"start": 14, "end": 19, "label": "PREF", "text": "jaldi"}]}
+{"text": "dal tadka milega kya ganesh sweet mart pe", "entities": [{"start": 0, "end": 9, "label": "FOOD", "text": "dal tadka"}, {"start": 21, "end": 38, "label": "STORE", "text": "ganesh sweet mart"}]}
+{"text": "get me ek paratha from ganesh sweet mart", "entities": [{"start": 7, "end": 9, "label": "QTY", "text": "ek"}, {"start": 10, "end": 17, "label": "FOOD", "text": "paratha"}, {"start": 23, "end": 40, "label": "STORE", "text": "ganesh sweet mart"}]}
+{"text": "pizza hut se kuch mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 18, "end": 25, "label": "ACTION", "text": "mangwao"}]}
+{"text": "7 sugar + 6 naan green bakes se", "entities": [{"start": 0, "end": 7, "label": "QTY|FOOD", "text": "7 sugar"}, {"start": 10, "end": 16, "label": "QTY|FOOD", "text": "6 naan"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}
+{"text": "i want one gulkand", "entities": [{"start": 11, "end": 18, "label": "FOOD", "text": "gulkand"}]}
+{"text": "tushar ka 2 seekh kebab extra spicy", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "text": "2"}, {"start": 12, "end": 23, "label": "FOOD", "text": "seekh kebab"}, {"start": 24, "end": 35, "label": "PREF", "text": "extra spicy"}]}

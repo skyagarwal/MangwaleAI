@@ -1,0 +1,98 @@
+{"text": "ghar pe deliver karo", "entities": [{"start": 0, "end": 4, "label": "ADDR_TYPE"}]}
+{"text": "office mein bhejo", "entities": [{"start": 0, "end": 6, "label": "ADDR_TYPE"}]}
+{"text": "work address pe", "entities": [{"start": 0, "end": 4, "label": "ADDR_TYPE"}]}
+{"text": "home delivery chahiye", "entities": [{"start": 0, "end": 4, "label": "ADDR_TYPE"}]}
+{"text": "hostel mein bhej do", "entities": [{"start": 0, "end": 6, "label": "ADDR_TYPE"}]}
+{"text": "shop pe deliver karo", "entities": [{"start": 0, "end": 4, "label": "ADDR_TYPE"}]}
+{"text": "college address pe bhejo", "entities": [{"start": 0, "end": 7, "label": "ADDR_TYPE"}]}
+{"text": "pg mein deliver karo", "entities": [{"start": 0, "end": 2, "label": "ADDR_TYPE"}]}
+{"text": "apartment mein chahiye", "entities": [{"start": 0, "end": 9, "label": "ADDR_TYPE"}]}
+{"text": "flat pe bhejo", "entities": [{"start": 0, "end": 4, "label": "ADDR_TYPE"}]}
+{"text": "hotel room mein deliver", "entities": [{"start": 0, "end": 10, "label": "ADDR_TYPE"}]}
+{"text": "society gate pe", "entities": [{"start": 0, "end": 12, "label": "ADDR_TYPE"}]}
+{"text": "main gate pe milna hai", "entities": [{"start": 0, "end": 9, "label": "ADDR_TYPE"}]}
+{"text": "basement parking mein", "entities": [{"start": 0, "end": 16, "label": "ADDR_TYPE"}]}
+{"text": "reception pe dena", "entities": [{"start": 0, "end": 9, "label": "ADDR_TYPE"}]}
+{"text": "lobby mein milna hai", "entities": [{"start": 0, "end": 5, "label": "ADDR_TYPE"}]}
+{"text": "canteen mein deliver karo", "entities": [{"start": 0, "end": 7, "label": "ADDR_TYPE"}]}
+{"text": "factory address pe", "entities": [{"start": 0, "end": 7, "label": "ADDR_TYPE"}]}
+{"text": "warehouse mein bhejo", "entities": [{"start": 0, "end": 9, "label": "ADDR_TYPE"}]}
+{"text": "clinic pe deliver", "entities": [{"start": 0, "end": 6, "label": "ADDR_TYPE"}]}
+{"text": "rohini mein deliver karo", "entities": [{"start": 0, "end": 6, "label": "LOC"}]}
+{"text": "dwarka sector 12 pe", "entities": [{"start": 0, "end": 16, "label": "LOC"}]}
+{"text": "connaught place mein", "entities": [{"start": 0, "end": 15, "label": "LOC"}]}
+{"text": "lajpat nagar mein", "entities": [{"start": 0, "end": 12, "label": "LOC"}]}
+{"text": "saket metro ke paas", "entities": [{"start": 0, "end": 5, "label": "LOC"}]}
+{"text": "noida sector 62", "entities": [{"start": 0, "end": 15, "label": "LOC"}]}
+{"text": "gurgaon cyber city", "entities": [{"start": 0, "end": 18, "label": "LOC"}]}
+{"text": "karol bagh mein bhejo", "entities": [{"start": 0, "end": 10, "label": "LOC"}]}
+{"text": "south ex mein", "entities": [{"start": 0, "end": 9, "label": "LOC"}]}
+{"text": "janakpuri west", "entities": [{"start": 0, "end": 14, "label": "LOC"}]}
+{"text": "vaishali ghaziabad", "entities": [{"start": 0, "end": 18, "label": "LOC"}]}
+{"text": "indirapuram mein deliver karo", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "pitampura near metro", "entities": [{"start": 0, "end": 9, "label": "LOC"}]}
+{"text": "greater kailash 1", "entities": [{"start": 0, "end": 17, "label": "LOC"}]}
+{"text": "hauz khas village", "entities": [{"start": 0, "end": 17, "label": "LOC"}]}
+{"text": "malviya nagar mein", "entities": [{"start": 0, "end": 13, "label": "LOC"}]}
+{"text": "rajouri garden pe", "entities": [{"start": 0, "end": 14, "label": "LOC"}]}
+{"text": "preet vihar", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "mayur vihar phase 1", "entities": [{"start": 0, "end": 19, "label": "LOC"}]}
+{"text": "vasant kunj mein", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "paschim vihar", "entities": [{"start": 0, "end": 13, "label": "LOC"}]}
+{"text": "shalimar bagh", "entities": [{"start": 0, "end": 13, "label": "LOC"}]}
+{"text": "model town", "entities": [{"start": 0, "end": 10, "label": "LOC"}]}
+{"text": "civil lines", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "chandni chowk mein", "entities": [{"start": 0, "end": 13, "label": "LOC"}]}
+{"text": "defence colony", "entities": [{"start": 0, "end": 14, "label": "LOC"}]}
+{"text": "nehru place pe", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "laxmi nagar mein", "entities": [{"start": 0, "end": 11, "label": "LOC"}]}
+{"text": "kalkaji pe bhejo", "entities": [{"start": 0, "end": 7, "label": "LOC"}]}
+{"text": "sarita vihar", "entities": [{"start": 0, "end": 12, "label": "LOC"}]}
+{"text": "haan bilkul sahi hai", "entities": [{"start": 0, "end": 11, "label": "CONFIRM"}]}
+{"text": "yes please order karo", "entities": [{"start": 0, "end": 10, "label": "CONFIRM"}]}
+{"text": "theek hai proceed karo", "entities": [{"start": 0, "end": 9, "label": "CONFIRM"}]}
+{"text": "done bhai", "entities": [{"start": 0, "end": 4, "label": "CONFIRM"}]}
+{"text": "ok kar do order", "entities": [{"start": 0, "end": 2, "label": "CONFIRM"}]}
+{"text": "confirm hai", "entities": [{"start": 0, "end": 7, "label": "CONFIRM"}]}
+{"text": "sahi hai yeh", "entities": [{"start": 0, "end": 8, "label": "CONFIRM"}]}
+{"text": "bilkul sahi bataya", "entities": [{"start": 0, "end": 11, "label": "CONFIRM"}]}
+{"text": "agreed karo order", "entities": [{"start": 0, "end": 6, "label": "CONFIRM"}]}
+{"text": "proceed karo aage", "entities": [{"start": 0, "end": 7, "label": "CONFIRM"}]}
+{"text": "aage badho order karo", "entities": [{"start": 0, "end": 10, "label": "CONFIRM"}]}
+{"text": "pakka order karo", "entities": [{"start": 0, "end": 5, "label": "CONFIRM"}]}
+{"text": "sure hai mujhe", "entities": [{"start": 0, "end": 4, "label": "CONFIRM"}]}
+{"text": "definitely chahiye", "entities": [{"start": 0, "end": 10, "label": "CONFIRM"}]}
+{"text": "zaroor order karo", "entities": [{"start": 0, "end": 6, "label": "CONFIRM"}]}
+{"text": "haan haan sahi hai", "entities": [{"start": 0, "end": 9, "label": "CONFIRM"}]}
+{"text": "correct hai", "entities": [{"start": 0, "end": 7, "label": "CONFIRM"}]}
+{"text": "perfect order karo", "entities": [{"start": 0, "end": 7, "label": "CONFIRM"}]}
+{"text": "approved hai yeh", "entities": [{"start": 0, "end": 8, "label": "CONFIRM"}]}
+{"text": "final hai", "entities": [{"start": 0, "end": 5, "label": "CONFIRM"}]}
+{"text": "2 pizza aur 1 burger", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 2, "end": 7, "label": "FOOD"}, {"start": 12, "end": 13, "label": "QTY"}, {"start": 14, "end": 20, "label": "FOOD"}]}
+{"text": "3 samosa dena", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 2, "end": 8, "label": "FOOD"}]}
+{"text": "do plate momos", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 14, "label": "FOOD"}]}
+{"text": "ek biryani large", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 3, "end": 10, "label": "FOOD"}, {"start": 11, "end": 16, "label": "PREF"}]}
+{"text": "paneer tikka extra spicy", "entities": [{"start": 0, "end": 12, "label": "FOOD"}, {"start": 13, "end": 24, "label": "PREF"}]}
+{"text": "chole bhature aur lassi", "entities": [{"start": 0, "end": 13, "label": "FOOD"}, {"start": 18, "end": 23, "label": "FOOD"}]}
+{"text": "5 paratha aur raita", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 2, "end": 9, "label": "FOOD"}, {"start": 14, "end": 19, "label": "FOOD"}]}
+{"text": "masala dosa without chutney", "entities": [{"start": 0, "end": 11, "label": "FOOD"}, {"start": 12, "end": 27, "label": "PREF"}]}
+{"text": "veg thali dominos se", "entities": [{"start": 0, "end": 9, "label": "FOOD"}, {"start": 10, "end": 17, "label": "STORE"}]}
+{"text": "mcdonalds ka mcaloo tikki", "entities": [{"start": 0, "end": 9, "label": "STORE"}, {"start": 13, "end": 25, "label": "FOOD"}]}
+{"text": "kfc se chicken bucket", "entities": [{"start": 0, "end": 3, "label": "STORE"}, {"start": 7, "end": 21, "label": "FOOD"}]}
+{"text": "haldirams ke soan papdi", "entities": [{"start": 0, "end": 9, "label": "STORE"}, {"start": 13, "end": 23, "label": "FOOD"}]}
+{"text": "swiggy se order karo pizza hut ka", "entities": [{"start": 22, "end": 31, "label": "STORE"}]}
+{"text": "zomato pe barbeque nation check karo", "entities": [{"start": 10, "end": 26, "label": "STORE"}]}
+{"text": "mainland china ka manchurian", "entities": [{"start": 0, "end": 14, "label": "STORE"}, {"start": 18, "end": 28, "label": "FOOD"}]}
+{"text": "subway ka footlong veg", "entities": [{"start": 0, "end": 6, "label": "STORE"}, {"start": 10, "end": 22, "label": "FOOD"}]}
+{"text": "starbucks se coffee", "entities": [{"start": 0, "end": 9, "label": "STORE"}, {"start": 13, "end": 19, "label": "FOOD"}]}
+{"text": "4 gulab jamun mithai wale se", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 2, "end": 13, "label": "FOOD"}]}
+{"text": "chole kulche extra pyaaz ke saath", "entities": [{"start": 0, "end": 12, "label": "FOOD"}, {"start": 13, "end": 33, "label": "PREF"}]}
+{"text": "rajma chawal ghar jaisa", "entities": [{"start": 0, "end": 12, "label": "FOOD"}, {"start": 13, "end": 23, "label": "PREF"}]}
+{"text": "dal makhani butter naan ke saath", "entities": [{"start": 0, "end": 11, "label": "FOOD"}, {"start": 12, "end": 23, "label": "FOOD"}, {"start": 24, "end": 32, "label": "PREF"}]}
+{"text": "10 pani puri", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 3, "end": 12, "label": "FOOD"}]}
+{"text": "bhel puri meetha wala", "entities": [{"start": 0, "end": 9, "label": "FOOD"}, {"start": 10, "end": 21, "label": "PREF"}]}
+{"text": "pav bhaji extra butter", "entities": [{"start": 0, "end": 9, "label": "FOOD"}, {"start": 10, "end": 22, "label": "PREF"}]}
+{"text": "vada pav hari chutney", "entities": [{"start": 0, "end": 8, "label": "FOOD"}, {"start": 9, "end": 21, "label": "PREF"}]}
+{"text": "idli sambhar hot", "entities": [{"start": 0, "end": 12, "label": "FOOD"}, {"start": 13, "end": 16, "label": "PREF"}]}
+{"text": "uttapam onion", "entities": [{"start": 0, "end": 7, "label": "FOOD"}, {"start": 8, "end": 13, "label": "PREF"}]}
+{"text": "filter coffee south indian", "entities": [{"start": 0, "end": 13, "label": "FOOD"}, {"start": 14, "end": 27, "label": "PREF"}]}

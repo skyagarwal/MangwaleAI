@@ -1,0 +1,293 @@
+
+services:
+  # Development Backend - Hot Reload Enabled
+  mangwale-ai:
+    image: node:20-bullseye
+    container_name: mangwale_ai_dev
+    restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon --watch src --ext ts --exec 'ts-node -r tsconfig-paths/register src/main.ts'"
+    volumes:
+      - ./src:/app/src
+      - ./libs:/app/libs
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      - /app/node_modules
+      - /app/dist
+    ports:
+      - "3200:3200"
+      - "9229:9229"  # Debug port
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=search_search-network
+      
+      # test.mangwale.ai - API routes (EXCLUDE /api/voice which goes to frontend Next.js)
+      - traefik.http.routers.test-api.rule=Host(`test.mangwale.ai`) && ((PathPrefix(`/api`) && !PathPrefix(`/api/voice`)) || PathPrefix(`/health`) || PathPrefix(`/webhook`))
+      - traefik.http.routers.test-api.entrypoints=websecure
+      - traefik.http.routers.test-api.tls=true
+      - traefik.http.routers.test-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.test-api.service=mangwale-ai-test
+      - traefik.http.routers.test-api.priority=50
+      
+      # test.mangwale.ai - WebSocket support (highest priority)
+      - traefik.http.routers.test-websocket.rule=Host(`test.mangwale.ai`) && PathPrefix(`/socket.io`)
+      - traefik.http.routers.test-websocket.entrypoints=websecure
+      - traefik.http.routers.test-websocket.tls=true
+      - traefik.http.routers.test-websocket.tls.certresolver=letsencrypt
+      - traefik.http.routers.test-websocket.service=mangwale-ai-test-ws
+      - traefik.http.routers.test-websocket.priority=100
+      
+      # Service definitions
+      - traefik.http.services.mangwale-ai-test.loadbalancer.server.port=3200
+      - traefik.http.services.mangwale-ai-test.loadbalancer.server.scheme=http
+      - traefik.http.services.mangwale-ai-test-ws.loadbalancer.server.port=3200
+      - traefik.http.services.mangwale-ai-test-ws.loadbalancer.server.scheme=http
+      - traefik.http.services.mangwale-ai-test-ws.loadbalancer.responseforwarding.flushinterval=1ms
+    environment:
+      # Core
+      - NODE_ENV=development
+      - TZ=Asia/Kolkata
+      - PORT=3200
+      - APP_NAME=Mangwale AI
+      - LOG_LEVEL=debug
+      
+      # Database - connect directly to the local postgres service inside the compose network
+      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=mangwale_config
+      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_DB=headless_mangwale
+      
+      # Redis - connect directly to the local redis service inside the compose network
+      - REDIS_URL=redis://redis:6379/1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - REDIS_DB=1
+      
+      # Session/OTP
+      - SESSION_TTL=86400
+      - OTP_TTL=600
+      - OTP_LENGTH=6
+      - DEFAULT_PARCEL_MODULE_ID=3
+      
+      # Flow Engine
+      - FLOW_SOURCE=yaml
+      - FLOW_HOT_RELOAD=true
+      
+      # NLU - Mercury GPU (host network) + local fallback
+      - NLU_AI_ENABLED=${NLU_AI_ENABLED:-true}
+      - NLU_PRIMARY_ENDPOINT=${NLU_PRIMARY_ENDPOINT:-http://192.168.0.151:7010}
+      - NLU_FALLBACK_ENDPOINT=${NLU_FALLBACK_ENDPOINT:-http://host.docker.internal:7010}
+      - NLU_MODEL_NAME=${NLU_MODEL_NAME:-ai4bharat/IndicBERTv2-MLM-Back-TLM}
+      - INTENT_MODEL_PATH=${INTENT_MODEL_PATH:-/models/indicbert_active}
+      - NLU_CONFIDENCE_THRESHOLD=${NLU_CONFIDENCE_THRESHOLD:-0.65}
+      
+      # Search Services - Use search-api for all searches (NOT direct OpenSearch!)
+      - SEARCH_API_URL=${SEARCH_API_URL:-http://search-api:3100}
+      - OPENSEARCH_URL=${OPENSEARCH_URL:-http://search-api:3100}
+      - OPENSEARCH_NODE=${OPENSEARCH_NODE:-http://search-api:3100}
+      - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME:-admin}
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD:-admin}
+      - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL:-http://search-embedding-service:3101}
+      
+      # PHP Backend
+      - PHP_BACKEND_URL=https://new.mangwale.com
+      - PHP_API_BASE_URL=https://new.mangwale.com
+      - PHP_API_TIMEOUT=30000
+      
+      # Google APIs (for external vendor search when restaurant not in our database)
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-AIzaSyC7YEeS-IfkYi6MftfJWpgMFU3fYapoakw}
+      - GOOGLE_PLACES_API_KEY=${GOOGLE_PLACES_API_KEY:-AIzaSyC7YEeS-IfkYi6MftfJWpgMFU3fYapoakw}
+      
+      # PHP MySQL Database (for rider/driver profile queries)
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT:-3307}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-mangwale_db}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - PHP_DB_HOST=${PHP_DB_HOST:-${MYSQL_HOST}}
+      - PHP_DB_PORT=${PHP_DB_PORT:-${MYSQL_PORT:-3307}}
+      - PHP_DB_NAME=${MYSQL_DATABASE:-mangwale_db}
+      - PHP_DB_USER=${MYSQL_USER:-root}
+      - PHP_DB_PASSWORD=${MYSQL_PASSWORD:-root_password}
+      
+      # Voice Services - Mercury GPU Server (host network)
+      - ASR_SERVICE_URL=${ASR_SERVICE_URL:-http://192.168.0.151:7001}
+      - TTS_SERVICE_URL=${TTS_SERVICE_URL:-http://192.168.0.151:7002}
+      - VOICE_ORCHESTRATOR_URL=${VOICE_ORCHESTRATOR_URL:-http://192.168.0.151:7000}
+      - NERVE_SYSTEM_URL=${NERVE_SYSTEM_URL:-http://192.168.0.151:7100}
+      - EXOTEL_SERVICE_URL=${EXOTEL_SERVICE_URL:-http://192.168.0.151:3100}
+      
+      # LLM - Ollama (HOST via host.docker.internal for GPU) + vLLM fallback
+      - LLM_MODE=${LLM_MODE:-hybrid}
+      # vLLM - Primary LLM provider (Qwen2.5-7B-AWQ on GPU)
+      - VLLM_URL=${VLLM_URL:-http://host.docker.internal:8002}
+      - VLLM_CHAT_ENDPOINT=${VLLM_CHAT_ENDPOINT:-http://host.docker.internal:8002/v1/chat/completions}
+      - VLLM_MODEL=${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct-AWQ}
+      - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-vllm}
+      - DEFAULT_CLOUD_PROVIDER=${DEFAULT_CLOUD_PROVIDER:-groq}
+      
+      # Cloud LLM Providers
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      
+      # WhatsApp
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID:-}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN:-}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN:-}
+      - WHATSAPP_API_VERSION=${WHATSAPP_API_VERSION:-v24.0}
+      
+      # Frappe ERP
+      - FRAPPE_BASE_URL=${FRAPPE_BASE_URL:-https://erp.sarvin.in}
+      - FRAPPE_API_KEY=${FRAPPE_API_KEY:-}
+      - FRAPPE_API_SECRET=${FRAPPE_API_SECRET:-}
+    networks:
+      - default
+      - search_search-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3200/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # Ollama runs on HOST (systemd service) for GPU access
+  # Backend connects via host.docker.internal:11434
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: mangwale_ollama
+  #   ...
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: mangwale_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=mangwale_config
+      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_DB=headless_mangwale
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mangwale_config -d headless_mangwale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: mangwale_redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  scraper:
+    build: ../scraper-service
+    container_name: mangwale_scraper
+    restart: unless-stopped
+    ports:
+      - "3300:3300"
+    environment:
+      - PORT=3300
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      - REDIS_URL=redis://redis:6379
+      - ZOMATO_REQUESTS_PER_MINUTE=10
+      - SWIGGY_REQUESTS_PER_MINUTE=10
+      - CACHE_TTL_DAYS=7
+      - HEADLESS=true
+      - USER_AGENT_ROTATION=true
+      - DEFAULT_LAT=19.9975
+      - DEFAULT_LNG=73.7898
+      - LOG_LEVEL=info
+    networks:
+      - default
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3300/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================
+  # FRONTEND (Next.js Dashboard)
+  # ===========================================
+  mangwale-frontend:
+    image: node:20-alpine
+    container_name: mangwale_frontend_dev
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3005:3005"
+    volumes:
+      - ../frontend:/app
+      - frontend-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true
+      - PORT=3005
+      # Backend URLs
+      - NEXT_PUBLIC_WS_URL=wss://test.mangwale.ai
+      - NEXT_PUBLIC_MANGWALE_AI_URL=https://test.mangwale.ai
+      - NEXT_PUBLIC_ADMIN_BACKEND_URL=https://test.mangwale.ai
+      - BACKEND_INTERNAL_URL=http://mangwale_ai_dev:3200
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=search_search-network
+      
+      # test.mangwale.ai - Next.js /api/voice routes (higher priority than backend /api)
+      - traefik.http.routers.test-frontend-api-voice.rule=Host(`test.mangwale.ai`) && PathPrefix(`/api/voice`)
+      - traefik.http.routers.test-frontend-api-voice.entrypoints=websecure
+      - traefik.http.routers.test-frontend-api-voice.tls=true
+      - traefik.http.routers.test-frontend-api-voice.tls.certresolver=letsencrypt
+      - traefik.http.routers.test-frontend-api-voice.service=mangwale-frontend-test
+      - traefik.http.routers.test-frontend-api-voice.priority=60
+      
+      # test.mangwale.ai - Frontend routes (default/lowest priority)
+      - traefik.http.routers.test-frontend.rule=Host(`test.mangwale.ai`)
+      - traefik.http.routers.test-frontend.entrypoints=websecure
+      - traefik.http.routers.test-frontend.tls=true
+      - traefik.http.routers.test-frontend.tls.certresolver=letsencrypt
+      - traefik.http.routers.test-frontend.service=mangwale-frontend-test
+      - traefik.http.routers.test-frontend.priority=10
+      
+      # Service definition
+      - traefik.http.services.mangwale-frontend-test.loadbalancer.server.port=3005
+    networks:
+      - default
+      - search_search-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  frontend-node-modules:
+
+networks:
+  default:
+    name: mangwale-ai_default
+    external: true
+  search_search-network:
+    external: true

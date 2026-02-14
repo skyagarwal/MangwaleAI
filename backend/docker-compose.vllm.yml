@@ -1,0 +1,52 @@
+
+################################################################################
+# vLLM Service - Gemma 3 4B Optimized for Speed
+# Model: google/gemma-3-4b-it (4B params, fast inference)
+# GPU: RTX 3060 12GB - fits comfortably with room for other services
+# Port: 8002 (OpenAI-compatible API)
+################################################################################
+
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: mangwale_vllm
+    restart: unless-stopped
+    runtime: nvidia
+    ports:
+      - "8002:8000"
+    environment:
+      - HF_TOKEN=${HF_TOKEN:-}
+      - NVIDIA_VISIBLE_DEVICES=0
+      - CUDA_VISIBLE_DEVICES=0
+      - VLLM_ATTENTION_BACKEND=FLASHINFER
+    volumes:
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: >
+      --model google/gemma-3-4b-it
+      --port 8000
+      --host 0.0.0.0
+      --max-model-len 4096
+      --tensor-parallel-size 1
+      --gpu-memory-utilization 0.85
+      --dtype auto
+      --max-num-seqs 8
+      --enforce-eager
+      --disable-log-requests
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

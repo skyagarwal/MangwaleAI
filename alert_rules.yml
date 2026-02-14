@@ -1,0 +1,145 @@
+# Alert Rules for Mangwale AI
+
+groups:
+  - name: mangwale_alerts
+    interval: 30s
+    rules:
+      # High Error Rate Alert
+      - alert: HighMessageErrorRate
+        expr: |
+          (
+            rate(mangwale_messages_processed_total{status="error"}[5m])
+            /
+            rate(mangwale_messages_processed_total[5m])
+          ) > 0.01
+        for: 5m
+        annotations:
+          summary: "High message error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: >1%)"
+
+      # High Latency Alert (p99)
+      - alert: HighMessageLatency
+        expr: |
+          histogram_quantile(0.99, mangwale_message_processing_duration_seconds_bucket) > 0.5
+        for: 5m
+        annotations:
+          summary: "High message processing latency detected"
+          description: "p99 latency is {{ $value }}s (threshold: >500ms)"
+
+      # Low Success Rate Alert
+      - alert: LowMessageSuccessRate
+        expr: |
+          (
+            rate(mangwale_messages_processed_total{status="success"}[5m])
+            /
+            rate(mangwale_messages_processed_total[5m])
+          ) < 0.95
+        for: 10m
+        annotations:
+          summary: "Low message success rate"
+          description: "Success rate is {{ $value | humanizePercentage }} (threshold: <95%)"
+
+      # API Down Alert
+      - alert: APIServerDown
+        expr: up{job="mangwale-api"} == 0
+        for: 1m
+        annotations:
+          summary: "Mangwale API server is down"
+          description: "The API server at localhost:3200 is not responding"
+
+      # High Duplicate Rate Alert
+      - alert: HighDuplicateRate
+        expr: |
+          rate(mangwale_messages_deduplicated_total[5m]) > 1
+        for: 5m
+        annotations:
+          summary: "High message duplication rate"
+          description: "Duplicate rate is {{ $value }}/sec (threshold: >1/sec)"
+
+      # Rate Limit Hit Alert
+      - alert: RateLimitExceeded
+        expr: |
+          increase(http_requests_total{status="429"}[1m]) > 10
+        for: 2m
+        annotations:
+          summary: "Rate limit exceeded frequently"
+          description: "{{ $value }} requests were rate limited in the last minute"
+  # ═══════════════════════════════════════════════════════════════
+  # FLOW ENGINE ALERTS - NEW!
+  # ═══════════════════════════════════════════════════════════════
+  - name: flow_alerts
+    interval: 30s
+    rules:
+      # Low Flow Completion Rate
+      - alert: LowFlowCompletionRate
+        expr: |
+          (
+            sum(rate(mangwale_flow_completions_total{status="completed"}[10m])) by (flow_name)
+            /
+            sum(rate(mangwale_flow_executions_total[10m])) by (flow_name)
+          ) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low flow completion rate for {{ $labels.flow_name }}"
+          description: "Only {{ $value | humanizePercentage }} of {{ $labels.flow_name }} flows are completing (threshold: <50%)"
+
+      # High Flow Drop-off Rate
+      - alert: HighFlowDropoffRate
+        expr: |
+          sum(rate(mangwale_flow_dropoffs_total[10m])) by (flow_name, state) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High drop-off rate in {{ $labels.flow_name }} at {{ $labels.state }}"
+          description: "{{ $value }} users per second dropping off at {{ $labels.state }} in {{ $labels.flow_name }}"
+
+      # Critical Flow Drop-off
+      - alert: CriticalFlowDropoff
+        expr: |
+          sum(rate(mangwale_flow_dropoffs_total[5m])) by (flow_name, state) > 2
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CRITICAL: Mass drop-off in {{ $labels.flow_name }}"
+          description: "{{ $value }} users per second dropping off at {{ $labels.state }} - possible flow bug"
+
+      # Flow Errors Spike
+      - alert: FlowErrorsSpike
+        expr: |
+          rate(mangwale_flow_completions_total{status="error"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Flow errors spiking"
+          description: "{{ $value }} flow errors per second (threshold: >0.1/sec)"
+
+      # Slow Flow Execution
+      - alert: SlowFlowExecution
+        expr: |
+          histogram_quantile(0.95, mangwale_flow_duration_seconds_bucket) > 30
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow flow execution detected"
+          description: "p95 flow duration is {{ $value }}s (threshold: >30s)"
+
+      # Flow Abandonment Pattern
+      - alert: FlowAbandonmentPattern
+        expr: |
+          (
+            sum(rate(mangwale_flow_completions_total{status="abandoned"}[10m])) by (flow_name)
+            /
+            sum(rate(mangwale_flow_executions_total[10m])) by (flow_name)
+          ) > 0.3
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High abandonment rate in {{ $labels.flow_name }}"
+          description: "{{ $value | humanizePercentage }} of flows abandoned - UX issue?"

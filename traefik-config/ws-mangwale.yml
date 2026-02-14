@@ -1,0 +1,21 @@
+# Dedicated WebSocket subdomain for Mangwale
+# This provides clean WebSocket routing without path conflicts
+http:
+  routers:
+    ws-mangwale-dedicated:
+      rule: "Host(`ws.mangwale.ai`)"
+      service: ws-mangwale-backend
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - websocket-headers@file
+
+  services:
+    ws-mangwale-backend:
+      loadBalancer:
+        servers:
+          - url: "http://172.17.0.1:3200"
+        passHostHeader: true
+        serversTransport: websocket-transport@file

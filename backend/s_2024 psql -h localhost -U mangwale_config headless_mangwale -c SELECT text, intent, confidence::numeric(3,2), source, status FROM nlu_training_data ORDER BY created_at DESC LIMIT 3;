@@ -1,0 +1,7 @@
+              text              |     intent     | confidence | source |     status     
+--------------------------------+----------------+------------+--------+----------------
+ mujhe masala dosa mangwana hai | order_food     |  0.9453125 | nlu    | approved
+ kuch khaana ke maan hai        | order_food     | 0.73828125 | nlu    | pending_review
+ send a parcel                  | parcel_booking | 0.62109375 | nlu    | pending_review
+(3 rows)
+

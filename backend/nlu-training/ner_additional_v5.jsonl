@@ -1,0 +1,63 @@
+{"text": "ek plate biryani do", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 16, "label": "FOOD"}]}
+{"text": "2 plate poha chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 12, "label": "FOOD"}]}
+{"text": "3 plate misal pav lao", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 17, "label": "FOOD"}]}
+{"text": "teen plate paneer tikka", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 11, "end": 23, "label": "FOOD"}]}
+{"text": "1 plate chicken fried rice", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 26, "label": "FOOD"}]}
+{"text": "char plate momos order karo", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 11, "end": 16, "label": "FOOD"}]}
+{"text": "do plate daal rice mangwao", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 18, "label": "FOOD"}]}
+{"text": "5 plate samosa bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 14, "label": "FOOD"}]}
+{"text": "2 glass lassi chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 13, "label": "FOOD"}]}
+{"text": "ek glass mango shake", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 20, "label": "FOOD"}]}
+{"text": "3 piece chicken lollipop", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 24, "label": "FOOD"}]}
+{"text": "do bowl soup mangwao", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 8, "end": 12, "label": "FOOD"}]}
+{"text": "1 bowl dal makhni chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 7, "end": 17, "label": "FOOD"}]}
+{"text": "4 piece tandoori chicken", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 24, "label": "FOOD"}]}
+{"text": "teen glass chai lao", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 11, "end": 15, "label": "FOOD"}]}
+{"text": "paanch roti chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY"}, {"start": 7, "end": 11, "label": "FOOD"}]}
+{"text": "chhe naan butter wali", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 5, "end": 9, "label": "FOOD"}, {"start": 10, "end": 21, "label": "PREF"}]}
+{"text": "das samosa order karo", "entities": [{"start": 0, "end": 3, "label": "QTY"}, {"start": 4, "end": 10, "label": "FOOD"}]}
+{"text": "aath paratha bhejo ghar pe", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 5, "end": 12, "label": "FOOD"}]}
+{"text": "bees gulab jamun chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 5, "end": 16, "label": "FOOD"}]}
+{"text": "pandrah vada pav pack karo", "entities": [{"start": 0, "end": 7, "label": "QTY"}, {"start": 8, "end": 16, "label": "FOOD"}]}
+{"text": "barah plate biryani party ke liye", "entities": [{"start": 0, "end": 5, "label": "QTY"}, {"start": 12, "end": 19, "label": "FOOD"}]}
+{"text": "do pizza aur teen burger star boys se", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 3, "end": 8, "label": "FOOD"}, {"start": 13, "end": 17, "label": "QTY"}, {"start": 18, "end": 24, "label": "FOOD"}, {"start": 25, "end": 34, "label": "STORE"}]}
+{"text": "1 biryani 2 naan aur 1 raita inayat cafe se", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 2, "end": 9, "label": "FOOD"}, {"start": 10, "end": 11, "label": "QTY"}, {"start": 12, "end": 16, "label": "FOOD"}, {"start": 23, "end": 28, "label": "FOOD"}, {"start": 29, "end": 40, "label": "STORE"}]}
+{"text": "ek plate misal do vada pav tushar se", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 14, "label": "FOOD"}, {"start": 15, "end": 17, "label": "QTY"}, {"start": 18, "end": 26, "label": "FOOD"}, {"start": 27, "end": 33, "label": "STORE"}]}
+{"text": "4 plate poha aur 2 chai mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 12, "label": "FOOD"}, {"start": 17, "end": 18, "label": "QTY"}, {"start": 19, "end": 23, "label": "FOOD"}]}
+{"text": "biryani chahiye paradise hotel gangapur road se", "entities": [{"start": 0, "end": 7, "label": "FOOD"}, {"start": 16, "end": 30, "label": "STORE"}, {"start": 31, "end": 44, "label": "LOC"}]}
+{"text": "pizza order karo dominos panchavati se", "entities": [{"start": 0, "end": 5, "label": "FOOD"}, {"start": 17, "end": 24, "label": "STORE"}, {"start": 25, "end": 35, "label": "LOC"}]}
+{"text": "vada pav tushar misal nashik road wala", "entities": [{"start": 0, "end": 8, "label": "FOOD"}, {"start": 9, "end": 21, "label": "STORE"}, {"start": 22, "end": 33, "label": "LOC"}]}
+{"text": "momos order karo wow momos college road", "entities": [{"start": 0, "end": 5, "label": "FOOD"}, {"start": 17, "end": 26, "label": "STORE"}, {"start": 27, "end": 39, "label": "LOC"}]}
+{"text": "paneer tikka extra spicy chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD"}, {"start": 13, "end": 24, "label": "PREF"}]}
+{"text": "butter naan less oil wala", "entities": [{"start": 0, "end": 11, "label": "FOOD"}, {"start": 12, "end": 25, "label": "PREF"}]}
+{"text": "biryani mild spice double raita", "entities": [{"start": 0, "end": 7, "label": "FOOD"}, {"start": 8, "end": 18, "label": "PREF"}, {"start": 19, "end": 31, "label": "PREF"}]}
+{"text": "pizza no onion extra cheese", "entities": [{"start": 0, "end": 5, "label": "FOOD"}, {"start": 6, "end": 14, "label": "PREF"}, {"start": 15, "end": 27, "label": "PREF"}]}
+{"text": "chai kam sugar wali 2 cup", "entities": [{"start": 0, "end": 4, "label": "FOOD"}, {"start": 5, "end": 19, "label": "PREF"}, {"start": 20, "end": 21, "label": "QTY"}]}
+{"text": "order status batao", "entities": []}
+{"text": "delivery kitni der mein aayega", "entities": []}
+{"text": "payment kaise karu", "entities": []}
+{"text": "cancel karna hai order", "entities": []}
+{"text": "refund chahiye mujhe", "entities": []}
+{"text": "complaint karna hai", "entities": []}
+{"text": "rider ka number do", "entities": []}
+{"text": "kuch nahi chahiye thanks", "entities": []}
+{"text": "address change karna hai", "entities": []}
+{"text": "hello ji kaise ho", "entities": []}
+{"text": "satpur se kuch mangwao", "entities": [{"start": 0, "end": 6, "label": "LOC"}]}
+{"text": "cidco colony delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC"}]}
+{"text": "panchavati pe kuch bhejo", "entities": [{"start": 0, "end": 10, "label": "LOC"}]}
+{"text": "gangapur road wala restaurant dikha do", "entities": [{"start": 0, "end": 13, "label": "LOC"}]}
+{"text": "indira nagar mein koi accha hotel batao", "entities": [{"start": 0, "end": 12, "label": "LOC"}]}
+{"text": "half biryani chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 5, "end": 12, "label": "FOOD"}]}
+{"text": "double cheese pizza", "entities": [{"start": 7, "end": 19, "label": "FOOD"}]}
+{"text": "quarter kg chicken", "entities": [{"start": 0, "end": 10, "label": "QTY"}, {"start": 11, "end": 18, "label": "FOOD"}]}
+{"text": "aadha kg mutton chahiye", "entities": [{"start": 0, "end": 8, "label": "QTY"}, {"start": 9, "end": 15, "label": "FOOD"}]}
+{"text": "1 kg chicken biryani order karo", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 5, "end": 20, "label": "FOOD"}]}
+{"text": "2 plate sabudana khichdi", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 24, "label": "FOOD"}]}
+{"text": "1 plate pav bhaji special", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 17, "label": "FOOD"}, {"start": 18, "end": 25, "label": "PREF"}]}
+{"text": "3 cup coffee lao", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 6, "end": 12, "label": "FOOD"}]}
+{"text": "ek plate chole bhature", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 22, "label": "FOOD"}]}
+{"text": "do plate idli sambar", "entities": [{"start": 0, "end": 2, "label": "QTY"}, {"start": 9, "end": 20, "label": "FOOD"}]}
+{"text": "4 glass nimbu paani", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 19, "label": "FOOD"}]}
+{"text": "1 plate pani puri mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY"}, {"start": 8, "end": 17, "label": "FOOD"}]}
+{"text": "teen plate chole kulche", "entities": [{"start": 0, "end": 4, "label": "QTY"}, {"start": 11, "end": 23, "label": "FOOD"}]}

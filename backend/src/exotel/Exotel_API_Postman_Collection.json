@@ -1,0 +1,889 @@
+{
+	"info": {
+		"name": "Exotel API - Complete Collection",
+		"description": "Complete Postman collection for Exotel Voice & SMS integration and Nerve AI Voice Calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "exotel-api"
+	},
+	"item": [
+		{
+			"name": "Health & Status",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "health"]
+						},
+						"description": "Check Exotel service health and connectivity"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "status"]
+						},
+						"description": "Get detailed service status and features"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Configuration",
+			"item": [
+				{
+					"name": "Get Configuration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config"]
+						},
+						"description": "Get all Exotel configuration settings"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Configuration",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"serviceUrl\": \"http://192.168.0.151:3100\",\n  \"apiKey\": \"your-api-key\",\n  \"apiToken\": \"your-api-token\",\n  \"accountSid\": \"your-account-sid\",\n  \"subdomain\": \"api.in.exotel.com\",\n  \"defaultExoPhone\": \"08040XXXXX\",\n  \"dltEntityId\": \"your-dlt-entity-id\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config"]
+						},
+						"description": "Update Exotel configuration settings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Timing Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/timing",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "timing"]
+						},
+						"description": "Get business hours, DND, and calling time configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Timing Config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"businessHoursStart\": \"09:00\",\n  \"businessHoursEnd\": \"21:00\",\n  \"dndStart\": \"21:00\",\n  \"dndEnd\": \"09:00\",\n  \"promoSmsStart\": \"10:00\",\n  \"promoSmsEnd\": \"21:00\",\n  \"timezone\": \"Asia/Kolkata\",\n  \"weekendCallsAllowed\": false,\n  \"holidays\": []\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/timing",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "timing"]
+						},
+						"description": "Update business hours and DND settings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Retry Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/retry",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "retry"]
+						},
+						"description": "Get call retry configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Retry Config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"maxAttempts\": 3,\n  \"initialDelaySeconds\": 300,\n  \"backoffMultiplier\": 2,\n  \"maxDelaySeconds\": 3600,\n  \"retryOnBusy\": true,\n  \"retryOnNoAnswer\": true,\n  \"retryOnNetworkError\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/retry",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "retry"]
+						},
+						"description": "Update call retry settings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feature Flags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/features",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "features"]
+						},
+						"description": "Get Exotel feature enable/disable flags"
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Feature",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"enabled\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/config/features/verifiedCallsEnabled",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "config", "features", "verifiedCallsEnabled"]
+						},
+						"description": "Enable or disable an Exotel feature. Features: verifiedCallsEnabled, numberMaskingEnabled, voiceStreamingEnabled, autoDialerEnabled, cqaEnabled"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Timing Check",
+			"item": [
+				{
+					"name": "Check Timing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/timing/check?purpose=order_confirmation",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "timing", "check"],
+							"query": [
+								{
+									"key": "purpose",
+									"value": "order_confirmation",
+									"description": "Call purpose: order_confirmation, delivery_update, payment_reminder, promotional_offer, feedback_request, support_callback, otp_verification, abandoned_cart, custom"
+								}
+							]
+						},
+						"description": "Check if current time allows calling/SMS"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Click-to-Call",
+			"item": [
+				{
+					"name": "Initiate Click-to-Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agentPhone\": \"+919876543210\",\n  \"customerPhone\": \"+919123456789\",\n  \"callerId\": \"08040XXXXX\",\n  \"timeLimit\": 1800,\n  \"recordCall\": true,\n  \"customField\": \"ORDER-12345\",\n  \"statusCallback\": \"https://your-app.com/webhooks/call-status\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/click-to-call",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "click-to-call"]
+						},
+						"description": "Connect agent to customer via phone call"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Number Masking",
+			"item": [
+				{
+					"name": "Create Masked Number",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"partyA\": \"+919876543210\",\n  \"partyB\": \"+919123456789\",\n  \"expiresInHours\": 24,\n  \"callType\": \"trans\",\n  \"context\": \"ORDER-12345\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/number-masking",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "number-masking"]
+						},
+						"description": "Get a virtual number for agent-customer communication"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Voice Streaming",
+			"item": [
+				{
+					"name": "Start Voice Stream",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"session_12345\",\n  \"phone\": \"+919123456789\",\n  \"language\": \"hi-IN\",\n  \"wsEndpoint\": \"wss://your-app.com/voice-stream\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/voice-stream/start",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "voice-stream", "start"]
+						},
+						"description": "Start real-time voice streaming for ASR/TTS"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verified Calls",
+			"item": [
+				{
+					"name": "Initiate Verified Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+919123456789\",\n  \"reason\": \"Order Delivery Update\",\n  \"orderId\": \"ORDER-12345\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/verified-calls",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "verified-calls"]
+						},
+						"description": "Make a Truecaller-verified branded call"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SMS",
+			"item": [
+				{
+					"name": "Send SMS",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to\": \"+919123456789\",\n  \"message\": \"Your order ORDER-12345 has been confirmed. Expected delivery: Today by 7 PM. Thank you for shopping with Mangwale!\",\n  \"templateId\": \"TEMPLATE_123\",\n  \"dltTemplateId\": \"DLT_TEMPLATE_123\",\n  \"smsType\": \"transactional\",\n  \"priority\": \"normal\",\n  \"customField\": \"ORDER-12345\",\n  \"statusCallback\": \"https://your-app.com/webhooks/sms-status\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/sms/send",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "sms", "send"]
+						},
+						"description": "Send a single SMS message"
+					},
+					"response": []
+				},
+				{
+					"name": "Send Bulk SMS",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"from\": \"MANGWALE\",\n  \"recipients\": [\n    \"+919123456789\",\n    \"+919876543210\",\n    \"+919112233445\"\n  ],\n  \"message\": \"Special offer! Get 20% off on your next order. Use code SAVE20. Valid till midnight.\",\n  \"smsType\": \"promotional\",\n  \"dltEntityId\": \"your-dlt-entity-id\",\n  \"dltTemplateId\": \"DLT_TEMPLATE_456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/sms/bulk",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "sms", "bulk"]
+						},
+						"description": "Send SMS to multiple recipients (max 100)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WhatsApp",
+			"item": [
+				{
+					"name": "Send WhatsApp",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to\": \"+919123456789\",\n  \"templateName\": \"order_confirmation\",\n  \"variables\": {\n    \"orderId\": \"ORDER-12345\",\n    \"total\": \"₹450\",\n    \"deliveryTime\": \"Today by 7 PM\"\n  },\n  \"languageCode\": \"en\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/whatsapp/send",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "whatsapp", "send"]
+						},
+						"description": "Send WhatsApp message via template"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campaigns",
+			"item": [
+				{
+					"name": "Create Campaign",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Festival Sale Campaign\",\n  \"type\": \"outbound\",\n  \"contacts\": [\n    {\n      \"phone\": \"+919123456789\",\n      \"name\": \"John Doe\",\n      \"metadata\": {\n        \"orderCount\": 5,\n        \"lastOrderDate\": \"2024-01-15\"\n      }\n    },\n    {\n      \"phone\": \"+919876543210\",\n      \"name\": \"Jane Smith\",\n      \"metadata\": {\n        \"orderCount\": 2,\n        \"lastOrderDate\": \"2024-01-10\"\n      }\n    }\n  ],\n  \"template\": \"Hello {{name}}, we have a special offer for you!\",\n  \"purpose\": \"promotional_offer\",\n  \"dialerType\": \"progressive\",\n  \"schedule\": \"2024-01-20T10:00:00Z\",\n  \"retryConfig\": {\n    \"maxAttempts\": 3,\n    \"initialDelaySeconds\": 300,\n    \"backoffMultiplier\": 2,\n    \"maxDelaySeconds\": 3600\n  },\n  \"priority\": 5,\n  \"tags\": [\"festival\", \"sale\", \"2024\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/campaigns",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "campaigns"]
+						},
+						"description": "Create a new outbound calling/messaging campaign"
+					},
+					"response": []
+				},
+				{
+					"name": "List Campaigns",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/campaigns",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "campaigns"]
+						},
+						"description": "Get all campaigns"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Campaign",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/campaigns/campaign_123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "campaigns", "campaign_123"]
+						},
+						"description": "Get campaign details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Campaign Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/campaigns/campaign_123/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "campaigns", "campaign_123", "stats"]
+						},
+						"description": "Get campaign statistics"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scheduled Calls",
+			"item": [
+				{
+					"name": "Schedule Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+919123456789\",\n  \"purpose\": \"order_confirmation\",\n  \"preferredTime\": \"2024-01-20T14:00:00Z\",\n  \"context\": {\n    \"orderId\": \"ORDER-12345\",\n    \"orderAmount\": 450,\n    \"itemCount\": 3,\n    \"deliveryDate\": \"2024-01-21\"\n  },\n  \"useVerifiedCall\": true,\n  \"retryConfig\": {\n    \"maxAttempts\": 3,\n    \"initialDelaySeconds\": 300,\n    \"backoffMultiplier\": 2,\n    \"maxDelaySeconds\": 3600\n  },\n  \"priority\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/scheduled-calls",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "scheduled-calls"]
+						},
+						"description": "Schedule a call for optimal time with auto-retry"
+					},
+					"response": []
+				},
+				{
+					"name": "List Scheduled Calls",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/scheduled-calls?limit=50",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "scheduled-calls"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Get pending scheduled calls"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Scheduled Call Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/scheduled-calls/call_1234567890_abc123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "scheduled-calls", "call_1234567890_abc123"]
+						},
+						"description": "Get scheduled call status"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Scheduled Call",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/scheduled-calls/call_1234567890_abc123/cancel",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "scheduled-calls", "call_1234567890_abc123", "cancel"]
+						},
+						"description": "Cancel a pending scheduled call"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Scheduled Call Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/scheduled-calls/stats/summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "scheduled-calls", "stats", "summary"]
+						},
+						"description": "Get statistics for scheduled calls"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recordings",
+			"item": [
+				{
+					"name": "Get Recording",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/recordings/CALL_SID_123456",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "recordings", "CALL_SID_123456"]
+						},
+						"description": "Get call recording URL"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CQA (Call Quality Analysis)",
+			"item": [
+				{
+					"name": "Analyze Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"callSid\": \"CALL_SID_123456\",\n  \"analysisType\": \"full\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/cqa/analyze",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "cqa", "analyze"]
+						},
+						"description": "Run quality analysis on a call recording"
+					},
+					"response": []
+				},
+				{
+					"name": "Get CQA Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/cqa/stats?period=7d",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "cqa", "stats"],
+							"query": [
+								{
+									"key": "period",
+									"value": "7d",
+									"description": "Period: 24h, 7d, 30d"
+								}
+							]
+						},
+						"description": "Get CQA dashboard statistics"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Voice Ordering",
+			"item": [
+				{
+					"name": "Process Voice Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+919123456789\",\n  \"action\": \"start\",\n  \"orderData\": {\n    \"items\": [\n      {\"name\": \"Dal Makhani\", \"quantity\": 2, \"price\": 150}\n    ],\n    \"total\": 300\n  },\n  \"sessionId\": \"session_12345\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/voice-ordering",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "voice-ordering"]
+						},
+						"description": "Process voice-based order"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Call Logs",
+			"item": [
+				{
+					"name": "Get Call Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/calls?page=1&limit=20&status=completed&direction=outbound&phone=+919123456789",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "calls"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "status",
+									"value": "completed"
+								},
+								{
+									"key": "direction",
+									"value": "outbound"
+								},
+								{
+									"key": "phone",
+									"value": "+919123456789"
+								}
+							]
+						},
+						"description": "Get call history with filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Call Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/calls/CALL_SID_123456",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "calls", "CALL_SID_123456"]
+						},
+						"description": "Get details of a specific call"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "Get Call Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/templates/order_confirmation",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "templates", "order_confirmation"]
+						},
+						"description": "Get call script template for a purpose. Purposes: order_confirmation, delivery_update, payment_reminder, promotional_offer, feedback_request, support_callback, otp_verification, abandoned_cart, custom"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Nerve - AI Voice Calls",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "health"]
+						},
+						"description": "Check AI voice call system health"
+					},
+					"response": []
+				},
+				{
+					"name": "Vendor Order Confirmation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orderId\": 12345,\n  \"vendorId\": 67,\n  \"vendorPhone\": \"919876543210\",\n  \"vendorName\": \"Sharma Dhaba\",\n  \"orderAmount\": 450,\n  \"itemCount\": 3,\n  \"language\": \"hi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/vendor/confirm",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "vendor", "confirm"]
+						},
+						"description": "Initiate AI voice call to vendor for order confirmation"
+					},
+					"response": []
+				},
+				{
+					"name": "Rider Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orderId\": 12345,\n  \"riderId\": 89,\n  \"riderPhone\": \"919876543210\",\n  \"riderName\": \"Ramesh\",\n  \"vendorName\": \"Sharma Dhaba\",\n  \"vendorAddress\": \"Near SBI Bank, Main Road, Sector 5\",\n  \"estimatedAmount\": 35,\n  \"language\": \"hi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/rider/assign",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "rider", "assign"]
+						},
+						"description": "Initiate AI voice call to rider for order assignment"
+					},
+					"response": []
+				},
+				{
+					"name": "Nerve Callback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"call_id\": \"VC_12345_1234567890\",\n  \"call_sid\": \"EXOTEL_SID_123\",\n  \"event\": \"answered\",\n  \"status\": \"accepted\",\n  \"dtmf_digits\": \"1\",\n  \"prep_time\": 30,\n  \"rejection_reason\": null,\n  \"recording_url\": \"https://recordings.exotel.com/call_123.mp3\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/callback",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "callback"]
+						},
+						"description": "Receive callback from Nerve System with call results"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Call History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/calls/order/12345",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "calls", "order", "12345"]
+						},
+						"description": "Get all voice calls for an order"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Voice Call Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/calls/stats?period=7d",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "calls", "stats"],
+							"query": [
+								{
+									"key": "period",
+									"value": "7d",
+									"description": "Period: 24h, 7d, 30d"
+								}
+							]
+						},
+						"description": "Get AI voice call statistics"
+					},
+					"response": []
+				},
+				{
+					"name": "Retry Call",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exotel/nerve/calls/VC_12345_1234567890/retry",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exotel", "nerve", "calls", "VC_12345_1234567890", "retry"]
+						},
+						"description": "Retry a failed voice call"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
+
+

@@ -1,0 +1,92 @@
+{"text": "cart se pizza remove karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "burger hatao cart se", "intent": "remove_from_cart", "language": "hi"}
+{"text": "biryani delete karo cart se", "intent": "remove_from_cart", "language": "hi"}
+{"text": "remove pizza from cart", "intent": "remove_from_cart", "language": "en"}
+{"text": "delete burger from my cart", "intent": "remove_from_cart", "language": "en"}
+{"text": "pizza nikalo please", "intent": "remove_from_cart", "language": "hi"}
+{"text": "momos hatao cart se", "intent": "remove_from_cart", "language": "hi"}
+{"text": "samosa remove kar do", "intent": "remove_from_cart", "language": "hi"}
+{"text": "thali nahi chahiye", "intent": "remove_from_cart", "language": "hi"}
+{"text": "dosa cart se nikalo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "noodles remove karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "paratha nahi chahiye ab", "intent": "remove_from_cart", "language": "hi"}
+{"text": "ice cream hatao", "intent": "remove_from_cart", "language": "hi"}
+{"text": "shake delete karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "coffee remove from cart", "intent": "remove_from_cart", "language": "en"}
+{"text": "sandwich hatao please", "intent": "remove_from_cart", "language": "hi"}
+{"text": "ye pizza nahi chahiye", "intent": "remove_from_cart", "language": "hi"}
+{"text": "pehla item hatao", "intent": "remove_from_cart", "language": "hi"}
+{"text": "first wala remove karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "last item delete karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "second item nikalo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "doosra wala hatao", "intent": "remove_from_cart", "language": "hi"}
+{"text": "2 number wala remove", "intent": "remove_from_cart", "language": "hi"}
+{"text": "number 1 delete karo", "intent": "remove_from_cart", "language": "hi"}
+{"text": "teesra item nahi chahiye", "intent": "remove_from_cart", "language": "hi"}
+{"text": "cart se ek pizza kam karo", "intent": "update_quantity", "language": "hi"}
+{"text": "2 burger ki jagah 1 karo", "intent": "update_quantity", "language": "hi"}
+{"text": "pizza quantity kam karo", "intent": "update_quantity", "language": "hi"}
+{"text": "ek biryani minus karo", "intent": "update_quantity", "language": "hi"}
+{"text": "reduce pizza to 1", "intent": "update_quantity", "language": "en"}
+{"text": "decrease burger quantity", "intent": "update_quantity", "language": "en"}
+{"text": "pizza 2 se 1 karo", "intent": "update_quantity", "language": "hi"}
+{"text": "biryani ki quantity badhao", "intent": "update_quantity", "language": "hi"}
+{"text": "ek aur pizza add karo", "intent": "update_quantity", "language": "hi"}
+{"text": "burger badha do 2 karo", "intent": "update_quantity", "language": "hi"}
+{"text": "momos 3 chahiye", "intent": "update_quantity", "language": "hi"}
+{"text": "increase pizza count", "intent": "update_quantity", "language": "en"}
+{"text": "add 1 more burger", "intent": "update_quantity", "language": "en"}
+{"text": "pizza plus 1 karo", "intent": "update_quantity", "language": "hi"}
+{"text": "cart khali karo", "intent": "view_cart", "language": "hi"}
+{"text": "empty my cart", "intent": "view_cart", "language": "en"}
+{"text": "sab hatao cart se", "intent": "view_cart", "language": "hi"}
+{"text": "clear cart", "intent": "view_cart", "language": "en"}
+{"text": "cart clear karo", "intent": "view_cart", "language": "hi"}
+{"text": "sab delete karo cart se", "intent": "view_cart", "language": "hi"}
+{"text": "cart khaali kar do", "intent": "view_cart", "language": "hi"}
+{"text": "reset cart", "intent": "view_cart", "language": "en"}
+{"text": "all items remove karo", "intent": "view_cart", "language": "hi"}
+{"text": "poora cart saaf karo", "intent": "view_cart", "language": "hi"}
+{"text": "pizza add karo", "intent": "add_to_cart", "language": "hi"}
+{"text": "add pizza to cart", "intent": "add_to_cart", "language": "en"}
+{"text": "burger cart mein dalo", "intent": "add_to_cart", "language": "hi"}
+{"text": "biryani add kar do", "intent": "add_to_cart", "language": "hi"}
+{"text": "ye wala cart mein dalo", "intent": "add_to_cart", "language": "hi"}
+{"text": "add this to my cart", "intent": "add_to_cart", "language": "en"}
+{"text": "first wala add karo", "intent": "add_to_cart", "language": "hi"}
+{"text": "pehla pizza add", "intent": "add_to_cart", "language": "hi"}
+{"text": "2 biryani add karo", "intent": "add_to_cart", "language": "hi"}
+{"text": "3 burger dalo cart mein", "intent": "add_to_cart", "language": "hi"}
+{"text": "ek plate momos add", "intent": "add_to_cart", "language": "hi"}
+{"text": "dosa add please", "intent": "add_to_cart", "language": "hi"}
+{"text": "cart mein add karo ye", "intent": "add_to_cart", "language": "hi"}
+{"text": "order mein add karo", "intent": "add_to_cart", "language": "hi"}
+{"text": "ye bhi chahiye add karo", "intent": "add_to_cart", "language": "hi"}
+{"text": "mera cart dikhao", "intent": "view_cart", "language": "hi"}
+{"text": "show my cart", "intent": "view_cart", "language": "en"}
+{"text": "cart mein kya hai", "intent": "view_cart", "language": "hi"}
+{"text": "what's in my cart", "intent": "view_cart", "language": "en"}
+{"text": "cart items dikhao", "intent": "view_cart", "language": "hi"}
+{"text": "my cart please", "intent": "view_cart", "language": "en"}
+{"text": "cart check karo", "intent": "view_cart", "language": "hi"}
+{"text": "cart dekho", "intent": "view_cart", "language": "hi"}
+{"text": "order summary dikhao", "intent": "view_cart", "language": "hi"}
+{"text": "kitne items hai cart mein", "intent": "view_cart", "language": "hi"}
+{"text": "haan order karo", "intent": "confirm", "language": "hi"}
+{"text": "yes proceed", "intent": "confirm", "language": "en"}
+{"text": "confirm order", "intent": "confirm", "language": "en"}
+{"text": "haan sahi hai", "intent": "confirm", "language": "hi"}
+{"text": "ok theek hai", "intent": "confirm", "language": "hi"}
+{"text": "proceed to payment", "intent": "checkout", "language": "en"}
+{"text": "payment karo", "intent": "checkout", "language": "hi"}
+{"text": "checkout please", "intent": "checkout", "language": "en"}
+{"text": "order place karo", "intent": "checkout", "language": "hi"}
+{"text": "final order karo", "intent": "checkout", "language": "hi"}
+{"text": "nahi cancel karo", "intent": "cancel", "language": "hi"}
+{"text": "no cancel this", "intent": "cancel", "language": "en"}
+{"text": "order band karo", "intent": "cancel", "language": "hi"}
+{"text": "nahi chahiye ab", "intent": "cancel", "language": "hi"}
+{"text": "cancel order", "intent": "cancel", "language": "en"}
+{"text": "ruko mat karo", "intent": "cancel", "language": "hi"}
+{"text": "stop order", "intent": "cancel", "language": "en"}
+{"text": "ye order nahi chahiye", "intent": "cancel", "language": "hi"}

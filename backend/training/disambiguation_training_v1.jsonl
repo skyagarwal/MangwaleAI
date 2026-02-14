@@ -1,0 +1,65 @@
+{"text": "show my address book", "intent": "manage_address"}
+{"text": "show saved addresses", "intent": "manage_address"}
+{"text": "view my saved addresses", "intent": "manage_address"}
+{"text": "mera saved address dikhao", "intent": "manage_address"}
+{"text": "address book open karo", "intent": "manage_address"}
+{"text": "my saved locations", "intent": "manage_address"}
+{"text": "list my addresses", "intent": "manage_address"}
+{"text": "show all my addresses", "intent": "manage_address"}
+{"text": "mere purane address", "intent": "manage_address"}
+{"text": "home office address dikhao", "intent": "manage_address"}
+{"text": "saved address list", "intent": "manage_address"}
+{"text": "address book dekho", "intent": "manage_address"}
+{"text": "mere addresses kahan hai", "intent": "manage_address"}
+{"text": "show my home and office address", "intent": "manage_address"}
+{"text": "pehle wale address dikhao", "intent": "manage_address"}
+{"text": "my registered addresses", "intent": "manage_address"}
+{"text": "saved delivery addresses", "intent": "manage_address"}
+{"text": "show address I saved before", "intent": "manage_address"}
+{"text": "view my address list", "intent": "manage_address"}
+{"text": "dikhao mera address book", "intent": "manage_address"}
+{"text": "my current location", "intent": "share_location"}
+{"text": "share my location", "intent": "share_location"}
+{"text": "where am I right now", "intent": "share_location"}
+{"text": "my GPS location", "intent": "share_location"}
+{"text": "what's my location", "intent": "share_location"}
+{"text": "mera current location", "intent": "share_location"}
+{"text": "abhi main kahan hoon", "intent": "share_location"}
+{"text": "share location", "intent": "share_location"}
+{"text": "send my location", "intent": "share_location"}
+{"text": "GPS share karo", "intent": "share_location"}
+{"text": "meri location bhejo", "intent": "share_location"}
+{"text": "current position share", "intent": "share_location"}
+{"text": "where am I", "intent": "share_location"}
+{"text": "detect my location", "intent": "share_location"}
+{"text": "use my current location", "intent": "share_location"}
+{"text": "location access karo", "intent": "share_location"}
+{"text": "mera live location", "intent": "share_location"}
+{"text": "share GPS", "intent": "share_location"}
+{"text": "abhi wali location", "intent": "share_location"}
+{"text": "real time location", "intent": "share_location"}
+{"text": "yahan se pickup karo", "intent": "share_location"}
+{"text": "is jagah se", "intent": "share_location"}
+{"text": "meri jagah batao", "intent": "share_location"}
+{"text": "locate me", "intent": "share_location"}
+{"text": "find my location", "intent": "share_location"}
+{"text": "get my location", "intent": "share_location"}
+{"text": "fetch my location", "intent": "share_location"}
+{"text": "location share karna hai", "intent": "share_location"}
+{"text": "📍 share karo", "intent": "share_location"}
+{"text": "pin my location", "intent": "share_location"}
+{"text": "login is done", "intent": "confirmation"}
+{"text": "maine login kar liya", "intent": "confirmation"}
+{"text": "logged in", "intent": "confirmation"}
+{"text": "login ho gaya", "intent": "confirmation"}
+{"text": "yes I logged in", "intent": "confirmation"}
+{"text": "login complete", "intent": "confirmation"}
+{"text": "done with login", "intent": "confirmation"}
+{"text": "login kar liya hai", "intent": "confirmation"}
+{"text": "main logged in hoon", "intent": "confirmation"}
+{"text": "authentication done", "intent": "confirmation"}
+{"text": "haan login ho gaya", "intent": "confirmation"}
+{"text": "login successful", "intent": "confirmation"}
+{"text": "I have logged in now", "intent": "confirmation"}
+{"text": "signed in", "intent": "confirmation"}
+{"text": "sign in ho gaya", "intent": "confirmation"}

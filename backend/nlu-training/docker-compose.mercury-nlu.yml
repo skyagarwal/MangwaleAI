@@ -1,0 +1,45 @@
+
+# NLU Service for Mercury - GPU Enabled
+# Runs alongside ASR and TTS on Mercury's RTX 3060
+# Total VRAM usage: ASR(~2GB) + TTS(~3GB) + NLU(~1.5GB) ≈ 6.5GB
+
+services:
+  nlu:
+    build:
+      context: ../nlu-service
+      dockerfile: Dockerfile
+    image: mangwale-nlu:gpu
+    container_name: mangwale_nlu
+    restart: unless-stopped
+    ports:
+      - "7010:7010"
+    volumes:
+      # Models directory - receives trained models from Jupiter
+      - ./models:/models:ro
+      - ./hf_cache:/hf_cache
+    environment:
+      - DEVICE=cuda
+      - HF_MODEL_NAME=ai4bharat/IndicBERTv2-MLM-Back-TLM
+      - BASE_ENCODER=/models/indicbert_active
+      - INTENT_MODEL=/models/indicbert_active
+      - HF_HOME=/hf_cache
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - mangwale_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7010/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mangwale_network:
+    external: true
+    name: mangwale_network

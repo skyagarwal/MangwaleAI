@@ -1,0 +1,409 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../../database/prisma.service';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
+import { randomUUID } from 'crypto';
+
+export interface TrainingDataSample {
+  text: string;
+  intent: string;
+  entities: Record<string, any>;
+  tone?: string;
+  sentiment?: string;
+  confidence: number;
+  source: 'nlu' | 'llm-fallback' | 'manual';
+  reviewStatus: 'pending' | 'approved' | 'rejected';
+  userId?: string;
+  sessionId?: string;
+  language: string;
+}
+
+@Injectable()
+export class NluTrainingDataService {
+  private readonly logger = new Logger(NluTrainingDataService.name);
+  private readonly labelStudioUrl: string;
+  private readonly labelStudioApiKey: string;
+  private readonly labelStudioProjectId: string;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly httpService: HttpService,
+    private readonly config: ConfigService,
+  ) {
+    this.labelStudioUrl = this.config.get('LABEL_STUDIO_URL', 'http://localhost:8080');
+    this.labelStudioApiKey = this.config.get('LABEL_STUDIO_API_KEY', '');
+    this.labelStudioProjectId = this.config.get('LABEL_STUDIO_PROJECT', '1');
+  }
+
+  /**
+   * Save training sample to database AND Label Studio
+   * This implements the continuous learning loop
+   */
+  async captureTrainingSample(sample: TrainingDataSample): Promise<void> {
+    try {
+      // 0. Filter out spam/common short messages
+      const ignoredTexts = ['hi', 'hello', 'hey', 'ok', 'yes', 'no', 'thanks', 'thank you', 'bye'];
+      if (ignoredTexts.includes(sample.text.trim().toLowerCase()) || sample.text.length < 2) {
+        return;
+      }
+
+      // 1. Check for duplicates (Deduplication) using Prisma ORM
+      const existing = await this.prisma.nluTrainingData.findUnique({
+        where: { text: sample.text },
+        select: { id: true },
+      });
+      
+      if (existing) {
+        this.logger.debug(`Skipping duplicate training sample: "${sample.text}"`);
+        return;
+      }
+
+      // 2. Auto-approve high confidence samples (Auto-Training)
+      // Unified threshold: LLM fallback >= 0.90 auto-approved
+      if (sample.confidence >= 0.90 && sample.source === 'llm-fallback') {
+        sample.reviewStatus = 'approved';
+        this.logger.log(`✨ Auto-approved high confidence LLM sample: "${sample.text}" (${sample.intent}, conf=${sample.confidence.toFixed(2)})`);
+      }
+
+      // 3. Save to database for immediate access
+      await this.saveToDatabase(sample);
+
+      // 4. Send to Label Studio for human review (Only if pending and not auto-approved)
+      if (sample.source === 'llm-fallback' && sample.reviewStatus === 'pending') {
+        await this.sendToLabelStudio(sample);
+      }
+
+      this.logger.log(
+        `Captured training sample: ${sample.intent} (${sample.source}) - "${sample.text.substring(0, 50)}..."`,
+      );
+    } catch (error) {
+      this.logger.error(`Failed to capture training sample: ${error.message}`);
+      // Don't throw - training data capture is non-critical
+    }
+  }
+
+  /**
+   * Save to PostgreSQL for analytics and batch export
+   */
+  private async saveToDatabase(sample: TrainingDataSample): Promise<void> {
+    // Now using Prisma ORM with NluTrainingData model
+    try {
+      // Map reviewStatus to the status column format used by SelfLearningService
+      const statusValue = sample.reviewStatus === 'approved' ? 'approved' : 
+                         sample.reviewStatus === 'pending' ? 'pending_review' : 
+                         sample.reviewStatus;
+      
+      await this.prisma.nluTrainingData.create({
+        data: {
+          text: sample.text,
+          intent: sample.intent,
+          entities: sample.entities || {},
+          tone: sample.tone || null,
+          sentiment: sample.sentiment || null,
+          confidence: sample.confidence,
+          source: sample.source,
+          reviewStatus: sample.reviewStatus,
+          userId: sample.userId || null,
+          sessionId: sample.sessionId || null,
+          language: sample.language,
+        },
+      });
+      
+      // Also set the status column for SelfLearningService compatibility
+      await this.prisma.$executeRaw`
+        UPDATE nlu_training_data 
+        SET status = ${statusValue}
+        WHERE text = ${sample.text}
+      `;
+    } catch (error: any) {
+      // Ignore unique constraint violations (duplicates)
+      if (error.code === 'P2002') {
+        this.logger.debug(`Duplicate training sample ignored: "${sample.text.substring(0, 30)}..."`);
+        return;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Send to Label Studio for human annotation/review
+   */
+  private async sendToLabelStudio(sample: TrainingDataSample): Promise<void> {
+    if (!this.labelStudioApiKey) {
+      this.logger.debug('Label Studio API key not configured, skipping');
+      return;
+    }
+
+    try {
+      const task = {
+        data: {
+          text: sample.text,
+          language: sample.language,
+          suggested_intent: sample.intent,
+          suggested_entities: sample.entities,
+          suggested_tone: sample.tone,
+          llm_confidence: sample.confidence,
+          source: sample.source,
+        },
+        annotations: [
+          {
+            result: [
+              {
+                value: {
+                  start: 0,
+                  end: sample.text.length,
+                  text: sample.text,
+                  labels: [sample.intent],
+                },
+                from_name: 'intent',
+                to_name: 'text',
+                type: 'labels',
+              },
+            ],
+          },
+        ],
+      };
+
+      await firstValueFrom(
+        this.httpService.post(
+          `${this.labelStudioUrl}/api/projects/${this.labelStudioProjectId}/tasks`,
+          task,
+          {
+            headers: {
+              Authorization: `Token ${this.labelStudioApiKey}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        ),
+      );
+
+      this.logger.debug('Sent sample to Label Studio for review');
+    } catch (error) {
+      this.logger.warn(`Label Studio submission failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get pending training samples for admin review
+   */
+  async getPendingSamples(limit: number = 100): Promise<any[]> {
+    return this.prisma.nluTrainingData.findMany({
+      where: { reviewStatus: 'pending' },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  }
+
+  /**
+   * Approve training sample (admin action)
+   */
+  async approveSample(sampleId: string): Promise<void> {
+    await this.prisma.nluTrainingData.update({
+      where: { id: sampleId },
+      data: { reviewStatus: 'approved' },
+    });
+
+    this.logger.log(`Training sample ${sampleId} approved`);
+  }
+
+  /**
+   * Get count of samples needing review
+   */
+  async getPendingCount(): Promise<number> {
+    return this.prisma.nluTrainingData.count({
+      where: { reviewStatus: 'pending' },
+    });
+  }
+
+  /**
+   * Export approved training data for model retraining
+   */
+  async exportForTraining(
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<{ text: string; intent: string; entities: any }[]> {
+    const samples = await this.prisma.nluTrainingData.findMany({
+      where: {
+        reviewStatus: 'approved',
+        ...(startDate && { createdAt: { gte: startDate } }),
+        ...(endDate && { createdAt: { lte: endDate } }),
+      },
+      select: {
+        text: true,
+        intent: true,
+        entities: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return samples.map(s => ({
+      text: s.text,
+      intent: s.intent,
+      entities: typeof s.entities === 'string' ? JSON.parse(s.entities) : s.entities,
+    }));
+  }
+
+  /**
+   * Capture user feedback/correction for learning
+   * When user corrects the system (e.g., "I meant X not Y"), we capture it
+   */
+  async captureFeedback(
+    originalText: string,
+    predictedIntent: string,
+    correctedIntent: string,
+    userId?: string,
+    sessionId?: string,
+  ): Promise<void> {
+    try {
+      // Check if we already have this sample
+      const existing = await this.prisma.nluTrainingData.findUnique({
+        where: { text: originalText },
+      });
+
+      if (existing) {
+        // Update with corrected intent and mark as approved (user-verified)
+        await this.prisma.nluTrainingData.update({
+          where: { id: existing.id },
+          data: {
+            intent: correctedIntent,
+            reviewStatus: 'approved',
+            source: 'manual', // User correction = manual verification
+          },
+        });
+        this.logger.log(`📝 Updated training sample with user correction: "${originalText}" → ${correctedIntent}`);
+      } else {
+        // Create new corrected sample
+        await this.prisma.nluTrainingData.create({
+          data: {
+            text: originalText,
+            intent: correctedIntent,
+            entities: {},
+            confidence: 1.0, // User correction = 100% confidence
+            source: 'manual',
+            reviewStatus: 'approved',
+            userId,
+            sessionId,
+            language: 'auto',
+          },
+        });
+        this.logger.log(`✨ Created new training sample from user correction: "${originalText}" → ${correctedIntent}`);
+      }
+
+      // Log the correction for analytics
+      this.logger.log(`🔄 Feedback captured: predicted=${predictedIntent}, corrected=${correctedIntent}`);
+    } catch (error) {
+      this.logger.error(`Failed to capture feedback: ${error.message}`);
+    }
+  }
+
+  /**
+   * Capture implicit feedback from successful order completion
+   * If user completes order after entity resolution, that resolution was correct
+   */
+  async captureSuccessfulResolution(
+    query: string,
+    resolvedIntent: string,
+    resolvedEntities: Record<string, any>,
+    userId?: string,
+  ): Promise<void> {
+    try {
+      const existing = await this.prisma.nluTrainingData.findUnique({
+        where: { text: query },
+      });
+
+      if (existing && existing.reviewStatus === 'pending') {
+        // Promote to approved since order was successful
+        await this.prisma.nluTrainingData.update({
+          where: { id: existing.id },
+          data: { reviewStatus: 'approved' },
+        });
+        this.logger.log(`✅ Promoted training sample to approved (successful order): "${query}"`);
+      } else if (!existing) {
+        // Create new approved sample from successful order
+        await this.prisma.nluTrainingData.create({
+          data: {
+            text: query,
+            intent: resolvedIntent,
+            entities: resolvedEntities,
+            confidence: 0.95,
+            source: 'nlu',
+            reviewStatus: 'approved',
+            userId,
+            language: 'auto',
+          },
+        });
+        this.logger.log(`✨ Created approved training sample from successful order: "${query}"`);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to capture successful resolution: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get training statistics for dashboard
+   */
+  async getTrainingStats(): Promise<{
+    total: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    bySource: Record<string, number>;
+    byIntent: Record<string, number>;
+    recentSamples: any[];
+  }> {
+    const [total, pending, approved, rejected] = await Promise.all([
+      this.prisma.nluTrainingData.count(),
+      this.prisma.nluTrainingData.count({ where: { reviewStatus: 'pending' } }),
+      this.prisma.nluTrainingData.count({ where: { reviewStatus: 'approved' } }),
+      this.prisma.nluTrainingData.count({ where: { reviewStatus: 'rejected' } }),
+    ]);
+
+    // Get counts by source
+    const sourceGroups = await this.prisma.nluTrainingData.groupBy({
+      by: ['source'],
+      _count: { id: true },
+    });
+    const bySource: Record<string, number> = {};
+    sourceGroups.forEach(g => { bySource[g.source] = g._count.id; });
+
+    // Get counts by intent (top 10)
+    const intentGroups = await this.prisma.nluTrainingData.groupBy({
+      by: ['intent'],
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 10,
+    });
+    const byIntent: Record<string, number> = {};
+    intentGroups.forEach(g => { byIntent[g.intent] = g._count.id; });
+
+    // Get recent samples
+    const recentSamples = await this.prisma.nluTrainingData.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        text: true,
+        intent: true,
+        confidence: true,
+        source: true,
+        reviewStatus: true,
+        createdAt: true,
+      },
+    });
+
+    return { total, pending, approved, rejected, bySource, byIntent, recentSamples };
+  }
+
+  /**
+   * Export training data in JSONL format for model retraining
+   */
+  async exportAsJsonl(startDate?: Date, endDate?: Date): Promise<string> {
+    const samples = await this.exportForTraining(startDate, endDate);
+    return samples.map(s => JSON.stringify({
+      text: s.text,
+      intent: s.intent,
+      entities: s.entities,
+    })).join('\n');
+  }
+}

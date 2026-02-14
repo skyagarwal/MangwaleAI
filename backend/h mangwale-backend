@@ -1,0 +1,13 @@
+           name           |               trigger_intents               
+--------------------------+---------------------------------------------
+ auth_v1                  | {login,signup,authenticate}
+ chitchat_v1              | {chitchat,casual}
+ first_time_onboarding_v1 | {onboarding}
+ food_order_v1            | {order_food,search_food,browse_menu,hungry}
+ greeting_v1              | {greeting,hello}
+ help_v1                  | {help,assistance}
+ order_tracking_v1        | {track_order,order_status}
+ parcel_delivery_v1       | {parcel_booking,book_parcel,send_parcel}
+ support_v1               | {contact_support,support_request,complaint}
+(9 rows)
+

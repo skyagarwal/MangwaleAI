@@ -1,0 +1,388 @@
+
+# MangwaleAI Development Environment
+# Usage: docker compose -f docker-compose.dev.yml up -d
+
+services:
+  # ===========================================
+  # INFRASTRUCTURE SERVICES (Always Running)
+  # ===========================================
+  
+  postgres:
+    image: postgres:16-alpine
+    container_name: mangwale_dev_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=mangwale_config
+      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_DB=headless_mangwale
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    networks:
+      - mangwale-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mangwale_config -d headless_mangwale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: mangwale_dev_redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis-dev-data:/data
+    networks:
+      mangwale-dev:
+      search_search-network:
+        aliases:
+          - search-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================
+  # AI SERVICES (GPU Required)
+  # ===========================================
+  
+  vllm:
+    image: vllm/vllm-openai:v0.4.2
+    container_name: mangwale_dev_vllm
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./backend/models/hub:/root/.cache/huggingface
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: >
+      --model Qwen/Qwen2.5-7B-Instruct-AWQ
+      --max-model-len 4096
+      --gpu-memory-utilization 0.7
+      --trust-remote-code
+    networks:
+      - mangwale-dev
+    profiles:
+      - ai
+
+  nlu:
+    image: admin-nlu:latest
+    container_name: mangwale_dev_nlu
+    restart: unless-stopped
+    ports:
+      - "7010:7010"
+    volumes:
+      - ./backend/models:/models:ro
+    environment:
+      - BASE_ENCODER=/models/indicbert_active
+      - INTENT_MODEL=/models/indicbert_active
+      - MODEL_PATH=/models/indicbert_active
+      - PORT=7010
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - mangwale-dev
+    profiles:
+      - ai
+
+  # ===========================================
+  # BACKEND (NestJS) - Development Mode
+  # ===========================================
+  
+  backend:
+    image: node:20-bookworm-slim
+    container_name: mangwale_dev_backend
+    working_dir: /app
+    restart: unless-stopped
+    command: sh -c "apt-get update && apt-get install -y openssl procps && npm install && npm run start:dev"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - backend-node-modules:/app/node_modules
+      - ./backend/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', r => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - TZ=Asia/Kolkata
+      
+      # Database
+      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=1
+      
+      # AI Services - NLU v3 (IndicBERT-v3, Gemma3-based, 39 intents) on Mercury GPU
+      - NLU_ENDPOINT=${NLU_ENDPOINT}
+      - NLU_PRIMARY_ENDPOINT=${NLU_PRIMARY_ENDPOINT}
+      - NER_SERVICE_URL=${NER_SERVICE_URL}
+      - TRAINING_SERVER_URL=${TRAINING_SERVER_URL}
+      - NLU_CONFIDENCE_THRESHOLD=${NLU_CONFIDENCE_THRESHOLD:-0.65}
+      - SEARCH_SERVICE_URL=${SEARCH_SERVICE_URL:-http://search-api:3100}
+      - VLLM_URL=${VLLM_URL:-http://host.docker.internal:8002}
+      - VLLM_MODEL=${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct-AWQ}
+      - NLU_AI_ENABLED=${NLU_AI_ENABLED:-true}
+      - LLM_MODE=${LLM_MODE:-hybrid}
+      - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-vllm}
+      
+      # Voice Services (Mercury Stack)
+      - ASR_SERVICE_URL=${ASR_SERVICE_URL}
+      - TTS_SERVICE_URL=${TTS_SERVICE_URL}
+      - VOICE_ORCHESTRATOR_URL=${VOICE_ORCHESTRATOR_URL}
+      - ADMIN_BACKEND_URL=${ADMIN_BACKEND_URL}
+      
+      # PHP Backend - Use production URL for auth/orders
+      - PHP_API_BASE_URL=https://new.mangwale.com
+      - PHP_BACKEND_URL=https://new.mangwale.com
+      
+      # MySQL Database (Laravel Backend - READ-ONLY)
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-mangwale_db}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+      # PHP Database Connection (same as MYSQL)
+      - PHP_DB_HOST=${PHP_DB_HOST:-${MYSQL_HOST}}
+      - PHP_DB_PORT=${PHP_DB_PORT:-3306}
+      - PHP_DB_NAME=${PHP_DB_NAME:-mangwale_db}
+      - PHP_DB_USER=${PHP_DB_USER:-${MYSQL_USER}}
+      - PHP_DB_PASSWORD=${PHP_DB_PASSWORD:-${MYSQL_PASSWORD}}
+      
+      # OpenSearch Credentials
+      - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME:-admin}
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD:-admin}
+      
+      # JWT Secret for Admin Auth
+      - JWT_SECRET=${JWT_SECRET:-mangwale-secure-jwt-secret-2024-production}
+      
+      # OpenSearch and Search API (external containers on search_search-network)
+      # Set SEARCH_API_URL to https://opensearch.mangwale.ai if you want the public stack.
+      - OPENSEARCH_URL=${OPENSEARCH_URL:-http://search-opensearch:9200}
+      - SEARCH_API_URL=${SEARCH_API_URL:-http://search-api:3100}
+      - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL:-http://search-embedding-service:3101}
+      
+      # Session
+      - SESSION_TTL=86400
+      - OTP_TTL=600
+      - OTP_LENGTH=6
+      
+      # Logging
+      - LOG_LEVEL=debug
+      
+      # WhatsApp Cloud API (CRITICAL - from .env)
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN}
+      - WHATSAPP_API_VERSION=${WHATSAPP_API_VERSION:-v24.0}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - mangwale-dev
+      - search_search-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=search_search-network
+      
+      # api.mangwale.ai - Main API domain (HTTP/REST)
+      - traefik.http.routers.ai-api.rule=Host(`api.mangwale.ai`)
+      - traefik.http.routers.ai-api.entrypoints=websecure
+      - traefik.http.routers.ai-api.tls=true
+      - traefik.http.routers.ai-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.ai-api.service=mangwale-backend
+      
+      # HTTP redirect to HTTPS
+      - traefik.http.routers.ai-api-http.rule=Host(`api.mangwale.ai`)
+      - traefik.http.routers.ai-api-http.entrypoints=web
+      - traefik.http.routers.ai-api-http.middlewares=redirect-to-https
+      
+      # chat.mangwale.ai - WebSocket for real-time chat (higher priority than search-api)
+      - traefik.http.routers.chat-backend-ws.rule=Host(`chat.mangwale.ai`) && PathPrefix(`/socket.io`)
+      - traefik.http.routers.chat-backend-ws.entrypoints=websecure
+      - traefik.http.routers.chat-backend-ws.tls=true
+      - traefik.http.routers.chat-backend-ws.tls.certresolver=letsencrypt
+      - traefik.http.routers.chat-backend-ws.service=mangwale-backend
+      - traefik.http.routers.chat-backend-ws.priority=20
+      
+      # chat.mangwale.ai - API routes (for flow engine, categories, etc.)
+      - traefik.http.routers.chat-backend-api.rule=Host(`chat.mangwale.ai`) && PathPrefix(`/api`)
+      - traefik.http.routers.chat-backend-api.entrypoints=websecure
+      - traefik.http.routers.chat-backend-api.tls=true
+      - traefik.http.routers.chat-backend-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.chat-backend-api.service=mangwale-backend
+      - traefik.http.routers.chat-backend-api.priority=20
+      
+      # Backend service on port 3000
+      - traefik.http.services.mangwale-backend.loadbalancer.server.port=3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles:
+      - backend
+
+  # ===========================================
+  # FRONTEND (Next.js) - Development Mode
+  # ===========================================
+  
+  frontend:
+    image: node:20-alpine
+    container_name: mangwale_dev_frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true
+      
+      # Backend URLs
+      - NEXT_PUBLIC_WS_URL=ws://localhost:3000
+      - NEXT_PUBLIC_MANGWALE_AI_URL=http://localhost:3000
+      - NEXT_PUBLIC_ADMIN_BACKEND_URL=http://localhost:3000
+      - BACKEND_INTERNAL_URL=http://mangwale_dev_backend:3000
+    networks:
+      - mangwale-dev
+    profiles:
+      - frontend
+
+  # ===========================================
+  # SCRAPER SERVICE (Competitor Data)
+  # ===========================================
+  
+  scraper:
+    build:
+      context: ./scraper-service
+      dockerfile: Dockerfile
+    container_name: mangwale_dev_scraper
+    restart: unless-stopped
+    ports:
+      - "3300:3300"
+    volumes:
+      - ./scraper-service:/app
+      - scraper-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3300
+      - TZ=Asia/Kolkata
+      
+      # Database
+      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      
+      # Redis
+      - REDIS_URL=redis://redis:6379
+      
+      # Scraping Settings
+      - ZOMATO_REQUESTS_PER_MINUTE=10
+      - SWIGGY_REQUESTS_PER_MINUTE=10
+      - CACHE_TTL_DAYS=7
+      - HEADLESS=true
+      
+      # Default Location (Nashik)
+      - DEFAULT_LAT=19.9975
+      - DEFAULT_LNG=73.7898
+      
+      # Logging
+      - LOG_LEVEL=info
+    networks:
+      - mangwale-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles:
+      - scraper
+
+  # ===========================================
+  # STORAGE & ANALYTICS SERVICES
+  # ===========================================
+  
+  minio:
+    image: minio/minio:latest
+    container_name: mangwale_dev_minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin123
+    volumes:
+      - minio-dev-data:/data
+    networks:
+      - mangwale-dev
+      - search_search-network  # For Traefik routing to storage.mangwale.ai
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  labelstudio:
+    image: heartexlabs/label-studio:1.21.0
+    container_name: mangwale_dev_labelstudio
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - DJANGO_DB=default
+      - POSTGRE_NAME=headless_mangwale
+      - POSTGRE_USER=mangwale_config
+      - POSTGRE_PASSWORD=config_secure_pass_2024
+      - POSTGRE_PORT=5432
+      - POSTGRE_HOST=postgres
+    volumes:
+      - labelstudio-dev-data:/label-studio/data
+    networks:
+      - mangwale-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  mangwale-dev:
+    driver: bridge
+  search_search-network:
+    external: true
+
+volumes:
+  postgres-dev-data:
+  redis-dev-data:
+  backend-node-modules:
+  frontend-node-modules:
+  scraper-node-modules:
+  minio-dev-data:
+  labelstudio-dev-data:

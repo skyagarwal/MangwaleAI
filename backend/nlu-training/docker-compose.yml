@@ -1,0 +1,47 @@
+
+# NLU Training Service - GPU Enabled
+# Run on Jupiter for training, deploys to NLU inference container
+
+services:
+  nlu-training:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mangwale_nlu_training
+    restart: unless-stopped
+    ports:
+      - "7011:7011"
+    volumes:
+      # Training data from backend
+      - ../training:/training-data:ro
+      # Models output (shared with NLU service)
+      - ../models:/models
+      # Logs
+      - ./logs:/logs
+      # HuggingFace cache
+      - ./hf_cache:/app/.cache/huggingface
+    environment:
+      - TRAINING_DATA_DIR=/training-data
+      - MODELS_DIR=/models
+      - NLU_SERVICE_URL=http://mangwale_nlu:7010
+      - BACKEND_URL=http://localhost:3001
+      - CUDA_VISIBLE_DEVICES=0
+    networks:
+      - mangwale_unified_network
+    # GPU configuration
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mangwale_unified_network:
+    external: true

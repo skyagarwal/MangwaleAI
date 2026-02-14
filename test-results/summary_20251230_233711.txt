@@ -1,0 +1,14 @@
+MangwaleAI User Journey Test Summary
+====================================
+Date: Tue Dec 30 11:37:22 PM IST 2025
+Total Tests: 53
+Passed: 53
+Failed: 0
+Success Rate: 100.00%
+
+Test Categories:
+- Customer Journeys: Food Ordering, Parcel Delivery, Order Tracking
+- Vendor Journeys: Authentication, Order Management, Menu Management
+- Rider Journeys: Authentication, Availability, Order Operations, Earnings
+
+Backend URL: http://localhost:3200

@@ -1,0 +1,197 @@
+{
+  "original_count": 873,
+  "removed": {
+    "garbage": 24,
+    "duplicates": 25,
+    "removed_intents": 3
+  },
+  "merged_intents": {
+    "thanks \u2192 chitchat": 5,
+    "create_parcel_order \u2192 parcel_booking": 20,
+    "service_inquiry \u2192 help": 26,
+    "browse_menu \u2192 order_food": 1
+  },
+  "final_count": 926,
+  "by_intent_before": {
+    "thanks": 5,
+    "parcel_booking": 173,
+    "manage_address": 123,
+    "use_my_details": 47,
+    "greeting": 74,
+    "order_food": 143,
+    "chitchat": 88,
+    "repeat_order": 8,
+    "track_order": 80,
+    "create_parcel_order": 22,
+    "login": 9,
+    "checkout": 15,
+    "help": 19,
+    "search_product": 17,
+    "add_to_cart": 6,
+    "service_inquiry": 27,
+    "cancel_order": 8,
+    "complaint": 5,
+    "contact_search": 1,
+    "browse_menu": 1,
+    "earn": 2
+  },
+  "by_intent_after": {
+    "chitchat": 84,
+    "manage_address": 121,
+    "use_my_details": 41,
+    "greeting": 61,
+    "parcel_booking": 191,
+    "order_food": 138,
+    "repeat_order": 5,
+    "track_order": 80,
+    "checkout": 15,
+    "help": 41,
+    "search_product": 17,
+    "add_to_cart": 6,
+    "cancel_order": 8,
+    "login": 8,
+    "complaint": 5
+  },
+  "garbage_samples": [
+    {
+      "text": "parcel_booking",
+      "intent": "parcel_booking",
+      "reason": "intent_as_text"
+    },
+    {
+      "text": "btn-0",
+      "intent": "chitchat",
+      "reason": "pattern:^btn-\\d+$"
+    },
+    {
+      "text": "order_food",
+      "intent": "order_food",
+      "reason": "intent_as_text"
+    },
+    {
+      "text": "9",
+      "intent": "create_parcel_order",
+      "reason": "too_short"
+    },
+    {
+      "text": "8",
+      "intent": "login",
+      "reason": "too_short"
+    },
+    {
+      "text": "YES",
+      "intent": "repeat_order",
+      "reason": "pattern:^yes$"
+    },
+    {
+      "text": "2",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "5",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "Yes",
+      "intent": "greeting",
+      "reason": "pattern:^yes$"
+    },
+    {
+      "text": "??",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "me",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "I want to order food aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "intent": "order_food",
+      "reason": "too_long"
+    },
+    {
+      "text": "ih",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "1",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "3",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "my",
+      "intent": "chitchat",
+      "reason": "too_short"
+    },
+    {
+      "text": "btn-1",
+      "intent": "chitchat",
+      "reason": "pattern:^btn-\\d+$"
+    },
+    {
+      "text": "?",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "ok",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "hi",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "Hi",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "yes",
+      "intent": "repeat_order",
+      "reason": "pattern:^yes$"
+    },
+    {
+      "text": "yo",
+      "intent": "greeting",
+      "reason": "too_short"
+    },
+    {
+      "text": "My",
+      "intent": "greeting",
+      "reason": "too_short"
+    }
+  ],
+  "by_intent_final": {
+    "chitchat": 84,
+    "manage_address": 121,
+    "use_my_details": 41,
+    "greeting": 61,
+    "parcel_booking": 191,
+    "order_food": 138,
+    "repeat_order": 15,
+    "track_order": 80,
+    "checkout": 25,
+    "help": 41,
+    "search_product": 32,
+    "add_to_cart": 16,
+    "cancel_order": 18,
+    "login": 8,
+    "complaint": 20,
+    "order_grocery": 15,
+    "human_takeover": 10,
+    "view_cart": 10
+  }
+}

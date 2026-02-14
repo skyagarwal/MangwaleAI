@@ -1,0 +1,16 @@
+# NLU Training Server Requirements
+torch==2.2.2
+transformers==4.42.3
+datasets==2.20.0
+scikit-learn==1.5.1
+accelerate==0.32.1
+evaluate==0.4.2
+tensorboard==2.17.0
+fastapi==0.111.0
+uvicorn==0.30.1
+requests==2.32.3
+numpy>=1.24.0
+safetensors>=0.4.1
+
+# NER-specific requirements
+seqeval==1.2.2  # NER evaluation metrics

@@ -1,0 +1,33 @@
+{
+  "timestamp": "20260105_161209",
+  "total_flows": 6,
+  "passed": 2,
+  "failed": 4,
+  "success_rate": 33.33,
+  "flows": [
+    {
+      "name": "Food Order Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Parcel Delivery Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Order Tracking Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Vendor Order Management",
+      "status": "tested"
+    },
+    {
+      "name": "Rider Delivery Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Complex Food Order",
+      "status": "tested"
+    }
+  ]
+}

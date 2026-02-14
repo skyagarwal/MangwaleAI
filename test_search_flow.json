@@ -1,0 +1,9 @@
+{
+  "message": "veg biryani under 200",
+  "identifier": "test_user_123",
+  "channel": "web",
+  "metadata": {
+    "userId": 123,
+    "sessionId": "test_session_search_1"
+  }
+}

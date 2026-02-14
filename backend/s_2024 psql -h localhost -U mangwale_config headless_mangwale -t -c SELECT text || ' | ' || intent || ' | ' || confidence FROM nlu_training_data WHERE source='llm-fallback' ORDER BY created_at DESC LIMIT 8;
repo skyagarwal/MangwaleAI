@@ -1,0 +1,14 @@
+                                                     text                                                     |    intent     | confidence | review_status 
+--------------------------------------------------------------------------------------------------------------+---------------+------------+---------------
+ order from local dukan                                                                                       | order_food    |       0.75 | pending
+ pickup loction 19.959, 73.768 drop location maps.app.goo.gl/abc                                              | book_parcel   |       0.95 | pending
+ pickup loction 19.959705199461446, 73.76896740356601 drop location https://maps.app.goo.gl/ZCwfW9nbFEpzFbWX7 | book_parcel   |       0.95 | pending
+ delivery location                                                                                            | add_address   |       0.85 | pending
+ cart me add karo                                                                                             | order_food    |       0.88 | pending
+ biryani dikhao                                                                                               | order_food    |       0.88 | pending
+ kfc se bucket lao                                                                                            | order_food    |       0.92 | pending
+ haldirams se namkeen chahiye                                                                                 | order_food    |       0.92 | pending
+ my location                                                                                                  | check_address |       0.75 | pending
+ add 1                                                                                                        | add_address   |       0.75 | pending
+(10 rows)
+

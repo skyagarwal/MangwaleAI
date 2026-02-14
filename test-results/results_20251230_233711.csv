@@ -1,0 +1,53 @@
+c001|customer|pizza chahiye|search_food|PASS
+c002|customer|show me biryani near me|search_food|PASS
+c003|customer|मुझे खाना चाहिए|search_food|PASS
+c004|customer|kuch acha sa khana dikhao|search_food|PASS
+c005|customer|burger milega kya|search_food|PASS
+c006|customer|nashik mein best restaurant|search_food|PASS
+c007|customer|chinese food order karna hai|search_food|PASS
+c008|customer|bhook lagi hai kuch suggest karo|search_food|PASS
+c009|customer|pet mein chuhe daud rahe hain|search_food|PASS
+c010|customer|kuch mast nashta chahiye|search_food|PASS
+c101|customer|parcel bhejni hai|parcel_booking|PASS
+c102|customer|courier service chahiye|parcel_booking|PASS
+c103|customer|saman bhejo|parcel_booking|PASS
+c104|customer|documents delivery|parcel_booking|PASS
+c105|customer|college se ghar parcel bhejo|parcel_booking|PASS
+c106|customer|kitna time lagega delivery mein|parcel_booking|PASS
+c107|customer|same day delivery hogi kya|parcel_booking|PASS
+c108|customer|bike par bhej do|parcel_booking|PASS
+c109|customer|auto mein bhejna hai|parcel_booking|PASS
+c110|customer|kitne paise lagenge|parcel_booking|PASS
+c201|customer|order kaha hai|track_order|PASS
+c202|customer|delivery kitna time lagega|track_order|PASS
+c203|customer|track my order|track_order|PASS
+c204|customer|rider kahan pahunch gaya|track_order|PASS
+c205|customer|मेरा आर्डर कहाँ है|track_order|PASS
+v001|vendor|vendor login|vendor_login|PASS
+v002|vendor|मैं vendor हूँ|vendor_login|PASS
+v003|vendor|restaurant owner hun|vendor_login|PASS
+v004|vendor|mera store hai|vendor_login|PASS
+v005|vendor|cafe chalata hun|vendor_login|PASS
+v011|vendor|pending orders dikhao|vendor_get_orders|PASS
+v012|vendor|कितने ऑर्डर हैं|vendor_get_orders|PASS
+v013|vendor|new orders|vendor_get_orders|PASS
+v014|vendor|order accept karna hai|vendor_accept_order|PASS
+v015|vendor|order reject kar do|vendor_reject_order|PASS
+v026|vendor|menu update karna hai|vendor_update_menu|PASS
+v027|vendor|paneer tikka out of stock hai|vendor_mark_unavailable|PASS
+v028|vendor|biryani band kar do aaj ke liye|vendor_disable_item|PASS
+r001|rider|rider login|rider_login|PASS
+r002|rider|delivery boy hun|rider_login|PASS
+r003|rider|डिलीवरी करता हूँ|rider_login|PASS
+r004|rider|driver account|rider_login|PASS
+r011|rider|online ho gaya|rider_go_online|PASS
+r012|rider|duty start kar di|rider_go_online|PASS
+r013|rider|available hun orders ke liye|rider_go_online|PASS
+r014|rider|offline ho raha hun|rider_go_offline|PASS
+r021|rider|pending deliveries dikhao|rider_get_orders|PASS
+r022|rider|नए ऑर्डर हैं क्या|rider_get_orders|PASS
+r023|rider|next delivery kahan hai|rider_next_delivery|PASS
+r024|rider|order accept kar liya|rider_accept_order|PASS
+r041|rider|आज की कमाई|rider_get_earnings|PASS
+r042|rider|today's earning kya hai|rider_get_earnings|PASS
+r043|rider|weekly income dikhao|rider_get_weekly_earnings|PASS

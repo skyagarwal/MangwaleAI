@@ -1,0 +1,41 @@
+{
+  "labels": [
+    "O",
+    "B-FOOD",
+    "I-FOOD",
+    "B-STORE",
+    "I-STORE",
+    "B-QTY",
+    "I-QTY",
+    "B-LOC",
+    "I-LOC",
+    "B-PREF",
+    "I-PREF"
+  ],
+  "label2id": {
+    "O": 0,
+    "B-FOOD": 1,
+    "I-FOOD": 2,
+    "B-STORE": 3,
+    "I-STORE": 4,
+    "B-QTY": 5,
+    "I-QTY": 6,
+    "B-LOC": 7,
+    "I-LOC": 8,
+    "B-PREF": 9,
+    "I-PREF": 10
+  },
+  "id2label": {
+    "0": "O",
+    "1": "B-FOOD",
+    "2": "I-FOOD",
+    "3": "B-STORE",
+    "4": "I-STORE",
+    "5": "B-QTY",
+    "6": "I-QTY",
+    "7": "B-LOC",
+    "8": "I-LOC",
+    "9": "B-PREF",
+    "10": "I-PREF"
+  }
+}

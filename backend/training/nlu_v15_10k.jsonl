@@ -1,0 +1,257 @@
+{"text": "\u0906\u0907\u0938 \u0915\u094d\u0930\u0940\u092e \u0914\u0930 \u091f\u0941\u0915\u0921\u093c\u0940 \u091a\u093e\u0935\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u092a\u0930\u094d\u0938 \u091a\u0940\u0915\u0928 \u0914\u0930 \u092c\u0917\u0930 \u0915\u0947 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930\u0928\u093e", "intent": "order_food"}
+{"text": "\u0917\u094d\u0930\u0947\u0915 \u092f\u0942\u0930\u094b\u092a\u0940\u092f \u0938\u094d\u091f\u094b\u092b \u0914\u0930 \u091f\u093e\u0907\u0915\u0940 \u0915\u094d\u0932\u0948\u092c\u0930 \u092a\u093e\u0938\u094d\u0924\u094b \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092c\u0940\u092b \u0915\u093e\u092e\u093f\u0932\u093e \u0914\u0930 \u092a\u093e\u0938\u094d\u091f\u0947 \u0921\u094d\u0930\u093e\u0907\u0935 \u090f\u0902\u0921 \u0921\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092c\u093e\u0932\u094d\u091f\u0940 \u091a\u093e\u0935\u0932 \u0914\u0930 \u0915\u094d\u0935\u0947\u091f\u093e \u092a\u093f\u091c\u094d\u091c\u093e \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u094d\u0930\u093e\u092e \u0915\u0949\u092b\u0940 \u0914\u0930 \u0930\u0947\u0938\u094d\u091f\u0930\u0902\u091f \u092a\u093e\u0938\u094d\u0924\u094b \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u092b\u094d\u0930\u093e\u0928\u094d\u0938\u0940 \u0930\u093f\u0938 \u092a\u0947 \u0932\u0940 \u0914\u0930 \u092c\u094d\u0932\u0949\u0915 \u091c\u0902\u0917\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0938\u094d\u091f\u0948\u0915 \u0915\u094d\u0935\u0947\u091f\u093e \u0914\u0930 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0924\u093e\u091c\u093e \u092b\u094d\u0930\u0940 \u0915\u0930\u094d\u0928\u0932 \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u0915\u0947\u0932\u094d\u0932\u093e \u0915\u093e \u092b\u094d\u0930\u093e\u0928\u094d\u0938\u0940 \u0938\u091f\u0940\u0915 \u092a\u093e\u0938\u094d\u0924\u094b \u0914\u0930 \u092c\u093f\u0928\u0940 \u0915\u094d\u0935\u0947\u091f\u093e \u0915\u093e \u0911\u0930\u094d\u0921\u0930", "intent": "order_food"}
+{"text": "\u798f\u7279\u8f66\u548c\u4f73\u80fd\u6253\u5370\u673a\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u6469\u6258\u7f57\u62c9\u624b\u673a\u548c\u7535\u529b\u6d41\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u6234\u68ee\u5439\u98ce\u673a\u548c\u6770\u514b\u900a\u725b\u6392\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u7279\u65af\u62c9\u6c7d\u8f66\u548c\u51b0\u6dc7\u6dcb\u751c\u54c1\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u5fae\u8f6f\u786c\u76d8\u548c\u9ea6\u5f53\u52b3\u9e21\u5757\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u68ee\u6d77\u585e\u5c14\u8033\u673a\u548c\u6c49\u5821\u5305\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u8fea\u666e\u6d1b\u7279\u7535\u52a8\u81ea\u884c\u8f66\u548c\u751c\u751c\u5708\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u76ae\u514b\u65af\u7b14\u8bb0\u672c\u7535\u8111\u548c\u70ed\u72d7\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u76db\u5927\u590d\u5370\u673a\u548c\u6c49\u5821\u8089\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u98de\u5229\u6d66\u5438\u5c18\u5668\u548c\u84dd\u8393\u5473\u7684\u8ba2\u5355", "intent": "order_food"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0906\u0907\u092a\u0940 \u0932\u0917\u093e\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0938\u0942\u091a\u0928\u093e \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u091a\u0941\u0928\u0947\u0902", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u091c\u0917\u0939 \u0932\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u0939\u094b\u0932\u094d\u0921 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0932\u0917\u093e\u090f \u091c\u093e\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0930\u093f\u0915\u0948\u0932 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u0935\u093f\u0935\u0930\u0923 \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930 \u0930\u0939\u093e \u0939\u0942\u0901", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0932\u0949\u0917\u0906\u0909\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u0924\u094d\u0930\u0941\u091f\u093f \u0939\u0948", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u0938\u094d\u0925\u093e\u0928 \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u092d\u094d\u0930\u092e\u0923 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0905\u092a\u0921\u0947\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u093e \u0938\u094d\u0925\u093e\u0928 \u0906\u0915\u0932\u0928 \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u092c\u0941\u0915 \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0921\u093e\u091f\u093e \u0926\u0947\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u094b \u0930\u093f\u092a\u094b\u0930\u094d\u091f \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "\u092a\u0947\u0938\u093f\u0932 \u0915\u0940 \u092a\u0930\u093f\u0915\u0932\u094d\u092a\u0928\u093e \u0915\u0930\u0928\u093e", "intent": "parcel_booking"}
+{"text": "Resize khali kar do, rice de do.", "intent": "search_product"}
+{"text": "dekho meri ki kitni khana de rha hain, rice bhi aaye se.", "intent": "search_product"}
+{"text": "rice dene ke liye resize karna padega.", "intent": "search_product"}
+{"text": "resize karo, rice de do.", "intent": "search_product"}
+{"text": "rice de do, resize karna padega.", "intent": "search_product"}
+{"text": "resize karke rice de do, baat nahi hai.", "intent": "search_product"}
+{"text": "rice de ki resize karna padega.", "intent": "search_product"}
+{"text": "resize karke rice de do, yeh kaisa nahi.", "intent": "search_product"}
+{"text": "rice de doresize karna padega.", "intent": "search_product"}
+{"text": "mera resize karna h, rice de do.", "intent": "search_product"}
+{"text": "resiz karke rice de do, yeh kaisa nahi.", "intent": "search_product"}
+{"text": "rice de, resize karna padega.", "intent": "search_product"}
+{"text": "resize karo, rice de do se.", "intent": "search_product"}
+{"text": "resize karke rice de do, kuch nahi hai.", "intent": "search_product"}
+{"text": "resize karna h, rice de do se.", "intent": "search_product"}
+{"text": "mera resize karna h, rice de do se.", "intent": "search_product"}
+{"text": "rice deresize karna padega.", "intent": "search_product"}
+{"text": "Delete this delivery address?", "intent": "manage_address"}
+{"text": "Are you sure you want to delete this address?", "intent": "manage_address"}
+{"text": "Remove this pickup location?", "intent": "manage_address"}
+{"text": "Confirm deletion of this address?", "intent": "manage_address"}
+{"text": "This address will be deleted. Continue?", "intent": "manage_address"}
+{"text": "Delete the saved address now?", "intent": "manage_address"}
+{"text": "Remove saved delivery address?", "intent": "manage_address"}
+{"text": "Confirm the deletion of your saved address?", "intent": "manage_address"}
+{"text": "Are you sure you want to remove this address?", "intent": "manage_address"}
+{"text": "Delete saved delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm that you want to delete this address?", "intent": "manage_address"}
+{"text": "Remove this delivery destination?", "intent": "manage_address"}
+{"text": "Delete this local delivery address?", "intent": "manage_address"}
+{"text": "Confirm the removal of this saved address?", "intent": "manage_address"}
+{"text": "Are you sure you want to delete this delivery address?", "intent": "manage_address"}
+{"text": "Remove saved local delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm the deletion of your local delivery address?", "intent": "manage_address"}
+{"text": "Are you sure you want to remove your saved delivery address?", "intent": "manage_address"}
+{"text": "Delete your local delivery pickup address?", "intent": "manage_address"}
+{"text": "Confirm the removal of your saved delivery address?", "intent": "manage_address"}
+{"text": "Your order is on the way. Expected delivery in 30 minutes.", "intent": "track_order"}
+{"text": "ETA for your order is 25 minutes. Keep an eye out!", "intent": "track_order"}
+{"text": "Your order is en route. Expected in 20 minutes.", "intent": "track_order"}
+{"text": "Tracking your order. Delivery estimated in 15 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected within 25 minutes.", "intent": "track_order"}
+{"text": "Order is in transit. Delivery ETA is 40 minutes.", "intent": "track_order"}
+{"text": "Your order is on its way. Estimated delivery in 10 minutes.", "intent": "track_order"}
+{"text": "Your parcel is on the way. Expected delivery in 35 minutes.", "intent": "track_order"}
+{"text": "Your grocery is being delivered. ETA is 20 minutes.", "intent": "track_order"}
+{"text": "Your food order is en route. Expected delivery in 25 minutes.", "intent": "track_order"}
+{"text": "Your parcel order is on the way. Estimated in 30 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. ETA is 20 minutes.", "intent": "track_order"}
+{"text": "Your grocery order is on its way. Expected delivery in 18 minutes.", "intent": "track_order"}
+{"text": "Your food order is en route. Estimated delivery in 22 minutes.", "intent": "track_order"}
+{"text": "Your parcel delivery is on the way. ETA is 15 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected within 20 minutes.", "intent": "track_order"}
+{"text": "Your grocery order is being delivered. ETA is 15 minutes.", "intent": "track_order"}
+{"text": "Your food order is on the way. Estimated delivery in 18 minutes.", "intent": "track_order"}
+{"text": "Your parcel order is on its way. ETA is 25 minutes.", "intent": "track_order"}
+{"text": "Your order is being delivered. Expected delivery in 30 minutes.", "intent": "track_order"}
+{"text": "Cancel my order, I placed it by mistake.", "intent": "cancel_order"}
+{"text": "I want to cancel my order, it was a wrong selection.", "intent": "cancel_order"}
+{"text": "Please cancel my order, I didn't mean to place it.", "intent": "cancel_order"}
+{"text": "My order was placed by accident, please cancel it.", "intent": "cancel_order"}
+{"text": "I need to cancel my order, I changed my mind.", "intent": "cancel_order"}
+{"text": "Cancel my recent order, I ordered the wrong item.", "intent": "cancel_order"}
+{"text": "I accidentally placed an order, please cancel it.", "intent": "cancel_order"}
+{"text": "My order was placed by mistake, can you cancel it?", "intent": "cancel_order"}
+{"text": "Cancel the order I placed wrong, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "I need to cancel an order I placed by mistake, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "Please cancel the order I placed by accident.", "intent": "cancel_order"}
+{"text": "I placed the order incorrectly, please cancel it.", "intent": "cancel_order"}
+{"text": "Cancel my order, I selected the wrong items.", "intent": "cancel_order"}
+{"text": "I ordered the wrong thing, please cancel the order.", "intent": "cancel_order"}
+{"text": "My order was the wrong selection, please cancel it.", "intent": "cancel_order"}
+{"text": "I placed the wrong order, please cancel it for me.", "intent": "cancel_order"}
+{"text": "Cancel the order I placed by mistake, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "I accidentally chose the wrong items, cancel my order.", "intent": "cancel_order"}
+{"text": "I placed the order by mistake, please cancel it.", "intent": "cancel_order"}
+{"text": "Cancel the order I placed in error, it's not what I wanted.", "intent": "cancel_order"}
+{"text": "use my number for deliveries", "intent": "use_my_details"}
+{"text": "use mein number for orders", "intent": "use_my_details"}
+{"text": "abhi meri number ko use karo", "intent": "use_my_details"}
+{"text": "mera number ka use kar", "intent": "use_my_details"}
+{"text": "use my phone number for delivery", "intent": "use_my_details"}
+{"text": "use my contact number for orders", "intent": "use_my_details"}
+{"text": "mera contact number use karo", "intent": "use_my_details"}
+{"text": "use mein number for pickup", "intent": "use_my_details"}
+{"text": "mera mobile number for delivery use karo", "intent": "use_my_details"}
+{"text": "use my mobile for deliveries", "intent": "use_my_details"}
+{"text": "use my mobile number for rides", "intent": "use_my_details"}
+{"text": "mera mobile number use karo for delivery", "intent": "use_my_details"}
+{"text": "use mein number for grocery delivery", "intent": "use_my_details"}
+{"text": "use my number for food delivery", "intent": "use_my_details"}
+{"text": "mera phone number for delivery use karo", "intent": "use_my_details"}
+{"text": "use my number for parcel pickup", "intent": "use_my_details"}
+{"text": "use mein number for local deliveries", "intent": "use_my_details"}
+{"text": "mera number use karo for deliveries", "intent": "use_my_details"}
+{"text": "use my number for ride requests", "intent": "use_my_details"}
+{"text": "use mein number for service", "intent": "use_my_details"}
+{"text": "\u0926\u0935\u093e \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092b\u0942\u0921 \u0915\u093e \u092a\u094d\u092f\u093e\u0938 \u0928\u0939\u0940\u0902, \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0917\u094d\u0930\u0949\u0938\u0930\u0940 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092a\u0948\u0915\u0947\u091a\u0930 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0930\u093e\u0908\u0921 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0926\u0935\u093e \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u092b\u0942\u0921 \u0915\u094b \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "\u0917\u094d\u0930\u0949\u0938\u0930\u0940 \u0915\u093e \u0926\u092c\u093e\u0935 \u0928\u0939\u0940\u0902, \u0915\u093e\u0930\u094d\u091f \u092e\u0947\u0902 \u091c\u094b\u0921\u093c\u0947\u0902", "intent": "add_to_cart"}
+{"text": "Add this pizza to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bottle of water to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bunch of bananas to your cart.", "intent": "add_to_cart"}
+{"text": "Add this salad to your cart.", "intent": "add_to_cart"}
+{"text": "Add this parcel to your cart.", "intent": "add_to_cart"}
+{"text": "Add this ride to your cart.", "intent": "add_to_cart"}
+{"text": "Add this sandwich to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bunch of grapes to your cart.", "intent": "add_to_cart"}
+{"text": "Add this loaf of bread to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bouquet of flowers to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of apples to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of potatoes to your cart.", "intent": "add_to_cart"}
+{"text": "Add this piece of clothing to your cart.", "intent": "add_to_cart"}
+{"text": "Add this book to your cart.", "intent": "add_to_cart"}
+{"text": "Add this helmet to your cart.", "intent": "add_to_cart"}
+{"text": "Add this gadget to your cart.", "intent": "add_to_cart"}
+{"text": "Add this toy to your cart.", "intent": "add_to_cart"}
+{"text": "Add this ticket to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bouquet of roses to your cart.", "intent": "add_to_cart"}
+{"text": "Add this bag of sweets to your cart.", "intent": "add_to_cart"}
+{"text": "Here's what's in your cart.", "intent": "view_cart"}
+{"text": "Your cart includes:", "intent": "view_cart"}
+{"text": "List of items in your cart:", "intent": "view_cart"}
+{"text": "Your current cart has:", "intent": "view_cart"}
+{"text": "Items in your cart:", "intent": "view_cart"}
+{"text": "View your cart contents:", "intent": "view_cart"}
+{"text": "Cart contents:", "intent": "view_cart"}
+{"text": "Items you selected:", "intent": "view_cart"}
+{"text": "You have these items in your cart:", "intent": "view_cart"}
+{"text": "Items in your shopping cart:", "intent": "view_cart"}
+{"text": "Your cart has these items:", "intent": "view_cart"}
+{"text": "Your cart includes these items:", "intent": "view_cart"}
+{"text": "List your cart items:", "intent": "view_cart"}
+{"text": "Your cart items are:", "intent": "view_cart"}
+{"text": "Your cart contains:", "intent": "view_cart"}
+{"text": "Your cart has the following items:", "intent": "view_cart"}
+{"text": "Your cart contents are:", "intent": "view_cart"}
+{"text": "Your cart contains the following items:", "intent": "view_cart"}
+{"text": "frosting ki parcel checkout karo", "intent": "checkout"}
+{"text": "grocery ki bill checkout karo", "intent": "checkout"}
+{"text": "dinning ki bill checkout karo", "intent": "checkout"}
+{"text": "parcel aas paas delivery checkout karo", "intent": "checkout"}
+{"text": "food bill checkout karo", "intent": "checkout"}
+{"text": "parcel payment checkout karo", "intent": "checkout"}
+{"text": "bill checkout karo", "intent": "checkout"}
+{"text": "groceries checkout karo", "intent": "checkout"}
+{"text": "parcel karo payment checkout karo", "intent": "checkout"}
+{"text": "pickup ki bill checkout karo", "intent": "checkout"}
+{"text": "delivery bill checkout karo", "intent": "checkout"}
+{"text": "bill payment checkout karo", "intent": "checkout"}
+{"text": "parcel for pickup checkout karo", "intent": "checkout"}
+{"text": "bill for grocery checkout karo", "intent": "checkout"}
+{"text": "food for delivery checkout karo", "intent": "checkout"}
+{"text": "bill for rides checkout karo", "intent": "checkout"}
+{"text": "parcel ki bill checkout karo", "intent": "checkout"}
+{"text": "bill for local delivery checkout karo", "intent": "checkout"}
+{"text": "grocery bill checkout karo", "intent": "checkout"}
+{"text": "delivery bill for parcel checkout karo", "intent": "checkout"}
+{"text": "Order food easily by selecting the restaurant and your preferred dish.", "intent": "help"}
+{"text": "Add your delivery address and choose a time slot for your food.", "intent": "help"}
+{"text": "Pay securely using the app for your food order.", "intent": "help"}
+{"text": "Get your food delivered right to your doorstep.", "intent": "help"}
+{"text": "Track your order in real-time using the app\u2019s delivery updates.", "intent": "help"}
+{"text": "Order groceries by picking the items and checking out.", "intent": "help"}
+{"text": "Schedule a parcel delivery for your package or documents.", "intent": "help"}
+{"text": "Book a ride and pay directly within the app.", "intent": "help"}
+{"text": "Rate your delivery experience to help improve the service.", "intent": "help"}
+{"text": "Use the app to send gifts to friends and family.", "intent": "help"}
+{"text": "Set up a recurring delivery for regular essentials.", "intent": "help"}
+{"text": "Manage your delivery preferences and settings within the app.", "intent": "help"}
+{"text": "Order food for a group by splitting the bill.", "intent": "help"}
+{"text": "Use the app to cancel a delivery if it\u2019s running late.", "intent": "help"}
+{"text": "Find your nearest pickup points for food and groceries.", "intent": "help"}
+{"text": "Learn about the app\u2019s reward system for repeat customers.", "intent": "help"}
+{"text": "Get discounts and offers on orders placed through the app.", "intent": "help"}
+{"text": "Use the app to track multiple deliveries at once.", "intent": "help"}
+{"text": "Check the delivery status of your food, grocery, and ride orders.", "intent": "help"}
+{"text": "Set up auto-pay for regular deliveries to save time.", "intent": "help"}
+{"text": "Hello there!", "intent": "greeting"}
+{"text": "Hi there!", "intent": "greeting"}
+{"text": "Hey, how can I help?", "intent": "greeting"}
+{"text": "Greetings!", "intent": "greeting"}
+{"text": "Hello!", "intent": "greeting"}
+{"text": "Hi, welcome!", "intent": "greeting"}
+{"text": "Hello, ready to help!", "intent": "greeting"}
+{"text": "Greetings and salutations!", "intent": "greeting"}
+{"text": "Hello! Ready to assist!", "intent": "greeting"}
+{"text": "Hi, let's go!", "intent": "greeting"}
+{"text": "Hello again!", "intent": "greeting"}
+{"text": "Greetings once more!", "intent": "greeting"}
+{"text": "Hello! Ready for your order!", "intent": "greeting"}
+{"text": "Hi there, ready for your delivery!", "intent": "greeting"}
+{"text": "Hello! How can I assist you today?", "intent": "greeting"}
+{"text": "Hi, looking forward to helping!", "intent": "greeting"}
+{"text": "Hello! Ready for your parcel!", "intent": "greeting"}
+{"text": "Hi there, ready for your ride!", "intent": "greeting"}
+{"text": "Hello! Ready for your grocery order!", "intent": "greeting"}
+{"text": "Why did the pizza deliverer cross the road? To get to the pizza party!", "intent": "chitchat"}
+{"text": "Did you hear about the grocery delivery app that went to the gym? It got muscle delivery!", "intent": "chitchat"}
+{"text": "What do you call a parcel that loves to deliver? A Parceldelivery!", "intent": "chitchat"}
+{"text": "Why did the courier refuse to play cards? He already had too many deliveries!", "intent": "chitchat"}
+{"text": "Why did the ride share driver break up with his girlfriend? Because he couldn\u2019t keep his routes to himself!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot stop at the bar? To order a cold pizza slice!", "intent": "chitchat"}
+{"text": "What do you call a parrot that loves to deliver food? A Parrotdelivery!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery driver break up with his girlfriend? She was always a heavy shopper!", "intent": "chitchat"}
+{"text": "A parcel and a pizza both arrived at my door. Which one left first? The parcel, it was feeling more delivery-able!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot go to therapy? It had a snack attack!", "intent": "chitchat"}
+{"text": "Why did the food delivery driver break up with his girlfriend? She was always a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the beach? To send its produce on vacation!", "intent": "chitchat"}
+{"text": "Why did the food delivery driver refuse to play cards? He couldn't keep his food deliveries to himself!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the gym? To get muscle delivery!", "intent": "chitchat"}
+{"text": "Why did the parrot refuse to play cards? He was a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the food delivery robot break up with its girlfriend? She was always a heavy deliverer!", "intent": "chitchat"}
+{"text": "Why did the grocery delivery app go to the dance? To get a food delivery!", "intent": "chitchat"}

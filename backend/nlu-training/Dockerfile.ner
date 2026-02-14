@@ -1,0 +1,17 @@
+FROM nlu-training-nlu-training:latest
+
+WORKDIR /app
+
+# Install seqeval for evaluation (optional at runtime)
+RUN pip install seqeval fastapi uvicorn --quiet
+
+# Copy NER server
+COPY ner_server.py /app/main.py
+
+# Model will be mounted at /models/ner_muril_v1
+ENV NER_MODEL_PATH=/models/ner_muril_v1
+ENV DEVICE=cuda
+
+EXPOSE 7011
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7011"]

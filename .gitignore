@@ -1,0 +1,127 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+build/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Model weights and ML artifacts
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.lock
+backend/models/
+backend/training-data/
+backend/labelstudio_data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+docker-compose.override.yml
+
+# OSRM data (large)
+backend/osrm-data/
+
+# ML/NLU training artifacts
+backend/nlu-training/hf_cache/
+backend/nlu-training/.venv/
+backend/nlu-training/models/
+backend/nlu-training/datasets/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Large binary files
+*.so
+*.dylib
+*.dll
+*.exe
+*.node
+
+# Backup and temporary files
+*.backup
+*.tmp
+*.swp
+*.bak
+*~
+
+# Next.js and frontend caches
+frontend/.next/
+frontend/.next.backup/
+frontend/.next.old/
+frontend/node_modules/
+frontend/.turbo/
+
+# Backend caches
+backend/node_modules/
+backend/.venv/
+
+# Temp files
+*.tmp
+*.temp
+.cache/
+
+# Python virtual environments (CRITICAL - 70GB+)
+.venv/
+.venv_*/
+venv/
+**/venv/
+**/.venv/
+**/.venv_*/
+backend/nlu-training/.venv/
+backend/nlu-training/.venv_train/
+
+# More node_modules patterns
+**/node_modules/
+
+# Large binary files
+*.so
+*.so.*
+*.node
+*.wasm
+
+# Core dumps
+core
+backend/core
+*.core
+
+# Accidental shell history files (SQL commands saved as filenames)
+backend/s_2024*
+ql -h*

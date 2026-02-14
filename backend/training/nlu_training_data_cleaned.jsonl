@@ -1,0 +1,1028 @@
+{"text": "thank you", "intent": "chitchat"}
+{"text": "19.97780465482046, 73.77563128660017", "intent": "manage_address"}
+{"text": "John Doe 9876543210", "intent": "use_my_details"}
+{"text": "Rahul Sharma 9876543210", "intent": "use_my_details"}
+{"text": "how are you", "intent": "greeting"}
+{"text": "pickup https://maps.app.goo.gl/1ENgXjqQP9JCDnvB7", "intent": "parcel_booking"}
+{"text": "Can you find me some samosas", "intent": "order_food"}
+{"text": "बवाँश्वाँ बवाँश्वाँ", "intent": "chitchat"}
+{"text": "Add pizza to cart", "intent": "order_food"}
+{"text": "how are you doing today?", "intent": "chitchat"}
+{"text": "thanks, that was nice of you", "intent": "chitchat"}
+{"text": "hi, i am rahul from delhi", "intent": "greeting"}
+{"text": "what did i tell you earlier?", "intent": "repeat_order"}
+{"text": "hi there!", "intent": "greeting"}
+{"text": "Heplo", "intent": "greeting"}
+{"text": "प्लेस एन ओर्डर नाओ", "intent": "order_food"}
+{"text": "raj 9983213121", "intent": "use_my_details"}
+{"text": "कि मुझे एक ओडर प्लेस करना है पार्सल का तुरंत हुआ था", "intent": "parcel_booking"}
+{"text": "shantanu, 9370407508", "intent": "use_my_details"}
+{"text": "19.98983099878748, 73.77613351417814", "intent": "manage_address"}
+{"text": "akash 9923383838", "intent": "use_my_details"}
+{"text": "हुआ थी झाला हुआ था", "intent": "chitchat"}
+{"text": "वो बद्याँ परसन्या", "intent": "parcel_booking"}
+{"text": "उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है उजे पर्सल भेजना है", "intent": "parcel_booking"}
+{"text": "📍 Location shared: XQCP+4JH, Chintamani Colony, Bhagirath Sankul, Nashik, Maharashtra 422009, India Road: Barne Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Road: Barne Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "Where is my order?", "intent": "track_order"}
+{"text": "Track my delivery", "intent": "track_order"}
+{"text": "I want to track my parcel", "intent": "track_order"}
+{"text": "What is the status of my order?", "intent": "track_order"}
+{"text": "Can you tell me where my package is?", "intent": "track_order"}
+{"text": "How can I check my order status?", "intent": "track_order"}
+{"text": "Show me my order tracking", "intent": "track_order"}
+{"text": "I need to track something I ordered", "intent": "track_order"}
+{"text": "Give me tracking update", "intent": "track_order"}
+{"text": "Is my order out for delivery?", "intent": "track_order"}
+{"text": "When will my parcel arrive?", "intent": "track_order"}
+{"text": "Check delivery status", "intent": "track_order"}
+{"text": "My order tracking please", "intent": "track_order"}
+{"text": "Where is my food delivery?", "intent": "track_order"}
+{"text": "Track food order", "intent": "track_order"}
+{"text": "Has my order been shipped?", "intent": "track_order"}
+{"text": "Order status check", "intent": "track_order"}
+{"text": "I want to see where my delivery is", "intent": "track_order"}
+{"text": "I want to order food", "intent": "order_food"}
+{"text": "Show tracking info", "intent": "track_order"}
+{"text": "ETA for my delivery?", "intent": "track_order"}
+{"text": "send a parcel", "intent": "parcel_booking"}
+{"text": "https://maps.app.goo.gl/zWBWuV8QbrXEd48R8", "intent": "manage_address"}
+{"text": "19.964190567593565, 73.76975438931225", "intent": "manage_address"}
+{"text": "online payment", "intent": "checkout"}
+{"text": "cash on delivery", "intent": "checkout"}
+{"text": "9923833883 ajasa", "intent": "use_my_details"}
+{"text": "can you share me my saved address", "intent": "manage_address"}
+{"text": "cool, thanks", "intent": "chitchat"}
+{"text": "how are you?", "intent": "chitchat"}
+{"text": "thanks for the help earlier", "intent": "chitchat"}
+{"text": "hey, i am feeling a bit tired today", "intent": "chitchat"}
+{"text": "i am doing ok", "intent": "chitchat"}
+{"text": "मेरा ऑर्डर कहां है?", "intent": "track_order"}
+{"text": "पार्सल ट्रैक करो", "intent": "track_order"}
+{"text": "मेरी डिलीवरी कब आएगी?", "intent": "track_order"}
+{"text": "ऑर्डर का स्टेटस बताओ", "intent": "track_order"}
+{"text": "मेरा सामान कहां पहुंचा?", "intent": "track_order"}
+{"text": "ट्रैकिंग दिखाओ", "intent": "track_order"}
+{"text": "कब तक मिलेगा?", "intent": "track_order"}
+{"text": "मेरा पैकेज कहां है?", "intent": "track_order"}
+{"text": "डिलीवरी स्टेटस चेक करो", "intent": "track_order"}
+{"text": "खाना कहां पहुंचा?", "intent": "track_order"}
+{"text": "Mera order kaha hai?", "intent": "track_order"}
+{"text": "Track karo mera parcel", "intent": "track_order"}
+{"text": "Delivery kab tak aayegi?", "intent": "track_order"}
+{"text": "Order status batao", "intent": "track_order"}
+{"text": "Mera samaan kaha pahucha?", "intent": "track_order"}
+{"text": "Tracking dikhao please", "intent": "track_order"}
+{"text": "Kab tak milega mera order?", "intent": "track_order"}
+{"text": "Mera package kidhar hai?", "intent": "track_order"}
+{"text": "Delivery status check karo", "intent": "track_order"}
+{"text": "Khana kaha pahucha?", "intent": "track_order"}
+{"text": "Order tracking chahiye", "intent": "track_order"}
+{"text": "Kya status hai mera order ka?", "intent": "track_order"}
+{"text": "Parcel ka update do", "intent": "track_order"}
+{"text": "Delivery out ho gayi?", "intent": "track_order"}
+{"text": "Order track karna hai", "intent": "track_order"}
+{"text": "Meri delivery ka kya hua?", "intent": "track_order"}
+{"text": "Check karo order kitna door hai", "intent": "track_order"}
+{"text": "Delivery boy kaha hai?", "intent": "track_order"}
+{"text": "Rider ka location batao", "intent": "track_order"}
+{"text": "Package shipped hua ya nahi?", "intent": "track_order"}
+{"text": "ETA kya hai delivery ka?", "intent": "track_order"}
+{"text": "Food delivery kab tak?", "intent": "track_order"}
+{"text": "20.0059, 73.7897", "intent": "manage_address"}
+{"text": "i paid", "intent": "checkout"}
+{"text": "location_shared", "intent": "manage_address"}
+{"text": "Location shared", "intent": "manage_address"}
+{"text": "rahul", "intent": "use_my_details"}
+{"text": "naresh 99999987", "intent": "use_my_details"}
+{"text": "Jajshs 883737383", "intent": "use_my_details"}
+{"text": "पाम समय चाओ", "intent": "chitchat"}
+{"text": "📍 Location shared: XQCP+4JH, Chintamani Colony, Bhagirath Sankul, Nashik, Maharashtra 422009, India House/Flat: BE3/25/3 Road: Sambhaji Stadium Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "9923383838 akash", "intent": "use_my_details"}
+{"text": "Order pohoch gaya kya?", "intent": "track_order"}
+{"text": "Tracking number se check karo", "intent": "track_order"}
+{"text": "Live location chahiye", "intent": "track_order"}
+{"text": "Order movement dikhao", "intent": "track_order"}
+{"text": "Parcel kab pick hua?", "intent": "track_order"}
+{"text": "Dispatch ho gaya kya?", "intent": "track_order"}
+{"text": "Order assigned hai kya?", "intent": "track_order"}
+{"text": "Bhai mera order ka kya scene hai?", "intent": "track_order"}
+{"text": "Yaar check kar de delivery kab aayegi", "intent": "track_order"}
+{"text": "Please track my recent order", "intent": "track_order"}
+{"text": "Can you help me find my package", "intent": "track_order"}
+{"text": "I ordered something yesterday where is it", "intent": "track_order"}
+{"text": "My delivery is late please check", "intent": "track_order"}
+{"text": "Wheres my stuff", "intent": "track_order"}
+{"text": "Pls track", "intent": "track_order"}
+{"text": "Package kaha hai abhi?", "intent": "track_order"}
+{"text": "Mera order aa gaya?", "intent": "track_order"}
+{"text": "19.957323841220294, 73.81272786196229", "intent": "manage_address"}
+{"text": "what is this ?", "intent": "help"}
+{"text": "ramesh 9923383838", "intent": "use_my_details"}
+{"text": "akasj 9158886329", "intent": "use_my_details"}
+{"text": "jhhhh 9988899987", "intent": "use_my_details"}
+{"text": "akash 9923596798", "intent": "use_my_details"}
+{"text": "i want you to pickup items from my friends manav and get it delivered to my home", "intent": "parcel_booking"}
+{"text": "📍 Location shared: 12/464/178, Sharanpur Gaothan, Nashik, Maharashtra 422002, India Coordinates: 20.000000, 73.780000", "intent": "manage_address"}
+{"text": "pickup bag from my home and deliver it to my friend akash", "intent": "parcel_booking"}
+{"text": "Can you show me my saved address", "intent": "manage_address"}
+{"text": "Ramesh", "intent": "greeting"}
+{"text": "Ramesh bhai 9923383838", "intent": "use_my_details"}
+{"text": "Order food delivery", "intent": "order_food"}
+{"text": "I am hungry", "intent": "order_food"}
+{"text": "Can I get some food", "intent": "order_food"}
+{"text": "I want pizza", "intent": "order_food"}
+{"text": "Order biryani for me", "intent": "order_food"}
+{"text": "Get me some thali", "intent": "order_food"}
+{"text": "Looking for nearby restaurants", "intent": "order_food"}
+{"text": "What can I eat?", "intent": "order_food"}
+{"text": "Food delivery please", "intent": "order_food"}
+{"text": "I need lunch", "intent": "order_food"}
+{"text": "Dinner options", "intent": "order_food"}
+{"text": "Breakfast delivery", "intent": "order_food"}
+{"text": "Order noodles", "intent": "order_food"}
+{"text": "Get me some momos", "intent": "order_food"}
+{"text": "Chinese food delivery", "intent": "order_food"}
+{"text": "South Indian food", "intent": "order_food"}
+{"text": "Tandoori chicken order", "intent": "order_food"}
+{"text": "I want dal makhani", "intent": "order_food"}
+{"text": "Order roti sabzi", "intent": "order_food"}
+{"text": "Paneer butter masala please", "intent": "order_food"}
+{"text": "I want samosa", "intent": "order_food"}
+{"text": "Get me chai", "intent": "order_food"}
+{"text": "Coffee delivery", "intent": "order_food"}
+{"text": "I want dessert", "intent": "order_food"}
+{"text": "Ice cream delivery", "intent": "order_food"}
+{"text": "Order some snacks", "intent": "order_food"}
+{"text": "Fast food delivery", "intent": "order_food"}
+{"text": "I want a burger", "intent": "order_food"}
+{"text": "Order fries", "intent": "order_food"}
+{"text": "Rahul dev 9876543210", "intent": "use_my_details"}
+{"text": "badiya", "intent": "chitchat"}
+{"text": "my self", "intent": "chitchat"}
+{"text": "confrin", "intent": "chitchat"}
+{"text": "📍 Location shared: Swaroop Bunglow, ME-44, Magha Sector, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.977739, 73.775915", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-43, Ashwin Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.960454, 73.758762", "intent": "manage_address"}
+{"text": "Add pizza to my cart", "intent": "add_to_cart"}
+{"text": "I want to send a package", "intent": "parcel_booking"}
+{"text": "i want to send a parcel", "intent": "parcel_booking"}
+{"text": "मुझे खाना चाहिए", "intent": "order_food"}
+{"text": "I want to send a parcel from College Road to Gangapur", "intent": "parcel_booking"}
+{"text": "I need to send a parcel", "intent": "parcel_booking"}
+{"text": "i want to send a parcel from cidco to gangapur road", "intent": "parcel_booking"}
+{"text": "pizza", "intent": "order_food"}
+{"text": "i want to send a parcel from college road nashik to gangapur road nashik", "intent": "parcel_booking"}
+{"text": "i want to order biryani", "intent": "order_food"}
+{"text": "send parcel", "intent": "parcel_booking"}
+{"text": "i want biryani", "intent": "order_food"}
+{"text": "gangapur road nashik", "intent": "manage_address"}
+{"text": "what can you do?", "intent": "help"}
+{"text": "repeat my last order", "intent": "repeat_order"}
+{"text": "btn parcel", "intent": "parcel_booking"}
+{"text": "what can you do", "intent": "help"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Cidco, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.977687, 73.776268", "intent": "manage_address"}
+{"text": "food", "intent": "order_food"}
+{"text": "Add Chicken Good Chilli to cart", "intent": "add_to_cart"}
+{"text": "Add Chicken Hakka Noodles to cart", "intent": "add_to_cart"}
+{"text": "search for pizza", "intent": "search_product"}
+{"text": "i want to search for pizza", "intent": "search_product"}
+{"text": "i want to order some food", "intent": "order_food"}
+{"text": "btn food", "intent": "order_food"}
+{"text": "📍 Location shared: 2Q97+RFQ, Nashik Rd, D. K. Nagar, Nashik, Maharashtra 422013, India Road: Nashik Road Coordinates: 20.019313, 73.763671", "intent": "manage_address"}
+{"text": "Show me catogery", "intent": "help"}
+{"text": "where is my order", "intent": "track_order"}
+{"text": "i need help", "intent": "help"}
+{"text": "show me paneer dishes", "intent": "search_product"}
+{"text": "help me", "intent": "help"}
+{"text": "cancle", "intent": "cancel_order"}
+{"text": "Add Amul Pav Bhaji (2 Butter Pav) to cart", "intent": "add_to_cart"}
+{"text": "Book a cab to airport", "intent": "help"}
+{"text": "Track my parcel delivery", "intent": "track_order"}
+{"text": "nashik road", "intent": "manage_address"}
+{"text": "📍 Location shared: B-931/5, Maa Ganga Colony, Kalewadi, Pimpri-Chinchwad, Maharashtra 411017, India Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.960545, 73.758758", "intent": "manage_address"}
+{"text": "u there", "intent": "greeting"}
+{"text": "pickup location is my home address and drop is my friend suresh , bike would be fine", "intent": "parcel_booking"}
+{"text": "pickup items from my home and delivery it to my office", "intent": "parcel_booking"}
+{"text": "use my name and number", "intent": "login"}
+{"text": "pickup my home and drop at my frineds place", "intent": "parcel_booking"}
+{"text": "put my details on it", "intent": "login"}
+{"text": "Recipient name is Rahul and phone is 9123456789", "intent": "use_my_details"}
+{"text": "खाना मंगाना है", "intent": "order_food"}
+{"text": "Recipient: Rahul, Phone: 9876543210", "intent": "use_my_details"}
+{"text": "my home", "intent": "parcel_booking"}
+{"text": "my name and number", "intent": "use_my_details"}
+{"text": "hello, i want to order food", "intent": "order_food"}
+{"text": "show me restaurants near me", "intent": "search_product"}
+{"text": "hii", "intent": "greeting"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "option-3", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Road: road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "📍 Location shared: Akash Bunglow, Plot No.ME-38 , Sunderban Colony , Bhujbal farm lane, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.977659, 73.776215", "intent": "manage_address"}
+{"text": "📍 Location shared: XQCP+4JH, Chintamani Colony, Bhagirath Sankul, Nashik, Maharashtra 422009, India Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India House/Flat: 10 Road: Fatehabad Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "how are you today?", "intent": "chitchat"}
+{"text": "cacnecl", "intent": "cancel_order"}
+{"text": "📍 Location shared: Akash Bunglow, Plot No.ME-38 , Sunderban Colony , Bhujbal farm lane, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India House/Flat: 10 Road: Fatehabad Road Coordinates: 19.977659, 73.776215", "intent": "manage_address"}
+{"text": "nashik road, near railway station", "intent": "manage_address"}
+{"text": "college road, nashik", "intent": "manage_address"}
+{"text": "small box with documents", "intent": "parcel_booking"}
+{"text": "college road", "intent": "manage_address"}
+{"text": "rahul 9876543210", "intent": "use_my_details"}
+{"text": "near cbs, nashik", "intent": "search_product"}
+{"text": "priya 9123456789", "intent": "use_my_details"}
+{"text": "nashik road railway station, nashik", "intent": "manage_address"}
+{"text": "cbs nashik", "intent": "manage_address"}
+{"text": "nashik road railway station", "intent": "manage_address"}
+{"text": "cbs bus stand nashik", "intent": "manage_address"}
+{"text": "old mumbai highway, nashik, maharashtra 422001", "intent": "manage_address"}
+{"text": "near cbs bus stand opposite hdfc bank, gangapur road, nashik 422001", "intent": "manage_address"}
+{"text": "📍 location shared: near cbs bus stand, gangapur road, nashik coordinates: 19.9834, 73.7800", "intent": "manage_address"}
+{"text": "📍 location shared: nashik road railway station coordinates: 19.9975, 73.7898", "intent": "manage_address"}
+{"text": "📍 location shared: cbs bus stand, gangapur road, nashik coordinates: 19.9834, 73.7800", "intent": "manage_address"}
+{"text": "📍 location shared: cbs bus stand, nashik coordinates: 19.9834, 73.7800", "intent": "manage_address"}
+{"text": "Sector 17, Chandigarh", "intent": "manage_address"}
+{"text": "📍 Location shared: XQCP+4JH, Chintamani Colony, Bhagirath Sankul, Nashik, Maharashtra 422009, India House/Flat: 3 Road: Avdumber Cidco Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India House/Flat: 3 Road: Avdumber Cidco Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "cacncel", "intent": "cancel_order"}
+{"text": "Put my name", "intent": "use_my_details"}
+{"text": "📍 Location shared: Akash Bunglow, Plot No.ME-38 , Sunderban Colony , Bhujbal farm lane, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India House/Flat: 3 Road: Avdumber Cidco Road Coordinates: 19.977659, 73.776215", "intent": "manage_address"}
+{"text": "whta can you do", "intent": "help"}
+{"text": "ok do it", "intent": "parcel_booking"}
+{"text": "https://maps.app.goo.gl/jtztDWiqAihCsFLY8 pickup", "intent": "parcel_booking"}
+{"text": "📍 Location shared: WQVG+HFX, Pathardi Gaon, Pathardi Phata, Nashik, Maharashtra 422009, India Coordinates: 19.944689, 73.776456", "intent": "manage_address"}
+{"text": "can you pickup my shoes from my home and send to office , right now", "intent": "parcel_booking"}
+{"text": "i am the rcecipt", "intent": "use_my_details"}
+{"text": "i am", "intent": "greeting"}
+{"text": "https://maps.app.goo.gl/ihnHG6fdcVMBxfjg9 - pickup location 19.95061912699634, 73.80737438807638 - drop location", "intent": "parcel_booking"}
+{"text": "📍 Location shared: XPHG+QVG, Ambad Satpur Link Rd, Bajrang Nagar, Medage Nagar, Nashik, Maharashtra 422010, India Road: Ambad Satpur Link Road Coordinates: 19.980098, 73.727259", "intent": "manage_address"}
+{"text": "whats up", "intent": "chitchat"}
+{"text": "what vechiles you have ?", "intent": "help"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Cidco, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.977704, 73.776280", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "what r u good at", "intent": "help"}
+{"text": "https://maps.app.goo.gl/QiEYWKZBWDkRqXZa7 rakesh 9934657867", "intent": "manage_address"}
+{"text": "kaise ho", "intent": "greeting"}
+{"text": "📍 Location shared: 11, P-11, Lekha Nagar Bypass Rd, Lekhanagar Colony, Cidco, Nashik, Maharashtra 422009, India House/Flat: 11 Road: Lekha Nagar Bypass Road Coordinates: 19.973463, 73.773071", "intent": "manage_address"}
+{"text": "From Bombay ??", "intent": "manage_address"}
+{"text": "📍 Location shared: P-17, Agra - Mumbai Hwy, MIDC Ambad, Nashik, Maharashtra 422010, India Road: Agra - Mumbai Highway Coordinates: 19.957383, 73.754381", "intent": "manage_address"}
+{"text": "भूख लगी है", "intent": "order_food"}
+{"text": "What's up", "intent": "chitchat"}
+{"text": "Complete the task", "intent": "checkout"}
+{"text": "What r u doing ??", "intent": "chitchat"}
+{"text": "Complete my profile", "intent": "manage_address"}
+{"text": "contact_support", "intent": "help"}
+{"text": "Lets go", "intent": "chitchat"}
+{"text": "Kya hai yeah , i didnt ask for this", "intent": "complaint"}
+{"text": "What more can you offer", "intent": "help"}
+{"text": "Put mine", "intent": "parcel_booking"}
+{"text": "बिरयानी लाओ", "intent": "order_food"}
+{"text": "Pickup my shoes from my friends house and get it deliverd to my home", "intent": "parcel_booking"}
+{"text": "what problem", "intent": "complaint"}
+{"text": "📍 Location shared: BE3/25/3, N52/BE3/25/3, Sambhaji Stadium Rd, Sinhasta Nagar, Nashik, Maharashtra 422009, India House/Flat: BE3/25/3 Road: Sambhaji Stadium Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: BE3/25/3, N52/BE3/25/3, Sambhaji Stadium Rd, Sinhasta Nagar, Nashik, Maharashtra 422009, India House/Flat: BE3/25/3 Road: Sambhaji Stadium Road Coordinates: 19.963719, 73.759542", "intent": "manage_address"}
+{"text": "पिज़्ज़ा ऑर्डर करो", "intent": "order_food"}
+{"text": "rahul 9923383838", "intent": "use_my_details"}
+{"text": "थाली भेजो", "intent": "order_food"}
+{"text": "mangwale offic on google maps", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India House/Flat: BE3/60/4 Road: Sihsth Nagar Road Coordinates: 19.960475, 73.758758", "intent": "manage_address"}
+{"text": "i am not raj?", "intent": "chitchat"}
+{"text": "pickup my shoes", "intent": "parcel_booking"}
+{"text": "📍 Location shared: XQ5V+H8J, Gandhi Nagar Airport Area, Wadala Gaon, Nashik, Maharashtra 422006, India Coordinates: 19.959507, 73.793863", "intent": "manage_address"}
+{"text": "लंच का क्या है?", "intent": "order_food"}
+{"text": "Get my shoes picked up from my home and send it to https://maps.app.goo.gl/XPQkgjfSVZ1oQoCBA his name is ramesh 9923383838", "intent": "parcel_booking"}
+{"text": "delivery location is https://maps.app.goo.gl/XPQkgjfSVZ1oQoCBA", "intent": "manage_address"}
+{"text": "priya 9923383838", "intent": "use_my_details"}
+{"text": "डिनर मंगाना है", "intent": "order_food"}
+{"text": "what can you do more", "intent": "help"}
+{"text": "which vechiles you have ?", "intent": "help"}
+{"text": "चाय मंगाओ", "intent": "order_food"}
+{"text": "समोसा खाना है", "intent": "order_food"}
+{"text": "Mujhe khana chahiye", "intent": "order_food"}
+{"text": "Khana mangana hai", "intent": "order_food"}
+{"text": "Bhookh lagi hai yaar", "intent": "order_food"}
+{"text": "Biryani order karo", "intent": "order_food"}
+{"text": "Pizza lao mujhe", "intent": "order_food"}
+{"text": "Thali bhejo ghar pe", "intent": "order_food"}
+{"text": "Lunch kya hai aaj?", "intent": "order_food"}
+{"text": "Dinner mangana hai", "intent": "order_food"}
+{"text": "Chai mangao please", "intent": "order_food"}
+{"text": "Samosa khana hai", "intent": "order_food"}
+{"text": "Chole bhature order karo", "intent": "order_food"}
+{"text": "Dal chawal lao", "intent": "order_food"}
+{"text": "Roti sabzi mangao", "intent": "order_food"}
+{"text": "Paneer butter masala chahiye", "intent": "order_food"}
+{"text": "कर दो कि अ क्यों कि यह काट कहां से आ गया है इसमें अ कि यह काट कहां से आ गया है इसमें अ कर दो कि यह काट कहां से आ गया है इसमें अ", "intent": "chitchat"}
+{"text": "वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है वासल कोडर प्लीस करना है", "intent": "parcel_booking"}
+{"text": "pay for order 103884", "intent": "parcel_booking"}
+{"text": "Chicken tikka order do", "intent": "order_food"}
+{"text": "Momos lao yaar", "intent": "order_food"}
+{"text": "Noodles khana hai", "intent": "order_food"}
+{"text": "Chinese food order karo", "intent": "order_food"}
+{"text": "South Indian khana dikhao", "intent": "order_food"}
+{"text": "Dosa mangana hai", "intent": "order_food"}
+{"text": "Idli sambhar bhejo", "intent": "order_food"}
+{"text": "Burger lao ek", "intent": "order_food"}
+{"text": "Fries chahiye", "intent": "order_food"}
+{"text": "Ice cream order karo", "intent": "order_food"}
+{"text": "Meetha kuch bhejo", "intent": "order_food"}
+{"text": "Kuch khane ko manga do", "intent": "order_food"}
+{"text": "Restaurant dikhao nearby", "intent": "order_food"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Cidco, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.977705, 73.776277", "intent": "manage_address"}
+{"text": "Food options batao", "intent": "order_food"}
+{"text": "Veg thali order do", "intent": "order_food"}
+{"text": "Non veg special chahiye", "intent": "order_food"}
+{"text": "Rajma chawal bhejo", "intent": "order_food"}
+{"text": "Aloo paratha lao", "intent": "order_food"}
+{"text": "Maggi mangao ghar pe", "intent": "order_food"}
+{"text": "Pasta order karna hai", "intent": "order_food"}
+{"text": "Sandwich lao ek", "intent": "order_food"}
+{"text": "Lassi chahiye", "intent": "order_food"}
+{"text": "Cold drink mangao", "intent": "order_food"}
+{"text": "Shake lao chocolate wala", "intent": "order_food"}
+{"text": "Juice delivery chahiye", "intent": "order_food"}
+{"text": "Snacks mangao kuch", "intent": "order_food"}
+{"text": "Book parcel delivery", "intent": "parcel_booking"}
+{"text": "Send package to my friend", "intent": "parcel_booking"}
+{"text": "I need courier service", "intent": "parcel_booking"}
+{"text": "Deliver something for me", "intent": "parcel_booking"}
+{"text": "Pickup and drop service", "intent": "parcel_booking"}
+{"text": "Book a delivery pickup", "intent": "parcel_booking"}
+{"text": "Send documents", "intent": "parcel_booking"}
+{"text": "Deliver this to another address", "intent": "parcel_booking"}
+{"text": "How to send a package?", "intent": "parcel_booking"}
+{"text": "Courier booking please", "intent": "parcel_booking"}
+{"text": "I have something to send", "intent": "parcel_booking"}
+{"text": "New parcel order", "intent": "parcel_booking"}
+{"text": "Schedule a pickup", "intent": "parcel_booking"}
+{"text": "Send to family", "intent": "parcel_booking"}
+{"text": "Deliver gift to someone", "intent": "parcel_booking"}
+{"text": "Parcel pickup needed", "intent": "parcel_booking"}
+{"text": "Express delivery booking", "intent": "parcel_booking"}
+{"text": "Same day delivery service", "intent": "parcel_booking"}
+{"text": "Send clothes to relative", "intent": "parcel_booking"}
+{"text": "Medicine delivery needed", "intent": "parcel_booking"}
+{"text": "Send electronics safely", "intent": "parcel_booking"}
+{"text": "Fragile item delivery", "intent": "parcel_booking"}
+{"text": "Heavy parcel pickup", "intent": "parcel_booking"}
+{"text": "I want to book a parcel", "intent": "parcel_booking"}
+{"text": "Urgent courier needed", "intent": "parcel_booking"}
+{"text": "Send within city", "intent": "parcel_booking"}
+{"text": "Interstate parcel delivery", "intent": "parcel_booking"}
+{"text": "Local delivery booking", "intent": "parcel_booking"}
+{"text": "Ship to another city", "intent": "parcel_booking"}
+{"text": "Bulk parcel sending", "intent": "parcel_booking"}
+{"text": "online", "intent": "checkout"}
+{"text": "19.96081573858909, 73.73858333991693", "intent": "manage_address"}
+{"text": "error ??", "intent": "help"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Cidco, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.977701, 73.776279", "intent": "manage_address"}
+{"text": "i dont see any vechile", "intent": "help"}
+{"text": "raj 9999999999", "intent": "use_my_details"}
+{"text": "पार्सल भेजना है", "intent": "parcel_booking"}
+{"text": "कुरियर बुक करो", "intent": "parcel_booking"}
+{"text": "सामान भेजना है", "intent": "parcel_booking"}
+{"text": "डिलीवरी बुक करनी है", "intent": "parcel_booking"}
+{"text": "पिकअप लगाओ", "intent": "parcel_booking"}
+{"text": "दस्तावेज भेजने हैं", "intent": "parcel_booking"}
+{"text": "पैकेज भिजवाना है", "intent": "parcel_booking"}
+{"text": "कपड़े भेजने हैं", "intent": "parcel_booking"}
+{"text": "गिफ्ट भेजना है", "intent": "parcel_booking"}
+{"text": "जल्दी डिलीवरी चाहिए", "intent": "parcel_booking"}
+{"text": "Parcel bhejna hai", "intent": "parcel_booking"}
+{"text": "Courier book karo", "intent": "parcel_booking"}
+{"text": "Samaan bhejna hai", "intent": "parcel_booking"}
+{"text": "Delivery book karni hai", "intent": "parcel_booking"}
+{"text": "Pickup lagao ghar se", "intent": "parcel_booking"}
+{"text": "Documents bhejne hain", "intent": "parcel_booking"}
+{"text": "Package bhijwana hai", "intent": "parcel_booking"}
+{"text": "Kapde bhejne hain ghar", "intent": "parcel_booking"}
+{"text": "Gift bhejna hai friend ko", "intent": "parcel_booking"}
+{"text": "Jaldi delivery chahiye urgent", "intent": "parcel_booking"}
+{"text": "Kuch bhejwana hai", "intent": "parcel_booking"}
+{"text": "Parcel ka rate kya hai?", "intent": "parcel_booking"}
+{"text": "Delivery charges batao", "intent": "parcel_booking"}
+{"text": "Pickup schedule karo kal", "intent": "parcel_booking"}
+{"text": "Same day delivery ho sakti hai?", "intent": "parcel_booking"}
+{"text": "Express courier chahiye", "intent": "parcel_booking"}
+{"text": "Medicine bhejna hai urgent", "intent": "parcel_booking"}
+{"text": "Electronics safely bhejo", "intent": "parcel_booking"}
+{"text": "Fragile item hai handle carefully", "intent": "parcel_booking"}
+{"text": "Heavy parcel pickup karo", "intent": "parcel_booking"}
+{"text": "City ke andar delivery", "intent": "parcel_booking"}
+{"text": "Doosre sheher bhejna hai", "intent": "parcel_booking"}
+{"text": "Local delivery book karo", "intent": "parcel_booking"}
+{"text": "wjhar can tiy do", "intent": "chitchat"}
+{"text": "need to pick up some stuff from my home", "intent": "parcel_booking"}
+{"text": "Multiple parcels bhejne hain", "intent": "parcel_booking"}
+{"text": "Relative ke paas bhejna hai", "intent": "parcel_booking"}
+{"text": "Office se pickup lena hai", "intent": "parcel_booking"}
+{"text": "Home delivery book karni hai", "intent": "parcel_booking"}
+{"text": "Parcel bhijwao address pe", "intent": "parcel_booking"}
+{"text": "Rakhi bhejna hai bhai ko", "intent": "parcel_booking"}
+{"text": "Birthday gift bhejo friend ko", "intent": "parcel_booking"}
+{"text": "Books courier karni hain", "intent": "parcel_booking"}
+{"text": "Laptop send karna hai safely", "intent": "parcel_booking"}
+{"text": "Mobile phone delivery", "intent": "parcel_booking"}
+{"text": "Food parcel bhejo", "intent": "parcel_booking"}
+{"text": "Sweets bhejna hai Diwali pe", "intent": "parcel_booking"}
+{"text": "Return parcel bhejwana hai", "intent": "parcel_booking"}
+{"text": "Pickup drop service chahiye", "intent": "parcel_booking"}
+{"text": "Ek parcel book karo please", "intent": "parcel_booking"}
+{"text": "Delivery slot book karo", "intent": "parcel_booking"}
+{"text": "Aaj hi pickup ho sakti hai?", "intent": "parcel_booking"}
+{"text": "Kal subah pickup lagao", "intent": "parcel_booking"}
+{"text": "Evening me pickup ho jayegi?", "intent": "parcel_booking"}
+{"text": "Office timing me pickup", "intent": "parcel_booking"}
+{"text": "Night delivery available hai?", "intent": "parcel_booking"}
+{"text": "Sunday ko bhi pickup hoti hai?", "intent": "parcel_booking"}
+{"text": "COD parcel bhej sakte ho?", "intent": "parcel_booking"}
+{"text": "Prepaid delivery book karo", "intent": "parcel_booking"}
+{"text": "Insurance wala courier", "intent": "parcel_booking"}
+{"text": "Valuable item bhejna hai", "intent": "parcel_booking"}
+{"text": "Jewellery courier safely", "intent": "parcel_booking"}
+{"text": "cbs se satpur delivery", "intent": "parcel_booking"}
+{"text": "who made you", "intent": "help"}
+{"text": "same day delivery", "intent": "help"}
+{"text": "urgent delivery", "intent": "parcel_booking"}
+{"text": "parcel ka rate kya hai", "intent": "help"}
+{"text": "khana order karna hai", "intent": "order_food"}
+{"text": "this is a text message", "intent": "chitchat"}
+{"text": "+917796033248", "intent": "login"}
+{"text": "https://goo.gl/maps/E5xcQJvhaj2d3fmL7", "intent": "manage_address"}
+{"text": "refund policy", "intent": "help"}
+{"text": "Do you have work from home??", "intent": "chitchat"}
+{"text": "Job che", "intent": "chitchat"}
+{"text": "For making receipt", "intent": "chitchat"}
+{"text": "I received a call in morning", "intent": "chitchat"}
+{"text": "show me chinese food", "intent": "order_food"}
+{"text": "veg paneer dishes", "intent": "order_food"}
+{"text": "chicken tikka", "intent": "order_food"}
+{"text": "cheap food under 100", "intent": "order_food"}
+{"text": "dominos pizza", "intent": "order_food"}
+{"text": "Is any vacancy for Data analyst", "intent": "chitchat"}
+{"text": "Harshvardhan Patil Flat F34 7588708810", "intent": "use_my_details"}
+{"text": "Majithia Villa no 7, Nirman Vila Row House, Vesa Mala , Behind Big Bazaar , College Road , Nashik Ronak Majithia 7030669699", "intent": "manage_address"}
+{"text": "Please send me your address / location for the interview", "intent": "chitchat"}
+{"text": "Pls send me location", "intent": "manage_address"}
+{"text": "No drop is different", "intent": "parcel_booking"}
+{"text": "Raj 9923383838", "intent": "use_my_details"}
+{"text": "Home-42", "intent": "chitchat"}
+{"text": "Where ?", "intent": "chitchat"}
+{"text": "Pickup address", "intent": "manage_address"}
+{"text": "Plz send me app link to join", "intent": "login"}
+{"text": "Are you understand what i am saying", "intent": "chitchat"}
+{"text": "Please send me address", "intent": "parcel_booking"}
+{"text": "Tomorrow", "intent": "greeting"}
+{"text": "What can you do for me", "intent": "order_food"}
+{"text": "https://maps.app.goo.gl/bYYsCEgFQQpmiSmx9", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/be6D9wrdY9rQbb3k8", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/VzgYQRCk1SwBDPW78", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/fXy5BuPxQTAvPbhD7", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/QiEYWKZBWDkRqXZa7", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/Jw8z7V9eU1HLbpEq7?g_st=iw", "intent": "manage_address"}
+{"text": "[Location: 19.9776707,73.7762707]", "intent": "manage_address"}
+{"text": "[Location: 19.972821921632,73.784683272243]", "intent": "manage_address"}
+{"text": "[Location: 19.986089736194,73.766404017806]", "intent": "manage_address"}
+{"text": "https://maps.app.goo.gl/vkwiCq8bw9766vk79", "intent": "manage_address"}
+{"text": "Order", "intent": "order_food"}
+{"text": "What is this mangwale", "intent": "help"}
+{"text": "Payment accept karne bolo 29 nov and 6 dec k hai", "intent": "complaint"}
+{"text": "I am vegitarian", "intent": "chitchat"}
+{"text": "Bhagat tarachand", "intent": "search_product"}
+{"text": "[respond in english] Oke, pay online.", "intent": "chitchat"}
+{"text": "[respond in english] um", "intent": "chitchat"}
+{"text": "[respond in english] مجھے کیا آپ کرسکتے ہیں؟", "intent": "chitchat"}
+{"text": "marathi yeti ka tumala ?", "intent": "chitchat"}
+{"text": "i dont want text in hindi i want it to be in english but hinglish", "intent": "chitchat"}
+{"text": "9923383838", "intent": "login"}
+{"text": "8888777766", "intent": "login"}
+{"text": "Rs 625", "intent": "chitchat"}
+{"text": "[Image received]", "intent": "chitchat"}
+{"text": "I apologize for missing your call earlier. Could you please let me know what it was regarding? Regards Sneha katkule", "intent": "greeting"}
+{"text": "Isha Pal this side", "intent": "greeting"}
+{"text": "19.941683372345228, 73.7485021489015", "intent": "manage_address"}
+{"text": "19.960170341095154, 73.77875612544705", "intent": "manage_address"}
+{"text": "19.951639343364793, 73.83932522617795", "intent": "manage_address"}
+{"text": "19.951475109442427, 73.83905875318099", "intent": "manage_address"}
+{"text": "19.94626204556546, 73.75589312113014", "intent": "manage_address"}
+{"text": "what is this?", "intent": "help"}
+{"text": "what can you", "intent": "help"}
+{"text": "contact number", "intent": "help"}
+{"text": "give feedback", "intent": "chitchat"}
+{"text": "hindi aatihai ?", "intent": "chitchat"}
+{"text": "who is raj", "intent": "chitchat"}
+{"text": "tell me a joke", "intent": "chitchat"}
+{"text": "what's the weather", "intent": "chitchat"}
+{"text": "123456", "intent": "chitchat"}
+{"text": "asdfghjkl", "intent": "chitchat"}
+{"text": "@#$%^&*()", "intent": "chitchat"}
+{"text": "12345", "intent": "chitchat"}
+{"text": "Please send me the address / location", "intent": "manage_address"}
+{"text": "Gangapur Road, Nashik", "intent": "manage_address"}
+{"text": "📍 Location shared: Sunder Nagar Colony, 38, New, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Road: New Coordinates: 19.977685, 73.776274", "intent": "manage_address"}
+{"text": "__LOCATION__", "intent": "manage_address"}
+{"text": "option-1", "intent": "chitchat"}
+{"text": "option-2", "intent": "chitchat"}
+{"text": "why", "intent": "chitchat"}
+{"text": "what is my name?", "intent": "chitchat"}
+{"text": "do you remember my name?", "intent": "chitchat"}
+{"text": "i gave you", "intent": "chitchat"}
+{"text": "my name", "intent": "chitchat"}
+{"text": "confired ?", "intent": "chitchat"}
+{"text": "i gave u", "intent": "chitchat"}
+{"text": "what is mangwale", "intent": "help"}
+{"text": "नेशद", "intent": "use_my_details"}
+{"text": "तो था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था था �", "intent": "chitchat"}
+{"text": "करते हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हुए हु�", "intent": "chitchat"}
+{"text": "कि शिष्ट और नाकुस और नाकुस और नाकुस और नाकुस और नाकुस और नाकुस", "intent": "chitchat"}
+{"text": "I dont know what you talking", "intent": "chitchat"}
+{"text": "mangwale", "intent": "chitchat"}
+{"text": "530 after discount", "intent": "chitchat"}
+{"text": "कर दो हुआ है कि आप लोग हैं हुआ था", "intent": "greeting"}
+{"text": "मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी मुझे एक पार्सल ओडर प्लेस करना है अभी", "intent": "parcel_booking"}
+{"text": "कोई reply नहीं आ रहा है मुझे", "intent": "complaint"}
+{"text": "use mine", "intent": "use_my_details"}
+{"text": "पारसल पिक अप नाओ", "intent": "parcel_booking"}
+{"text": "[respond in english] پارسل آرڈر پلیس کرنا ہے", "intent": "parcel_booking"}
+{"text": "मुझे परसल बेजना है ना सिक से बूमबे", "intent": "parcel_booking"}
+{"text": "home", "intent": "greeting"}
+{"text": "what can you suggest", "intent": "search_product"}
+{"text": "burgers", "intent": "order_food"}
+{"text": "how r u", "intent": "greeting"}
+{"text": "hi, my name is rahul", "intent": "greeting"}
+{"text": "hello, my name is priya. how are you today?", "intent": "greeting"}
+{"text": "how are you? i am doing great!", "intent": "chitchat"}
+{"text": "मुझे खाना ऑर्डर करना है", "intent": "order_food"}
+{"text": "namaste kaise ho", "intent": "greeting"}
+{"text": "hello!", "intent": "greeting"}
+{"text": "how are you doing?", "intent": "chitchat"}
+{"text": "मुझे एक ओडर प्लेस करना है पार्सल का मुझे एक ओडर प्लेस करना है पार्सल का मुझे एक ओडर प्लेस करना है पार्सल का मुझे एक ओडर प्लेस करना है पार्सल का मुझे एक ओडर प्लेस करना है पार्सल का मुझे एक ओडर प्लेस करना है पार्सल का", "intent": "parcel_booking"}
+{"text": "mere ghar se picup karna hai and deliver karna hai 19.960170341095154, 73.77875612544705", "intent": "parcel_booking"}
+{"text": "मेरे घर से एक पार्चल पिक अप करना है, मेरे घर का एड्रेस है तुम्हारे पास।", "intent": "parcel_booking"}
+{"text": "day is going fine but i am unable to send a parcel to my friend can you hekp me", "intent": "parcel_booking"}
+{"text": "show me restaurants", "intent": "order_food"}
+{"text": "help", "intent": "greeting"}
+{"text": "order pizza", "intent": "order_food"}
+{"text": "Parcel", "intent": "greeting"}
+{"text": "use my", "intent": "use_my_details"}
+{"text": "मुझे मेरे घर से जूते मेरे फ्रेंड के हाँ भेजने हैं", "intent": "parcel_booking"}
+{"text": "Add Kolhapuri Pav Bhaji (2 Butter Pav) to cart", "intent": "order_food"}
+{"text": "what are you doing", "intent": "chitchat"}
+{"text": "I want to place an order, I want to place an order, I want to place an order, I want to place an order,", "intent": "parcel_booking"}
+{"text": "कैंसल", "intent": "cancel_order"}
+{"text": "कि मुझे पार्सल बेचना है एक हुआ कि मुझे पार्सल बेचना है एक", "intent": "parcel_booking"}
+{"text": "start", "intent": "greeting"}
+{"text": "इसे कैंसल करो और मुझे एक पार्सल भेजना है।", "intent": "cancel_order"}
+{"text": "कर दो", "intent": "parcel_booking"}
+{"text": "करने के लिए", "intent": "login"}
+{"text": "hello", "intent": "greeting"}
+{"text": "pick my home", "intent": "parcel_booking"}
+{"text": "show mew saved address", "intent": "manage_address"}
+{"text": "confirm", "intent": "greeting"}
+{"text": "put my details", "intent": "use_my_details"}
+{"text": "आप कैसे हो?", "intent": "chitchat"}
+{"text": "documents", "intent": "greeting"}
+{"text": "hello, my name is rahul", "intent": "greeting"}
+{"text": "नमस्ते", "intent": "greeting"}
+{"text": "मुझे पार्सल ओर्डर प्लेस करना है।", "intent": "parcel_booking"}
+{"text": "near nashik road railway station", "intent": "search_product"}
+{"text": "location", "intent": "greeting"}
+{"text": "mere ghar se shoes picup karna hai and deliver karna hai 19.960170341095154, 73.77875612544705", "intent": "parcel_booking"}
+{"text": "एक पार्सन बेजना है अर्जक्ट एक पार्सन बेजना है अर्जक्ट एक पार्सन बेजना है अर्जक्ट", "intent": "parcel_booking"}
+{"text": "एक पार्सल बेशना है अर्जिंट मेरे घर से एक पार्सल बेशना है अर्जिंट मेरे घर से", "intent": "parcel_booking"}
+{"text": "raj 999999999", "intent": "use_my_details"}
+{"text": "एक पार्सल भेजना है मेरे घर से पिक अप करना है और डिलिवरी एट्रिस मैं देम का भी", "intent": "parcel_booking"}
+{"text": "हाँ", "intent": "greeting"}
+{"text": "muje college road se saaman pickup karna hai , sab se badi gadi konsi hai?", "intent": "parcel_booking"}
+{"text": "Near byk college", "intent": "search_product"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Road: Mohammed Ali Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "📍 Location shared: Sunder Nagar Colony, 38, New, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Road: New Coordinates: 19.977679, 73.776267", "intent": "manage_address"}
+{"text": "कि वाइज मैं नेम राज है मैं नॉट राज मैं नेम फॉर माय अकाउंट कर दो", "intent": "use_my_details"}
+{"text": "मेरे घर से पिक अप करना है और आगे डिलिवर करना है", "intent": "parcel_booking"}
+{"text": "कर दो कि अ कर दो कर दो कर दो कर दो कर दो कर दो कर दो", "intent": "repeat_order"}
+{"text": "एक पार्सल पिक अप करना है मेरे घर से एड्रेस मेरे घर का यूज करना और ड्रॉप करने के लिए मैं आपको एड्रेस दूंगा", "intent": "parcel_booking"}
+{"text": "مجھے ایک پارسل ڈیلیوری کروانی ہے", "intent": "parcel_booking"}
+{"text": "my address", "intent": "manage_address"}
+{"text": "show me my saved address ?? do you have it or not ?", "intent": "manage_address"}
+{"text": "my office", "intent": "manage_address"}
+{"text": "can you share me the status of this order", "intent": "track_order"}
+{"text": "payment confirmed", "intent": "parcel_booking"}
+{"text": "kuch saaman mangwana hai", "intent": "order_food"}
+{"text": "Add Khaman Dhokla to cart", "intent": "add_to_cart"}
+{"text": "office", "intent": "greeting"}
+{"text": "हुआ है कि अ क्योंकि यू डू फॉर में टुड़े थे हुआ था कर दो", "intent": "order_food"}
+{"text": "पाना सेकी", "intent": "parcel_booking"}
+{"text": "मुझे एक parcel order place करना है अभी तुरंथ", "intent": "parcel_booking"}
+{"text": "करते हुए दिनों के लिए जाने के लिए जाने के लिए जाने के लिए.", "intent": "chitchat"}
+{"text": "[respond in english] Thank you.", "intent": "chitchat"}
+{"text": "[respond in english] What can you do? تم کیا کر سکتے ہو؟", "intent": "help"}
+{"text": "📍 Location shared: Plot No.ME-38 , Sunderban Colony, Bhujbal Farm Rd, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.977744, 73.776170", "intent": "manage_address"}
+{"text": "Show me adrress book", "intent": "manage_address"}
+{"text": "my saved address", "intent": "manage_address"}
+{"text": "📍 Location shared: XQCP+4JH, Chintamani Colony, Bhagirath Sankul, Nashik, Maharashtra 422009, India Road: Bhujbal Farm Road Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "Raj singh 992736282", "intent": "use_my_details"}
+{"text": "Order ID: #103884", "intent": "track_order"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Coordinates: 19.960461, 73.758773", "intent": "manage_address"}
+{"text": "📍 Location shared: 799/19, Murlidhar Vajre Nagar, Govind Nagar, Old Cidco, Nashik, Maharashtra 422009, India House/Flat: 809 Road: Ring Road Coordinates: 19.986904, 73.775632", "intent": "manage_address"}
+{"text": "Rahul 9999999999", "intent": "use_my_details"}
+{"text": "मुझे एक पारसल बुक करना है जल्दी", "intent": "parcel_booking"}
+{"text": "my orders status", "intent": "track_order"}
+{"text": "show me address", "intent": "manage_address"}
+{"text": "इस पर्संखावोड़ लिएश कनना है इस पर्संखावोड़ लिएश कनना है इस पर्संखावोड़ लिएश कनना है इस पर्संखावोड़ लिएश कनना है इस पर्संखावोड़ लिएश कनना है इस पर्संखावोड़ लिएश कनना है", "intent": "parcel_booking"}
+{"text": "put my name and number", "intent": "use_my_details"}
+{"text": "I want to place an order. मुझे एक वाटर प्लेश करना है, अभी जल्दी.", "intent": "parcel_booking"}
+{"text": "मुझे पार्सल का ओर्डर करना है, फूड का नहीं।", "intent": "parcel_booking"}
+{"text": "मुझे पासर ओर्डर प्लेश करना है मेरे घर से, मेरे सेव डेटरिस में है।", "intent": "parcel_booking"}
+{"text": "मेरे घर से मेरे शूज मनाने मुझे मेरे घर पे मेरे घर से मेरे शूज मनाने मुझे मेरे घर पे", "intent": "parcel_booking"}
+{"text": "कि मेरे घर से समान लेकर मेरे प्रेंड के हां पार्सल पहुंचाना है कि अ कि अ कि अ", "intent": "parcel_booking"}
+{"text": "मुझे एक पार्सल ओट प्रेस करना है अभी", "intent": "parcel_booking"}
+{"text": "पिक अप एट्रेस मेरे घर का ले लेना पिक अप एट्रेस मेरे घर का ले लेना पिक अप एट्रेस मेरे घर का ले लेना पिक अप एट्रेस मेरे घर का ले लेना पिक अप एट्रेस मेरे घर का ले लेना पिक अप एट्रेस मेरे घर का ले लेना", "intent": "parcel_booking"}
+{"text": "[respond in english] پرسل آرڈر پلیس کرنا ہے", "intent": "parcel_booking"}
+{"text": "📍 Location shared: BLOCK-A3, DWARKA SUNCREST SOCIETY, रामबाग कॉलनी, रहाटणी, पिंपरी चिंचवड, महाराष्ट्र 411017, India Coordinates: 19.970256, 73.786782", "intent": "manage_address"}
+{"text": "please help me cancel order number 12345", "intent": "cancel_order"}
+{"text": "cancel order 12345", "intent": "cancel_order"}
+{"text": "track my order 12345", "intent": "track_order"}
+{"text": "what payment methods do you accept", "intent": "help"}
+{"text": "bike", "intent": "greeting"}
+{"text": "📍 Location shared: Dehabhonoo Complex, Nashik Road, Nashik, Maharashtra 422006, India Road: Bhujbal Farm Road Coordinates: 19.972890, 73.822952", "intent": "manage_address"}
+{"text": "Order status", "intent": "track_order"}
+{"text": "Order status 103891", "intent": "track_order"}
+{"text": "103891 Order", "intent": "track_order"}
+{"text": "what is the order status now", "intent": "track_order"}
+{"text": "is the payment done for 103892", "intent": "track_order"}
+{"text": "order 103892", "intent": "repeat_order"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India House/Flat: BE3/25/3 Road: Sambhaji Stadium Road Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "what can you do , can you get my shoes picked from my home and delivered to my office", "intent": "parcel_booking"}
+{"text": "helllo", "intent": "greeting"}
+{"text": "i m good n u", "intent": "chitchat"}
+{"text": "hey", "intent": "greeting"}
+{"text": "do you have my home address", "intent": "manage_address"}
+{"text": "do you have any saved address?", "intent": "manage_address"}
+{"text": "lets pick home some stuff", "intent": "parcel_booking"}
+{"text": "📍 Location shared: 12/464/178, Sharanpur Gaothan, Nashik, Maharashtra 422002, India Contact: ramesh (992338388) Type: home Coordinates: 20.000000, 73.780000", "intent": "manage_address"}
+{"text": "what can you do ?", "intent": "help"}
+{"text": "Pickup from Nashik Road near train station", "intent": "parcel_booking"}
+{"text": "Deliver to CIDCO, sector 5", "intent": "manage_address"}
+{"text": "Its a small box, about 2kg", "intent": "parcel_booking"}
+{"text": "small box about 2kg", "intent": "order_food"}
+{"text": "📍 Location shared: Nashik Road Station, Nashik Coordinates: 20.0063, 73.7789", "intent": "manage_address"}
+{"text": "📍 Location shared: CIDCO, Sector 5, Nashik Coordinates: 19.9975, 73.7898", "intent": "manage_address"}
+{"text": "small box, about 2kg", "intent": "order_food"}
+{"text": "📍 Location shared: Nashik Road Station Coordinates: 20.0063, 73.7789", "intent": "manage_address"}
+{"text": "📍 Location shared: CIDCO Nashik Coordinates: 19.9975, 73.7898", "intent": "manage_address"}
+{"text": "Priya 9876543210", "intent": "use_my_details"}
+{"text": "small box 2kg", "intent": "parcel_booking"}
+{"text": "i need to quicky get my shoes pickup from my home and get it to badmintion court , rachna at gangapur road", "intent": "parcel_booking"}
+{"text": "📍 Location shared: 2Q84+864, Narsinha Nagar, Datey Nagar, Veer Sawarkar Nagar, Nashik, Maharashtra 422013, India Contact: Akash Agarwal (09158886329) Type: home Coordinates: 20.015720, 73.755171", "intent": "manage_address"}
+{"text": "call me akash", "intent": "use_my_details"}
+{"text": "yeah konsi basha hai ?", "intent": "chitchat"}
+{"text": "kya karsakte hai aap", "intent": "search_product"}
+{"text": "Recheck login", "intent": "login"}
+{"text": "I want to send my shoes to my friend", "intent": "parcel_booking"}
+{"text": "📍 Location shared: Sunder Nagar Colony, 38, New, Shanti Nagar, Lekha Nagar, Nashik, Maharashtra 422009, India Contact: Rajesh (9923383838) Type: home Road: New Coordinates: 19.977666, 73.776278", "intent": "parcel_booking"}
+{"text": "📍 Location shared: ASC-42, Ashwin Nagar, Nashik, Maharashtra 422009, India Contact: Akash (9158886329) Type: home Road: New Coordinates: 19.960518, 73.758770", "intent": "manage_address"}
+{"text": "I just gave it", "intent": "repeat_order"}
+{"text": "I don't see any vechile", "intent": "help"}
+{"text": "i want to send a parcel to my friend", "intent": "parcel_booking"}
+{"text": "hello i want to send a parcel", "intent": "parcel_booking"}
+{"text": "i want to send a parcel to 123 main street", "intent": "parcel_booking"}
+{"text": "near kthm college", "intent": "search_product"}
+{"text": "continue", "intent": "greeting"}
+{"text": "bike delivery", "intent": "parcel_booking"}
+{"text": "cbs bus stand, nashik road, nashik", "intent": "manage_address"}
+{"text": "namaste", "intent": "greeting"}
+{"text": "namaskar", "intent": "greeting"}
+{"text": "helo", "intent": "greeting"}
+{"text": "hiiii", "intent": "greeting"}
+{"text": "good afternoon", "intent": "greeting"}
+{"text": "good evening", "intent": "greeting"}
+{"text": "sup", "intent": "greeting"}
+{"text": "kem cho", "intent": "chitchat"}
+{"text": "kya haal", "intent": "chitchat"}
+{"text": "hello ji", "intent": "greeting"}
+{"text": "hii there", "intent": "greeting"}
+{"text": "hey there", "intent": "greeting"}
+{"text": "greetings", "intent": "greeting"}
+{"text": "kya kar sakte ho", "intent": "help"}
+{"text": "options", "intent": "greeting"}
+{"text": "services", "intent": "greeting"}
+{"text": "what services do you offer", "intent": "help"}
+{"text": "tell me about mangwale", "intent": "help"}
+{"text": "kya kya hai", "intent": "chitchat"}
+{"text": "features", "intent": "greeting"}
+{"text": "how does this work", "intent": "chitchat"}
+{"text": "guide me", "intent": "help"}
+{"text": "parcel bhejni hai", "intent": "parcel_booking"}
+{"text": "delivery karni hai", "intent": "parcel_booking"}
+{"text": "send something", "intent": "parcel_booking"}
+{"text": "pickup and drop", "intent": "parcel_booking"}
+{"text": "genie service", "intent": "help"}
+{"text": "courier chahiye", "intent": "parcel_booking"}
+{"text": "mujhe parcel bhejna hai", "intent": "parcel_booking"}
+{"text": "document deliver karna hai", "intent": "parcel_booking"}
+{"text": "keys bhejni hai", "intent": "parcel_booking"}
+{"text": "tiffin delivery", "intent": "order_food"}
+{"text": "bike delivery chahiye", "intent": "parcel_booking"}
+{"text": "auto delivery", "intent": "parcel_booking"}
+{"text": "tempo booking", "intent": "parcel_booking"}
+{"text": "nashik me parcel", "intent": "parcel_booking"}
+{"text": "gangapur road se college road", "intent": "manage_address"}
+{"text": "good morning", "intent": "greeting"}
+{"text": "mujhe madad chahiye", "intent": "help"}
+{"text": "mujhe pizza khana hai", "intent": "order_food"}
+{"text": "pizza chahiye", "intent": "order_food"}
+{"text": "biryani mangwao", "intent": "order_food"}
+{"text": "misal pav", "intent": "order_food"}
+{"text": "hungry", "intent": "greeting"}
+{"text": "bhook lagi hai", "intent": "chitchat"}
+{"text": "dinner order", "intent": "order_food"}
+{"text": "lunch karna hai", "intent": "order_food"}
+{"text": "breakfast", "intent": "greeting"}
+{"text": "chinese food", "intent": "order_food"}
+{"text": "south indian", "intent": "search_product"}
+{"text": "thali chahiye", "intent": "order_food"}
+{"text": "burger", "intent": "order_food"}
+{"text": "sandwich", "intent": "greeting"}
+{"text": "coffee", "intent": "greeting"}
+{"text": "juice", "intent": "greeting"}
+{"text": "ice cream", "intent": "order_food"}
+{"text": "best restaurant nearby", "intent": "order_food"}
+{"text": "aap kaise ho", "intent": "greeting"}
+{"text": "what's your name", "intent": "chitchat"}
+{"text": "tumhara naam kya hai", "intent": "greeting"}
+{"text": "are you a robot", "intent": "chitchat"}
+{"text": "momos", "intent": "order_food"}
+{"text": "😀😀😀", "intent": "chitchat"}
+{"text": "help me now!!!", "intent": "help"}
+{"text": "stop", "intent": "greeting"}
+{"text": "cbs bus stand", "intent": "manage_address"}
+{"text": "i want to order pizza", "intent": "order_food"}
+{"text": "add coin pizza to cart", "intent": "order_food"}
+{"text": "bye", "intent": "greeting"}
+{"text": "talk to support", "intent": "help"}
+{"text": "I have a complaint", "intent": "complaint"}
+{"text": "store timings", "intent": "help"}
+{"text": "delivery locations", "intent": "help"}
+{"text": "hindi mein baat karo", "intent": "chitchat"}
+{"text": "biryani", "intent": "greeting"}
+{"text": "मुझे बिरयानी चाहिए", "intent": "order_food"}
+{"text": "south indian breakfast", "intent": "order_food"}
+{"text": "something quick to eat", "intent": "order_food"}
+{"text": "healthy salads", "intent": "order_food"}
+{"text": "cold coffee", "intent": "order_food"}
+{"text": "thali combo", "intent": "order_food"}
+{"text": "samosa", "intent": "order_food"}
+{"text": "add first one to cart", "intent": "add_to_cart"}
+{"text": "🍕🍔🍟", "intent": "order_food"}
+{"text": "biryni pizzza", "intent": "order_food"}
+{"text": "no wait send parcel", "intent": "parcel_booking"}
+{"text": "मुझे pizza चाहिए delivery ke liye", "intent": "order_food"}
+{"text": "show me biryani options", "intent": "order_food"}
+{"text": "Hi test", "intent": "greeting"}
+{"text": "Bappas pav bhaji", "intent": "order_food"}
+{"text": "Hello sir", "intent": "greeting"}
+{"text": "Near RK", "intent": "manage_address"}
+{"text": "Location send kara na", "intent": "parcel_booking"}
+{"text": "Pls msg u r service", "intent": "help"}
+{"text": "Sir process sanga", "intent": "manage_address"}
+{"text": "Drop Location", "intent": "manage_address"}
+{"text": "Details send krra", "intent": "use_my_details"}
+{"text": "Donyoubhave food items ??", "intent": "order_food"}
+{"text": "Do you have c bhagat tarafhand", "intent": "search_product"}
+{"text": "From which restaurant", "intent": "search_product"}
+{"text": "Pickup a parcel from my home quickly", "intent": "parcel_booking"}
+{"text": "Pick up cloths from my home", "intent": "parcel_booking"}
+{"text": "whats happning", "intent": "chitchat"}
+{"text": "Parcel bhejna hai urgently", "intent": "parcel_booking"}
+{"text": "Kaise sab", "intent": "chitchat"}
+{"text": "Very good", "intent": "chitchat"}
+{"text": "Share me veg restaurant near me", "intent": "order_food"}
+{"text": "I want to pickup a parcel cancel this food", "intent": "cancel_order"}
+{"text": "Pick up parcel from my home", "intent": "parcel_booking"}
+{"text": "Parcel pickup from my home", "intent": "parcel_booking"}
+{"text": "Order Food", "intent": "order_food"}
+{"text": "🏠 home - Sunder Nag", "intent": "manage_address"}
+{"text": "I don't see any catogery", "intent": "help"}
+{"text": "Rahul 9999999923", "intent": "use_my_details"}
+{"text": "mai bhut badiya", "intent": "order_food"}
+{"text": "doodh chahiye 2 litre", "intent": "order_grocery", "source": "synthetic"}
+{"text": "ande mangwa do dozen", "intent": "order_grocery", "source": "synthetic"}
+{"text": "atta aur cheeni bhej do", "intent": "order_grocery", "source": "synthetic"}
+{"text": "kirana saman chahiye", "intent": "order_grocery", "source": "synthetic"}
+{"text": "vegetables lana hai - aloo pyaz tamatar", "intent": "order_grocery", "source": "synthetic"}
+{"text": "sabzi mangwani hai", "intent": "order_grocery", "source": "synthetic"}
+{"text": "ghee aur tel bhej do", "intent": "order_grocery", "source": "synthetic"}
+{"text": "bread aur butter chahiye", "intent": "order_grocery", "source": "synthetic"}
+{"text": "dahi 500gm lana", "intent": "order_grocery", "source": "synthetic"}
+{"text": "chai patti aur cheeni", "intent": "order_grocery", "source": "synthetic"}
+{"text": "nashta ke liye saman", "intent": "order_grocery", "source": "synthetic"}
+{"text": "grocery list hai mere paas", "intent": "order_grocery", "source": "synthetic"}
+{"text": "daily needs delivery karo", "intent": "order_grocery", "source": "synthetic"}
+{"text": "dudh ka packet bhej do", "intent": "order_grocery", "source": "synthetic"}
+{"text": "namkeen aur biscuit mangwa do", "intent": "order_grocery", "source": "synthetic"}
+{"text": "agent se baat karni hai", "intent": "human_takeover", "source": "synthetic"}
+{"text": "real person please", "intent": "human_takeover", "source": "synthetic"}
+{"text": "customer care connect karo", "intent": "human_takeover", "source": "synthetic"}
+{"text": "bot se nahi insaan se baat karo", "intent": "human_takeover", "source": "synthetic"}
+{"text": "human support chahiye", "intent": "human_takeover", "source": "synthetic"}
+{"text": "kisi se directly baat karni hai", "intent": "human_takeover", "source": "synthetic"}
+{"text": "executive se baat karo", "intent": "human_takeover", "source": "synthetic"}
+{"text": "customer service", "intent": "human_takeover", "source": "synthetic"}
+{"text": "speak to representative", "intent": "human_takeover", "source": "synthetic"}
+{"text": "live agent please", "intent": "human_takeover", "source": "synthetic"}
+{"text": "wrong item aaya", "intent": "complaint", "source": "synthetic"}
+{"text": "order incomplete hai", "intent": "complaint", "source": "synthetic"}
+{"text": "refund chahiye", "intent": "complaint", "source": "synthetic"}
+{"text": "food cold tha", "intent": "complaint", "source": "synthetic"}
+{"text": "quality kharab hai", "intent": "complaint", "source": "synthetic"}
+{"text": "rider rude tha", "intent": "complaint", "source": "synthetic"}
+{"text": "late delivery hua", "intent": "complaint", "source": "synthetic"}
+{"text": "galat address pe pahuncha", "intent": "complaint", "source": "synthetic"}
+{"text": "item missing hai", "intent": "complaint", "source": "synthetic"}
+{"text": "packaging kharab thi", "intent": "complaint", "source": "synthetic"}
+{"text": "portion size kam tha", "intent": "complaint", "source": "synthetic"}
+{"text": "taste theek nahi tha", "intent": "complaint", "source": "synthetic"}
+{"text": "spill ho gaya tha", "intent": "complaint", "source": "synthetic"}
+{"text": "wrong restaurant se aaya", "intent": "complaint", "source": "synthetic"}
+{"text": "overcharged ho gaya", "intent": "complaint", "source": "synthetic"}
+{"text": "order cancel karna hai", "intent": "cancel_order", "source": "synthetic"}
+{"text": "nahi chahiye ab", "intent": "cancel_order", "source": "synthetic"}
+{"text": "cancel my order", "intent": "cancel_order", "source": "synthetic"}
+{"text": "booking cancel karo", "intent": "cancel_order", "source": "synthetic"}
+{"text": "order hatao please", "intent": "cancel_order", "source": "synthetic"}
+{"text": "change of mind - cancel", "intent": "cancel_order", "source": "synthetic"}
+{"text": "galti se order ho gaya cancel karo", "intent": "cancel_order", "source": "synthetic"}
+{"text": "mujhe nahi lena hai", "intent": "cancel_order", "source": "synthetic"}
+{"text": "order cancel kardo jaldi", "intent": "cancel_order", "source": "synthetic"}
+{"text": "cancellation chahiye", "intent": "cancel_order", "source": "synthetic"}
+{"text": "cart mein add karo", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "add to cart", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "ye bhi chahiye", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "isko bhi daal do", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "cart mein daal do", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "add this item", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "put in my cart", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "mujhe ye bhi lena hai", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "ek aur add karo", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "cart mein daalo", "intent": "add_to_cart", "source": "synthetic"}
+{"text": "checkout karo", "intent": "checkout", "source": "synthetic"}
+{"text": "order place karo", "intent": "checkout", "source": "synthetic"}
+{"text": "payment karna hai", "intent": "checkout", "source": "synthetic"}
+{"text": "proceed to checkout", "intent": "checkout", "source": "synthetic"}
+{"text": "order confirm karo", "intent": "checkout", "source": "synthetic"}
+{"text": "payment page kholo", "intent": "checkout", "source": "synthetic"}
+{"text": "COD se order karo", "intent": "checkout", "source": "synthetic"}
+{"text": "online payment karna hai", "intent": "checkout", "source": "synthetic"}
+{"text": "bill pay karna hai", "intent": "checkout", "source": "synthetic"}
+{"text": "order finalize karo", "intent": "checkout", "source": "synthetic"}
+{"text": "cart dikhao", "intent": "view_cart", "source": "synthetic"}
+{"text": "mera cart", "intent": "view_cart", "source": "synthetic"}
+{"text": "kya order kiya maine", "intent": "view_cart", "source": "synthetic"}
+{"text": "cart check karo", "intent": "view_cart", "source": "synthetic"}
+{"text": "show my cart", "intent": "view_cart", "source": "synthetic"}
+{"text": "cart items dikhao", "intent": "view_cart", "source": "synthetic"}
+{"text": "basket mein kya hai", "intent": "view_cart", "source": "synthetic"}
+{"text": "cart summary", "intent": "view_cart", "source": "synthetic"}
+{"text": "what's in my cart", "intent": "view_cart", "source": "synthetic"}
+{"text": "apna cart dikhao", "intent": "view_cart", "source": "synthetic"}
+{"text": "restaurants near me", "intent": "search_product", "source": "synthetic"}
+{"text": "pizza shops dikhao", "intent": "search_product", "source": "synthetic"}
+{"text": "what all can I order", "intent": "search_product", "source": "synthetic"}
+{"text": "Chinese food options", "intent": "search_product", "source": "synthetic"}
+{"text": "biryani milegi kahan", "intent": "search_product", "source": "synthetic"}
+{"text": "nearby stores", "intent": "search_product", "source": "synthetic"}
+{"text": "search for paneer", "intent": "search_product", "source": "synthetic"}
+{"text": "kya kya available hai", "intent": "search_product", "source": "synthetic"}
+{"text": "options dikhao", "intent": "search_product", "source": "synthetic"}
+{"text": "explore menu", "intent": "search_product", "source": "synthetic"}
+{"text": "find vegetarian restaurants", "intent": "search_product", "source": "synthetic"}
+{"text": "fast food near me", "intent": "search_product", "source": "synthetic"}
+{"text": "sweet shops nearby", "intent": "search_product", "source": "synthetic"}
+{"text": "juice bars dikhao", "intent": "search_product", "source": "synthetic"}
+{"text": "bakery near me", "intent": "search_product", "source": "synthetic"}
+{"text": "wahi order karo", "intent": "repeat_order", "source": "synthetic"}
+{"text": "last order repeat", "intent": "repeat_order", "source": "synthetic"}
+{"text": "same as before", "intent": "repeat_order", "source": "synthetic"}
+{"text": "previous order phir se", "intent": "repeat_order", "source": "synthetic"}
+{"text": "reorder karo", "intent": "repeat_order", "source": "synthetic"}
+{"text": "same order again", "intent": "repeat_order", "source": "synthetic"}
+{"text": "wahi jo pichli baar manga tha", "intent": "repeat_order", "source": "synthetic"}
+{"text": "repeat last order", "intent": "repeat_order", "source": "synthetic"}
+{"text": "fir se wahi", "intent": "repeat_order", "source": "synthetic"}
+{"text": "same food phir se", "intent": "repeat_order", "source": "synthetic"}
+{"text": "I need a mobile phone cover", "intent": "search_product"}
+{"text": "I want to buy shoes", "intent": "search_product"}
+{"text": "search for headphones", "intent": "search_product"}
+{"text": "looking for a laptop bag", "intent": "search_product"}
+{"text": "show me watches", "intent": "search_product"}
+{"text": "I need a phone case", "intent": "search_product"}
+{"text": "buy earphones online", "intent": "search_product"}
+{"text": "I want to purchase a shirt", "intent": "search_product"}
+{"text": "find me a good backpack", "intent": "search_product"}
+{"text": "where can I buy a charger", "intent": "search_product"}
+{"text": "show me the latest phones", "intent": "search_product"}
+{"text": "I need new sneakers", "intent": "search_product"}
+{"text": "looking for sunglasses", "intent": "search_product"}
+{"text": "buy a water bottle", "intent": "search_product"}
+{"text": "I want a power bank", "intent": "search_product"}
+{"text": "search for bluetooth speaker", "intent": "search_product"}
+{"text": "show me wallets", "intent": "search_product"}
+{"text": "I need a screen protector", "intent": "search_product"}
+{"text": "looking for a nice dress", "intent": "search_product"}
+{"text": "buy kurta online", "intent": "search_product"}
+{"text": "I want sandals", "intent": "search_product"}
+{"text": "find jeans for me", "intent": "search_product"}
+{"text": "show me jewellery", "intent": "search_product"}
+{"text": "I need a tablet cover", "intent": "search_product"}
+{"text": "looking for electronics", "intent": "search_product"}
+{"text": "mobile cover chahiye", "intent": "search_product"}
+{"text": "shoes dikhao", "intent": "search_product"}
+{"text": "mujhe headphone chahiye", "intent": "search_product"}
+{"text": "laptop bag dhundo", "intent": "search_product"}
+{"text": "watch dikhao", "intent": "search_product"}
+{"text": "phone case lena hai", "intent": "search_product"}
+{"text": "earphone chahiye", "intent": "search_product"}
+{"text": "shirt buy karna hai", "intent": "search_product"}
+{"text": "backpack dikhao", "intent": "search_product"}
+{"text": "charger kahan milega", "intent": "search_product"}
+{"text": "naya phone chahiye", "intent": "search_product"}
+{"text": "sports shoes chahiye", "intent": "search_product"}
+{"text": "sunglasses dikhao yaar", "intent": "search_product"}
+{"text": "water bottle milegi kya", "intent": "search_product"}
+{"text": "power bank lena hai", "intent": "search_product"}
+{"text": "speaker bluetooth wala", "intent": "search_product"}
+{"text": "wallet dikhao", "intent": "search_product"}
+{"text": "screen guard chahiye", "intent": "search_product"}
+{"text": "dress dikhao party ke liye", "intent": "search_product"}
+{"text": "kurta pajama chahiye", "intent": "search_product"}
+{"text": "sandal dikhao", "intent": "search_product"}
+{"text": "jeans chahiye mujhe", "intent": "search_product"}
+{"text": "jewellery dekhni hai", "intent": "search_product"}
+{"text": "tablet cover milega kya", "intent": "search_product"}
+{"text": "koi electronics product dikhao", "intent": "search_product"}
+{"text": "checkout", "intent": "checkout"}
+{"text": "proceed to checkout", "intent": "checkout"}
+{"text": "I want to checkout", "intent": "checkout"}
+{"text": "place my order", "intent": "checkout"}
+{"text": "confirm my order", "intent": "checkout"}
+{"text": "complete my order", "intent": "checkout"}
+{"text": "pay now", "intent": "checkout"}
+{"text": "I am ready to pay", "intent": "checkout"}
+{"text": "let me pay", "intent": "checkout"}
+{"text": "proceed to payment", "intent": "checkout"}
+{"text": "finalize order", "intent": "checkout"}
+{"text": "done ordering", "intent": "checkout"}
+{"text": "that is all I want", "intent": "checkout"}
+{"text": "ready to order", "intent": "checkout"}
+{"text": "submit my order", "intent": "checkout"}
+{"text": "checkout karo", "intent": "checkout"}
+{"text": "order place karo", "intent": "checkout"}
+{"text": "payment kar do", "intent": "checkout"}
+{"text": "order confirm kar do", "intent": "checkout"}
+{"text": "pay kar do", "intent": "checkout"}
+{"text": "bill de do", "intent": "checkout"}
+{"text": "order de do", "intent": "checkout"}
+{"text": "check out kar do", "intent": "checkout"}
+{"text": "order finalize karo", "intent": "checkout"}
+{"text": "bas itna hi order confirm karo", "intent": "checkout"}
+{"text": "show my cart", "intent": "view_cart"}
+{"text": "what is in my cart", "intent": "view_cart"}
+{"text": "view my cart", "intent": "view_cart"}
+{"text": "cart items", "intent": "view_cart"}
+{"text": "open cart", "intent": "view_cart"}
+{"text": "let me see my cart", "intent": "view_cart"}
+{"text": "check my cart", "intent": "view_cart"}
+{"text": "what did I add to cart", "intent": "view_cart"}
+{"text": "mera cart kya hai", "intent": "view_cart"}
+{"text": "cart me kya kya hai", "intent": "view_cart"}
+{"text": "my order so far", "intent": "view_cart"}
+{"text": "items in my basket", "intent": "view_cart"}
+{"text": "show basket", "intent": "view_cart"}
+{"text": "cart summary dikhao", "intent": "view_cart"}
+{"text": "order list dikhao", "intent": "view_cart"}
+{"text": "add this to cart", "intent": "add_to_cart"}
+{"text": "add to my cart", "intent": "add_to_cart"}
+{"text": "put this in my cart", "intent": "add_to_cart"}
+{"text": "I want this one", "intent": "add_to_cart"}
+{"text": "add 2 of these", "intent": "add_to_cart"}
+{"text": "isko cart mein daal do", "intent": "add_to_cart"}
+{"text": "ye bhi add karo", "intent": "add_to_cart"}
+{"text": "ek aur daal do", "intent": "add_to_cart"}
+{"text": "cart mein add kar do", "intent": "add_to_cart"}
+{"text": "ye lena hai", "intent": "add_to_cart"}
+{"text": "add one more", "intent": "add_to_cart"}
+{"text": "include this item", "intent": "add_to_cart"}
+{"text": "select this", "intent": "add_to_cart"}
+{"text": "ye bhi le lo", "intent": "add_to_cart"}
+{"text": "mujhe ye bhi dena", "intent": "add_to_cart"}
+{"text": "yes confirm my order", "intent": "confirm_checkout"}
+{"text": "haan order confirm karo", "intent": "confirm_checkout"}
+{"text": "yes place the order", "intent": "confirm_checkout"}
+{"text": "confirm checkout", "intent": "confirm_checkout"}
+{"text": "yes proceed with payment", "intent": "confirm_checkout"}
+{"text": "haan payment karo", "intent": "confirm_checkout"}
+{"text": "order pakka karo", "intent": "confirm_checkout"}
+{"text": "final order confirm", "intent": "confirm_checkout"}
+{"text": "ha order kar do", "intent": "confirm_checkout"}
+{"text": "proceed with order", "intent": "confirm_checkout"}

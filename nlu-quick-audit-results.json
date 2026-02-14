@@ -1,0 +1,1531 @@
+[
+  {
+    "query": "4 butter chicken from Bhagat Tarachand",
+    "expect": {
+      "food": "butter chicken",
+      "store": "bhagat tarachand",
+      "qty": "4"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "butter chicken from",
+        "butter chicken"
+      ],
+      "store": "Bhagat Tarachand",
+      "qty": "4",
+      "provider": "heuristic",
+      "time": 657
+    }
+  },
+  {
+    "query": "2 masala dosa from Satyam",
+    "expect": {
+      "food": "masala dosa",
+      "store": "satyam",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "masala dosa from",
+        "masala dosa"
+      ],
+      "store": "Satyam",
+      "qty": "2",
+      "provider": "heuristic",
+      "time": 3
+    }
+  },
+  {
+    "query": "1 kg paneer from Ganesh",
+    "expect": {
+      "food": "paneer",
+      "store": "ganesh",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paneer from",
+        "paneer"
+      ],
+      "store": "Ganesh",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "3 samosa from Nilesh Store",
+    "expect": {
+      "food": "samosa",
+      "store": "nilesh",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "samosa from",
+        "samosa"
+      ],
+      "store": "Nilesh Store",
+      "qty": "3",
+      "provider": "indicbert",
+      "time": 23
+    }
+  },
+  {
+    "query": "5 biryani from Paradise",
+    "expect": {
+      "food": "biryani",
+      "store": "paradise",
+      "qty": "5"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "10 momos from Wow Momo",
+    "expect": {
+      "food": "momos",
+      "store": "wow momo",
+      "qty": "10"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "2 pizza from Dominos",
+    "expect": {
+      "food": "pizza",
+      "store": "dominos",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "pizza from",
+        "pizza"
+      ],
+      "store": "Dominos",
+      "qty": "2",
+      "provider": "heuristic",
+      "time": 2
+    }
+  },
+  {
+    "query": "1 burger from McDonalds",
+    "expect": {
+      "food": "burger",
+      "store": "mcdonalds",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "burger from",
+        "burger"
+      ],
+      "store": "McDonalds",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "4 idli from Sagar",
+    "expect": {
+      "food": "idli",
+      "store": "sagar",
+      "qty": "4"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "idli from",
+        "idli"
+      ],
+      "store": "Sagar",
+      "qty": "4",
+      "provider": "indicbert",
+      "time": 11
+    }
+  },
+  {
+    "query": "6 vada pav from Jumbo King",
+    "expect": {
+      "food": "vada pav",
+      "store": "jumbo king",
+      "qty": "6"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "2 coffee from Starbucks",
+    "expect": {
+      "food": "coffee",
+      "store": "starbucks",
+      "qty": "2"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "3 sandwich from Subway",
+    "expect": {
+      "food": "sandwich",
+      "store": "subway",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "sandwich from",
+        "sandwich"
+      ],
+      "store": "Subway",
+      "qty": "3",
+      "provider": "heuristic",
+      "time": 2
+    }
+  },
+  {
+    "query": "1 thali from Shiv Sagar",
+    "expect": {
+      "food": "thali",
+      "store": "shiv sagar",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "thali from",
+        "thali"
+      ],
+      "store": "Shiv Sagar",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "8 pani puri from Elco",
+    "expect": {
+      "food": "pani puri",
+      "store": "elco",
+      "qty": "8"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "pani puri from",
+        "pani puri"
+      ],
+      "store": "Elco",
+      "qty": "8",
+      "provider": "indicbert",
+      "time": 11
+    }
+  },
+  {
+    "query": "2 paneer tikka from Barbeque Nation",
+    "expect": {
+      "food": "paneer tikka",
+      "store": "barbeque",
+      "qty": "2"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "4 gulab jamun from Haldiram",
+    "expect": {
+      "food": "gulab jamun",
+      "store": "haldiram",
+      "qty": "4"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "1 lassi from Amul",
+    "expect": {
+      "food": "lassi",
+      "store": "amul",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "lassi from",
+        "lassi"
+      ],
+      "store": "Amul",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "3 paratha from Parathas and More",
+    "expect": {
+      "food": "paratha",
+      "store": "paratha",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paratha from",
+        "paratha"
+      ],
+      "store": "Parathas and More",
+      "qty": "3",
+      "provider": "heuristic",
+      "time": 13
+    }
+  },
+  {
+    "query": "5 chai from Chaayos",
+    "expect": {
+      "food": "chai",
+      "store": "chaayos",
+      "qty": "5"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "chai from",
+        "chai"
+      ],
+      "store": "Chaayos",
+      "qty": "5",
+      "provider": "indicbert",
+      "time": 10
+    }
+  },
+  {
+    "query": "2 naan from Karim",
+    "expect": {
+      "food": "naan",
+      "store": "karim",
+      "qty": "2"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "ek samosa Nilesh se bhej do",
+    "expect": {
+      "food": "samosa",
+      "store": "nilesh",
+      "qty": "1"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "do dosa Satyam se bhej do",
+    "expect": {
+      "food": "dosa",
+      "store": "satyam",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "dosa"
+      ],
+      "store": "satyam",
+      "qty": "2",
+      "provider": "indicbert",
+      "time": 11
+    }
+  },
+  {
+    "query": "teen chai Chaayos se bhej do",
+    "expect": {
+      "food": "chai",
+      "store": "chaayos",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "chai"
+      ],
+      "store": "chaayos",
+      "qty": "3",
+      "provider": "indicbert",
+      "time": 12
+    }
+  },
+  {
+    "query": "char paratha Haldiram se bhej do",
+    "expect": {
+      "food": "paratha",
+      "store": "haldiram",
+      "qty": "4"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paratha"
+      ],
+      "store": "haldiram",
+      "qty": "4",
+      "provider": "heuristic",
+      "time": 32
+    }
+  },
+  {
+    "query": "paanch biryani Paradise se bhej do",
+    "expect": {
+      "food": "biryani",
+      "store": "paradise",
+      "qty": "5"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "chhah samosa Ganesh se bhej do",
+    "expect": {
+      "food": "samosa",
+      "store": "ganesh",
+      "qty": "6"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "saat momos Wow Momo se bhej do",
+    "expect": {
+      "food": "momos",
+      "store": "wow momo",
+      "qty": "7"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "momos"
+      ],
+      "store": "wow momo",
+      "qty": "7",
+      "provider": "heuristic",
+      "time": 3
+    }
+  },
+  {
+    "query": "aath pizza Dominos se bhej do",
+    "expect": {
+      "food": "pizza",
+      "store": "dominos",
+      "qty": "8"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "pizza"
+      ],
+      "store": "dominos",
+      "qty": "8",
+      "provider": "heuristic",
+      "time": 5
+    }
+  },
+  {
+    "query": "nau burger McDonalds se bhej do",
+    "expect": {
+      "food": "burger",
+      "store": "mcdonalds",
+      "qty": "9"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "burger"
+      ],
+      "store": "mcdonalds",
+      "qty": "9",
+      "provider": "heuristic",
+      "time": 19
+    }
+  },
+  {
+    "query": "das idli Sagar se bhej do",
+    "expect": {
+      "food": "idli",
+      "store": "sagar",
+      "qty": "10"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "ek butter chicken Bhagat Tarachand se bhej do",
+    "expect": {
+      "food": "butter chicken",
+      "store": "bhagat tarachand",
+      "qty": "1"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "do paneer tikka Barbeque Nation se bhej do",
+    "expect": {
+      "food": "paneer tikka",
+      "store": "barbeque",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paneer tikka"
+      ],
+      "store": "barbeque nation",
+      "qty": "2",
+      "provider": "heuristic",
+      "time": 2721
+    }
+  },
+  {
+    "query": "teen coffee Starbucks se bhej do",
+    "expect": {
+      "food": "coffee",
+      "store": "starbucks",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "coffee"
+      ],
+      "store": "starbucks",
+      "qty": "3",
+      "provider": "heuristic",
+      "time": 33
+    }
+  },
+  {
+    "query": "char gulab jamun Haldiram se bhej do",
+    "expect": {
+      "food": "gulab jamun",
+      "store": "haldiram",
+      "qty": "4"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "gulab"
+      ],
+      "store": "jamun haldiram",
+      "qty": "4",
+      "provider": "indicbert",
+      "time": 138
+    }
+  },
+  {
+    "query": "paanch lassi Amul se bhej do",
+    "expect": {
+      "food": "lassi",
+      "store": "amul",
+      "qty": "5"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "lassi"
+      ],
+      "store": "amul",
+      "qty": "5",
+      "provider": "heuristic",
+      "time": 3
+    }
+  },
+  {
+    "query": "ek thali Shiv Sagar se bhej do",
+    "expect": {
+      "food": "thali",
+      "store": "shiv sagar",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "thali"
+      ],
+      "store": "shiv sagar",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 3
+    }
+  },
+  {
+    "query": "do pani puri Elco se bhej do",
+    "expect": {
+      "food": "pani puri",
+      "store": "elco",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "pani"
+      ],
+      "store": "puri elco",
+      "qty": "2",
+      "provider": "indicbert",
+      "time": 12
+    }
+  },
+  {
+    "query": "teen vada pav Jumbo King se bhej do",
+    "expect": {
+      "food": "vada pav",
+      "store": "jumbo king",
+      "qty": "3"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "char sandwich Subway se bhej do",
+    "expect": {
+      "food": "sandwich",
+      "store": "subway",
+      "qty": "4"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "paanch naan Karim se bhej do",
+    "expect": {
+      "food": "naan",
+      "store": "karim",
+      "qty": "5"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "naan"
+      ],
+      "store": "karim",
+      "qty": "5",
+      "provider": "heuristic",
+      "time": 2
+    }
+  },
+  {
+    "query": "2 butter naan bhagat tarachand",
+    "expect": {
+      "food": "butter naan",
+      "store": "bhagat tarachand",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "butter naan"
+      ],
+      "store": "bhagat tarachand",
+      "qty": "2",
+      "provider": "heuristic",
+      "time": 11
+    }
+  },
+  {
+    "query": "3 masala dosa satyam",
+    "expect": {
+      "food": "masala dosa",
+      "store": "satyam",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "masala"
+      ],
+      "store": "dosa satyam",
+      "qty": "3",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "4 paneer tikka paradise",
+    "expect": {
+      "food": "paneer tikka",
+      "store": "paradise",
+      "qty": "4"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "5 chicken biryani bawarchi",
+    "expect": {
+      "food": "chicken biryani",
+      "store": "bawarchi",
+      "qty": "5"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "1 veg thali shiv sagar",
+    "expect": {
+      "food": "veg thali",
+      "store": "shiv sagar",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "veg thali"
+      ],
+      "store": "shiv sagar",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "2 cold coffee starbucks",
+    "expect": {
+      "food": "cold coffee",
+      "store": "starbucks",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "cold"
+      ],
+      "store": "coffee starbucks",
+      "qty": "2",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "6 veg momos wow momo",
+    "expect": {
+      "food": "veg momos",
+      "store": "wow momo",
+      "qty": "6"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "veg momos"
+      ],
+      "store": "wow momo",
+      "qty": "6",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "4 cheese pizza dominos",
+    "expect": {
+      "food": "cheese pizza",
+      "store": "dominos",
+      "qty": "4"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "2 veggie burger mcdonalds",
+    "expect": {
+      "food": "veggie burger",
+      "store": "mcdonalds",
+      "qty": "2"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "3 plain dosa sagar ratna",
+    "expect": {
+      "food": "plain dosa",
+      "store": "sagar ratna",
+      "qty": "3"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "plain dosa"
+      ],
+      "store": "sagar ratna",
+      "qty": "3",
+      "provider": "indicbert",
+      "time": 11
+    }
+  },
+  {
+    "query": "5 paneer butter masala punjab grill",
+    "expect": {
+      "food": "paneer butter masala",
+      "store": "punjab grill",
+      "qty": "5"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paneer butter masala"
+      ],
+      "store": "punjab grill",
+      "qty": "5",
+      "provider": "heuristic",
+      "time": 106
+    }
+  },
+  {
+    "query": "1 filter coffee saravana bhavan",
+    "expect": {
+      "food": "filter coffee",
+      "store": "saravana bhavan",
+      "qty": "1"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "filter coffee"
+      ],
+      "store": "saravana bhavan",
+      "qty": "1",
+      "provider": "heuristic",
+      "time": 24
+    }
+  },
+  {
+    "query": "2 chole bhature haldiram",
+    "expect": {
+      "food": "chole bhature",
+      "store": "haldiram",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "chole"
+      ],
+      "store": "bhature haldiram",
+      "qty": "2",
+      "provider": "indicbert",
+      "time": 10
+    }
+  },
+  {
+    "query": "4 rasmalai bikanervala",
+    "expect": {
+      "food": "rasmalai",
+      "store": "bikanervala",
+      "qty": "4"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "rasmalai"
+      ],
+      "store": "bikanervala",
+      "qty": "4",
+      "provider": "indicbert",
+      "time": 10
+    }
+  },
+  {
+    "query": "3 jalebi aggarwal sweets",
+    "expect": {
+      "food": "jalebi",
+      "store": "aggarwal",
+      "qty": "3"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "paneer butter masala 1 and rice 1 from paradise",
+    "expect": {
+      "food": [
+        "paneer butter masala",
+        "rice"
+      ],
+      "store": "paradise"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "2 roti and 1 dal from shiv sagar",
+    "expect": {
+      "food": [
+        "roti",
+        "dal"
+      ],
+      "store": "shiv sagar"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "roti",
+        "dal from",
+        "dal"
+      ],
+      "store": "shiv sagar",
+      "qty": "2,1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "3 samosa aur 2 chai bhagat se",
+    "expect": {
+      "food": [
+        "samosa",
+        "chai"
+      ],
+      "store": "bhagat"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "samosa",
+        "chai se",
+        "chai"
+      ],
+      "store": "bhagat se",
+      "qty": "3,2",
+      "provider": "indicbert",
+      "time": 9
+    }
+  },
+  {
+    "query": "biryani 2 and raita 1 and naan 4 paradise se",
+    "expect": {
+      "food": [
+        "biryani",
+        "raita",
+        "naan"
+      ],
+      "store": "paradise"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "and",
+        "paradise se",
+        "biryani",
+        "raita"
+      ],
+      "qty": "2,1,4",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "1 pizza 1 coke 1 garlic bread dominos",
+    "expect": {
+      "food": [
+        "pizza",
+        "coke",
+        "garlic bread"
+      ],
+      "store": "dominos"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "idli 4 vada 2 sambar 1 sagar ratna",
+    "expect": {
+      "food": [
+        "idli",
+        "vada",
+        "sambar"
+      ],
+      "store": "sagar ratna"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "2 dosa 2 coffee saravana bhavan se bhej do",
+    "expect": {
+      "food": [
+        "dosa",
+        "coffee"
+      ],
+      "store": "saravana bhavan"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "coffee"
+      ],
+      "store": "saravana bhavan",
+      "qty": "2,2",
+      "provider": "heuristic",
+      "time": 56
+    }
+  },
+  {
+    "query": "paneer tikka 1 butter naan 2 dal makhani 1 karim",
+    "expect": {
+      "food": [
+        "paneer tikka",
+        "butter naan",
+        "dal makhani"
+      ],
+      "store": "karim"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "butter",
+        "dal"
+      ],
+      "qty": "1,2,1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "3 momos 2 thukpa 1 chowmein wow momo",
+    "expect": {
+      "food": [
+        "momos",
+        "thukpa",
+        "chowmein"
+      ],
+      "store": "wow momo"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "chowmein"
+      ],
+      "store": "wow momo",
+      "qty": "3,2,1",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "1 kg atta aur 500g sugar aur 1 kg rice nilesh store",
+    "expect": {
+      "food": [
+        "atta",
+        "sugar",
+        "rice"
+      ],
+      "store": "nilesh"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "biryani",
+    "expect": {
+      "food": "biryani"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "pizza",
+    "expect": {
+      "food": "pizza"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "pizza"
+      ],
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "samosa",
+    "expect": {
+      "food": "samosa"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "samosa"
+      ],
+      "provider": "indicbert",
+      "time": 10
+    }
+  },
+  {
+    "query": "momos",
+    "expect": {
+      "food": "momos"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "momos"
+      ],
+      "provider": "heuristic",
+      "time": 0
+    }
+  },
+  {
+    "query": "chai",
+    "expect": {
+      "food": "chai"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "dosa",
+    "expect": {
+      "food": "dosa"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "burger",
+    "expect": {
+      "food": "burger"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "burger"
+      ],
+      "provider": "heuristic",
+      "time": 0
+    }
+  },
+  {
+    "query": "thali",
+    "expect": {
+      "food": "thali"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "thali"
+      ],
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "paratha",
+    "expect": {
+      "food": "paratha"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paratha"
+      ],
+      "provider": "heuristic",
+      "time": 4
+    }
+  },
+  {
+    "query": "idli",
+    "expect": {
+      "food": "idli"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "biryani available hai?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "biryani"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "paneer milega?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "paneer"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paneer"
+      ],
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "pizza hai kya?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "pizza"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "pizza"
+      ],
+      "provider": "heuristic",
+      "time": 0
+    }
+  },
+  {
+    "query": "samosa mil jayega?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "samosa"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "search_product",
+      "food": [
+        "samosa"
+      ],
+      "provider": "llm",
+      "time": 12857
+    }
+  },
+  {
+    "query": "momos milte hai?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "momos"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "momos milte"
+      ],
+      "provider": "heuristic",
+      "time": 0
+    }
+  },
+  {
+    "query": "is chai available?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "chai"
+    },
+    "status": "fail",
+    "issues": [
+      "Intent: expected check_availability, got search"
+    ],
+    "actual": {
+      "intent": "search",
+      "food": [
+        "is chai",
+        "chai"
+      ],
+      "provider": "indicbert"
+    }
+  },
+  {
+    "query": "do you have dosa?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "dosa"
+    },
+    "status": "fail",
+    "issues": [
+      "Intent: expected check_availability, got place_order"
+    ],
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "you have dosa?",
+        "you have"
+      ],
+      "qty": "2",
+      "provider": "indicbert"
+    }
+  },
+  {
+    "query": "burger milega kya?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "burger"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "thali available?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "thali"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "paratha hai?",
+    "expect": {
+      "intent": "check_availability",
+      "food": "paratha"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "paratha"
+      ],
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "bhai 2 samosa de de",
+    "expect": {
+      "food": "samosa",
+      "qty": "2"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "place_order",
+      "food": [
+        "samosa de de"
+      ],
+      "qty": "2",
+      "provider": "indicbert",
+      "time": 10
+    }
+  },
+  {
+    "query": "yaar pizza mangwa de",
+    "expect": {
+      "food": "pizza"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "yaar pizza mangwa de"
+      ],
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "jaldi se 4 chai bhej",
+    "expect": {
+      "food": "chai",
+      "qty": "4"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "ek plate momos",
+    "expect": {
+      "food": "momos",
+      "qty": "1"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "thoda biryani bhej do",
+    "expect": {
+      "food": "biryani"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "thoda biryani"
+      ],
+      "provider": "heuristic",
+      "time": 0
+    }
+  },
+  {
+    "query": "kuch khana order karna hai",
+    "expect": {
+      "intent": "order_food"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "order_food",
+      "provider": "heuristic",
+      "time": 2
+    }
+  },
+  {
+    "query": "menu dikhao",
+    "expect": {
+      "intent": "browse_menu"
+    },
+    "status": "fail",
+    "issues": [
+      "Intent: expected browse_menu, got order_food"
+    ],
+    "actual": {
+      "intent": "order_food",
+      "food": [
+        "dikhao"
+      ],
+      "store": "menu",
+      "provider": "heuristic"
+    }
+  },
+  {
+    "query": "kya khilate ho?",
+    "expect": {
+      "intent": "browse_menu"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "sab kuch cancel karo",
+    "expect": {
+      "intent": "cancel_order"
+    },
+    "status": "error",
+    "error": "empty response"
+  },
+  {
+    "query": "order kahan tak aaya?",
+    "expect": {
+      "intent": "track_order"
+    },
+    "status": "fail",
+    "issues": [
+      "Intent: expected track_order, got track"
+    ],
+    "actual": {
+      "intent": "track",
+      "food": [
+        "kahan tak aaya?"
+      ],
+      "provider": "indicbert"
+    }
+  },
+  {
+    "query": "kitna time lagega delivery me?",
+    "expect": {
+      "intent": "track_order"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "track_order",
+      "provider": "llm",
+      "time": 4355
+    }
+  },
+  {
+    "query": "hello",
+    "expect": {
+      "intent": "greeting"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "greeting",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "namaste",
+    "expect": {
+      "intent": "greeting"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "greeting",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "thank you",
+    "expect": {
+      "intent": "greeting"
+    },
+    "status": "pass",
+    "actual": {
+      "intent": "chitchat",
+      "food": [
+        "you"
+      ],
+      "store": "thank",
+      "provider": "heuristic",
+      "time": 1
+    }
+  },
+  {
+    "query": "bye",
+    "expect": {
+      "intent": "greeting"
+    },
+    "status": "error",
+    "error": "empty response"
+  }
+]

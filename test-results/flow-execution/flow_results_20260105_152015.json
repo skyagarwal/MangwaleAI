@@ -1,0 +1,33 @@
+{
+  "timestamp": "20260105_152015",
+  "total_flows": 6,
+  "passed": 0,
+  "failed": 6,
+  "success_rate": 0,
+  "flows": [
+    {
+      "name": "Food Order Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Parcel Delivery Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Order Tracking Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Vendor Order Management",
+      "status": "tested"
+    },
+    {
+      "name": "Rider Delivery Journey",
+      "status": "tested"
+    },
+    {
+      "name": "Complex Food Order",
+      "status": "tested"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{"text": "get me 3 missal from tushar", "entities": [{"start": 7, "end": 8, "label": "QTY", "text": "3"}, {"start": 9, "end": 15, "label": "FOOD", "text": "missal"}, {"start": 21, "end": 27, "label": "STORE", "text": "tushar"}]}
+{"text": "2 misal pav from tushar misal", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 2, "end": 11, "label": "FOOD", "text": "misal pav"}, {"start": 17, "end": 30, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order 1 vada pav from green bakes", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "1"}, {"start": 8, "end": 16, "label": "FOOD", "text": "vada pav"}, {"start": 22, "end": 33, "label": "STORE", "text": "green bakes"}]}
+{"text": "paneer tikka mangwao rajabhau se", "entities": [{"start": 0, "end": 13, "label": "FOOD", "text": "paneer tikka"}, {"start": 22, "end": 30, "label": "STORE", "text": "rajabhau"}]}
+{"text": "misal hai kya tushar pe", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "misal"}, {"start": 14, "end": 20, "label": "STORE", "text": "tushar"}]}
+{"text": "tushar misal se misal pav dedo", "entities": [{"start": 0, "end": 12, "label": "STORE", "text": "tushar misal"}, {"start": 16, "end": 25, "label": "FOOD", "text": "misal pav"}]}
+{"text": "4 samosa chahiye green bakes se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "4"}, {"start": 2, "end": 8, "label": "FOOD", "text": "samosa"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}
+{"text": "get 5 pav bhaji from vaishali", "entities": [{"start": 4, "end": 5, "label": "QTY", "text": "5"}, {"start": 6, "end": 15, "label": "FOOD", "text": "pav bhaji"}, {"start": 21, "end": 29, "label": "STORE", "text": "vaishali"}]}
+{"text": "rajabhau ka chole bhature 2", "entities": [{"start": 0, "end": 8, "label": "STORE", "text": "rajabhau"}, {"start": 12, "end": 25, "label": "FOOD", "text": "chole bhature"}, {"start": 26, "end": 27, "label": "QTY", "text": "2"}]}
+{"text": "3 biryani lao prakash se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 9, "label": "FOOD", "text": "biryani"}, {"start": 14, "end": 21, "label": "STORE", "text": "prakash"}]}
+{"text": "order biryani from hotel prakash", "entities": [{"start": 6, "end": 13, "label": "FOOD", "text": "biryani"}, {"start": 19, "end": 33, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "sadhana misal se special misal", "entities": [{"start": 0, "end": 13, "label": "STORE", "text": "sadhana misal"}, {"start": 17, "end": 30, "label": "FOOD", "text": "special misal"}]}
+{"text": "mujhe pizza chahiye dominos se", "entities": [{"start": 6, "end": 11, "label": "FOOD", "text": "pizza"}, {"start": 20, "end": 27, "label": "STORE", "text": "dominos"}]}
+{"text": "bring 10 idli from south cafe", "entities": [{"start": 6, "end": 8, "label": "QTY", "text": "10"}, {"start": 9, "end": 13, "label": "FOOD", "text": "idli"}, {"start": 19, "end": 29, "label": "STORE", "text": "south cafe"}]}
+{"text": "i want dosa from udipi", "entities": [{"start": 7, "end": 11, "label": "FOOD", "text": "dosa"}, {"start": 17, "end": 22, "label": "STORE", "text": "udipi"}]}
+{"text": "pizza hut ka pepperoni pizza", "entities": [{"start": 0, "end": 9, "label": "STORE", "text": "pizza hut"}, {"start": 13, "end": 28, "label": "FOOD", "text": "pepperoni pizza"}]}
+{"text": "tushar misal hai kya", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}, {"start": 7, "end": 12, "label": "FOOD", "text": "misal"}]}
+{"text": "green bakes ka sandwich", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "green bakes"}, {"start": 15, "end": 23, "label": "FOOD", "text": "sandwich"}]}
+{"text": "missal pav tushar", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "missal pav"}, {"start": 11, "end": 17, "label": "STORE", "text": "tushar"}]}
+{"text": "only misal tushar misal", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "only misal"}, {"start": 11, "end": 23, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order 2 butter naan from punjabi dhaba", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "2"}, {"start": 8, "end": 19, "label": "FOOD", "text": "butter naan"}, {"start": 25, "end": 38, "label": "STORE", "text": "punjabi dhaba"}]}
+{"text": "chai lao 3 cup rajabhau se", "entities": [{"start": 0, "end": 4, "label": "FOOD", "text": "chai"}, {"start": 9, "end": 10, "label": "QTY", "text": "3"}, {"start": 15, "end": 23, "label": "STORE", "text": "rajabhau"}]}
+{"text": "kfc se 6 piece chicken wings", "entities": [{"start": 0, "end": 3, "label": "STORE", "text": "kfc"}, {"start": 7, "end": 8, "label": "QTY", "text": "6"}, {"start": 15, "end": 28, "label": "FOOD", "text": "chicken wings"}]}
+{"text": "burger king ka whopper", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "burger king"}, {"start": 15, "end": 22, "label": "FOOD", "text": "whopper"}]}
+{"text": "mujhe manchurian chahiye china gate se", "entities": [{"start": 6, "end": 16, "label": "FOOD", "text": "manchurian"}, {"start": 25, "end": 35, "label": "STORE", "text": "china gate"}]}
+{"text": "momos lao 4 plate", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "momos"}, {"start": 10, "end": 11, "label": "QTY", "text": "4"}]}
+{"text": "order spring roll from chinese corner", "entities": [{"start": 6, "end": 17, "label": "FOOD", "text": "spring roll"}, {"start": 23, "end": 37, "label": "STORE", "text": "chinese corner"}]}
+{"text": "get misal from sadhana", "entities": [{"start": 4, "end": 9, "label": "FOOD", "text": "misal"}, {"start": 15, "end": 22, "label": "STORE", "text": "sadhana"}]}
+{"text": "2 plate misal sadhana", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "2"}, {"start": 8, "end": 13, "label": "FOOD", "text": "misal"}, {"start": 14, "end": 21, "label": "STORE", "text": "sadhana"}]}
+{"text": "1 missal tushar se", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "1"}, {"start": 2, "end": 8, "label": "FOOD", "text": "missal"}, {"start": 9, "end": 15, "label": "STORE", "text": "tushar"}]}
+{"text": "lassi sweet mujhe chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "text": "lassi"}, {"start": 6, "end": 11, "label": "PREF", "text": "sweet"}]}
+{"text": "extra spicy missal dena", "entities": [{"start": 0, "end": 11, "label": "PREF", "text": "extra spicy"}, {"start": 12, "end": 18, "label": "FOOD", "text": "missal"}]}
+{"text": "veg biryani green hotel", "entities": [{"start": 0, "end": 3, "label": "PREF", "text": "veg"}, {"start": 4, "end": 11, "label": "FOOD", "text": "biryani"}, {"start": 12, "end": 23, "label": "STORE", "text": "green hotel"}]}
+{"text": "3 anda bhurji from mamta", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "3"}, {"start": 2, "end": 13, "label": "FOOD", "text": "anda bhurji"}, {"start": 19, "end": 24, "label": "STORE", "text": "mamta"}]}
+{"text": "hot coffee 2 cup barista", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "hot coffee"}, {"start": 11, "end": 12, "label": "QTY", "text": "2"}, {"start": 17, "end": 24, "label": "STORE", "text": "barista"}]}
+{"text": "mujhe nasik nashik pe kuch chahiye", "entities": [{"start": 6, "end": 11, "label": "LOC", "text": "nasik"}, {"start": 12, "end": 18, "label": "LOC", "text": "nashik"}]}
+{"text": "sadar me restaurants dikha", "entities": [{"start": 0, "end": 5, "label": "LOC", "text": "sadar"}]}
+{"text": "college road pe khana mil jaega", "entities": [{"start": 0, "end": 12, "label": "LOC", "text": "college road"}]}
+{"text": "tidke colony me best misal", "entities": [{"start": 0, "end": 12, "label": "LOC", "text": "tidke colony"}, {"start": 18, "end": 26, "label": "FOOD", "text": "best misal"}]}
+{"text": "garma garam samosa 5", "entities": [{"start": 0, "end": 10, "label": "PREF", "text": "garma garam"}, {"start": 11, "end": 17, "label": "FOOD", "text": "samosa"}, {"start": 18, "end": 19, "label": "QTY", "text": "5"}]}
+{"text": "thanda cold coffee lao", "entities": [{"start": 0, "end": 6, "label": "PREF", "text": "thanda"}, {"start": 7, "end": 18, "label": "FOOD", "text": "cold coffee"}]}
+{"text": "missal pav from tushar misal", "entities": [{"start": 0, "end": 10, "label": "FOOD", "text": "missal pav"}, {"start": 16, "end": 28, "label": "STORE", "text": "tushar misal"}]}
+{"text": "order food from green bakes tidke colony", "entities": [{"start": 16, "end": 27, "label": "STORE", "text": "green bakes"}, {"start": 28, "end": 40, "label": "LOC", "text": "tidke colony"}]}
+{"text": "rajabhau restaurant se dal makhani", "entities": [{"start": 0, "end": 20, "label": "STORE", "text": "rajabhau restaurant"}, {"start": 24, "end": 35, "label": "FOOD", "text": "dal makhani"}]}
+{"text": "get 2 plate chole bhature", "entities": [{"start": 4, "end": 5, "label": "QTY", "text": "2"}, {"start": 12, "end": 25, "label": "FOOD", "text": "chole bhature"}]}
+{"text": "special misal pav tushar se", "entities": [{"start": 0, "end": 17, "label": "FOOD", "text": "special misal pav"}, {"start": 18, "end": 24, "label": "STORE", "text": "tushar"}]}
+{"text": "order from tushar", "entities": [{"start": 11, "end": 17, "label": "STORE", "text": "tushar"}]}
+{"text": "tushar ka menu dikha", "entities": [{"start": 0, "end": 6, "label": "STORE", "text": "tushar"}]}
+{"text": "missal available hai kya", "entities": [{"start": 0, "end": 6, "label": "FOOD", "text": "missal"}]}
+{"text": "order 3 plate missal from tushar misal pav center", "entities": [{"start": 6, "end": 7, "label": "QTY", "text": "3"}, {"start": 14, "end": 20, "label": "FOOD", "text": "missal"}, {"start": 26, "end": 49, "label": "STORE", "text": "tushar misal pav center"}]}
+{"text": "lao mujhe paneer butter masala 1", "entities": [{"start": 10, "end": 30, "label": "FOOD", "text": "paneer butter masala"}, {"start": 31, "end": 32, "label": "QTY", "text": "1"}]}
+{"text": "5 roti hotel prakash", "entities": [{"start": 0, "end": 1, "label": "QTY", "text": "5"}, {"start": 2, "end": 6, "label": "FOOD", "text": "roti"}, {"start": 7, "end": 20, "label": "STORE", "text": "hotel prakash"}]}
+{"text": "green bakes ka menu", "entities": [{"start": 0, "end": 11, "label": "STORE", "text": "green bakes"}]}
+{"text": "sadhana chulivarchi se misal bhakri", "entities": [{"start": 0, "end": 19, "label": "STORE", "text": "sadhana chulivarchi"}, {"start": 23, "end": 35, "label": "FOOD", "text": "misal bhakri"}]}
+{"text": "do misal pav tushar", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "do"}, {"start": 3, "end": 12, "label": "FOOD", "text": "misal pav"}, {"start": 13, "end": 19, "label": "STORE", "text": "tushar"}]}
+{"text": "teen samosa green bakes", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "text": "samosa"}, {"start": 12, "end": 23, "label": "STORE", "text": "green bakes"}]}
+{"text": "char plate biryani prakash hotel", "entities": [{"start": 0, "end": 4, "label": "QTY", "text": "char"}, {"start": 11, "end": 18, "label": "FOOD", "text": "biryani"}, {"start": 19, "end": 32, "label": "STORE", "text": "prakash hotel"}]}
+{"text": "ek chai rajabhau", "entities": [{"start": 0, "end": 2, "label": "QTY", "text": "ek"}, {"start": 3, "end": 7, "label": "FOOD", "text": "chai"}, {"start": 8, "end": 16, "label": "STORE", "text": "rajabhau"}]}
+{"text": "paanch puri bhel green bakes", "entities": [{"start": 0, "end": 6, "label": "QTY", "text": "paanch"}, {"start": 7, "end": 16, "label": "FOOD", "text": "puri bhel"}, {"start": 17, "end": 28, "label": "STORE", "text": "green bakes"}]}

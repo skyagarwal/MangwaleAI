@@ -1,0 +1,173 @@
+groups:
+  - name: phase1_nlu_alerts
+    interval: 30s
+    rules:
+      # Classification accuracy alerts
+      - alert: LowQuestionDetectionRate
+        expr: |
+          sum(rate(question_classifier_requests_total{result="question"}[5m])) 
+          / sum(rate(question_classifier_requests_total[5m])) * 100 < 70
+        for: 5m
+        labels:
+          severity: warning
+          component: question_classifier
+        annotations:
+          summary: "Question detection rate is below 70%"
+          description: "Only {{ $value | humanize }}% of requests are being detected as questions (target: >85%)"
+
+      # Latency alerts
+      - alert: HighClassificationLatency
+        expr: |
+          histogram_quantile(0.95, rate(question_classifier_latency_ms_bucket[5m])) > 500
+        for: 2m
+        labels:
+          severity: warning
+          component: question_classifier
+        annotations:
+          summary: "Question classification latency is high"
+          description: "p95 latency is {{ $value | humanize }}ms (target: <500ms)"
+
+      - alert: CriticalClassificationLatency
+        expr: |
+          histogram_quantile(0.95, rate(question_classifier_latency_ms_bucket[5m])) > 2000
+        for: 1m
+        labels:
+          severity: critical
+          component: question_classifier
+        annotations:
+          summary: "Question classification latency is critically high"
+          description: "p95 latency is {{ $value | humanize }}ms (critical threshold: 2000ms)"
+
+      # LLM generation alerts
+      - alert: LowLLMSuccessRate
+        expr: |
+          sum(rate(intelligent_response_llm_generation_total{result="success"}[5m])) 
+          / sum(rate(intelligent_response_llm_generation_total[5m])) * 100 < 80
+        for: 5m
+        labels:
+          severity: warning
+          component: intelligent_response
+        annotations:
+          summary: "LLM response generation success rate is low"
+          description: "Only {{ $value | humanize }}% of LLM generations are successful (target: >95%)"
+
+      - alert: HighLLMResponseLatency
+        expr: |
+          histogram_quantile(0.95, rate(intelligent_response_latency_ms_bucket{method="llm"}[5m])) > 5000
+        for: 2m
+        labels:
+          severity: warning
+          component: intelligent_response
+        annotations:
+          summary: "LLM response generation is slow"
+          description: "p95 latency is {{ $value | humanize }}ms (target: <5000ms)"
+
+      # Error rate alerts
+      - alert: HighClassificationErrorRate
+        expr: |
+          rate(question_classifier_errors_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          component: question_classifier
+        annotations:
+          summary: "Classification error rate is high"
+          description: "{{ $value | humanize }} errors/sec (threshold: 5 errors/sec)"
+
+      - alert: CriticalClassificationErrorRate
+        expr: |
+          rate(question_classifier_errors_total[5m]) > 20
+        for: 1m
+        labels:
+          severity: critical
+          component: question_classifier
+        annotations:
+          summary: "Classification error rate is critically high"
+          description: "{{ $value | humanize }} errors/sec (critical threshold: 20 errors/sec)"
+
+      # Template fallback alerts
+      - alert: HighTemplateFallbackRate
+        expr: |
+          sum(rate(intelligent_response_template_fallback_total[5m])) 
+          / sum(rate(intelligent_response_requests_total[5m])) * 100 > 50
+        for: 5m
+        labels:
+          severity: warning
+          component: intelligent_response
+        annotations:
+          summary: "Too many template fallbacks"
+          description: "{{ $value | humanize }}% of responses using template fallback (LLM issues?)"
+
+      # Memory operations alerts
+      - alert: HighEmbeddingLatency
+        expr: |
+          histogram_quantile(0.95, rate(conversation_memory_embedding_latency_ms_bucket[5m])) > 1000
+        for: 2m
+        labels:
+          severity: warning
+          component: conversation_memory
+        annotations:
+          summary: "Embedding generation is slow"
+          description: "p95 latency is {{ $value | humanize }}ms (target: <1000ms)"
+
+      - alert: HighMemoryOperationErrors
+        expr: |
+          sum(rate(conversation_memory_operations_total{result="error"}[5m])) 
+          / sum(rate(conversation_memory_operations_total[5m])) * 100 > 5
+        for: 2m
+        labels:
+          severity: warning
+          component: conversation_memory
+        annotations:
+          summary: "Memory operations failing"
+          description: "{{ $value | humanize }}% of memory operations are failing"
+
+      # Memory size alerts (potential memory leak)
+      - alert: UnboundedMemoryGrowth
+        expr: |
+          rate(conversation_memory_size_items[10m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: conversation_memory
+        annotations:
+          summary: "Conversation memory growing too fast"
+          description: "Memory growing at {{ $value | humanize }} items/sec (potential leak?)"
+
+      # Active sessions monitoring
+      - alert: TooManyActiveSessions
+        expr: |
+          conversation_memory_active_sessions > 10000
+        for: 2m
+        labels:
+          severity: warning
+          component: conversation_memory
+        annotations:
+          summary: "Too many active conversation sessions"
+          description: "{{ $value | humanize }} active sessions (capacity concern)"
+
+      # LLM fallback reliance
+      - alert: ExcessiveLLMFallbackUsage
+        expr: |
+          sum(rate(question_classifier_llm_fallback_total[5m])) 
+          / sum(rate(question_classifier_requests_total[5m])) * 100 > 30
+        for: 10m
+        labels:
+          severity: info
+          component: question_classifier
+        annotations:
+          summary: "Pattern matching not catching enough questions"
+          description: "{{ $value | humanize }}% of classifications need LLM fallback (consider improving patterns)"
+
+      # Repeated questions (user frustration indicator)
+      - alert: HighRepeatedQuestionRate
+        expr: |
+          sum(rate(intelligent_response_repeated_questions_total[5m])) 
+          / sum(rate(intelligent_response_requests_total[5m])) * 100 > 20
+        for: 5m
+        labels:
+          severity: info
+          component: intelligent_response
+        annotations:
+          summary: "Users repeating questions frequently"
+          description: "{{ $value | humanize }}% of questions are repeats (user frustration signal)"

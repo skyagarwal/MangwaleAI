@@ -1,0 +1,257 @@
+{
+  "dashboard": {
+    "title": "Mangwale AI - Flow Execution Monitoring",
+    "tags": ["mangwale", "flows", "conversational-ai"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Flow Completion Rate (%)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "(sum(rate(mangwale_flow_completions_total{status=\"completed\"}[5m])) by (flow_name) / sum(rate(mangwale_flow_executions_total[5m])) by (flow_name)) * 100",
+            "legendFormat": "{{ flow_name }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "Completion Rate", "min": 0, "max": 100}
+        ],
+        "legend": {"show": true, "values": true, "current": true, "alignAsTable": true}
+      },
+      {
+        "id": 2,
+        "title": "Flow Execution Rate (flows/sec)",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_executions_total[5m])) by (flow_name)",
+            "legendFormat": "{{ flow_name }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Flows/sec", "min": 0}
+        ],
+        "legend": {"show": true, "values": true, "current": true, "alignAsTable": true}
+      },
+      {
+        "id": 3,
+        "title": "Flow Drop-off Points (Heatmap)",
+        "type": "heatmap",
+        "gridPos": {"x": 0, "y": 8, "w": 24, "h": 10},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_dropoffs_total[5m])) by (flow_name, state)",
+            "legendFormat": "{{ flow_name }}: {{ state }}",
+            "refId": "A"
+          }
+        ],
+        "dataFormat": "timeseries",
+        "heatmap": {
+          "yAxis": {"format": "short", "label": "State"}
+        },
+        "color": {
+          "mode": "spectrum",
+          "colorScheme": "interpolateOranges"
+        }
+      },
+      {
+        "id": 4,
+        "title": "Top Drop-off States (Current)",
+        "type": "table",
+        "gridPos": {"x": 0, "y": 18, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "topk(10, sum(rate(mangwale_flow_dropoffs_total[5m])) by (flow_name, state))",
+            "instant": true,
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "transform": "table",
+        "columns": [
+          {"text": "Flow", "value": "flow_name"},
+          {"text": "State", "value": "state"},
+          {"text": "Drop-offs/sec", "value": "Value"}
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Flow Duration (p50, p95, p99)",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 18, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(mangwale_flow_duration_seconds_bucket[5m])) by (flow_name, le))",
+            "legendFormat": "{{ flow_name }} (p50)",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(mangwale_flow_duration_seconds_bucket[5m])) by (flow_name, le))",
+            "legendFormat": "{{ flow_name }} (p95)",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(mangwale_flow_duration_seconds_bucket[5m])) by (flow_name, le))",
+            "legendFormat": "{{ flow_name }} (p99)",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {"format": "s", "label": "Duration", "min": 0}
+        ],
+        "legend": {"show": true, "values": true, "current": true, "alignAsTable": true}
+      },
+      {
+        "id": 6,
+        "title": "Flow Status Distribution",
+        "type": "piechart",
+        "gridPos": {"x": 0, "y": 26, "w": 8, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_completions_total[5m])) by (status)",
+            "legendFormat": "{{ status }}",
+            "refId": "A"
+          }
+        ],
+        "pieType": "donut",
+        "legend": {"show": true, "values": true, "percentage": true}
+      },
+      {
+        "id": 7,
+        "title": "Active Flows (Current)",
+        "type": "stat",
+        "gridPos": {"x": 8, "y": 26, "w": 8, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(mangwale_active_flows)",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 100, "color": "yellow"},
+                {"value": 500, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Flow Error Rate",
+        "type": "stat",
+        "gridPos": {"x": 16, "y": 26, "w": 8, "h": 8},
+        "targets": [
+          {
+            "expr": "(sum(rate(mangwale_flow_completions_total{status=\"error\"}[5m])) / sum(rate(mangwale_flow_executions_total[5m]))) * 100",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 1, "color": "yellow"},
+                {"value": 5, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "State Transition Flow (Sankey)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 34, "w": 24, "h": 10},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_state_transitions_total[5m])) by (flow_name, from_state, to_state)",
+            "legendFormat": "{{ flow_name }}: {{ from_state }} → {{ to_state }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Transitions/sec", "min": 0}
+        ],
+        "legend": {"show": true, "values": true, "current": true, "alignAsTable": true}
+      },
+      {
+        "id": 10,
+        "title": "Drop-off Reasons",
+        "type": "piechart",
+        "gridPos": {"x": 0, "y": 44, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_dropoffs_total[5m])) by (reason)",
+            "legendFormat": "{{ reason }}",
+            "refId": "A"
+          }
+        ],
+        "pieType": "donut",
+        "legend": {"show": true, "values": true, "percentage": true}
+      },
+      {
+        "id": 11,
+        "title": "Flow Funnel Analysis (Food Order)",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 44, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(mangwale_flow_state_transitions_total{flow_name=\"food_order_v1\"}[5m])) by (to_state)",
+            "legendFormat": "{{ to_state }}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "short", "label": "Users/sec", "min": 0}
+        ],
+        "legend": {"show": true, "values": true, "current": true, "alignAsTable": true},
+        "stack": false
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["10s", "30s", "1m", "5m", "15m"],
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    },
+    "annotations": {
+      "list": [
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "ALERTS{alertname=~\".*Flow.*\"}",
+          "iconColor": "red",
+          "name": "Flow Alerts"
+        }
+      ]
+    }
+  }
+}

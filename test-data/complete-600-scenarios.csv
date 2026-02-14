@@ -1,0 +1,601 @@
+id,user_type,text,intent,language,category
+c001,customer,pizza chahiye,search_food,hinglish,food_ordering
+c002,customer,show me biryani near me,search_food,english,food_ordering
+c003,customer,मुझे खाना चाहिए,search_food,hindi,food_ordering
+c004,customer,kuch acha sa khana dikhao,search_food,hinglish,food_ordering
+c005,customer,burger milega kya,search_food,hinglish,food_ordering
+c006,customer,nashik mein best restaurant,search_food,hinglish,food_ordering
+c007,customer,chinese food order karna hai,search_food,hinglish,food_ordering
+c008,customer,bhook lagi hai kuch suggest karo,search_food,hinglish,food_ordering
+c009,customer,pet mein chuhe daud rahe hain,search_food,hinglish,food_ordering
+c010,customer,kuch mast nashta chahiye,search_food,hinglish,food_ordering
+c011,customer,dinner ke liye kuch sasta dikhao,search_food,hinglish,food_ordering
+c012,customer,veg thali milegi,search_food,hinglish,food_ordering
+c013,customer,non veg kuch chahiye,search_food,hinglish,food_ordering
+c014,customer,college road pe best pizza,search_food,hinglish,food_ordering
+c015,customer,pav bhaji khani hai,search_food,hinglish,food_ordering
+c016,customer,south indian food chahiye,search_food,hinglish,food_ordering
+c017,customer,मुझे डोसा चाहिए,search_food,hindi,food_ordering
+c018,customer,क्या pizza मिलेगा,search_food,hindi,food_ordering
+c019,customer,today's special kya hai,search_food,hinglish,food_ordering
+c020,customer,sabse sasta burger batao,search_food,hinglish,food_ordering
+c021,customer,family dinner ke liye kuch combo,search_food,hinglish,food_ordering
+c022,customer,late night delivery hoti hai kya,search_food,hinglish,food_ordering
+c023,customer,healthy food chahiye weight loss ke liye,search_food,hinglish,food_ordering
+c024,customer,baccho ke liye kuch tasty,search_food,hinglish,food_ordering
+c025,customer,party order kar sakta hoon kya,search_food,hinglish,food_ordering
+c026,customer,tandoori chicken with naan,search_food,english,food_ordering
+c027,customer,dessert chahiye khana ke baad,search_food,hinglish,food_ordering
+c028,customer,ice cream flavors kya hain,search_food,hinglish,food_ordering
+c029,customer,coffee shop ka menu dikha,search_food,hinglish,food_ordering
+c030,customer,breakfast mein kya milega,search_food,hinglish,food_ordering
+c031,customer,fast delivery chahiye bahut bhook lagi hai,search_food,hinglish,food_ordering
+c032,customer,spicy nahi chahiye,search_food,hinglish,food_ordering
+c033,customer,jain food available hai kya,search_food,hinglish,food_ordering
+c034,customer,swiggy se sasta milega kya,search_food,hinglish,food_ordering
+c035,customer,discount offer hai koi,search_food,hinglish,food_ordering
+c036,customer,free delivery chahiye,search_food,hinglish,food_ordering
+c037,customer,cashback milega kya,search_food,hinglish,food_ordering
+c038,customer,combo offer dikha,search_food,hinglish,food_ordering
+c039,customer,paneer tikka with roti,search_food,english,food_ordering
+c040,customer,momos milenge kya,search_food,hinglish,food_ordering
+c041,customer,sandwich and cold coffee,search_food,english,food_ordering
+c042,customer,rolls milte hain kya,search_food,hinglish,food_ordering
+c043,customer,frankie chahiye,search_food,hinglish,food_ordering
+c044,customer,shawarma hai kya,search_food,hinglish,food_ordering
+c045,customer,pasta milega italian,search_food,hinglish,food_ordering
+c046,customer,mexican food hai nashik mein,search_food,hinglish,food_ordering
+c047,customer,sushi milta hai kya yahan,search_food,hinglish,food_ordering
+c048,customer,gujarati thali,search_food,hindi,food_ordering
+c049,customer,rajasthani food,search_food,english,food_ordering
+c050,customer,maharashtrian meal,search_food,english,food_ordering
+c051,customer,misal pav kahan milega,search_food,hinglish,food_ordering
+c052,customer,poha jalebi milega morning mein,search_food,hinglish,food_ordering
+c053,customer,vada pav best kahan ka hai,search_food,hinglish,food_ordering
+c054,customer,dabeli milti hai,search_food,hinglish,food_ordering
+c055,customer,bhel puri aur pani puri,search_food,hinglish,food_ordering
+c056,customer,chat items chahiye,search_food,hinglish,food_ordering
+c057,customer,samosa kachori milegi,search_food,hinglish,food_ordering
+c058,customer,masala chai ke saath kuch,search_food,hinglish,food_ordering
+c059,customer,cutting chai aur biscuit,search_food,hinglish,food_ordering
+c060,customer,filter coffee milegi south indian,search_food,hinglish,food_ordering
+c061,customer,idli sambhar dosa,search_food,hindi,food_ordering
+c062,customer,uttapam with varieties,search_food,english,food_ordering
+c063,customer,chole bhature heavy breakfast,search_food,hinglish,food_ordering
+c064,customer,aloo paratha with dahi,search_food,hinglish,food_ordering
+c065,customer,punjabi food thali style,search_food,hinglish,food_ordering
+c066,customer,dal makhani butter naan,search_food,hinglish,food_ordering
+c067,customer,kadai paneer roti ke saath,search_food,hinglish,food_ordering
+c068,customer,malai kofta gravy wala,search_food,hinglish,food_ordering
+c069,customer,palak paneer aur jeera rice,search_food,hinglish,food_ordering
+c070,customer,शाही पनीर और नान,search_food,hindi,food_ordering
+c071,customer,chicken curry home style,search_food,english,food_ordering
+c072,customer,butter chicken boneless,search_food,hinglish,food_ordering
+c073,customer,mutton rogan josh kashmiri,search_food,hinglish,food_ordering
+c074,customer,fish fry crispy aur tasty,search_food,hinglish,food_ordering
+c075,customer,prawn masala coastal style,search_food,hinglish,food_ordering
+c076,customer,egg curry simple home made,search_food,hinglish,food_ordering
+c077,customer,omelet sandwich breakfast ke liye,search_food,hinglish,food_ordering
+c078,customer,boiled eggs aur toast,search_food,hinglish,food_ordering
+c079,customer,bread pakoda chai ke saath,search_food,hinglish,food_ordering
+c080,customer,maggi noodles masala wala,search_food,hinglish,food_ordering
+c081,customer,fried rice veg aur non veg,search_food,hinglish,food_ordering
+c082,customer,hakka noodles spicy,search_food,hinglish,food_ordering
+c083,customer,manchurian dry aur gravy,search_food,hinglish,food_ordering
+c084,customer,chilli chicken indo chinese,search_food,hinglish,food_ordering
+c085,customer,spring rolls crispy,search_food,english,food_ordering
+c086,customer,soup hot and sour,search_food,english,food_ordering
+c087,customer,sweet corn soup chicken ke saath,search_food,hinglish,food_ordering
+c088,customer,fried wontons appetizer,search_food,english,food_ordering
+c089,customer,dimsum steamed ya fried,search_food,hinglish,food_ordering
+c090,customer,sushi rolls vegetarian,search_food,english,food_ordering
+c091,customer,ramen bowl spicy chicken,search_food,english,food_ordering
+c092,customer,pho vietnamese soup,search_food,english,food_ordering
+c093,customer,pad thai noodles,search_food,english,food_ordering
+c094,customer,green curry thai style,search_food,english,food_ordering
+c095,customer,tom yum soup seafood,search_food,english,food_ordering
+c096,customer,kebabs seekh aur tandoori,search_food,hinglish,food_ordering
+c097,customer,biryani hyderabadi authentic,search_food,hinglish,food_ordering
+c098,customer,pulao jeera ya veg,search_food,hinglish,food_ordering
+c099,customer,raita cucumber mint,search_food,english,food_ordering
+c100,customer,papad fry aur roast,search_food,hinglish,food_ordering
+c101,customer,parcel bhejni hai,parcel_booking,hinglish,parcel_delivery
+c102,customer,courier service chahiye,parcel_booking,hinglish,parcel_delivery
+c103,customer,saman bhejo,parcel_booking,hinglish,parcel_delivery
+c104,customer,documents delivery,parcel_booking,english,parcel_delivery
+c105,customer,college se ghar parcel bhejo,parcel_booking,hinglish,parcel_delivery
+c106,customer,kitna time lagega delivery mein,parcel_booking,hinglish,parcel_delivery
+c107,customer,same day delivery hogi kya,parcel_booking,hinglish,parcel_delivery
+c108,customer,bike par bhej do,parcel_booking,hinglish,parcel_delivery
+c109,customer,auto mein bhejna hai,parcel_booking,hinglish,parcel_delivery
+c110,customer,kitne paise lagenge,parcel_booking,hinglish,parcel_delivery
+c111,customer,fragile hai handle carefully,parcel_booking,hinglish,parcel_delivery
+c112,customer,khaana bhejni hai padosi ke ghar,parcel_booking,hinglish,parcel_delivery
+c113,customer,laptop bhejni hai safe chahiye,parcel_booking,hinglish,parcel_delivery
+c114,customer,कूरियर भेजना है,parcel_booking,hindi,parcel_delivery
+c115,customer,I need a delivery guy,parcel_booking,english,parcel_delivery
+c116,customer,rider chahiye pickup ke liye,parcel_booking,hinglish,parcel_delivery
+c117,customer,urgent delivery hai koi available hai kya,parcel_booking,hinglish,parcel_delivery
+c118,customer,nashik se pune bhejni hai,parcel_booking,hinglish,parcel_delivery
+c119,customer,local delivery kitne mein hogi,parcel_booking,hinglish,parcel_delivery
+c120,customer,parcel tracking kar sakta hoon,parcel_booking,hinglish,parcel_delivery
+c121,customer,coolie chahiye saman uthane ke liye,parcel_booking,hinglish,parcel_delivery
+c122,customer,heavy saman hai uthega kya,parcel_booking,hinglish,parcel_delivery
+c123,customer,bike pe nahi chadega truck chahiye,parcel_booking,hinglish,parcel_delivery
+c124,customer,2 ghante mein delivery ho sakti hai,parcel_booking,hinglish,parcel_delivery
+c125,customer,pakka 1 ghante mein pahuch jayega na,parcel_booking,hinglish,parcel_delivery
+c126,customer,pickup kitne baje hoga,parcel_booking,hinglish,parcel_delivery
+c127,customer,office se pickup kar sakte ho,parcel_booking,hinglish,parcel_delivery
+c128,customer,raat mein delivery hoti hai,parcel_booking,hinglish,parcel_delivery
+c129,customer,Sunday ko pickup milega,parcel_booking,hinglish,parcel_delivery
+c130,customer,COD available hai kya,parcel_booking,hinglish,parcel_delivery
+c131,customer,online payment kar sakta hoon,parcel_booking,hinglish,parcel_delivery
+c132,customer,receipt milega,parcel_booking,hinglish,parcel_delivery
+c133,customer,insurance hai kya,parcel_booking,hinglish,parcel_delivery
+c134,customer,parcel kho gaya to kya hoga,parcel_booking,hinglish,parcel_delivery
+c135,customer,rider ka number mil sakta hai,parcel_booking,hinglish,parcel_delivery
+c136,customer,live tracking hai kya,parcel_booking,hinglish,parcel_delivery
+c137,customer,padosi ke ghar drop karna hai,parcel_booking,hinglish,parcel_delivery
+c138,customer,address change karna hai,parcel_booking,hinglish,parcel_delivery
+c139,customer,cancel kar sakta hoon kya,parcel_booking,hinglish,parcel_delivery
+c140,customer,reschedule karna hai,parcel_booking,hinglish,parcel_delivery
+c141,customer,package size kya hai maximum,parcel_booking,hinglish,parcel_delivery
+c142,customer,weight limit kitni hai,parcel_booking,hinglish,parcel_delivery
+c143,customer,gift bhejni hai packing milegi,parcel_booking,hinglish,parcel_delivery
+c144,customer,cake delivery kar sakte ho,parcel_booking,hinglish,parcel_delivery
+c145,customer,flowers bhejne hain,parcel_booking,hinglish,parcel_delivery
+c146,customer,medicine urgent delivery,parcel_booking,english,parcel_delivery
+c147,customer,books bhejni hai college,parcel_booking,hinglish,parcel_delivery
+c148,customer,keys bhool gaya pickup kar lo,parcel_booking,hinglish,parcel_delivery
+c149,customer,lunch dabba office bhejo,parcel_booking,hinglish,parcel_delivery
+c150,customer,groceries delivery ho sakti hai,parcel_booking,hinglish,parcel_delivery
+c151,customer,order kaha hai,track_order,hinglish,order_tracking
+c152,customer,delivery kitna time lagega,track_order,hinglish,order_tracking
+c153,customer,track my order,track_order,english,order_tracking
+c154,customer,rider kahan pahunch gaya,track_order,hinglish,order_tracking
+c155,customer,मेरा आर्डर कहाँ है,track_order,hindi,order_tracking
+c156,customer,order cancel ho gaya kya,track_order,hinglish,order_tracking
+c157,customer,late ho raha hai delivery,track_order,hinglish,order_tracking
+c158,customer,1 ghanta ho gaya kab aayega,track_order,hinglish,order_tracking
+c159,customer,rider ka contact number do,track_order,hinglish,order_tracking
+c160,customer,order ID 12345 track karo,track_order,hinglish,order_tracking
+c161,customer,status kya hai mere order ka,track_order,hinglish,order_tracking
+c162,customer,preparing ho raha hai kitna time,track_order,hinglish,order_tracking
+c163,customer,out for delivery ka matlab kya,track_order,hinglish,order_tracking
+c164,customer,arrived dikha raha hai lekin nahi aaya,track_order,hinglish,order_tracking
+c165,customer,rider ne call kiya tha main nahi utha paya,track_order,hinglish,order_tracking
+c166,customer,order history dikhao,track_order,hinglish,order_tracking
+c167,customer,last order ka bill chahiye,track_order,hinglish,order_tracking
+c168,customer,invoice download karna hai,track_order,hinglish,order_tracking
+c169,customer,payment fail ho gaya refund milega,track_order,hinglish,order_tracking
+c170,customer,double charge ho gaya hai,track_order,hinglish,order_tracking
+c171,customer,order delivered ho gaya confirm karo,track_order,hinglish,order_tracking
+c172,customer,OTP kya hai delivery ke liye,track_order,hinglish,order_tracking
+c173,customer,rating deni hai rider ko,track_order,hinglish,order_tracking
+c174,customer,feedback dena chahta hoon,track_order,hinglish,order_tracking
+c175,customer,complaint kaise karein,track_order,hinglish,order_tracking
+c176,customer,help,help,english,support
+c177,customer,मदद चाहिए,help,hindi,support
+c178,customer,cancel karna hai,cancel,hinglish,support
+c179,customer,back jao previous menu,back,hinglish,support
+c180,customer,complaint dalni hai,help,hinglish,support
+c181,customer,refund kab milega,help,hinglish,support
+c182,customer,customer care number,help,english,support
+c183,customer,manager se baat karni hai,help,hinglish,support
+c184,customer,कोई तो सुनो मेरी बात,help,hindi,support
+c185,customer,problem hai solve karo,help,hinglish,support
+c186,customer,order wrong aaya hai,help,hinglish,support
+c187,customer,item missing hai,help,hinglish,support
+c188,customer,quality kharab thi,help,hinglish,support
+c189,customer,cold food aaya hai,help,hinglish,support
+c190,customer,packaging damage ho gaya,help,hinglish,support
+c191,customer,taste acha nahi tha,help,hinglish,support
+c192,customer,quantity kam thi,help,hinglish,support
+c193,customer,extra charge ho gaya,help,hinglish,support
+c194,customer,discount nahi mila,help,hinglish,support
+c195,customer,promo code apply nahi hua,help,hinglish,support
+c196,customer,wallet balance check karo,help,hinglish,support
+c197,customer,points kitne hain mere,help,hinglish,support
+c198,customer,referral code kaise use karein,help,hinglish,support
+c199,customer,account delete karna hai,help,hinglish,support
+c200,customer,logout kaise karein,help,hinglish,support
+v001,vendor,vendor login,vendor_login,english,authentication
+v002,vendor,मैं vendor हूँ,vendor_login,hindi,authentication
+v003,vendor,restaurant owner hun,vendor_login,hinglish,authentication
+v004,vendor,mera store hai,vendor_login,hinglish,authentication
+v005,vendor,cafe chalata hun,vendor_login,hinglish,authentication
+v006,vendor,shop ka malik hun,vendor_login,hinglish,authentication
+v007,vendor,business account,vendor_login,english,authentication
+v008,vendor,partner login,vendor_login,english,authentication
+v009,vendor,restaurant manage karna hai,vendor_login,hinglish,authentication
+v010,vendor,menu update karna hai,vendor_update_menu,hinglish,menu_management
+v011,vendor,pending orders dikhao,vendor_get_orders,hinglish,order_management
+v012,vendor,कितने ऑर्डर हैं,vendor_get_orders,hindi,order_management
+v013,vendor,new orders,vendor_get_orders,english,order_management
+v014,vendor,order accept karna hai,vendor_accept_order,hinglish,order_management
+v015,vendor,order reject kar do,vendor_reject_order,hinglish,order_management
+v016,vendor,order ready hai rider bhejo,vendor_mark_ready,hinglish,order_management
+v017,vendor,preparing time 20 minutes hai,vendor_update_prep_time,hinglish,order_management
+v018,vendor,order 123 ka status kya hai,vendor_check_status,hinglish,order_management
+v019,vendor,rider nahi aaya pickup ke liye,vendor_complain,hinglish,order_management
+v020,vendor,customer ne cancel kar diya,vendor_query,hinglish,order_management
+v021,vendor,order history chahiye,vendor_get_history,hinglish,order_management
+v022,vendor,aaj kitne orders aaye,vendor_get_stats,hinglish,analytics
+v023,vendor,is week ka revenue,vendor_get_revenue,hinglish,analytics
+v024,vendor,top selling items,vendor_get_analytics,english,analytics
+v025,vendor,customer rating kitni hai,vendor_get_rating,hinglish,analytics
+v026,vendor,paneer tikka out of stock hai,vendor_mark_unavailable,hinglish,menu_management
+v027,vendor,biryani band kar do aaj ke liye,vendor_disable_item,hinglish,menu_management
+v028,vendor,new item add karna hai,vendor_add_item,hinglish,menu_management
+v029,vendor,price change karna hai,vendor_update_price,hinglish,menu_management
+v030,vendor,pizza ka rate badha do,vendor_increase_price,hinglish,menu_management
+v031,vendor,discount laga do 20%,vendor_add_discount,hinglish,menu_management
+v032,vendor,offer remove kar do,vendor_remove_offer,hinglish,menu_management
+v033,vendor,combo meal add karo,vendor_add_combo,hinglish,menu_management
+v034,vendor,veg menu dikhao,vendor_view_menu,hinglish,menu_management
+v035,vendor,categories kitni hain,vendor_get_categories,hinglish,menu_management
+v036,vendor,photos upload karne hain,vendor_upload_image,hinglish,menu_management
+v037,vendor,description change karo,vendor_update_desc,hinglish,menu_management
+v038,vendor,special item mark karna hai,vendor_mark_special,hinglish,menu_management
+v039,vendor,today's special set kar do,vendor_set_special,hinglish,menu_management
+v040,vendor,shop online kar do,vendor_open_store,hinglish,store_operations
+v041,vendor,offline kar do band kar raha hun,vendor_close_store,hinglish,store_operations
+v042,vendor,busy mode lagao,vendor_set_busy,hinglish,store_operations
+v043,vendor,break lena hai 30 mins,vendor_take_break,hinglish,store_operations
+v044,vendor,delivery radius badha do,vendor_update_radius,hinglish,store_operations
+v045,vendor,minimum order 100 set karo,vendor_set_minimum,hinglish,store_operations
+v046,vendor,free delivery lagao,vendor_set_free_delivery,hinglish,store_operations
+v047,vendor,timing change karni hai,vendor_update_timings,hinglish,store_operations
+v048,vendor,holidays add kar do,vendor_set_holidays,hinglish,store_operations
+v049,vendor,contact number update karo,vendor_update_contact,hinglish,store_operations
+v050,vendor,bank account details change karne hain,vendor_update_bank,hinglish,store_operations
+v051,vendor,GST number update karo,vendor_update_gst,hinglish,store_operations
+v052,vendor,store name change karna hai,vendor_update_name,hinglish,store_operations
+v053,vendor,address update karni hai,vendor_update_address,hinglish,store_operations
+v054,vendor,logo upload karna hai,vendor_upload_logo,hinglish,store_operations
+v055,vendor,cover photo change karo,vendor_update_cover,hinglish,store_operations
+v056,vendor,cuisine type add karo,vendor_add_cuisine,hinglish,store_operations
+v057,vendor,pure veg mark kar do,vendor_mark_veg,hinglish,store_operations
+v058,vendor,delivery charges kitni rakhen,vendor_set_delivery_charges,hinglish,store_operations
+v059,vendor,packaging charges lagana hai,vendor_add_packaging_charges,hinglish,store_operations
+v060,vendor,tax settings check karo,vendor_check_tax,hinglish,store_operations
+v061,vendor,staff management karna hai,vendor_manage_staff,hinglish,staff_management
+v062,vendor,employee add karo,vendor_add_employee,hinglish,staff_management
+v063,vendor,employee remove kar do,vendor_remove_employee,hinglish,staff_management
+v064,vendor,staff permissions update karo,vendor_update_permissions,hinglish,staff_management
+v065,vendor,manager banao isko,vendor_make_manager,hinglish,staff_management
+v066,vendor,inventory management,vendor_inventory,english,inventory
+v067,vendor,stock update karna hai,vendor_update_stock,hinglish,inventory
+v068,vendor,low stock items dikhao,vendor_show_low_stock,hinglish,inventory
+v069,vendor,supplier ka contact chahiye,vendor_get_supplier,hinglish,inventory
+v070,vendor,purchase order banana hai,vendor_create_po,hinglish,inventory
+v071,vendor,report monthly chahiye,vendor_get_monthly_report,hinglish,reports
+v072,vendor,sales report download karo,vendor_download_sales,hinglish,reports
+v073,vendor,tax report generate karo,vendor_generate_tax_report,hinglish,reports
+v074,vendor,customer feedback dikhao,vendor_show_feedback,hinglish,reports
+v075,vendor,complaint log chahiye,vendor_complaint_log,hinglish,reports
+v076,vendor,payment settlement pending hai kya,vendor_check_settlement,hinglish,payments
+v077,vendor,invoice download karna hai,vendor_download_invoice,hinglish,payments
+v078,vendor,payout history dikhao,vendor_payout_history,hinglish,payments
+v079,vendor,commission kitna kata hai,vendor_check_commission,hinglish,payments
+v080,vendor,refund process kaise hota hai,vendor_refund_process,hinglish,payments
+v081,vendor,promotion run karna hai,vendor_run_promotion,hinglish,marketing
+v082,vendor,advertisement lagao platform pe,vendor_advertise,hinglish,marketing
+v083,vendor,featured restaurant banao,vendor_feature_request,hinglish,marketing
+v084,vendor,coupon code banana hai,vendor_create_coupon,hinglish,marketing
+v085,vendor,loyalty program join karna hai,vendor_join_loyalty,hinglish,marketing
+v086,vendor,notification bhejo customers ko,vendor_send_notification,hinglish,marketing
+v087,vendor,email campaign chalana hai,vendor_email_campaign,hinglish,marketing
+v088,vendor,whatsapp broadcast karna hai,vendor_whatsapp_broadcast,hinglish,marketing
+v089,vendor,social media integration,vendor_social_integration,english,marketing
+v090,vendor,reviews ko reply karna hai,vendor_reply_review,hinglish,marketing
+v091,vendor,dashboard ka tour dikha do,vendor_dashboard_tour,hinglish,support
+v092,vendor,help center kahan hai,vendor_help_center,hinglish,support
+v093,vendor,tutorial videos chahiye,vendor_tutorials,hinglish,support
+v094,vendor,training session book karo,vendor_book_training,hinglish,support
+v095,vendor,account manager se baat karni hai,vendor_contact_manager,hinglish,support
+v096,vendor,technical issue hai solve karo,vendor_tech_issue,hinglish,support
+v097,vendor,app crash ho raha hai,vendor_app_crash,hinglish,support
+v098,vendor,printer setup karna hai,vendor_printer_setup,hinglish,support
+v099,vendor,POS integration chahiye,vendor_pos_integration,hinglish,support
+v100,vendor,API documentation chahiye,vendor_api_docs,english,support
+v101,vendor,order sound notification nahi aa raha,vendor_notification_issue,hinglish,technical
+v102,vendor,internet slow hai orders late load hote,vendor_connection_issue,hinglish,technical
+v103,vendor,password reset karna hai,vendor_reset_password,hinglish,technical
+v104,vendor,two factor authentication enable karo,vendor_enable_2fa,hinglish,technical
+v105,vendor,device change karna hai,vendor_change_device,hinglish,technical
+v106,vendor,subscription plan upgrade karo,vendor_upgrade_plan,hinglish,billing
+v107,vendor,billing issue hai payment nahi hua,vendor_billing_issue,hinglish,billing
+v108,vendor,invoice chahiye subscription ka,vendor_subscription_invoice,hinglish,billing
+v109,vendor,plan downgrade karna hai,vendor_downgrade_plan,hinglish,billing
+v110,vendor,free trial extend kar sakte ho,vendor_extend_trial,hinglish,billing
+v111,vendor,peak hours ka data dikhao,vendor_peak_hours,hinglish,insights
+v112,vendor,busiest days kaunse hain,vendor_busiest_days,hinglish,insights
+v113,vendor,average order value kitni hai,vendor_avg_order_value,hinglish,insights
+v114,vendor,repeat customers kitne hain,vendor_repeat_customers,hinglish,insights
+v115,vendor,cancellation rate check karo,vendor_cancellation_rate,hinglish,insights
+v116,vendor,preparation time average kitna hai,vendor_avg_prep_time,hinglish,insights
+v117,vendor,delivery time trends,vendor_delivery_trends,english,insights
+v118,vendor,competitor analysis dikhao,vendor_competitor_analysis,hinglish,insights
+v119,vendor,customer demographics,vendor_demographics,english,insights
+v120,vendor,seasonal trends ka data,vendor_seasonal_trends,hinglish,insights
+v121,vendor,hygiene certificate upload karna hai,vendor_hygiene_cert,hinglish,compliance
+v122,vendor,FSSAI license update karo,vendor_fssai_update,hinglish,compliance
+v123,vendor,fire safety check pending hai,vendor_fire_safety,hinglish,compliance
+v124,vendor,health inspection ka result,vendor_health_inspection,hinglish,compliance
+v125,vendor,insurance policy upload karo,vendor_insurance,hinglish,compliance
+v126,vendor,quality audit kab hoga,vendor_quality_audit,hinglish,compliance
+v127,vendor,allergen information add karna hai,vendor_allergen_info,hinglish,compliance
+v128,vendor,nutritional values mention karne hain,vendor_nutritional_values,hinglish,compliance
+v129,vendor,vegan options mark karo,vendor_mark_vegan,hinglish,compliance
+v130,vendor,halal certified mark kar do,vendor_mark_halal,hinglish,compliance
+v131,vendor,kitchen video live dikhao,vendor_kitchen_cam,hinglish,transparency
+v132,vendor,chef profile add karo,vendor_chef_profile,hinglish,transparency
+v133,vendor,sourcing information customers ko dikha do,vendor_sourcing_info,hinglish,transparency
+v134,vendor,behind the scenes video upload karo,vendor_bts_video,hinglish,transparency
+v135,vendor,farm to table story share karo,vendor_story,hinglish,transparency
+v136,vendor,waste management kaise hota hai,vendor_waste_mgmt,hinglish,sustainability
+v137,vendor,eco friendly packaging use karte hain,vendor_eco_packaging,hinglish,sustainability
+v138,vendor,carbon footprint reduce karna hai,vendor_carbon_footprint,hinglish,sustainability
+v139,vendor,local sourcing promote karo,vendor_local_sourcing,hinglish,sustainability
+v140,vendor,food donation program join karna hai,vendor_food_donation,hinglish,sustainability
+v141,vendor,catering service start karni hai,vendor_catering,hinglish,new_services
+v142,vendor,bulk orders accept karte hain,vendor_bulk_orders,hinglish,new_services
+v143,vendor,corporate tie up karna hai,vendor_corporate_tieup,hinglish,new_services
+v144,vendor,cloud kitchen start karna hai,vendor_cloud_kitchen,hinglish,new_services
+v145,vendor,franchise opportunity explore karo,vendor_franchise,hinglish,new_services
+v146,vendor,multi location setup karna hai,vendor_multi_location,hinglish,expansion
+v147,vendor,new branch add kar do,vendor_add_branch,hinglish,expansion
+v148,vendor,central kitchen setup,vendor_central_kitchen,english,expansion
+v149,vendor,commissary license chahiye,vendor_commissary_license,hinglish,expansion
+v150,vendor,expansion loan apply karna hai,vendor_expansion_loan,hinglish,expansion
+v151,vendor,performance review chahiye monthly,vendor_performance_review,hinglish,performance
+v152,vendor,benchmarking report dikhao,vendor_benchmarking,hinglish,performance
+v153,vendor,areas of improvement batao,vendor_improvement_areas,hinglish,performance
+v154,vendor,best practices guide chahiye,vendor_best_practices,hinglish,performance
+v155,vendor,certification program join karna hai,vendor_certification,hinglish,performance
+v156,vendor,rewards program kya hai vendors ke liye,vendor_rewards,hinglish,incentives
+v157,vendor,milestone achievements unlock karo,vendor_milestones,hinglish,incentives
+v158,vendor,referral bonus milega kya,vendor_referral_bonus,hinglish,incentives
+v159,vendor,excellence award ke liye apply karo,vendor_excellence_award,hinglish,incentives
+v160,vendor,partner benefits kya hain,vendor_partner_benefits,hinglish,incentives
+v161,vendor,order rejection rate zyada hai,vendor_rejection_issue,hinglish,issues
+v162,vendor,customers complaints bahut aa rahe,vendor_complaints_issue,hinglish,issues
+v163,vendor,delivery boys rude hain,vendor_delivery_behavior,hinglish,issues
+v164,vendor,platform commission zyada hai,vendor_commission_issue,hinglish,issues
+v165,vendor,payment delay ho raha hai,vendor_payment_delay,hinglish,issues
+v166,vendor,competitor better rates de raha hai,vendor_competition_concern,hinglish,issues
+v167,vendor,visibility kam hai search mein,vendor_visibility_issue,hinglish,issues
+v168,vendor,photos quality improve karni hai,vendor_photo_quality,hinglish,issues
+v169,vendor,menu description better banana hai,vendor_menu_desc_improve,hinglish,issues
+v170,vendor,negative reviews handle karna hai,vendor_negative_reviews,hinglish,issues
+v171,vendor,seasonal menu add karna hai,vendor_seasonal_menu,hinglish,menu_special
+v172,vendor,festival special dishes,vendor_festival_special,english,menu_special
+v173,vendor,happy hours timing set karo,vendor_happy_hours,hinglish,menu_special
+v174,vendor,breakfast menu alag rakho,vendor_breakfast_menu,hinglish,menu_special
+v175,vendor,lunch combos add karo,vendor_lunch_combos,hinglish,menu_special
+v176,vendor,dinner specials highlight karo,vendor_dinner_specials,hinglish,menu_special
+v177,vendor,kids menu banana hai,vendor_kids_menu,hinglish,menu_special
+v178,vendor,senior citizen discount offer,vendor_senior_discount,hinglish,menu_special
+v179,vendor,student discount program,vendor_student_discount,hinglish,menu_special
+v180,vendor,family pack combo create karo,vendor_family_pack,hinglish,menu_special
+v181,vendor,bestseller badge lagao items pe,vendor_bestseller_badge,hinglish,menu_features
+v182,vendor,chef recommended mark karo,vendor_chef_recommended,hinglish,menu_features
+v183,vendor,new arrival highlight karo,vendor_new_arrival,hinglish,menu_features
+v184,vendor,limited time offer add karo,vendor_limited_offer,hinglish,menu_features
+v185,vendor,signature dish mark kar do,vendor_signature_dish,hinglish,menu_features
+v186,vendor,customization options add karo,vendor_customization,hinglish,menu_features
+v187,vendor,portion size options de do,vendor_portion_options,hinglish,menu_features
+v188,vendor,spice level indicator lagao,vendor_spice_indicator,hinglish,menu_features
+v189,vendor,calories information show karo,vendor_calories_info,hinglish,menu_features
+v190,vendor,ingredients list display karo,vendor_ingredients_list,hinglish,menu_features
+v191,vendor,combo builder tool chahiye,vendor_combo_builder,hinglish,tools
+v192,vendor,menu analytics dashboard,vendor_menu_analytics,english,tools
+v193,vendor,pricing calculator use karna hai,vendor_pricing_calculator,hinglish,tools
+v194,vendor,demand forecasting tool,vendor_demand_forecast,english,tools
+v195,vendor,recipe management system,vendor_recipe_mgmt,english,tools
+v196,vendor,cost analysis karna hai items ka,vendor_cost_analysis,hinglish,tools
+v197,vendor,profit margin calculator,vendor_profit_calculator,english,tools
+v198,vendor,food cost percentage check karo,vendor_food_cost_pct,hinglish,tools
+v199,vendor,wastage tracking system,vendor_wastage_tracking,english,tools
+v200,vendor,shelf life management,vendor_shelf_life,english,tools
+r001,rider,rider login,rider_login,english,authentication
+r002,rider,delivery boy hun,rider_login,hinglish,authentication
+r003,rider,डिलीवरी करता हूँ,rider_login,hindi,authentication
+r004,rider,driver account,rider_login,english,authentication
+r005,rider,courier boy hun,rider_login,hinglish,authentication
+r006,rider,delivery partner,rider_login,english,authentication
+r007,rider,bike se delivery karta hun,rider_login,hinglish,authentication
+r008,rider,parcel delivery service,rider_login,english,authentication
+r009,rider,coolie ka kaam karta hun,rider_login,hinglish,authentication
+r010,rider,transport business hai,rider_login,hinglish,authentication
+r011,rider,online ho gaya,rider_go_online,hinglish,availability
+r012,rider,duty start kar di,rider_go_online,hinglish,availability
+r013,rider,available hun orders ke liye,rider_go_online,hinglish,availability
+r014,rider,offline ho raha hun,rider_go_offline,hinglish,availability
+r015,rider,duty khatam kar raha hun,rider_go_offline,hinglish,availability
+r016,rider,break lena hai 15 mins,rider_take_break,hinglish,availability
+r017,rider,lunch break lagao,rider_take_break,hinglish,availability
+r018,rider,petrol bharna hai wait karo,rider_pause,hinglish,availability
+r019,rider,bike kharab ho gaya,rider_emergency,hinglish,availability
+r020,rider,accident ho gaya help chahiye,rider_emergency,hinglish,availability
+r021,rider,pending deliveries dikhao,rider_get_orders,hinglish,order_operations
+r022,rider,नए ऑर्डर हैं क्या,rider_get_orders,hindi,order_operations
+r023,rider,next delivery kahan hai,rider_next_delivery,hinglish,order_operations
+r024,rider,order accept kar liya,rider_accept_order,hinglish,order_operations
+r025,rider,pickup pe pahunch gaya,rider_arrived_pickup,hinglish,order_operations
+r026,rider,order collect kar liya,rider_picked_order,hinglish,order_operations
+r027,rider,customer ke ghar ja raha hun,rider_on_way,hinglish,order_operations
+r028,rider,pahunch gaya delivery location,rider_arrived_delivery,hinglish,order_operations
+r029,rider,order deliver kar diya,rider_completed_delivery,hinglish,order_operations
+r030,rider,cash collect kar liya COD,rider_collected_cash,hinglish,order_operations
+r031,rider,customer nahi mil raha,rider_customer_unavailable,hinglish,order_operations
+r032,rider,address galat hai,rider_wrong_address,hinglish,order_operations
+r033,rider,customer ne cancel kar diya,rider_cancelled_by_customer,hinglish,order_operations
+r034,rider,order reject karna hai bahut door hai,rider_reject_order,hinglish,order_operations
+r035,rider,navigation chahiye,rider_get_navigation,hinglish,order_operations
+r036,rider,location send karo customer ko,rider_share_location,hinglish,order_operations
+r037,rider,customer ka number do,rider_get_customer_contact,hinglish,order_operations
+r038,rider,restaurant ka contact chahiye,rider_get_restaurant_contact,hinglish,order_operations
+r039,rider,order details batao,rider_get_order_details,hinglish,order_operations
+r040,rider,aaj kitne deliveries kiye,rider_get_trip_count,hinglish,order_operations
+r041,rider,आज की कमाई,rider_get_earnings,hindi,earnings
+r042,rider,today's earning kya hai,rider_get_earnings,hinglish,earnings
+r043,rider,weekly income dikhao,rider_get_weekly_earnings,hinglish,earnings
+r044,rider,trip history chahiye,rider_get_trip_history,hinglish,earnings
+r045,rider,distance kitna cover kiya,rider_get_distance,hinglish,earnings
+r046,rider,rating kitni hai meri,rider_get_rating,hinglish,performance
+r047,rider,complaints kitni hain,rider_get_complaints,hinglish,performance
+r048,rider,incentive milega kya,rider_check_incentive,hinglish,earnings
+r049,rider,bonus kab milega,rider_check_bonus,hinglish,earnings
+r050,rider,payout kab hoga,rider_get_payout_date,hinglish,earnings
+r051,rider,fuel reimbursement claim karna hai,rider_fuel_claim,hinglish,expenses
+r052,rider,maintenance bill submit karo,rider_maintenance_claim,hinglish,expenses
+r053,rider,parking charges add kar do,rider_parking_charges,hinglish,expenses
+r054,rider,toll charges ka reimbursement,rider_toll_reimbursement,hinglish,expenses
+r055,rider,expense report download karo,rider_expense_report,hinglish,expenses
+r056,rider,vehicle insurance upload karna hai,rider_insurance_upload,hinglish,documents
+r057,rider,driving license renew karna hai,rider_license_renew,hinglish,documents
+r058,rider,RC book update kar do,rider_rc_update,hinglish,documents
+r059,rider,pollution certificate upload,rider_pollution_cert,english,documents
+r060,rider,medical fitness certificate,rider_medical_cert,english,documents
+r061,rider,background verification pending hai,rider_background_check,hinglish,documents
+r062,rider,bank account details change karne hain,rider_bank_update,hinglish,documents
+r063,rider,PAN card upload karna hai,rider_pan_upload,hinglish,documents
+r064,rider,Aadhaar verification karna hai,rider_aadhaar_verify,hinglish,documents
+r065,rider,profile photo update karo,rider_photo_update,hinglish,documents
+r066,rider,zone change request karna hai,rider_zone_change,hinglish,preferences
+r067,rider,preferred area set kar do,rider_set_preferred_area,hinglish,preferences
+r068,rider,night shift opt in karna hai,rider_night_shift,hinglish,preferences
+r069,rider,weekend availability update karo,rider_weekend_availability,hinglish,preferences
+r070,rider,peak hours mein kaam karna chahta hun,rider_peak_hours_opt,hinglish,preferences
+r071,rider,shift timing change karni hai,rider_shift_change,hinglish,preferences
+r072,rider,part time se full time karna hai,rider_fulltime_request,hinglish,preferences
+r073,rider,leave apply karna hai,rider_apply_leave,hinglish,preferences
+r074,rider,emergency leave chahiye,rider_emergency_leave,hinglish,preferences
+r075,rider,work schedule dikhao,rider_work_schedule,hinglish,preferences
+r076,rider,training session kab hai,rider_training_schedule,hinglish,support
+r077,rider,safety tips chahiye,rider_safety_tips,hinglish,support
+r078,rider,app tutorial dikha do,rider_app_tutorial,hinglish,support
+r079,rider,customer service skills training,rider_cs_training,english,support
+r080,rider,first aid training kab hoga,rider_first_aid,hinglish,support
+r081,rider,vehicle maintenance tips,rider_maintenance_tips,english,support
+r082,rider,fuel efficient driving guide,rider_fuel_efficiency,english,support
+r083,rider,traffic rules refresher,rider_traffic_rules,english,support
+r084,rider,route optimization tips,rider_route_optimization,english,support
+r085,rider,customer interaction best practices,rider_interaction_tips,english,support
+r086,rider,escalation kaise karein,rider_escalation,hinglish,issues
+r087,rider,unsafe delivery location hai,rider_unsafe_location,hinglish,issues
+r088,rider,customer threatening hai,rider_customer_threat,hinglish,issues
+r089,rider,payment dispute hai,rider_payment_dispute,hinglish,issues
+r090,rider,order sealed nahi hai restaurant se,rider_unsealed_order,hinglish,issues
+r091,rider,food spill ho gaya accident mein,rider_food_spill,hinglish,issues
+r092,rider,vehicle breakdown ho gaya delivery ke beech,rider_breakdown,hinglish,issues
+r093,rider,health emergency hai,rider_health_emergency,hinglish,issues
+r094,rider,phone battery dead ho gaya,rider_battery_dead,hinglish,issues
+r095,rider,GPS not working navigation issue,rider_gps_issue,english,issues
+r096,rider,customer rating unfair hai,rider_unfair_rating,hinglish,disputes
+r097,rider,tip nahi mila promise kiya tha,rider_tip_dispute,hinglish,disputes
+r098,rider,false complaint customer ne kiya,rider_false_complaint,hinglish,disputes
+r099,rider,restaurant delay ke liye blame kar rahe,rider_restaurant_delay_blame,hinglish,disputes
+r100,rider,accident mein vehicle damage hua insurance claim,rider_insurance_claim,hinglish,disputes
+r101,rider,leaderboard mein position kya hai,rider_leaderboard,hinglish,gamification
+r102,rider,badges kitne unlock kiye,rider_badges,hinglish,gamification
+r103,rider,streak maintain karna hai,rider_streak,hinglish,gamification
+r104,rider,challenge participate karna hai,rider_challenge,hinglish,gamification
+r105,rider,referral program ka benefit,rider_referral,hinglish,gamification
+r106,rider,milestone achievement unlock,rider_milestone,english,gamification
+r107,rider,top performer benefits kya hain,rider_top_performer,hinglish,gamification
+r108,rider,weekly target achieve kar liya,rider_weekly_target,hinglish,gamification
+r109,rider,monthly goal set karna hai,rider_monthly_goal,hinglish,gamification
+r110,rider,performance comparison peers ke saath,rider_peer_comparison,hinglish,gamification
+r111,rider,weather alert notifications,rider_weather_alert,english,notifications
+r112,rider,surge pricing areas dikhao,rider_surge_areas,hinglish,notifications
+r113,rider,high demand zone kaha hai,rider_high_demand_zone,hinglish,notifications
+r114,rider,order rush timing kya hai,rider_rush_timing,hinglish,notifications
+r115,rider,bonus opportunities available,rider_bonus_opportunities,english,notifications
+r116,rider,delivery partner community join karna hai,rider_community,hinglish,social
+r117,rider,fellow riders se connect karna hai,rider_connect_peers,hinglish,social
+r118,rider,rider meetup events,rider_meetup,english,social
+r119,rider,success stories share karna hai,rider_success_stories,hinglish,social
+r120,rider,mentorship program join karo,rider_mentorship,hinglish,social
+r121,rider,vehicle upgrade loan chahiye,rider_vehicle_loan,hinglish,financial
+r122,rider,electric vehicle subsidy,rider_ev_subsidy,english,financial
+r123,rider,equipment purchase financing,rider_equipment_finance,english,financial
+r124,rider,salary advance le sakta hun,rider_salary_advance,hinglish,financial
+r125,rider,financial planning support,rider_financial_planning,english,financial
+r126,rider,health insurance benefit,rider_health_insurance,english,benefits
+r127,rider,accident insurance coverage,rider_accident_insurance,english,benefits
+r128,rider,life insurance option,rider_life_insurance,english,benefits
+r129,rider,family medical benefits,rider_family_medical,english,benefits
+r130,rider,retirement savings plan,rider_retirement_plan,english,benefits
+r131,rider,helmet aur safety gear free milta hai,rider_safety_gear,hinglish,equipment
+r132,rider,thermal bag replacement chahiye,rider_thermal_bag,hinglish,equipment
+r133,rider,raincoat aur jacket,rider_raincoat,hinglish,equipment
+r134,rider,mobile holder aur charger,rider_mobile_accessories,hinglish,equipment
+r135,rider,uniform aur ID card,rider_uniform,hinglish,equipment
+r136,rider,delivery bag quality kharab hai,rider_bag_quality,hinglish,equipment
+r137,rider,phone mount broken ho gaya,rider_mount_broken,hinglish,equipment
+r138,rider,reflective jacket chahiye night delivery ke liye,rider_reflective_jacket,hinglish,equipment
+r139,rider,spare key chahiye delivery bag ka,rider_spare_key,hinglish,equipment
+r140,rider,sanitizer aur mask replenishment,rider_sanitizer_mask,hinglish,equipment
+r141,rider,customer satisfaction score,rider_satisfaction_score,english,metrics
+r142,rider,on time delivery percentage,rider_ontime_percentage,english,metrics
+r143,rider,acceptance rate check karo,rider_acceptance_rate,hinglish,metrics
+r144,rider,cancellation rate kitna hai,rider_cancellation_rate,hinglish,metrics
+r145,rider,average delivery time,rider_avg_delivery_time,english,metrics
+r146,rider,orders per hour metrics,rider_orders_per_hour,english,metrics
+r147,rider,earnings per km calculation,rider_earnings_per_km,english,metrics
+r148,rider,peak efficiency hours,rider_peak_efficiency,english,metrics
+r149,rider,customer feedback summary,rider_feedback_summary,english,metrics
+r150,rider,improvement areas analysis,rider_improvement_areas,english,metrics
+r151,rider,city navigation best routes,rider_best_routes,english,navigation
+r152,rider,traffic hotspots avoid karna hai,rider_avoid_traffic,hinglish,navigation
+r153,rider,parking locations near restaurants,rider_parking_locations,english,navigation
+r154,rider,shortcuts for common deliveries,rider_shortcuts,english,navigation
+r155,rider,toll free routes dikhao,rider_toll_free_routes,hinglish,navigation
+r156,rider,gated community entry tips,rider_gated_entry,english,navigation
+r157,rider,hospital delivery protocols,rider_hospital_protocol,english,navigation
+r158,rider,office complex access,rider_office_access,english,navigation
+r159,rider,apartment complex directory,rider_apartment_directory,english,navigation
+r160,rider,landmark based navigation,rider_landmark_nav,english,navigation
+r161,rider,customer tipping culture,rider_tipping_culture,english,culture
+r162,rider,professional etiquette tips,rider_etiquette,english,culture
+r163,rider,multilingual communication,rider_multilingual,english,culture
+r164,rider,festival season tips,rider_festival_tips,english,culture
+r165,rider,monsoon delivery strategies,rider_monsoon_strategy,english,culture
+r166,rider,summer heat precautions,rider_summer_precautions,english,culture
+r167,rider,night delivery safety,rider_night_safety,english,culture
+r168,rider,customer privacy respect,rider_privacy_respect,english,culture
+r169,rider,food handling hygiene,rider_food_hygiene,english,culture
+r170,rider,professional appearance standards,rider_appearance_standards,english,culture
+r171,rider,upskilling opportunities,rider_upskilling,english,career
+r172,rider,team leader ban sakta hun,rider_team_leader,hinglish,career
+r173,rider,supervisor role apply karna hai,rider_supervisor_role,hinglish,career
+r174,rider,operations manager path,rider_operations_path,english,career
+r175,rider,trainer become karna chahta hun,rider_trainer_role,hinglish,career
+r176,rider,quality auditor position,rider_auditor_position,english,career
+r177,rider,dispatcher role transition,rider_dispatcher_role,english,career
+r178,rider,customer support role,rider_support_role,english,career
+r179,rider,franchise owner ban sakta hun,rider_franchise_owner,hinglish,career
+r180,rider,entrepreneurship program,rider_entrepreneurship,english,career
+r181,rider,retirement planning 50 years ke baad,rider_retirement_planning,hinglish,longterm
+r182,rider,pension scheme join karna hai,rider_pension_scheme,hinglish,longterm
+r183,rider,skill development courses free hain kya,rider_skill_courses,hinglish,longterm
+r184,rider,higher education support,rider_education_support,english,longterm
+r185,rider,children education benefits,rider_children_education,english,longterm
+r186,rider,housing loan assistance,rider_housing_loan,english,longterm
+r187,rider,emergency fund building,rider_emergency_fund,english,longterm
+r188,rider,tax filing support,rider_tax_filing,english,longterm
+r189,rider,legal aid service,rider_legal_aid,english,longterm
+r190,rider,counseling services mental health,rider_counseling,english,longterm
+r191,rider,appreciation recognition program,rider_appreciation,english,recognition
+r192,rider,employee of month nomination,rider_employee_month,english,recognition
+r193,rider,public acknowledgment platform pe,rider_public_recognition,hinglish,recognition
+r194,rider,certificate of excellence,rider_certificate,english,recognition
+r195,rider,media coverage opportunity,rider_media_coverage,english,recognition
+r196,rider,brand ambassador ban sakta hun,rider_brand_ambassador,hinglish,recognition
+r197,rider,case study feature hona chahta hun,rider_case_study,hinglish,recognition
+r198,rider,testimonial video mein participate,rider_testimonial_video,hinglish,recognition
+r199,rider,success story publish karo,rider_success_story,hinglish,recognition
+r200,rider,hall of fame entry criteria,rider_hall_of_fame,english,recognition
