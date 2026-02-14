@@ -1,0 +1,210 @@
+{
+  "order_food": {
+    "description": "User wants to order food (general intent)",
+    "aliases": [
+      "hungry",
+      "search_food"
+    ],
+    "sample_count": 117
+  },
+  "browse_menu": {
+    "description": "User wants to see menu/options from a restaurant",
+    "aliases": [],
+    "sample_count": 102
+  },
+  "browse_stores": {
+    "description": "User wants to see available restaurants/stores",
+    "aliases": [
+      "browse_category"
+    ],
+    "sample_count": 78
+  },
+  "ask_recommendation": {
+    "description": "User asks for food/restaurant recommendations",
+    "aliases": [
+      "ask_famous",
+      "ask_fastest_delivery"
+    ],
+    "sample_count": 76
+  },
+  "ask_price": {
+    "description": "User asks about price of item or delivery",
+    "aliases": [
+      "price_inquiry"
+    ],
+    "sample_count": 69
+  },
+  "check_offers": {
+    "description": "User asks about offers, discounts, or coupons",
+    "aliases": [
+      "apply_coupon"
+    ],
+    "sample_count": 64
+  },
+  "add_to_cart": {
+    "description": "User wants to add a specific item to cart",
+    "aliases": [],
+    "sample_count": 68
+  },
+  "view_cart": {
+    "description": "User wants to see what's in their cart",
+    "aliases": [],
+    "sample_count": 51
+  },
+  "update_quantity": {
+    "description": "User wants to change quantity of an item in cart",
+    "aliases": [],
+    "sample_count": 52
+  },
+  "remove_from_cart": {
+    "description": "User wants to remove an item from cart",
+    "aliases": [],
+    "sample_count": 43
+  },
+  "clear_cart": {
+    "description": "User wants to clear entire cart",
+    "aliases": [],
+    "sample_count": 39
+  },
+  "customize_order": {
+    "description": "User wants to customize food (extra cheese, less spicy, etc.)",
+    "aliases": [],
+    "sample_count": 59
+  },
+  "checkout": {
+    "description": "User wants to proceed to checkout/payment",
+    "aliases": [
+      "confirm_checkout"
+    ],
+    "sample_count": 67
+  },
+  "repeat_order": {
+    "description": "User wants to repeat a previous order",
+    "aliases": [],
+    "sample_count": 49
+  },
+  "cancel_order": {
+    "description": "User wants to cancel a placed order",
+    "aliases": [],
+    "sample_count": 38
+  },
+  "bulk_order": {
+    "description": "User wants to place a large/bulk order",
+    "aliases": [
+      "multi_store_order",
+      "schedule_order"
+    ],
+    "sample_count": 57
+  },
+  "search_product": {
+    "description": "User searching for a specific product (e-commerce)",
+    "aliases": [],
+    "sample_count": 65
+  },
+  "parcel_booking": {
+    "description": "User wants to send/book a parcel/courier",
+    "aliases": [
+      "book_parcel",
+      "send_parcel"
+    ],
+    "sample_count": 57
+  },
+  "track_order": {
+    "description": "User wants to track their order status",
+    "aliases": [
+      "order_status"
+    ],
+    "sample_count": 54
+  },
+  "manage_address": {
+    "description": "User shares location, adds/changes address",
+    "aliases": [],
+    "sample_count": 59
+  },
+  "login": {
+    "description": "User wants to login, signup, or authenticate",
+    "aliases": [
+      "signup",
+      "authenticate"
+    ],
+    "sample_count": 46
+  },
+  "help": {
+    "description": "User needs help or assistance with the bot",
+    "aliases": [
+      "assistance"
+    ],
+    "sample_count": 54
+  },
+  "complaint": {
+    "description": "User has a complaint about order, delivery, quality",
+    "aliases": [
+      "contact_support",
+      "support_request",
+      "voice_feedback",
+      "voice_repeat",
+      "price_match"
+    ],
+    "sample_count": 60
+  },
+  "payment_issue": {
+    "description": "User has payment or wallet related issues",
+    "aliases": [
+      "check_wallet"
+    ],
+    "sample_count": 53
+  },
+  "refund_request": {
+    "description": "User specifically requesting a refund",
+    "aliases": [],
+    "sample_count": 42
+  },
+  "greeting": {
+    "description": "User greeting the bot",
+    "aliases": [
+      "hello"
+    ],
+    "sample_count": 62
+  },
+  "chitchat": {
+    "description": "Casual conversation, small talk",
+    "aliases": [
+      "casual"
+    ],
+    "sample_count": 75
+  },
+  "goodbye": {
+    "description": "User saying goodbye",
+    "aliases": [],
+    "sample_count": 49
+  },
+  "confirm": {
+    "description": "User confirming/agreeing with something",
+    "aliases": [
+      "affirm"
+    ],
+    "sample_count": 60
+  },
+  "deny": {
+    "description": "User denying/disagreeing/saying no",
+    "aliases": [],
+    "sample_count": 54
+  },
+  "feedback": {
+    "description": "User giving feedback about their experience",
+    "aliases": [],
+    "sample_count": 54
+  },
+  "human_takeover": {
+    "description": "User explicitly wants to talk to a human agent",
+    "aliases": [],
+    "sample_count": 59
+  },
+  "use_saved": {
+    "description": "User wants to use saved info (details, address, payment method)",
+    "aliases": [
+      "use_my_details"
+    ],
+    "sample_count": 42
+  }
+}

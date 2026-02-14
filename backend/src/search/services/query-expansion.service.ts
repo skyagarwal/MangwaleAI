@@ -33,6 +33,42 @@ export class QueryExpansionService implements OnModuleInit {
   private pool: Pool;
   private opensearch: AxiosInstance;
 
+  // Hindi (Devanagari) ↔ Latin transliteration map for common food terms
+  // This handles cases like "वडापाव" → "vada pav", "बिरयानी" → "biryani"
+  private readonly transliterationMap: Record<string, string> = {
+    // Foods
+    'वडापाव': 'vada pav', 'वडा पाव': 'vada pav', 'वडापव': 'vada pav',
+    'बिरयानी': 'biryani', 'बिरियानी': 'biryani', 'बिर्यानी': 'biryani',
+    'पनीर': 'paneer', 'चिकन': 'chicken', 'मटन': 'mutton',
+    'रोटी': 'roti', 'नान': 'naan', 'पराठा': 'paratha',
+    'दाल': 'dal', 'चावल': 'chawal', 'राइस': 'rice',
+    'पिज़्ज़ा': 'pizza', 'पीज़ा': 'pizza', 'पिज्जा': 'pizza',
+    'बर्गर': 'burger', 'मोमो': 'momos', 'मोमोज': 'momos',
+    'समोसा': 'samosa', 'डोसा': 'dosa', 'इडली': 'idli',
+    'छोले': 'chole', 'भटूरे': 'bhature', 'छोले भटूरे': 'chole bhature',
+    'पाव भाजी': 'pav bhaji', 'पावभाजी': 'pav bhaji',
+    'मिसल': 'misal', 'मिसळ': 'misal', 'मिसल पाव': 'misal pav',
+    'थाली': 'thali', 'लस्सी': 'lassi', 'चाय': 'chai',
+    'कॉफ़ी': 'coffee', 'कॉफी': 'coffee', 'जूस': 'juice',
+    'पकोड़ा': 'pakora', 'पकोड़े': 'pakora',
+    'नूडल्स': 'noodles', 'मैगी': 'maggi',
+    'सैंडविच': 'sandwich', 'रैप': 'wrap', 'रोल': 'roll',
+    'गुलाब जामुन': 'gulab jamun', 'रसगुल्ला': 'rasgulla',
+    'जलेबी': 'jalebi', 'खीर': 'kheer',
+    'पुलाव': 'pulao', 'खिचड़ी': 'khichdi',
+    'सब्जी': 'sabji', 'सब्ज़ी': 'sabzi',
+    'भुर्जी': 'bhurji', 'ऑमलेट': 'omelette',
+    'कबाब': 'kebab', 'तंदूरी': 'tandoori',
+    'कोरमा': 'korma', 'विंदालू': 'vindaloo',
+    // Stores/locations
+    'होटल': 'hotel', 'रेस्टोरेंट': 'restaurant',
+    'कैफ़े': 'cafe', 'कैफे': 'cafe',
+    // Location terms
+    'नाशिक': 'nashik', 'पुणे': 'pune', 'मुंबई': 'mumbai',
+    'सातपुर': 'satpur', 'पंचवटी': 'panchavati',
+    'गंगापुर': 'gangapur', 'सिडको': 'cidco',
+  };
+
   // Local food synonym mappings
   private readonly synonyms: Record<string, string[]> = {
     // Vegetarian/Non-veg
@@ -119,8 +155,11 @@ export class QueryExpansionService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    const databaseUrl = this.configService.get('DATABASE_URL') ||
-      'postgresql://mangwale_config:config_secure_pass_2024@mangwale_postgres:5432/headless_mangwale?schema=public';
+    const databaseUrl = this.configService.get('DATABASE_URL');
+    if (!databaseUrl) {
+      this.logger.warn('⚠️ DATABASE_URL not set — QueryExpansionService DB features disabled');
+      return;
+    }
 
     this.pool = new Pool({
       connectionString: databaseUrl,
@@ -179,7 +218,6 @@ export class QueryExpansionService implements OnModuleInit {
    */
   async expandQuery(query: string, moduleId?: number): Promise<ExpandedQuery> {
     const original = query.trim().toLowerCase();
-    const terms = original.split(/\s+/);
     const synonyms: string[] = [];
     const corrections: string[] = [];
     let categoryHint: string | undefined;
@@ -188,6 +226,18 @@ export class QueryExpansionService implements OnModuleInit {
 
     // Detect language
     const language = this.detectLanguage(original);
+
+    // Step 1: Transliterate Devanagari → Latin (if Hindi/mixed detected)
+    let transliterated = original;
+    if (language === 'hi' || language === 'mixed') {
+      transliterated = this.transliterate(original);
+      if (transliterated !== original) {
+        corrections.push(`${original} → ${transliterated}`);
+        this.logger.debug(`🔤 Transliterated: "${original}" → "${transliterated}"`);
+      }
+    }
+
+    const terms = transliterated.split(/\s+/);
 
     // Process each term
     const expandedTerms = await Promise.all(
@@ -251,6 +301,23 @@ export class QueryExpansionService implements OnModuleInit {
   }
 
   /**
+   * Transliterate Devanagari text to Latin using the transliteration map.
+   * Tries longest match first (multi-word phrases like "वडा पाव" before single words).
+   */
+  private transliterate(text: string): string {
+    let result = text;
+    // Sort by key length descending so multi-word phrases match first
+    const entries = Object.entries(this.transliterationMap)
+      .sort((a, b) => b[0].length - a[0].length);
+    for (const [devanagari, latin] of entries) {
+      if (result.includes(devanagari)) {
+        result = result.split(devanagari).join(latin);
+      }
+    }
+    return result.trim();
+  }
+
+  /**
    * Detect language of query (English, Hindi, Mixed)
    */
   private detectLanguage(query: string): 'en' | 'hi' | 'mixed' {
@@ -267,6 +334,7 @@ export class QueryExpansionService implements OnModuleInit {
    * Get custom synonyms from database
    */
   private async getCustomSynonyms(term: string, moduleId?: number): Promise<string[]> {
+    if (!this.pool) return [];
     try {
       const result = await this.pool.query(
         `SELECT synonyms FROM search_synonyms 
@@ -289,6 +357,7 @@ export class QueryExpansionService implements OnModuleInit {
    */
   private async getSpellingCorrection(term: string): Promise<string | null> {
     // First check database corrections
+    if (!this.pool) return null;
     try {
       const result = await this.pool.query(
         `SELECT correction FROM search_corrections 

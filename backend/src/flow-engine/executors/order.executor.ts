@@ -9,6 +9,7 @@ import { AdvancedLearningService } from '../../agents/services/advanced-learning
 import { OrderLearningService } from '../../order/services/order-learning.service';
 import { PricingValidatorService } from '../../common/validators/pricing.validator';
 import { AuthValidatorService } from '../../common/validators/auth.validator';
+import { ConversationEnrichmentService } from '../../personalization/conversation-enrichment.service';
 
 /**
  * Order Executor
@@ -31,6 +32,7 @@ export class OrderExecutor implements ActionExecutor {
     private readonly pricingValidator: PricingValidatorService,
     private readonly authValidator: AuthValidatorService,
     @Optional() private readonly orderLearning?: OrderLearningService,
+    @Optional() private readonly conversationEnrichment?: ConversationEnrichmentService,
   ) {
     this.trackingBaseUrl = this.configService.get('tracking.baseUrl') || process.env.TRACKING_BASE_URL || 'https://track.mangwale.in';
   }
@@ -795,6 +797,17 @@ export class OrderExecutor implements ActionExecutor {
 
       if (success) {
         this.logger.log(`✅ Order placed successfully (${orderType}) - sentiment: ${sentiment.emotion}`);
+
+        // Trigger real-time profile enrichment after successful order
+        const userId = context._system?.userId ? Number(context._system.userId) : null;
+        if (userId && this.conversationEnrichment) {
+          this.conversationEnrichment.enrichProfileFromOrder(userId, {
+            orderType,
+            items: context.data.selectedItems || context.data.cart_items || [],
+            storeName: context.data.store_name || context.data.selected_store_name,
+            totalPrice: context.data.total_price || context.data.order_total,
+          }).catch(err => this.logger.debug(`Profile enrichment failed (non-fatal): ${err.message}`));
+        }
       } else if (sentiment.frustration_score > 0.7) {
         this.logger.log(`😤 Order failed with high frustration: ${sentiment.frustration_score.toFixed(2)}`);
       }

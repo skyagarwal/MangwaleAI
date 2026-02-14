@@ -14,6 +14,7 @@ import { EmbeddingService } from './services/embedding.service';
 import { UnifiedEmbeddingService } from './services/unified-embedding.service';
 import { ModuleService } from './services/module.service';
 import { ExternalVendorService } from './services/external-vendor.service';
+import { QueryExpansionService } from './services/query-expansion.service';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 import { NluModule } from '../nlu/nlu.module';
 
@@ -39,6 +40,7 @@ import { NluModule } from '../nlu/nlu.module';
     UnifiedEmbeddingService,
     ModuleService,
     ExternalVendorService,
+    QueryExpansionService,
   ],
   exports: [
     SearchService,
@@ -52,6 +54,7 @@ import { NluModule } from '../nlu/nlu.module';
     UnifiedEmbeddingService,
     ModuleService,
     ExternalVendorService,
+    QueryExpansionService,
   ],
 })
 export class SearchModule {}

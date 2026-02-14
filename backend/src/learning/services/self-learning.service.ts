@@ -50,12 +50,12 @@ interface TrainingExample {
 export class SelfLearningService {
   private readonly logger = new Logger(SelfLearningService.name);
   
-  // Confidence thresholds (unified across all services)
+  // Confidence thresholds (from config, unified across all services)
   // >= HIGH_CONFIDENCE: auto-approve for training
   // MEDIUM to HIGH: queue for human review
   // < MEDIUM: priority review + Label Studio
-  private readonly HIGH_CONFIDENCE = 0.85;
-  private readonly MEDIUM_CONFIDENCE = 0.7;
+  private readonly HIGH_CONFIDENCE: number;
+  private readonly MEDIUM_CONFIDENCE: number;
   
   // Label Studio config
   private readonly labelStudioUrl: string;
@@ -69,6 +69,8 @@ export class SelfLearningService {
     @Optional() @Inject(forwardRef(() => RetrainingCoordinatorService))
     private readonly retrainingCoordinator?: RetrainingCoordinatorService,
   ) {
+    this.HIGH_CONFIDENCE = parseFloat(this.configService.get('TRAINING_CONFIDENCE_HIGH', '0.85'));
+    this.MEDIUM_CONFIDENCE = parseFloat(this.configService.get('TRAINING_CONFIDENCE_MEDIUM', '0.70'));
     this.labelStudioUrl = this.configService.get('LABEL_STUDIO_URL') || 'http://localhost:8080';
     this.labelStudioToken = this.configService.get('LABEL_STUDIO_TOKEN') || '';
     this.labelStudioProject = parseInt(this.configService.get('LABEL_STUDIO_PROJECT') || '1');

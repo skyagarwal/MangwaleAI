@@ -29,7 +29,7 @@ export class IntentClassifierService {
   ) {
     this.nluEnabled = this.config.get('NLU_AI_ENABLED', 'true') === 'true';
     this.llmFallbackEnabled = this.config.get('NLU_LLM_FALLBACK_ENABLED', 'true') === 'true';
-    this.confidenceThreshold = parseFloat(this.config.get('NLU_CONFIDENCE_THRESHOLD', '0.7'));
+    this.confidenceThreshold = parseFloat(this.config.get('NLU_CONFIDENCE_THRESHOLD', '0.65'));
   }
 
   async classify(

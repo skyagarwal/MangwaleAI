@@ -29,7 +29,7 @@ export class NluService {
     @Optional() private readonly selfLearningService: SelfLearningService,
   ) {
     this.nluEnabled = this.config.get('NLU_AI_ENABLED', 'true') === 'true';
-    this.confidenceThreshold = parseFloat(this.config.get('NLU_CONFIDENCE_THRESHOLD', '0.7'));
+    this.confidenceThreshold = parseFloat(this.config.get('NLU_CONFIDENCE_THRESHOLD', '0.65'));
     this.enableLlmFallback = this.config.get('NLU_LLM_FALLBACK_ENABLED', 'true') === 'true';
     this.captureTrainingData = this.config.get('NLU_CAPTURE_TRAINING_DATA', 'true') === 'true';
     

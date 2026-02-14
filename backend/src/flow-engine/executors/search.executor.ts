@@ -5,6 +5,7 @@ import { EnhancedSearchService } from '../../search/services/enhanced-search.ser
 import { SearchAIIntegrationService } from '../../search/services/search-ai-integration.service';
 import { UserProfilingService } from '../../personalization/user-profiling.service';
 import { SearchAnalyticsService } from '../../search/services/search-analytics.service';
+import { QueryExpansionService } from '../../search/services/query-expansion.service';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { SentimentAnalysisService } from '../../agents/services/sentiment-analysis.service';
 import { AdvancedLearningService } from '../../agents/services/advanced-learning.service';
@@ -34,6 +35,7 @@ export class SearchExecutor implements ActionExecutor {
     @Optional() private readonly searchAI?: SearchAIIntegrationService,
     @Optional() private readonly userProfiling?: UserProfilingService,
     @Optional() private readonly searchAnalytics?: SearchAnalyticsService,
+    @Optional() private readonly queryExpansion?: QueryExpansionService,
     @Optional() private readonly configService?: ConfigService,
   ) {
     this.storageCdnUrl = this.configService?.get<string>('storage.cdnUrl') || 'https://storage.mangwale.ai/mangwale/product';
@@ -170,6 +172,19 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
       
+      // 🔍 Query preprocessing: transliteration, spelling correction, synonym expansion
+      if (query && this.queryExpansion) {
+        try {
+          const expanded = await this.queryExpansion.expandQuery(query);
+          if (expanded.expanded !== expanded.original) {
+            this.logger.log(`🔍 Query expanded: "${query}" → "${expanded.expanded}" (corrections: ${expanded.corrections.join(', ') || 'none'}, synonyms: ${expanded.synonyms.length})`);
+            query = expanded.expanded;
+          }
+        } catch (err) {
+          this.logger.debug(`Query expansion failed (non-fatal): ${err.message}`);
+        }
+      }
+
       const limit = config.limit || config.size || 10;
       const filters = config.filters ? [...config.filters] : [];
       const lat = config.lat;
