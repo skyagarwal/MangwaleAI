@@ -131,7 +131,10 @@ export class ParcelExecutor implements ActionExecutor {
     try {
       const distance = this.resolve(context, config.distancePath, 'distance');
       const categoryId = this.resolve(context, config.categoryPath, 'parcel_category_id');
-      const zoneIds = context.data.zone_ids || [context.data.zone_id || 4]; // Default to Nashik if missing
+      const zoneIds = context.data.zone_ids || (context.data.zone_id ? [context.data.zone_id] : []);
+      if (zoneIds.length === 0) {
+        this.logger.warn(`⚠️ calculateShipping called without zone_id — pricing may be inaccurate`);
+      }
 
       if (distance === null || distance === undefined || !categoryId) {
         this.logger.warn(`Missing data: distance=${distance}, categoryId=${categoryId}`);

@@ -9,6 +9,7 @@ import { ContextEnhancerService } from './services/context-enhancer.service';
 import { ContextSchemaValidatorService } from './services/context-schema-validator.service';
 import { FeatureFlagService } from '../common/services/feature-flag.service';
 import { MetricsService } from '../metrics/metrics.service';
+import { UserProfilingService } from '../personalization/user-profiling.service';
 import {
   FlowDefinition,
   FlowExecutionOptions,
@@ -47,9 +48,14 @@ export class FlowEngineService {
     @Optional() private readonly contextSchemaValidator?: ContextSchemaValidatorService,
     @Optional() private readonly featureFlags?: FeatureFlagService,
     @Optional() private readonly metrics?: MetricsService,
+    @Optional() private readonly userProfiling?: UserProfilingService,
   ) {
     this.logger.log('🔄 Flow Engine initialized');
   }
+
+  // Cooldown tracker for post-flow profile analysis
+  private profileAnalysisCooldown = new Map<number, number>();
+  private readonly PROFILE_ANALYSIS_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutes
 
   /**
    * Start a new flow execution
@@ -168,6 +174,23 @@ export class FlowEngineService {
     }
     if (session?.data?.phone_number || session?.data?.user_phone) {
       context.data.phone_number = session.data.phone_number || session.data.user_phone;
+    }
+
+    // 🎭 INJECT USER COMMUNICATION PREFERENCES FOR TONE/EMOJI ENFORCEMENT
+    const prefUserId = context.data.user_id;
+    if (prefUserId) {
+      try {
+        const profile = await this.prisma.user_profiles.findUnique({
+          where: { user_id: Number(prefUserId) },
+          select: { communication_tone: true, language_preference: true },
+        });
+        if (profile) {
+          if (profile.communication_tone) context.data.communicationTone = profile.communication_tone;
+          if (profile.language_preference) context.data.languagePreference = profile.language_preference;
+        }
+      } catch (err) {
+        this.logger.debug(`Could not load user tone preferences: ${err.message}`);
+      }
     }
 
     // Ensure _user_message is set (critical for NLU executors)
@@ -339,14 +362,30 @@ export class FlowEngineService {
       context.data.phone_number = session.data.phone_number || session.data.user_phone;
     }
     
+    // 🎭 REFRESH USER COMMUNICATION PREFERENCES FOR TONE/EMOJI ENFORCEMENT
+    if (context.data.user_id && !context.data.communicationTone) {
+      try {
+        const profile = await this.prisma.user_profiles.findUnique({
+          where: { user_id: Number(context.data.user_id) },
+          select: { communication_tone: true, language_preference: true },
+        });
+        if (profile) {
+          if (profile.communication_tone) context.data.communicationTone = profile.communication_tone;
+          if (profile.language_preference) context.data.languagePreference = profile.language_preference;
+        }
+      } catch (err) {
+        this.logger.debug(`Could not load user tone preferences: ${err.message}`);
+      }
+    }
+
     // Store user message in context
     this.contextService.set(context, '_user_message', message);
     this.contextService.set(context, '_last_message_at', new Date());
-    
+
     // 🧹 Clear stale response from previous cycle so wait states
     // don't accidentally re-send old messages (e.g., payment link)
     this.contextService.set(context, '_last_response', null);
-    
+
     // 🎯 INJECT INTENT INTO CONTEXT (Phase 3: Intent-Aware Flows)
     // This allows executors to make decisions based on the user's detected intent
     // Feature-flagged: USE_INTENT_AWARE_FLOWS
@@ -469,6 +508,11 @@ export class FlowEngineService {
       this.logger.log(`✅ Flow completed! Clearing from session to allow new flow on next message.`);
       await this.clearFlowFromSession(sessionId);
 
+      // 🧠 Post-flow profile analysis: holistic conversation analysis via LLM
+      this.triggerPostFlowProfileAnalysis(sessionId, context).catch(err =>
+        this.logger.debug(`Post-flow profile analysis skipped: ${err.message}`),
+      );
+
       // 🔄 RESUME CHECK: If there is a suspended flow, ask user if they want to resume
       const session = await this.sessionService.getSession(sessionId);
       if (session?.data?.suspendedFlow) {
@@ -517,12 +561,16 @@ export class FlowEngineService {
       await this.saveContextToSession(sessionId, context);
     }
 
-    // Handle error case explicitly
+    // Handle error case explicitly with user-friendly messages
     if (result.error) {
+      // Prefer executor-set _friendly_error (more contextual) over generic mapping
+      const userMessage = context.data._friendly_error || this.getUserFriendlyError(result.error);
+      // Clear _friendly_error after use to avoid stale messages
+      delete context.data._friendly_error;
       return {
         flowRunId: flowRun.id,
         currentState: result.nextState || context._system.currentState,
-        response: `I encountered an error: ${result.error}. Please type 'reset' to start over.`,
+        response: userMessage,
         completed: false,
         collectingData: false,
         progress: 0,
@@ -1295,6 +1343,53 @@ export class FlowEngineService {
   }
 
   /**
+   * Convert internal error messages to user-friendly messages
+   * Prevents leaking technical details to end users
+   */
+  private getUserFriendlyError(error: string): string {
+    const lower = error.toLowerCase();
+
+    // Authentication errors
+    if (lower.includes('auth') || lower.includes('login') || lower.includes('token') || lower.includes('unauthorized') || lower.includes('401')) {
+      return 'Your session has expired. Please log in again to continue. Type "login" to get started.';
+    }
+
+    // Search/product errors
+    if (lower.includes('search') || lower.includes('no results') || lower.includes('not found')) {
+      return 'I couldn\'t find what you\'re looking for. Could you try rephrasing your search or check the spelling?';
+    }
+
+    // Address errors
+    if (lower.includes('address') || lower.includes('location') || lower.includes('zone')) {
+      return 'I had trouble with the delivery address. Could you please share your location or type your address again?';
+    }
+
+    // Payment errors
+    if (lower.includes('payment') || lower.includes('wallet') || lower.includes('razorpay') || lower.includes('insufficient')) {
+      return 'There was an issue with the payment. Please check your payment method and try again.';
+    }
+
+    // Cart errors
+    if (lower.includes('cart') || lower.includes('item') || lower.includes('out of stock')) {
+      return 'There was an issue with your cart. Some items may no longer be available. Please review your cart and try again.';
+    }
+
+    // Network/API errors
+    if (lower.includes('timeout') || lower.includes('network') || lower.includes('econnrefused') || lower.includes('503') || lower.includes('502')) {
+      return 'I\'m having trouble connecting right now. Please try again in a moment.';
+    }
+
+    // Order placement errors
+    if (lower.includes('order') && (lower.includes('fail') || lower.includes('could not'))) {
+      return 'I couldn\'t place your order. Please check your details and try again, or type "help" for assistance.';
+    }
+
+    // Generic fallback - don't expose internal error
+    this.logger.warn(`Unhandled error type shown to user: ${error}`);
+    return 'Something went wrong. Please try again, or type "help" if you need assistance.';
+  }
+
+  /**
    * Extract response data (message, buttons, cards, metadata) from flow context.
    * Shared by startFlow() and processMessage() — extracted to eliminate duplication.
    */
@@ -1369,5 +1464,47 @@ export class FlowEngineService {
     this.flowCache.clear();
     this.cacheExpiry = 0;
     this.logger.log('🗑️ Flow cache cleared');
+  }
+
+  /**
+   * Trigger holistic profile analysis after flow completion.
+   * Analyzes the full conversation to extract patterns that per-message
+   * extraction might miss (overall tone, intent patterns, dietary signals).
+   */
+  private async triggerPostFlowProfileAnalysis(
+    sessionId: string,
+    context: FlowContext,
+  ): Promise<void> {
+    if (!this.userProfiling) return;
+
+    const userId = context._system?.userId ? Number(context._system.userId) : null;
+    if (!userId || isNaN(userId)) return;
+
+    // Cooldown: skip if analyzed within last 30 minutes
+    const lastAnalysis = this.profileAnalysisCooldown.get(userId) || 0;
+    if (Date.now() - lastAnalysis < this.PROFILE_ANALYSIS_COOLDOWN_MS) return;
+
+    // Get conversation history from session
+    const session = await this.sessionService.getSession(sessionId);
+    const history = session?.data?.conversation_history;
+    if (!Array.isArray(history) || history.length < 3) return;
+
+    const phone = session?.phoneNumber || context._system?.phoneNumber || '';
+
+    // Format history for the profiling service
+    const conversationHistory = history.map((msg: any) => ({
+      role: typeof msg === 'object' ? (msg.role || 'user') : 'user',
+      content: typeof msg === 'object' ? (msg.content || String(msg)) : String(msg),
+    }));
+
+    this.profileAnalysisCooldown.set(userId, Date.now());
+
+    this.logger.log(`🧠 Triggering post-flow profile analysis for user ${userId}`);
+    await this.userProfiling.updateProfileFromConversation({
+      userId,
+      phone,
+      conversationHistory,
+      sessionId,
+    });
   }
 }

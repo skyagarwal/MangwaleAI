@@ -562,15 +562,21 @@ export class AgentOrchestratorService implements OnModuleInit {
         try {
           // Pass phone number to enable order history lookup from MySQL
           const prefs = await this.userPreferenceService.getPreferenceContext(
-            session.data.user_id, 
+            session.data.user_id,
             phoneNumber // 🧠 Enable order history context
           );
           finalUserPreferenceContext = prefs.fullContext;
+          // Store structured fields for explicit LLM enforcement
+          if (session?.data) {
+            if (prefs.communicationTone) session.data._communicationTone = prefs.communicationTone;
+            if (prefs.emojiUsage) session.data._emojiUsage = prefs.emojiUsage;
+            if (prefs.languagePreference) session.data._languagePreference = prefs.languagePreference;
+          }
         } catch (err) {
           this.logger.warn(`Failed to fetch user preferences: ${err.message}`);
         }
       }
-      
+
       // 🧠 SMART PERSONALIZATION: Try to load user context even without auth
       // This enables personalized greetings for returning users before they log in
       // 🚀 OPTIMIZATION: Skip for anonymous web sessions (web-*, test-*, sess-*) to avoid unnecessary MySQL calls
@@ -1684,6 +1690,25 @@ ${systemPrompt}`;
       systemPrompt = `${systemPrompt}\n\n== USER PERSONALIZATION ==\n${userPreferenceContext}`;
       this.logger.log('✅ User preference context injected into LLM system prompt');
     }
+
+    // 🎭 TONE & STYLE ENFORCEMENT: Explicitly enforce stored preferences
+    const toneRules: string[] = [];
+    const commTone = context.session?.data?._communicationTone;
+    const emojiPref = context.session?.data?._emojiUsage;
+
+    if (commTone === 'formal') {
+      toneRules.push('USE FORMAL, PROFESSIONAL LANGUAGE. No slang, no casual expressions.');
+    } else if (commTone === 'casual') {
+      toneRules.push('Use casual, friendly language. Slang and informal expressions are welcome.');
+    }
+    if (emojiPref === 'hate' || emojiPref === 'none') {
+      toneRules.push('DO NOT use any emojis in your response.');
+    } else if (emojiPref === 'love' || emojiPref === 'frequent') {
+      toneRules.push('Include 1-2 relevant emojis in your response.');
+    }
+    if (toneRules.length > 0) {
+      systemPrompt += `\n\n=== TONE & STYLE RULES ===\n${toneRules.join('\n')}`;
+    }
     
     try {
       // 🌐 Language-aware system prompt
@@ -1873,7 +1898,7 @@ ${systemPrompt}`;
                 floor: selectedAddr.floor || '',
                 source: 'saved_address',
               },
-              [zoneField]: selectedAddr.zoneId || 4, // Capture zone ID from saved address
+              [zoneField]: selectedAddr.zoneId, // Zone ID from saved address (may be undefined if not set)
             },
           };
         }
@@ -2041,7 +2066,7 @@ ${systemPrompt}`;
           complete: true,
           data: {
             [field]: addressData,
-            [zoneField]: zoneValidation.zoneId || 4, // Capture zone ID from validation
+            [zoneField]: zoneValidation.zoneId, // Zone ID from validation (null if detection failed)
           }
         };
       } else {
@@ -2736,8 +2761,11 @@ ${systemPrompt}`;
         this.logger.log('📦 Creating parcel order via PhpOrderService...');
         
         // Get zone IDs from collected data (from validate_zone steps)
-        const senderZoneId = flowContext.collectedData['sender_zone_id'] as number || 4;  // Default to zone 4 (Nashik New)
-        const receiverZoneId = flowContext.collectedData['receiver_zone_id'] as number || 4;
+        const senderZoneId = flowContext.collectedData['sender_zone_id'] as number;
+        const receiverZoneId = flowContext.collectedData['receiver_zone_id'] as number;
+        if (!senderZoneId || !receiverZoneId) {
+          this.logger.warn(`⚠️ Missing zone IDs for parcel order: sender=${senderZoneId}, receiver=${receiverZoneId}`);
+        }
         
         const result = await this.phpOrderService.createOrder(authToken, {
           pickupAddress: {

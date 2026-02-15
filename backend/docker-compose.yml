@@ -108,6 +108,7 @@ services:
       - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
       - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
       - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN}
+      - WHATSAPP_APP_SECRET=${WHATSAPP_APP_SECRET}
       - WHATSAPP_API_VERSION=${WHATSAPP_API_VERSION:-v24.0}
       
       # PHP Backend
@@ -154,9 +155,9 @@ services:
       - EMBEDDING_SERVICE_URL=${EMBEDDING_SERVICE_URL:-http://search-embedding-service:3101}
       - OSRM_URL=http://mangwale_osrm:5000
       
-      # Voice Services (ASR/TTS)
-      - ASR_SERVICE_URL=${ASR_SERVICE_URL:-http://host.docker.internal:7000}
-      - TTS_SERVICE_URL=${TTS_SERVICE_URL:-http://host.docker.internal:8010}
+      # Voice Services (ASR/TTS) - Mercury GPU Server (ASR: 7001, TTS: 7002)
+      - ASR_SERVICE_URL=${ASR_SERVICE_URL:-http://host.docker.internal:7001}
+      - TTS_SERVICE_URL=${TTS_SERVICE_URL:-http://host.docker.internal:7002}
       
       # PostgreSQL Database (Prisma)
       - DATABASE_URL=postgresql://mangwale_config:${POSTGRES_PASSWORD:-config_secure_pass_2024}@mangwale_postgres:5432/headless_mangwale?schema=public

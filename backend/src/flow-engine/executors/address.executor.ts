@@ -973,6 +973,7 @@ export class AddressExecutor implements ActionExecutor {
       };
     } catch (error) {
       this.logger.error(`Address execution failed: ${error.message}`, error.stack);
+      context.data._friendly_error = "I had trouble processing your address. Could you try sharing your location using the button below, or type the full address again?";
       return {
         success: false,
         error: error.message,

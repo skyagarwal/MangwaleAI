@@ -138,7 +138,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_DB=1
       
-      # AI Services - NLU v3 (IndicBERT-v3, Gemma3-based, 39 intents) on Mercury GPU
+      # AI Services - NLU v5 (IndicBERT-v2, 33 intents) on Mercury GPU
       - NLU_ENDPOINT=${NLU_ENDPOINT}
       - NLU_PRIMARY_ENDPOINT=${NLU_PRIMARY_ENDPOINT}
       - NER_SERVICE_URL=${NER_SERVICE_URL}
@@ -151,10 +151,10 @@ services:
       - LLM_MODE=${LLM_MODE:-hybrid}
       - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-vllm}
       
-      # Voice Services (Mercury Stack)
-      - ASR_SERVICE_URL=${ASR_SERVICE_URL}
-      - TTS_SERVICE_URL=${TTS_SERVICE_URL}
-      - VOICE_ORCHESTRATOR_URL=${VOICE_ORCHESTRATOR_URL}
+      # Voice Services (Mercury Stack - ASR: 7001, TTS: 7002)
+      - ASR_SERVICE_URL=${ASR_SERVICE_URL:-http://192.168.0.151:7001}
+      - TTS_SERVICE_URL=${TTS_SERVICE_URL:-http://192.168.0.151:7002}
+      - VOICE_ORCHESTRATOR_URL=${VOICE_ORCHESTRATOR_URL:-http://192.168.0.151:7000}
       - ADMIN_BACKEND_URL=${ADMIN_BACKEND_URL}
       
       # PHP Backend - Use production URL for auth/orders
@@ -200,6 +200,7 @@ services:
       - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
       - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
       - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN}
+      - WHATSAPP_APP_SECRET=${WHATSAPP_APP_SECRET}
       - WHATSAPP_API_VERSION=${WHATSAPP_API_VERSION:-v24.0}
     extra_hosts:
       - "host.docker.internal:host-gateway"

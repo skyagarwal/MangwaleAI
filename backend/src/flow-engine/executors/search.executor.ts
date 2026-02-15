@@ -355,6 +355,7 @@ export class SearchExecutor implements ActionExecutor {
       }
 
       if (!query) {
+        context.data._friendly_error = 'What would you like to search for? Try typing a dish name like "pizza" or "biryani".';
         return {
           success: false,
           error: 'Search query is required',
@@ -954,6 +955,11 @@ export class SearchExecutor implements ActionExecutor {
       // Determine event based on results
       const event = output.hasResults ? 'items_found' : 'no_items';
 
+      // Set friendly error for no results so response executor can show a helpful message
+      if (!output.hasResults) {
+        context.data._friendly_error = `Hmm, I couldn't find anything for "${query}". Try searching for something else, like a dish name or restaurant?`;
+      }
+
       return {
         success: true,
         output,
@@ -961,6 +967,10 @@ export class SearchExecutor implements ActionExecutor {
       };
     } catch (error) {
       this.logger.error(`Search execution failed: ${error.message}`, error.stack);
+
+      // Set user-friendly error for the response executor
+      context.data._friendly_error = 'Sorry, search is temporarily unavailable. Please try again in a moment.';
+
       // On error (like timeout), return no_items event so flow can proceed to external vendor search
       return {
         success: false,

@@ -104,6 +104,7 @@ const navigation = [
       { name: 'Agents', href: '/admin/agents' },
       { name: 'Intents', href: '/admin/intents' },
       { name: 'NLU Testing', href: '/admin/nlu-testing' },
+      { name: 'NER Entities', href: '/admin/ner-entities' },
       { name: 'Training', href: '/admin/training' },
       { name: 'Flows', href: '/admin/flows' },
     ],
@@ -116,6 +117,16 @@ const navigation = [
       { name: 'Settings', href: '/admin/gamification/settings' },
       { name: 'Game Questions', href: '/admin/gamification/questions' },
       { name: 'Training Samples', href: '/admin/gamification/training-samples' },
+    ],
+  },
+  {
+    name: 'Personalization',
+    icon: Sparkles,
+    children: [
+      { name: 'User Profiles', href: '/admin/user-profiles' },
+      { name: 'User Insights', href: '/admin/user-insights' },
+      { name: 'Conversation Memory', href: '/admin/conversation-memory' },
+      { name: 'RAG Documents', href: '/admin/rag-documents' },
     ],
   },
   {

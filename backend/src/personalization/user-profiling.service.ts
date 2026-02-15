@@ -588,6 +588,124 @@ export class UserProfilingService {
       sortPreference: null
     };
   }
+
+  /**
+   * Get all insights across all users (admin dashboard)
+   */
+  async getAllInsights(options: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    minConfidence?: number;
+    search?: string;
+  } = {}): Promise<{ insights: any[]; total: number }> {
+    const page = options.page || 1;
+    const limit = Math.min(options.limit || 20, 100);
+    const offset = (page - 1) * limit;
+
+    try {
+      let whereClause = 'WHERE 1=1';
+      const params: any[] = [];
+      let paramIdx = 1;
+
+      if (options.type) {
+        whereClause += ` AND i.insight_type = $${paramIdx++}`;
+        params.push(options.type);
+      }
+      if (options.minConfidence) {
+        whereClause += ` AND i.confidence >= $${paramIdx++}`;
+        params.push(options.minConfidence);
+      }
+      if (options.search) {
+        whereClause += ` AND (p.phone ILIKE $${paramIdx} OR i.insight_key ILIKE $${paramIdx} OR i.insight_value::text ILIKE $${paramIdx})`;
+        params.push(`%${options.search}%`);
+        paramIdx++;
+      }
+
+      const countResult = await this.pool.query(
+        `SELECT COUNT(*) FROM user_insights i LEFT JOIN user_profiles p ON i.user_id = p.user_id ${whereClause}`,
+        params,
+      );
+      const total = parseInt(countResult.rows[0].count, 10);
+
+      params.push(limit, offset);
+      const result = await this.pool.query(
+        `SELECT i.*, p.phone, p.dietary_type, p.profile_completeness
+         FROM user_insights i
+         LEFT JOIN user_profiles p ON i.user_id = p.user_id
+         ${whereClause}
+         ORDER BY i.extracted_at DESC
+         LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+        params,
+      );
+
+      return { insights: result.rows, total };
+    } catch (error) {
+      this.logger.error(`Failed to get all insights: ${error.message}`);
+      return { insights: [], total: 0 };
+    }
+  }
+
+  /**
+   * Get insight statistics (admin dashboard)
+   */
+  async getInsightStats(): Promise<any> {
+    try {
+      const result = await this.pool.query(`
+        SELECT
+          COUNT(*) as total_insights,
+          COUNT(DISTINCT user_id) as unique_users,
+          AVG(confidence) as avg_confidence,
+          COUNT(*) FILTER (WHERE extracted_at > NOW() - INTERVAL '24 hours') as last_24h,
+          COUNT(*) FILTER (WHERE extracted_at > NOW() - INTERVAL '7 days') as last_7d
+        FROM user_insights
+      `);
+
+      const typeResult = await this.pool.query(`
+        SELECT insight_type, COUNT(*) as count
+        FROM user_insights
+        GROUP BY insight_type
+        ORDER BY count DESC
+      `);
+
+      const stats = result.rows[0];
+      return {
+        totalInsights: parseInt(stats.total_insights, 10),
+        uniqueUsers: parseInt(stats.unique_users, 10),
+        avgConfidence: parseFloat(stats.avg_confidence) || 0,
+        last24h: parseInt(stats.last_24h, 10),
+        last7d: parseInt(stats.last_7d, 10),
+        byType: typeResult.rows.reduce((acc: any, row: any) => {
+          acc[row.insight_type] = parseInt(row.count, 10);
+          return acc;
+        }, {}),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get insight stats: ${error.message}`);
+      return { totalInsights: 0, uniqueUsers: 0, avgConfidence: 0, last24h: 0, last7d: 0, byType: {} };
+    }
+  }
+
+  /**
+   * Get distinct insight types (for filter dropdown)
+   */
+  async getInsightTypes(): Promise<Array<{ type: string; count: number }>> {
+    try {
+      const result = await this.pool.query(`
+        SELECT insight_type as type, COUNT(*) as count
+        FROM user_insights
+        GROUP BY insight_type
+        ORDER BY count DESC
+      `);
+      return result.rows.map((row: any) => ({
+        type: row.type,
+        count: parseInt(row.count, 10),
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to get insight types: ${error.message}`);
+      return [];
+    }
+  }
 }
 
 // Type Definitions

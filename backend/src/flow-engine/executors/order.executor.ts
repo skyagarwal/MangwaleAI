@@ -113,8 +113,27 @@ export class OrderExecutor implements ActionExecutor {
       this.logger.error(`Order executor failed: ${error.message}`, error.stack);
 
       // Handle auth token expiry - signal flow to re-authenticate
-      if (error.requiresReAuth || error.code === 'auth_expired' || error.statusCode === 401) {
+      if (error.requiresReAuth || error.code === 'AUTH_TOKEN_EXPIRED' || error.code === 'auth_expired' || error.statusCode === 401) {
         this.logger.warn('⚠️ Auth token expired during order placement - triggering re-auth');
+
+        // Clear the stale auth token from session so re-auth fetches a fresh one
+        try {
+          const session = await this.sessionService.getSession(context._system.sessionId);
+          if (session?.data?.auth_token) {
+            await this.sessionService.updateSession(context._system.sessionId, {
+              ...session.data,
+              auth_token: null,
+            });
+            this.logger.log('🔑 Cleared expired auth token from session');
+          }
+        } catch (clearErr) {
+          this.logger.warn(`Failed to clear expired auth token: ${clearErr.message}`);
+        }
+
+        // Signal flow to transition to re-auth state
+        context.data._auth_expired = true;
+        context.data._friendly_error = 'Your session has expired. Let me log you back in so we can place your order.';
+
         return {
           success: false,
           error: 'Your session has expired. Please log in again to place your order.',

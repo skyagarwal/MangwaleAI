@@ -71,6 +71,10 @@ export interface PreferenceContext {
   fullContext: string; // Detailed prompt section
   confidenceLevel: 'high' | 'medium' | 'low'; // Based on profile completeness
   suggestionsEnabled: boolean; // Can we make proactive suggestions?
+  // Structured fields for explicit enforcement in LLM prompts
+  communicationTone?: string; // 'formal' | 'casual' | 'friendly' | 'direct'
+  emojiUsage?: string; // 'love' | 'moderate' | 'minimal' | 'hate'
+  languagePreference?: string; // 'en' | 'hi' | 'mr' | 'hinglish'
 }
 
 @Injectable()
@@ -344,6 +348,9 @@ ${conversationMemory.recentTopics.map(t => `- ${t}`).join('\n')}
       fullContext,
       confidenceLevel: hasExcellentData ? 'high' : hasGoodData ? 'medium' : 'low',
       suggestionsEnabled: hasGoodData, // Only make proactive suggestions if confidence is medium+
+      communicationTone: prefs.communicationTone,
+      emojiUsage: prefs.emojiUsage,
+      languagePreference: prefs.language,
     };
   }
 

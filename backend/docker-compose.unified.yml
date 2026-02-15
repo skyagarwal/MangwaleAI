@@ -487,8 +487,8 @@ services:
       # AI Services (all local now!)
       - VLLM_URL=http://vllm:8002
       - NLU_ENDPOINT=http://nlu:7010
-      - ASR_SERVICE_URL=http://asr:7000
-      - TTS_SERVICE_URL=http://tts:8010
+      - ASR_SERVICE_URL=http://asr:8000
+      - TTS_SERVICE_URL=http://tts:5501
       - VISION_SERVICE_URL=http://localhost:3200/vision
       
       # Search
@@ -517,7 +517,8 @@ services:
       - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
       - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
       - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN}
-      
+      - WHATSAPP_APP_SECRET=${WHATSAPP_APP_SECRET}
+
       # PHP Backend (external)
       - PHP_API_BASE_URL=${PHP_API_BASE_URL}
       - PHP_DB_HOST=host.docker.internal

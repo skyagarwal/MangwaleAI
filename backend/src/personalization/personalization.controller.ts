@@ -274,8 +274,74 @@ export class PersonalizationController {
   }
 
   /**
+   * Get All Insights (Admin Dashboard)
+   *
+   * GET /personalization/insights/all?page=1&limit=20&type=&minConfidence=&search=
+   */
+  @Get('insights/all')
+  async getAllInsights(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '20',
+    @Query('type') type?: string,
+    @Query('minConfidence') minConfidence?: string,
+    @Query('search') search?: string,
+  ) {
+    try {
+      const result = await this.userProfilingService.getAllInsights({
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(limit, 10) || 20,
+        type: type || undefined,
+        minConfidence: minConfidence ? parseFloat(minConfidence) : undefined,
+        search: search || undefined,
+      });
+
+      return {
+        success: true,
+        ...result,
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(limit, 10) || 20,
+      };
+    } catch (error) {
+      this.logger.error('Failed to get all insights:', error);
+      return { success: false, error: error.message, insights: [], total: 0 };
+    }
+  }
+
+  /**
+   * Get Insight Statistics (Admin Dashboard)
+   *
+   * GET /personalization/insights/stats
+   */
+  @Get('insights/stats')
+  async getInsightStats() {
+    try {
+      const stats = await this.userProfilingService.getInsightStats();
+      return { success: true, ...stats };
+    } catch (error) {
+      this.logger.error('Failed to get insight stats:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Get Distinct Insight Types (Admin Dashboard filter dropdown)
+   *
+   * GET /personalization/insights/types
+   */
+  @Get('insights/types')
+  async getInsightTypes() {
+    try {
+      const types = await this.userProfilingService.getInsightTypes();
+      return { success: true, types };
+    } catch (error) {
+      this.logger.error('Failed to get insight types:', error);
+      return { success: false, types: [] };
+    }
+  }
+
+  /**
    * Health Check
-   * 
+   *
    * Verify personalization service is operational
    */
   @Get('health')

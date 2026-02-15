@@ -85,8 +85,8 @@ export class SearchAIIntegrationService {
           `${this.searchApiUrl}/v3/search/understand`,
           {
             query,
-            module_id: context.module_id || 4,
-            zone_id: context.zone_id || 4,
+            module_id: context.module_id || this.getModuleId(context),
+            zone_id: context.zone_id,
             user_location: context.user_location,
             conversation_history: context.conversation_history?.slice(-3), // Last 3 messages
           },
@@ -142,8 +142,8 @@ export class SearchAIIntegrationService {
           {
             query,
             context: conversationContext,
-            module_id: searchContext.module_id || 4,
-            zone_id: searchContext.zone_id || 4,
+            module_id: searchContext.module_id || this.getModuleId(searchContext),
+            zone_id: searchContext.zone_id,
           },
           { timeout: 5000 },
         ),
@@ -245,10 +245,14 @@ export class SearchAIIntegrationService {
     understanding: SearchUnderstanding,
     context: any = {},
   ): Record<string, any> {
+    if (!context.zone_id) {
+      this.logger.warn(`⚠️ buildSearchParams called without zone_id — search results may be inaccurate`);
+    }
+
     const params: Record<string, any> = {
       q: understanding.correctedQuery,
       module_id: context.module_id || this.getModuleId(context),
-      zone_id: context.zone_id || 4,
+      zone_id: context.zone_id,
       ...understanding.filters,
     };
 

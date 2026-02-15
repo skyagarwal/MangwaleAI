@@ -52,6 +52,7 @@ export class PricingExecutor implements ActionExecutor {
       };
     } catch (error) {
       this.logger.error(`Pricing calculation failed: ${error.message}`, error.stack);
+      context.data._friendly_error = 'We could not calculate the price right now. Please try again, or contact support if the issue persists.';
       return {
         success: false,
         error: error.message,

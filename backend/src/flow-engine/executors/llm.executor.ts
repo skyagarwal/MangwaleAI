@@ -108,11 +108,13 @@ export class LlmExecutor implements ActionExecutor {
       // Get user message early (needed for language selection)
       const userMessage = context.data._user_message || context.data.message || '';
 
-      // 🌐 LANGUAGE DETECTION - Simple fallback
-      const detectedLang = 'en';
-      const langName = 'English';
-      
-      this.logger.log(`🌐 Language detected: ${langName} (${detectedLang}) for message: "${userMessage.substring(0, 50)}..."`);
+      // 🌐 LANGUAGE DETECTION - Use stored preference or detect from message
+      const storedLangPref = context.data.languagePreference as string | undefined;
+      const detectedLang = storedLangPref || this.detectPreferredResponseLanguage(userMessage);
+      const langMap: Record<string, string> = { en: 'English', hi: 'Hindi', mr: 'Marathi', hinglish: 'Hinglish' };
+      const langName = langMap[detectedLang] || 'English';
+
+      this.logger.log(`🌐 Language: ${langName} (${detectedLang}${storedLangPref ? ', from profile' : ', detected'}) for: "${userMessage.substring(0, 50)}..."`);
 
       // 🌤️ CONTEXT INJECTION - Weather, Time, Festivals, Local Knowledge
       // If enhanced context exists in flow data, inject it
@@ -148,6 +150,38 @@ Suggested foods for ${ctx.time?.mealTime}: ${ctx.suggestions?.timeBased?.join(',
           systemPrompt = `You are a helpful AI assistant.\n\n${prefContext}`;
         }
         this.logger.debug(`🧠 Injected user preference context into system prompt`);
+      }
+
+      // 🎭 TONE & STYLE ENFORCEMENT - Explicitly enforce stored preferences
+      const toneRules: string[] = [];
+      const communicationTone = context.data.communicationTone as string | undefined;
+      const emojiUsage = context.data.emojiUsage as string | undefined;
+
+      if (communicationTone === 'formal') {
+        toneRules.push('USE FORMAL, PROFESSIONAL LANGUAGE. No slang, no casual expressions, no abbreviations.');
+      } else if (communicationTone === 'casual') {
+        toneRules.push('Use casual, friendly language. Slang and informal expressions are welcome.');
+      }
+
+      if (emojiUsage === 'hate' || emojiUsage === 'none') {
+        toneRules.push('DO NOT use any emojis in your response.');
+      } else if (emojiUsage === 'love' || emojiUsage === 'frequent') {
+        toneRules.push('Include 1-2 relevant emojis in your response.');
+      }
+
+      // Empathetic response if user is frustrated
+      if (context.data._user_frustrated) {
+        toneRules.push('The user is frustrated. Be EXTRA empathetic, acknowledge their issue, and provide a clear solution. Start with understanding their concern.');
+      }
+
+      if (toneRules.length > 0) {
+        const toneBlock = `\n\n=== TONE & STYLE RULES ===\n${toneRules.join('\n')}`;
+        if (systemPrompt) {
+          systemPrompt += toneBlock;
+        } else {
+          systemPrompt = `You are a helpful AI assistant.${toneBlock}`;
+        }
+        this.logger.debug(`🎭 Injected ${toneRules.length} tone rules`);
       }
 
       // 🌍 LANGUAGE INSTRUCTION - Strong, explicit instruction based on detected language

@@ -70,6 +70,11 @@ export default () => ({
     nluUrl: process.env.NLU_SERVICE_URL || 'http://localhost:7012',
     searchUrl: process.env.SEARCH_SERVICE_URL || 'http://localhost:3100',
   },
+  voice: {
+    asrUrl: process.env.ASR_SERVICE_URL || 'http://localhost:7001',
+    ttsUrl: process.env.TTS_SERVICE_URL || 'http://localhost:7002',
+    orchestratorUrl: process.env.VOICE_ORCHESTRATOR_URL || 'http://localhost:7000',
+  },
   logging: {
     level: process.env.LOG_LEVEL || 'info',
   },

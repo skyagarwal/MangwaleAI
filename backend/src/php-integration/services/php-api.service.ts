@@ -51,11 +51,14 @@ export class PhpApiService {
         
         // Handle 401 Unauthorized - auth token expired or invalid
         if (error.response?.status === 401) {
-          const authError = new Error('Authentication token expired. Please log in again.');
-          (authError as any).code = 'auth_expired';
+          const authError = new Error('Your session has expired. Please log in again to continue.');
+          (authError as any).code = 'AUTH_TOKEN_EXPIRED';
           (authError as any).statusCode = 401;
           (authError as any).requiresReAuth = true;
-          this.logger.warn('⚠️ PHP API returned 401 - auth token expired or invalid');
+          this.logger.warn(
+            `⚠️ PHP API returned 401 - auth token expired or invalid. ` +
+            `URL: ${error.config?.url || 'unknown'}, Method: ${error.config?.method || 'unknown'}`,
+          );
           throw authError;
         }
 

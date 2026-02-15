@@ -67,6 +67,15 @@ export class QueryExpansionService implements OnModuleInit {
     'नाशिक': 'nashik', 'पुणे': 'pune', 'मुंबई': 'mumbai',
     'सातपुर': 'satpur', 'पंचवटी': 'panchavati',
     'गंगापुर': 'gangapur', 'सिडको': 'cidco',
+    // More foods
+    'पोहा': 'poha', 'पोहे': 'poha',
+    'उसळ': 'usal', 'उसल': 'usal',
+    'थालीपीठ': 'thalipeeth',
+    'साबुदाणा': 'sabudana', 'साबूदाना': 'sabudana',
+    'लिंबू पाणी': 'limbu pani', 'नींबू पानी': 'nimbu pani',
+    'श्रीखंड': 'shrikhand', 'आमरस': 'aamras',
+    'पूरणपोळी': 'puranpoli', 'पुरण पोळी': 'puranpoli',
+    'भाकरी': 'bhakri', 'ज्वारीची भाकरी': 'jowar bhakri',
   };
 
   // Local food synonym mappings
@@ -119,6 +128,20 @@ export class QueryExpansionService implements OnModuleInit {
     'noodles': ['noodels', 'नूडल्स', 'maggi'],
     'momos': ['momo', 'मोमो', 'dumplings'],
     'thali': ['थाली', 'platter'],
+
+    // Nashik local terms
+    'misal pav': ['misal', 'मिसळ पाव', 'missal'],
+    'vada pav': ['vadapav', 'वडापाव', 'vada pao'],
+    'pav bhaji': ['pavbhaji', 'पाव भाजी'],
+    'sabudana': ['sabudana khichdi', 'साबुदाणा'],
+    'thalipeeth': ['थालीपीठ', 'thalipith'],
+    'poha': ['पोहा', 'pohe', 'पोहे'],
+    'usal': ['उसळ', 'usal pav'],
+    'coke': ['coca cola', 'coca-cola'],
+    'thums up': ['thumbs up', 'thumps up'],
+    'pepsi': ['pepsie'],
+    'limbu pani': ['nimbu pani', 'lemon water', 'lime water', 'लिंबू पाणी'],
+    'chai': ['tea', 'चाय', 'cutting chai'],
   };
 
   // Price range mappings

@@ -220,7 +220,7 @@ ray start --address='jupiter-ip:6379'
 
 # Run vLLM with tensor parallelism
 python -m vllm.entrypoints.openai.api_server \
-  --model Qwen/Qwen2.5-32B-Instruct-AWQ \
+  --model Qwen/Qwen2.5-7B-Instruct-AWQ \
   --tensor-parallel-size 2 \
   --pipeline-parallel-size 1
 ```

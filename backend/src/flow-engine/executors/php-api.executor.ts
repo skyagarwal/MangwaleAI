@@ -93,7 +93,20 @@ export class PhpApiExecutor implements ActionExecutor {
       };
     } catch (error) {
       this.logger.error(`❌ PHP API action ${action} failed: ${error.message}`);
-      
+
+      // Handle auth token expiry - propagate as auth_expired event
+      if (error.requiresReAuth || error.code === 'AUTH_TOKEN_EXPIRED' || error.code === 'auth_expired' || error.statusCode === 401) {
+        this.logger.warn(`⚠️ Auth token expired during PHP API action: ${action}`);
+        context.data._auth_expired = true;
+        context.data._friendly_error = 'Your session has expired. Please log in again to continue.';
+        return {
+          success: false,
+          error: error.message,
+          event: 'auth_expired',
+          output: { requiresReAuth: true },
+        };
+      }
+
       return {
         success: false,
         error: error.message,

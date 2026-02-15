@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { PrismaService } from '../database/prisma.service';
 
 export interface ConversationMessage {
   role: 'user' | 'assistant';
@@ -28,7 +29,10 @@ export class SessionService {
   private readonly memoryCache = new Map<string, { session: Session | null; timestamp: number }>();
   private readonly CACHE_TTL_MS = 5000; // 5 seconds - enough for a single request lifecycle
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    @Optional() private prisma: PrismaService,
+  ) {
     const redisConfig = {
       host: this.configService.get('redis.host'),
       port: this.configService.get('redis.port'),
@@ -238,22 +242,110 @@ export class SessionService {
     }
   }
 
+  /**
+   * Persist key user preferences from session data to PostgreSQL user_profiles
+   * before the session is cleared or expires. This ensures preferences survive
+   * beyond the Redis session TTL (24h).
+   */
+  async persistUserPreferences(phoneNumber: string): Promise<void> {
+    try {
+      const session = await this.getSession(phoneNumber);
+      if (!session || !this.prisma) return;
+
+      const data = session.data || {};
+      const userId = data.user_id ? Number(data.user_id) : null;
+      if (!userId) {
+        this.logger.debug(`No user_id in session for ${phoneNumber}, skipping preference persistence`);
+        return;
+      }
+
+      // Collect preference updates from session data
+      const updates: Record<string, any> = {
+        updated_at: new Date(),
+      };
+
+      // Communication tone (e.g., 'formal', 'casual', 'friendly')
+      if (data.communication_tone) {
+        updates.communication_tone = String(data.communication_tone).substring(0, 20);
+      }
+
+      // Language preference (e.g., 'en', 'hi', 'hinglish')
+      if (data.language_preference || data.detected_language) {
+        updates.language_preference = String(data.language_preference || data.detected_language).substring(0, 10);
+      }
+
+      // Favorite items from ordered/carted items during this session
+      if (data.ordered_items || data.cart_items) {
+        const sessionItems = data.ordered_items || data.cart_items || [];
+        if (Array.isArray(sessionItems) && sessionItems.length > 0) {
+          // Merge with existing favorites rather than overwriting
+          const existing = await this.prisma.user_profiles.findUnique({
+            where: { user_id: userId },
+            select: { favorite_items: true },
+          });
+          const existingFavorites = Array.isArray(existing?.favorite_items) ? existing.favorite_items as any[] : [];
+          // Extract item names/ids from session items
+          const newItemRefs = sessionItems.map((item: any) =>
+            typeof item === 'object' ? { id: item.id, name: item.name || item.item_name } : item,
+          );
+          // Deduplicate by id, keep last 50
+          const merged = [...existingFavorites, ...newItemRefs];
+          const deduped = merged.reduce((acc: any[], item: any) => {
+            const key = typeof item === 'object' ? item.id : item;
+            if (!acc.find((a: any) => (typeof a === 'object' ? a.id : a) === key)) {
+              acc.push(item);
+            }
+            return acc;
+          }, []).slice(-50);
+          updates.favorite_items = deduped;
+        }
+      }
+
+      // Only persist if we have meaningful updates beyond just the timestamp
+      if (Object.keys(updates).length <= 1) {
+        this.logger.debug(`No meaningful preferences to persist for user ${userId}`);
+        return;
+      }
+
+      await this.prisma.user_profiles.upsert({
+        where: { user_id: userId },
+        update: updates,
+        create: {
+          user_id: userId,
+          phone: phoneNumber,
+          ...updates,
+        },
+      });
+
+      const persistedKeys = Object.keys(updates).filter(k => k !== 'updated_at');
+      this.logger.log(`Persisted user preferences for user ${userId} (${phoneNumber}): ${persistedKeys.join(', ')}`);
+    } catch (error) {
+      // Non-critical: log but don't throw so session cleanup still proceeds
+      this.logger.warn(`Failed to persist user preferences for ${phoneNumber}: ${error.message}`);
+    }
+  }
+
   async clearSession(phoneNumber: string): Promise<void> {
+    // Persist preferences before clearing
+    await this.persistUserPreferences(phoneNumber);
     const key = this.getSessionKey(phoneNumber);
     await this.redis.del(key);
-    this.logger.log(`🗑️ Session cleared for ${phoneNumber}`);
+    this.logger.log(`Session cleared for ${phoneNumber}`);
   }
 
   async deleteSession(phoneNumber: string): Promise<void> {
+    // Persist preferences before deleting
+    await this.persistUserPreferences(phoneNumber);
+
     // Delete session data
     const sessionKey = this.getSessionKey(phoneNumber);
     await this.redis.del(sessionKey);
-    
+
     // Delete bot messages
     const messagesKey = `bot_messages:${phoneNumber}`;
     await this.redis.del(messagesKey);
-    
-    this.logger.log(`🗑️ Session and messages deleted for ${phoneNumber}`);
+
+    this.logger.log(`Session and messages deleted for ${phoneNumber}`);
   }
 
   async getAllSessions(): Promise<Session[]> {

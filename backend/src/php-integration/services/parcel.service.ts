@@ -192,7 +192,11 @@ export class PhpParcelService {
     }> => {
       try {
         // Fetch actual category pricing from PHP
-        const categories = await this.getParcelCategories(3, zoneIds[0] || 4);
+        const zoneIdForPricing = zoneIds[0];
+        if (!zoneIdForPricing) {
+          this.logger.warn(`⚠️ getParcelCategories called without zone_id — using module default`);
+        }
+        const categories = await this.getParcelCategories(3, zoneIdForPricing);
         const category = categories.find(c => c.id === parcelCategoryId);
         
         if (category) {

@@ -1,8 +1,8 @@
 
 ################################################################################
-# vLLM Service - Gemma 3 4B Optimized for Speed
-# Model: google/gemma-3-4b-it (4B params, fast inference)
-# GPU: RTX 3060 12GB - fits comfortably with room for other services
+# vLLM Service - Qwen 2.5 7B AWQ (production model)
+# Model: Qwen/Qwen2.5-7B-Instruct-AWQ (7B params, AWQ quantized)
+# GPU: RTX 3060 12GB - fits with AWQ quantization
 # Port: 8002 (OpenAI-compatible API)
 ################################################################################
 
@@ -29,7 +29,7 @@ services:
               count: 1
               capabilities: [gpu]
     command: >
-      --model google/gemma-3-4b-it
+      --model ${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct-AWQ}
       --port 8000
       --host 0.0.0.0
       --max-model-len 4096
