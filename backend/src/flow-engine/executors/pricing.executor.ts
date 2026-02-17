@@ -1,4 +1,5 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
 
@@ -16,6 +17,7 @@ export class PricingExecutor implements ActionExecutor {
 
   constructor(
     @Optional() private readonly phpPaymentService?: PhpPaymentService,
+    @Optional() private readonly configService?: ConfigService,
   ) {}
 
   async execute(
@@ -166,7 +168,9 @@ export class PricingExecutor implements ActionExecutor {
       return sum + (item.price * (item.quantity || 1));
     }, 0);
 
-    const shippingFee = itemsTotal > 500 ? 0 : 40; // Free shipping over ₹500
+    const freeShippingThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
+    const baseShippingFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
+    const shippingFee = itemsTotal > freeShippingThreshold ? 0 : baseShippingFee;
     const subtotal = itemsTotal + shippingFee;
     const tax = Math.ceil(subtotal * 0.18); // 18% GST
     const total = subtotal + tax;

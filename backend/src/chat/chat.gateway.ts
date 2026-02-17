@@ -46,17 +46,18 @@ interface MessagePayload {
   namespace: '/ai-agent',
   cors: {
     origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3005',
       'https://chat.mangwale.ai',
       'https://admin.mangwale.ai',
-      'https://test.mangwale.ai', // Explicitly add test subdomain
+      'https://test.mangwale.ai',
       'https://mangwale.ai',
-      /^https?:\/\/.*\.mangwale\.ai$/,
-      /^https?:\/\/192\.168\.\d+\.\d+:\d+$/, // LAN IPs
-      /^https?:\/\/100\.\d+\.\d+\.\d+:\d+$/, // Tailscale IPs
-      /^https?:\/\/10\.\d+\.\d+\.\d+:\d+$/, // Private network IPs
+      ...(process.env.ADDITIONAL_CORS_ORIGINS
+        ? process.env.ADDITIONAL_CORS_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+        : []),
+      ...(process.env.NODE_ENV !== 'production' ? [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3005',
+      ] : []),
     ],
     credentials: true,
   },
@@ -74,7 +75,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   // Message deduplication cache: sessionId -> Map of message hash -> last send time
   private readonly messageCache = new Map<string, Map<string, number>>();
-  private readonly DEDUP_WINDOW = 1500; // 1.5 seconds window for duplicate detection (reduced to allow legitimate repeated button values)
+  private readonly DEDUP_WINDOW = 3000; // 3 seconds window for duplicate detection (accounts for network latency on slow connections)
 
   constructor(
     private readonly conversationService: ConversationService,
@@ -164,11 +165,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     
     // Set authenticated if userId provided OR VALID token provided OR already authenticated
     // ✅ FIX: Reject fake tokens like 'guest_token', 'null', 'undefined', empty strings
-    const isValidToken = token && 
-      token !== 'guest_token' && 
-      token !== 'null' && 
-      token !== 'undefined' && 
-      token.length > 20; // Real tokens are typically longer
+    // Validate token: reject known fakes, check minimum length, and verify JWT-like format (3 dot-separated segments)
+    const isValidToken = token &&
+      token !== 'guest_token' &&
+      token !== 'null' &&
+      token !== 'undefined' &&
+      token.length > 20 &&
+      token.split('.').length === 3; // JWT tokens always have 3 segments (header.payload.signature)
     const isValidUserId = userId && userId > 0;
     
     if (isValidUserId || isValidToken || isAlreadyAuthenticated) {
@@ -400,15 +403,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       // 2. Session data loss after Redis TTL expiry
       // 3. Auth data not being available when flow engine reads session
       // 4. Client leaving room due to frontend effect cleanup (auth state change)
+
+      // Ensure client is in the session room (single check for all auth paths)
+      if (!client.rooms.has(sessionId)) {
+        this.logger.log(`🔧 Client not in room ${sessionId} - rejoining`);
+        await client.join(sessionId);
+      }
+
       if (payload.auth?.userId || payload.auth?.token) {
-        // 🔧 CRITICAL FIX: Always ensure client is in the session room
-        // Frontend effect cleanup may have removed client from room when auth state changed
-        const rooms = client.rooms;
-        if (!rooms.has(sessionId)) {
-          this.logger.log(`🔧 Client not in room ${sessionId} - rejoining`);
-          await client.join(sessionId);
-        }
-        
         const existingSession = await this.sessionService.getSession(sessionId);
         const isAlreadyAuthed = existingSession?.data?.authenticated === true && 
                                  existingSession?.data?.user_id === payload.auth.userId &&
@@ -432,13 +434,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
       // Also handle Google OAuth users (have email + name but no userId yet)
       else if (payload.auth?.email && payload.auth?.name) {
-        // 🔧 FIX: Ensure client is in room for Google OAuth users too
-        const rooms = client.rooms;
-        if (!rooms.has(sessionId)) {
-          this.logger.log(`🔧 Google OAuth client not in room ${sessionId} - rejoining`);
-          await client.join(sessionId);
-        }
-        
         const existingSession = await this.sessionService.getSession(sessionId);
         const isAlreadyAuthed = existingSession?.data?.authenticated === true && 
                                  existingSession?.data?.user_id; // Also check user_id exists

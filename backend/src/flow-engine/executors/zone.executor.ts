@@ -1,4 +1,5 @@
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { ZoneService } from '../../zones/services/zone.service';
 
@@ -13,9 +14,18 @@ export class ZoneExecutor implements ActionExecutor {
   readonly name = 'zone';
   private readonly logger = new Logger(ZoneExecutor.name);
 
+  private readonly fallbackZones: Array<{ name: string; zoneId: number; minLat: number; maxLat: number; minLng: number; maxLng: number }>;
+
   constructor(
     @Optional() @Inject(ZoneService) private readonly zoneService?: ZoneService,
-  ) {}
+    @Optional() private readonly configService?: ConfigService,
+  ) {
+    this.fallbackZones = this.configService?.get('geo.fallbackZones') || [
+      { name: 'Nashik City', zoneId: 4, minLat: 19.9, maxLat: 20.1, minLng: 73.6, maxLng: 73.9 },
+      { name: 'Pune City', zoneId: 5, minLat: 18.4, maxLat: 18.7, minLng: 73.7, maxLng: 74.0 },
+      { name: 'Mumbai', zoneId: 6, minLat: 18.87, maxLat: 19.3, minLng: 72.7, maxLng: 73.1 },
+    ];
+  }
 
   async execute(
     config: Record<string, any>,
@@ -117,11 +127,7 @@ export class ZoneExecutor implements ActionExecutor {
   private boundingBoxFallback(latitude: number, longitude: number): ActionExecutionResult {
     this.logger.warn('Using bounding box fallback for zone detection (ZoneService unavailable)');
 
-    const serviceBounds = [
-      { name: 'Nashik City', zoneId: 4, minLat: 19.9, maxLat: 20.1, minLng: 73.6, maxLng: 73.9 },
-      { name: 'Pune City', zoneId: 5, minLat: 18.4, maxLat: 18.7, minLng: 73.7, maxLng: 74.0 },
-      { name: 'Mumbai', zoneId: 6, minLat: 18.87, maxLat: 19.3, minLng: 72.7, maxLng: 73.1 },
-    ];
+    const serviceBounds = this.fallbackZones;
 
     let matchedZone = null;
     for (const zone of serviceBounds) {

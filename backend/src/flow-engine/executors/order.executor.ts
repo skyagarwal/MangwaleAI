@@ -42,7 +42,15 @@ export class OrderExecutor implements ActionExecutor {
     context: FlowContext
   ): Promise<ActionExecutionResult> {
     try {
-      const orderType = config.type as 'food' | 'parcel' | 'ecommerce' | 'multi_store' || 'food';
+      const orderType = config.type as 'food' | 'parcel' | 'ecommerce' | 'multi_store';
+
+      if (!orderType) {
+        this.logger.error('Order type required but not specified in config');
+        return {
+          success: false,
+          error: 'Order type required. Please specify food, parcel, or ecommerce.',
+        };
+      }
 
       // 🔒 CRITICAL SECURITY FIX: Validate user authentication
       // Get session for auth token
@@ -67,6 +75,12 @@ export class OrderExecutor implements ActionExecutor {
           context._system.sessionId,
         );
         this.logger.log(`✅ User authenticated: user_id=${validation.userId}, phone=${validation.profile?.phone}`);
+
+        // Store zone_id from user profile for zone resolution fallback
+        if (validation.profile?.zoneId && !context.data.zone_id) {
+          context.data.zone_id = validation.profile.zoneId;
+          this.logger.debug(`📍 Set zone_id=${validation.profile.zoneId} from user profile`);
+        }
       } catch (error) {
         this.logger.error(`❌ Authentication validation failed: ${error.message}`);
         return {
@@ -244,7 +258,14 @@ export class OrderExecutor implements ActionExecutor {
     const pricing = resolve(config.pricingPath, 'pricing');
     const parcelDetails = resolve(config.detailsPath, 'parcel_details');
     
-    const parcelCategoryId = config.parcel_category_id || context.data.parcel_category_id || 5;
+    const parcelCategoryId = config.parcel_category_id || context.data.parcel_category_id;
+    if (!parcelCategoryId) {
+      this.logger.error('❌ parcel_category_id is required but missing');
+      return {
+        success: false,
+        message: 'Please select a vehicle type for delivery.',
+      };
+    }
     const paymentMethod = this.resolvePaymentMethod(config, context, 'cash_on_delivery');
 
     // Map recipient details if available
@@ -271,23 +292,25 @@ export class OrderExecutor implements ActionExecutor {
       };
     }
 
-    // Validate submitted amount against server-side calculation
+    // Validate submitted amount against server-side calculation (sanity check only)
+    // PHP is the source of truth for pricing — uses category-specific rates
+    // Our hardcoded validator rates may not match, so we warn but don't block
     const validation = this.pricingValidator.validateParcelOrderAmount(submittedAmount, distance);
 
     if (!validation.valid) {
-      this.logger.error(`❌ Parcel order amount validation failed: ${validation.message}`);
-      this.logger.error(`   Submitted: ₹${submittedAmount}, Expected: ₹${validation.expected?.totalAmount}`);
-      return {
-        success: false,
-        message: `Order amount validation failed: ${validation.message}. Please refresh and try again.`,
-      };
+      this.logger.warn(`⚠️ Parcel pricing sanity check: ${validation.message}`);
+      this.logger.warn(`   Submitted (PHP): ₹${submittedAmount}, Validator expected: ₹${validation.expected?.totalAmount}`);
+      this.logger.warn(`   Proceeding with PHP-calculated amount ₹${submittedAmount} (PHP is source of truth)`);
+      // Don't fail the order — PHP calculates the actual amount with category-specific rates
+    } else {
+      this.logger.log(`✅ Parcel order amount sanity check passed: ₹${submittedAmount}`);
     }
 
-    // Use server-calculated amount (not frontend-submitted) for maximum security
-    const totalAmount = validation.expected.totalAmount;
+    // Trust PHP-calculated amount (submitted from flow context)
+    // PHP uses category-specific rates that our hardcoded validator doesn't know about
+    const totalAmount = submittedAmount || validation.expected?.totalAmount || 0;
 
-    this.logger.log(`✅ Parcel order amount validated: ₹${totalAmount}`);
-    this.logger.log(`   Distance: ${distance}km, Base: ₹${validation.expected.baseCharge}, Distance charge: ₹${validation.expected.distanceCharge}, Platform fee: ₹${validation.expected.platformFee}`);
+    this.logger.log(`📦 Parcel order amount: ₹${totalAmount} (distance: ${distance}km)`);
 
     // 🔒 CRITICAL SECURITY FIX: Validate wallet balance for wallet/partial payments
     if (paymentMethod === 'wallet' || paymentMethod === 'partial_payment') {
@@ -314,6 +337,21 @@ export class OrderExecutor implements ActionExecutor {
       this.logger.log(`✅ Wallet balance validated: sufficient funds for order`);
     }
 
+    // Resolve zone IDs with multiple fallbacks (zone executor output → address → context → user profile)
+    const senderZoneId = pickupAddress?.zone_id || context.data.sender_zone_id
+      || context.data.pickup_zone?.zoneId || context.data.zone_id
+      || session?.data?.zone_id;
+    const deliveryZoneId = deliveryAddress?.zone_id || context.data.delivery_zone_id
+      || context.data.delivery_zone?.zoneId || context.data.zone_id
+      || session?.data?.zone_id;
+
+    if (!senderZoneId) {
+      this.logger.warn('⚠️ sender_zone_id not available — PHP may reject the order');
+    }
+    if (!deliveryZoneId) {
+      this.logger.warn('⚠️ delivery_zone_id not available — PHP may reject the order');
+    }
+
     const orderResult = await this.phpOrderService.createOrder(authToken, {
       pickupAddress: {
         address: pickupAddress.address || pickupAddress.formatted,
@@ -338,24 +376,28 @@ export class OrderExecutor implements ActionExecutor {
       orderNote: config.order_note || context.data.order_note || this.buildParcelNote(parcelDetails),
       distance,
       parcelCategoryId,
-      senderZoneId: pickupAddress?.zone_id || context.data.sender_zone_id || context.data.zone_id,
-      deliveryZoneId: deliveryAddress?.zone_id || context.data.delivery_zone_id || context.data.zone_id,
+      senderZoneId,
+      deliveryZoneId,
     });
 
     // 💳 For digital payments, create Razorpay order
     if (orderResult.success && paymentMethod === 'digital_payment') {
-      const totalAmount = pricing?.total_charge || pricing?.total || 49; // Default to minimum
+      const razorpayAmount = pricing?.total_charge || pricing?.total;
+      if (!razorpayAmount || razorpayAmount <= 0) {
+        this.logger.error(`Pricing unavailable for digital payment on parcel #${orderResult.orderId} — skipping Razorpay`);
+        orderResult.paymentNote = 'Pricing unavailable for online payment. Please pay via cash on delivery or retry.';
+      } else {
       const customerId = orderResult.rawResponse?.user_id || sessionUserId;
-      this.logger.log(`💳 Creating Razorpay payment link for parcel #${orderResult.orderId}, amount: ₹${totalAmount}, customerId: ${customerId}`);
-      
+      this.logger.log(`💳 Creating Razorpay payment link for parcel #${orderResult.orderId}, amount: ₹${razorpayAmount}, customerId: ${customerId}`);
+
       try {
         const razorpayResult = await this.phpPaymentService.initializeRazorpay(
           authToken,
           orderResult.orderId,
-          totalAmount,
+          razorpayAmount,
           customerId,
         );
-        
+
         if (razorpayResult.success && razorpayResult.razorpayOrderId) {
           orderResult.razorpayOrderId = razorpayResult.razorpayOrderId;
           orderResult.paymentRequestId = razorpayResult.paymentRequestId;
@@ -368,6 +410,7 @@ export class OrderExecutor implements ActionExecutor {
         this.logger.error(`❌ Razorpay initialization failed: ${error.message}`);
         // Don't fail the order, just log the error
       }
+      } // end else (razorpayAmount available)
     }
 
     // Generate tracking URL
@@ -485,7 +528,7 @@ export class OrderExecutor implements ActionExecutor {
       const walletValidation = this.pricingValidator.validateWalletBalance(
         walletBalance,
         walletDeduction,
-        estimatedAmount || 100, // Minimum order amount if not provided
+        estimatedAmount || 0,
       );
 
       if (!walletValidation.valid) {
@@ -521,7 +564,16 @@ export class OrderExecutor implements ActionExecutor {
         const price = item.price || item.rawPrice || 0;
         const qty = item.quantity || 1;
         return sum + (price * qty);
-      }, 0) || 100; // Default minimum
+      }, 0);
+
+      if (!totalAmount || totalAmount <= 0) {
+        this.logger.error(`Cannot calculate order total — items total is ₹${totalAmount}`);
+        return {
+          success: true,
+          output: orderResult,
+          event: 'success',
+        };
+      }
       
       // For partial payment, Razorpay only charges the remaining amount (after wallet deduction)
       if (paymentMethod === 'partial_payment' && context.data.payment_details?.online_amount) {
@@ -902,7 +954,7 @@ export class OrderExecutor implements ActionExecutor {
       },
       paymentMethod,
       orderNote: orderNote || 'E-commerce order',
-      moduleId: 1, // Module ID 1 = E-commerce/Grocery
+      moduleId: 5, // Module ID 5 = Shop (E-commerce)
     });
   }
 

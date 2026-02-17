@@ -8,6 +8,7 @@ import { ModuleService } from './module.service';
 import { SearchAnalyticsService } from './search-analytics.service';
 import { SearchDto } from '../dto/search.dto';
 import { SearchResultDto, SearchHit } from '../dto/search-result.dto';
+import { resolveImageUrl } from '../../common/utils/image-url.util';
 import { PhpStoreService } from '../../php-integration/services/php-store.service';
 
 @Injectable()
@@ -206,34 +207,12 @@ export class SearchService {
         const index = module === 'food' ? 'food_items' : module === 'ecom' ? 'ecom_items' : 'food_items';
         const result = await this.openSearchService.keywordSearch(q, index, 10, 0, []);
         
-        // S3 bucket and storage CDN for images
-        const S3_BASE = 'https://s3.ap-south-1.amazonaws.com/mangwale/product';
-        const STORAGE_CDN = this.config.get<string>('storage.cdnUrl') || 'https://storage.mangwale.ai/mangwale/product';
-        
+        const s3BaseUrl = this.config.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
+
         // Map to expected response format
         return {
           items: result.results.map(hit => {
-            // Handle image - prefer full URL, fallback to filename with S3
-            let imageUrl = hit.source?.image_full_url || hit.source?.image_fallback_url || hit.source?.image || hit.source?.image_url;
-            if (imageUrl) {
-              // Already a full URL - check if it's storage.mangwale.ai or keep as-is
-              if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-                if (imageUrl.includes('storage.mangwale.ai')) {
-                  // Keep storage.mangwale.ai URLs as-is
-                  imageUrl = imageUrl;
-                }
-                // Already a full URL - use as-is
-              } else {
-                // Handle relative paths - extract filename
-                let filename = imageUrl;
-                if (filename.startsWith('/product/')) {
-                  filename = filename.replace('/product/', '');
-                } else if (filename.startsWith('product/')) {
-                  filename = filename.replace('product/', '');
-                }
-                imageUrl = `${S3_BASE}/${filename}`;
-              }
-            }
+            const imageUrl = resolveImageUrl(hit.source || {}, s3BaseUrl);
             
             return {
               id: hit.id,

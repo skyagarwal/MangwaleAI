@@ -10,15 +10,19 @@
  */
 
 import { Controller, Get, Query, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { UserContextService, UserContext } from '../services/user-context.service';
+import { EnvironmentalContextService, UserContext } from '../services/user-context.service';
 
 @ApiTags('Context')
 @Controller('context')
 export class ContextController {
   private readonly logger = new Logger(ContextController.name);
 
-  constructor(private readonly contextService: UserContextService) {}
+  constructor(
+    private readonly contextService: EnvironmentalContextService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Get full user context
@@ -54,8 +58,8 @@ export class ContextController {
     @Query('lat') lat?: string,
     @Query('lng') lng?: string,
   ) {
-    const latitude = lat ? parseFloat(lat) : 19.9975;  // Nashik
-    const longitude = lng ? parseFloat(lng) : 73.7898;
+    const latitude = lat ? parseFloat(lat) : this.configService.get<number>('geo.defaultLatitude');
+    const longitude = lng ? parseFloat(lng) : this.configService.get<number>('geo.defaultLongitude');
     
     return this.contextService.getWeatherContext(latitude, longitude);
   }
@@ -87,7 +91,7 @@ export class ContextController {
   @ApiOperation({ summary: 'Get local city knowledge' })
   @ApiQuery({ name: 'city', required: false, description: 'City name (default: Nashik)' })
   async getCityKnowledge(@Query('city') city?: string) {
-    return this.contextService.getCityKnowledge(city || 'Nashik');
+    return this.contextService.getCityKnowledge(city || this.configService.get('geo.defaultCity'));
   }
 
   /**
@@ -132,7 +136,10 @@ export class ContextController {
   @ApiOperation({ summary: 'Get current meal time and suggestions' })
   async getMealTime() {
     const dateTime = await this.contextService.getDateTimeContext();
-    const weather = await this.contextService.getWeatherContext(19.9975, 73.7898);
+    const weather = await this.contextService.getWeatherContext(
+      this.configService.get<number>('geo.defaultLatitude'),
+      this.configService.get<number>('geo.defaultLongitude'),
+    );
     
     return {
       currentTime: new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),

@@ -2517,9 +2517,26 @@ export class ConversationService {
     );
     
     // Get zone IDs for pricing calculation
-    const pickupZoneId = orderData.pickup_zone_id || 1;
+    const pickupZoneId = orderData.pickup_zone_id;
+    if (!pickupZoneId) {
+      this.logger.error(`Pickup zone not determined for ${phoneNumber}`);
+      await this.messagingService.sendTextMessage(Platform.WHATSAPP,
+        phoneNumber,
+        '❌ Pickup zone not determined — please re-enter your pickup address.'
+      );
+      await this.sessionService.setStep(phoneNumber, 'awaiting_pickup_location');
+      return;
+    }
     const zoneIds = orderData.pickup_zone_ids ? JSON.parse(orderData.pickup_zone_ids) : [pickupZoneId];
-    const categoryId = orderData.category_id || 1;
+    const categoryId = orderData.category_id;
+    if (!categoryId) {
+      this.logger.error(`Category not selected for ${phoneNumber}`);
+      await this.messagingService.sendTextMessage(Platform.WHATSAPP,
+        phoneNumber,
+        '❌ Please select a vehicle category first.'
+      );
+      return;
+    }
     
     // Fetch delivery cost from PHP backend (zone-based pricing)
     let estimatedAmount: number;
@@ -2651,7 +2668,15 @@ export class ConversationService {
       const orderData = await this.sessionService.getData(phoneNumber);
       
       // Get pre-calculated delivery charge from PHP backend (calculated in proceedToPaymentSelection)
-      const deliveryCharge = orderData.calculated_delivery_charge || orderData.calculated_total || 50;
+      const deliveryCharge = orderData.calculated_delivery_charge || orderData.calculated_total;
+      if (!deliveryCharge) {
+        this.logger.error(`Delivery charge unavailable for ${phoneNumber} — cannot proceed with order`);
+        await this.messagingService.sendTextMessage(Platform.WHATSAPP,
+          phoneNumber,
+          '❌ Delivery charge unavailable. Please try again or contact support.'
+        );
+        return;
+      }
       const distance = orderData.distance || 0;
       
       const pickupCoords = orderData.pickup_coordinates || {};
@@ -2666,9 +2691,29 @@ export class ConversationService {
         pickupLat, pickupLng, deliveryLat, deliveryLng
       );
       
-      const pickupZoneId = orderData.pickup_zone_id || 1;
-      const deliveryZoneId = orderData.delivery_zone_id || 1;
-      const selectedModuleId = orderData.module_id || 1;
+      const pickupZoneId = orderData.pickup_zone_id;
+      const deliveryZoneId = orderData.delivery_zone_id;
+      const selectedModuleId = orderData.module_id;
+      if (!pickupZoneId) {
+        this.logger.error(`Pickup zone not determined for ${phoneNumber} during order placement`);
+        await this.messagingService.sendTextMessage(Platform.WHATSAPP, phoneNumber,
+          '❌ Pickup zone not determined — please re-enter your pickup address.');
+        await this.sessionService.setStep(phoneNumber, 'awaiting_pickup_location');
+        return;
+      }
+      if (!deliveryZoneId) {
+        this.logger.error(`Delivery zone not determined for ${phoneNumber} during order placement`);
+        await this.messagingService.sendTextMessage(Platform.WHATSAPP, phoneNumber,
+          '❌ Delivery zone not determined — please re-enter your delivery address.');
+        await this.sessionService.setStep(phoneNumber, 'awaiting_delivery_location');
+        return;
+      }
+      if (!selectedModuleId) {
+        this.logger.error(`Module not set for ${phoneNumber} during order placement`);
+        await this.messagingService.sendTextMessage(Platform.WHATSAPP, phoneNumber,
+          '❌ Service type not set. Please start your order again.');
+        return;
+      }
       const pickupZoneIds = orderData.pickup_zone_ids || null;
 
       this.logger.log(`📊 Order details: Distance=${calculatedDistance}km, Charge=₹${deliveryCharge}, PickupZone=${pickupZoneId}, DeliveryZone=${deliveryZoneId}`);
@@ -2681,8 +2726,8 @@ export class ConversationService {
         // Partial payment flag (for wallet + digital payment)
         partial_payment: orderData.partial_payment === true ? 1 : 0,
         
-        // Category - default to first category or 1
-        category_id: orderData.category_id || 1,
+        // Category - validated above (required)
+        category_id: orderData.category_id,
         
         // Recipient details
         receiver_name: orderData.recipient_name,

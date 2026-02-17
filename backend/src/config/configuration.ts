@@ -55,6 +55,14 @@ export default () => ({
   },
   storage: {
     cdnUrl: process.env.STORAGE_CDN_URL || 'https://storage.mangwale.ai/mangwale/product',
+    s3BaseUrl: process.env.S3_BASE_URL || 'https://mangwale.s3.ap-south-1.amazonaws.com/product',
+  },
+  geo: {
+    defaultCity: process.env.DEFAULT_CITY || 'Nashik',
+    defaultState: process.env.DEFAULT_STATE || 'Maharashtra',
+    defaultLatitude: parseFloat(process.env.DEFAULT_LATITUDE) || 19.9975,
+    defaultLongitude: parseFloat(process.env.DEFAULT_LONGITUDE) || 73.7898,
+    fallbackZones: JSON.parse(process.env.FALLBACK_ZONES || '[{"name":"Nashik City","zoneId":4,"minLat":19.9,"maxLat":20.1,"minLng":73.6,"maxLng":73.9},{"name":"Pune City","zoneId":5,"minLat":18.4,"maxLat":18.7,"minLng":73.7,"maxLng":74.0},{"name":"Mumbai","zoneId":6,"minLat":18.87,"maxLat":19.3,"minLng":72.7,"maxLng":73.1}]'),
   },
   pricing: {
     platformFee: parseFloat(process.env.PLATFORM_FEE) || 5,
@@ -64,6 +72,8 @@ export default () => ({
     defaultMinDeliveryFee: parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30,
     parcelPerKmRate: parseFloat(process.env.PARCEL_PER_KM_RATE) || 11.11,
     parcelMinCharge: parseFloat(process.env.PARCEL_MIN_CHARGE) || 44,
+    ecomShippingFee: parseFloat(process.env.ECOM_SHIPPING_FEE) || 40,
+    ecomFreeShippingThreshold: parseFloat(process.env.ECOM_FREE_SHIPPING_THRESHOLD) || 500,
   },
   mlServices: {
     nerUrl: process.env.NER_SERVICE_URL || 'http://localhost:7011',
@@ -74,6 +84,11 @@ export default () => ({
     asrUrl: process.env.ASR_SERVICE_URL || 'http://localhost:7001',
     ttsUrl: process.env.TTS_SERVICE_URL || 'http://localhost:7002',
     orchestratorUrl: process.env.VOICE_ORCHESTRATOR_URL || 'http://localhost:7000',
+  },
+  cors: {
+    additionalOrigins: process.env.ADDITIONAL_CORS_ORIGINS
+      ? process.env.ADDITIONAL_CORS_ORIGINS.split(',').map(s => s.trim())
+      : [],
   },
   logging: {
     level: process.env.LOG_LEVEL || 'info',

@@ -2,6 +2,7 @@ import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SearchService } from '../../search/services/search.service';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
+import { resolveImageUrl } from '../../common/utils/image-url.util';
 
 /**
  * Multi-Store Search Executor
@@ -198,22 +199,7 @@ export class MultiStoreSearchExecutor implements ActionExecutor {
    * Get proper image URL from item data
    */
   private getImageUrl(item: any): string | undefined {
-    let imageUrl = item.image || item.images?.[0] || item.image_url;
-    if (!imageUrl) {
-      imageUrl = item.image_full_url || item.image_fallback_url;
-    }
-    if (!imageUrl) return undefined;
-
-    let filename = imageUrl;
-    if (filename.startsWith('http://') || filename.startsWith('https://')) {
-      try {
-        const urlParts = filename.split('/');
-        filename = urlParts[urlParts.length - 1] || filename;
-      } catch { /* keep as-is */ }
-    }
-    if (filename.startsWith('/product/')) filename = filename.replace('/product/', '');
-    else if (filename.startsWith('product/')) filename = filename.replace('product/', '');
-
-    return `https://mangwale.s3.ap-south-1.amazonaws.com/product/${filename}`;
+    const s3BaseUrl = this.configService?.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
+    return resolveImageUrl(item, s3BaseUrl);
   }
 }

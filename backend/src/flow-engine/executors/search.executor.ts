@@ -9,6 +9,7 @@ import { QueryExpansionService } from '../../search/services/query-expansion.ser
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { SentimentAnalysisService } from '../../agents/services/sentiment-analysis.service';
 import { AdvancedLearningService } from '../../agents/services/advanced-learning.service';
+import { resolveImageUrl } from '../../common/utils/image-url.util';
 
 /**
  * Search Executor
@@ -474,7 +475,7 @@ export class SearchExecutor implements ActionExecutor {
           
           try {
             const storeResult = await this.searchService.findStoreByName(requestedStoreName, {
-              module_id: 4,  // Food module
+              module_id: context.data.module_id || (index.includes('food') ? 4 : 5),
             });
             
             if (storeResult.storeId) {
@@ -567,6 +568,18 @@ export class SearchExecutor implements ActionExecutor {
           }
         }
         
+        // Module safety net: Search API now handles module_id filtering at OpenSearch level,
+        // but we keep this as defense-in-depth to prevent cross-module data leaks
+        if (index.includes('food')) {
+          const beforeModuleFilter = filteredItems.length;
+          filteredItems = filteredItems.filter((item: any) =>
+            !item.module_id || item.module_id === 4 || String(item.module_id) === '4'
+          );
+          if (beforeModuleFilter !== filteredItems.length) {
+            this.logger.log(`🔒 Module safety net: filtered ${beforeModuleFilter} → ${filteredItems.length} (removed non-food module items)`);
+          }
+        }
+
         // 🧹 TEST DATA FILTER: Remove test stores, placeholder items, and demo data
         filteredItems = this.filterTestData(filteredItems);
 
@@ -642,7 +655,7 @@ export class SearchExecutor implements ActionExecutor {
         
         if (isLikelyNotFood) {
           try {
-            const storeCheck = await this.searchService.findStoreByName(query, { module_id: 4 });
+            const storeCheck = await this.searchService.findStoreByName(query, { module_id: context.data.module_id || (index.includes('food') ? 4 : 5) });
             if (storeCheck.storeId && storeCheck.score >= 500) {
               this.logger.log(`🏪 Store-first match: "${query}" → ${storeCheck.storeName} (ID: ${storeCheck.storeId}, score: ${storeCheck.score})`);
               // Add store_id filter and change query to broad menu search
@@ -693,7 +706,7 @@ export class SearchExecutor implements ActionExecutor {
         try {
           // Use dedicated store search endpoint for accurate resolution
           const storeResult = await this.searchService.findStoreByName(storeName, {
-            module_id: 4,  // Food module
+            module_id: context.data.module_id || (index.includes('food') ? 4 : 5),
           });
           
           if (storeResult.storeId) {
@@ -734,8 +747,9 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
 
-      // 🍔 MODULE FILTERING: For food searches, request more results to compensate for module filtering
-      const searchLimit = isFoodSearch ? limit * 6 : limit * 3; // Request 6x for food to allow module filtering
+      // MODULE FILTERING: Request 2x buffer for diversity algorithm and post-filtering.
+      // Search API now handles module_id filtering at OpenSearch level, so 6x is no longer needed.
+      const searchLimit = isFoodSearch ? limit * 2 : limit * 2;
 
       // Perform search
       const results = await this.searchService.search({
@@ -859,80 +873,60 @@ export class SearchExecutor implements ActionExecutor {
         hasResults: flattenedItems.length > 0,
       };
 
-      // S3 bucket and storage CDN for images
-      const S3_BASE = 'https://s3.ap-south-1.amazonaws.com/mangwale/product';
-      const STORAGE_CDN = this.storageCdnUrl;
-
-      // Helper to get proper image URL — always normalize to filename for frontend fallback
-      const getImageUrl = (item: any): string | undefined => {
-        let imageUrl = item.image || item.images?.[0] || item.image_url;
-        if (!imageUrl) {
-          // Fallback to full URLs but extract filename
-          imageUrl = item.image_full_url || item.image_fallback_url;
-        }
-        if (!imageUrl) return undefined;
-        
-        // Extract just the filename from any URL pattern
-        let filename = imageUrl;
-        if (filename.startsWith('http://') || filename.startsWith('https://')) {
-          try {
-            const urlParts = filename.split('/');
-            filename = urlParts[urlParts.length - 1] || filename;
-          } catch { /* keep as-is */ }
-        }
-        // Strip path prefixes
-        if (filename.startsWith('/product/')) filename = filename.replace('/product/', '');
-        else if (filename.startsWith('product/')) filename = filename.replace('product/', '');
-        
-        // Always return with the working S3 bucket-style base URL
-        return `https://mangwale.s3.ap-south-1.amazonaws.com/product/${filename}`;
-      };
+      // S3 base URL for images
+      const s3BaseUrl = this.configService?.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
+      const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, s3BaseUrl);
 
       // Always generate UI cards for product results
       if (output.hasResults) {
         output.cards = flattenedItems.slice(0, 10).map((item: any) => {
+          // Search API returns most fields nested in _source — fall back to _source for fields not at top level
+          const src = item._source || {};
           // Calculate distance from user if we have coordinates
-          const storeLat = item.store_location?.lat || item.store_latitude;
-          const storeLng = item.store_location?.lon || item.store_longitude;
+          const storeLat = item.store_location?.lat || item.store_latitude || src.store_latitude || src.store_location?.lat;
+          const storeLng = item.store_location?.lon || item.store_longitude || src.store_longitude || src.store_location?.lon;
           let distanceKm: number | undefined;
           let distanceText: string | undefined;
-          
+
           if (hasUserLocation && storeLat && storeLng) {
             distanceKm = this.calculateDistance(parsedUserLat, parsedUserLng, storeLat, storeLng);
-            distanceText = distanceKm < 1 
+            distanceText = distanceKm < 1
               ? `${Math.round(distanceKm * 1000)}m away`
               : `${distanceKm.toFixed(1)}km away`;
           }
-          
+
+          const itemMrp = item.mrp || src.mrp;
+          const itemPrice = item.price || src.price;
+          const foodVariations = item.food_variations || src.food_variations || [];
+          const parsedVariations = typeof foodVariations === 'string' ? (() => { try { return JSON.parse(foodVariations); } catch { return []; } })() : foodVariations;
+
           return {
             id: item.id,
-            name: item.title || item.name,
-            description: item.description || item.category,
-            price: item.mrp ? `₹${item.mrp}` : (item.price ? `₹${item.price}` : undefined),
-            rawPrice: item.mrp || item.price, // Numeric price for order
+            name: item.title || item.name || src.name,
+            description: item.description || item.category || src.category,
+            price: itemMrp ? `₹${itemMrp}` : (itemPrice ? `₹${itemPrice}` : undefined),
+            rawPrice: itemMrp || itemPrice,
             image: getImageUrl(item),
-            rating: item.rating || item.avg_rating || '0.0',
-            deliveryTime: item.delivery_time || '30-45 min',
-            brand: item.brand,
-            category: item.category || item.category_name,
-            storeName: item.store_name,
-            storeId: item.store_id,
-            moduleId: item.module_id, // Important for order placement
+            rating: item.rating || item.avg_rating || src.avg_rating || '0.0',
+            deliveryTime: item.delivery_time || src.delivery_time || '30-45 min',
+            brand: item.brand || src.brand,
+            category: item.category || item.category_name || src.category_name,
+            storeName: item.store_name || src.store_name,
+            storeId: item.store_id || src.store_id,
+            moduleId: item.module_id || src.module_id,
             storeLat,
             storeLng,
-            distanceKm,  // Numeric distance for sorting
-            distance: distanceText,  // Formatted text for display
-            veg: item.veg,
-            // 📦 Product variations for size/weight options
+            distanceKm,
+            distance: distanceText,
+            veg: item.veg ?? src.veg,
             has_variant: (() => {
-              const fv = item.food_variations;
-              if (fv && Array.isArray(fv) && fv.length > 0) return 1;
-              return item.has_variant || 0;
+              if (Array.isArray(parsedVariations) && parsedVariations.length > 0) return 1;
+              return item.has_variant || src.has_variant || 0;
             })(),
-            food_variations: item.food_variations || [],
+            food_variations: Array.isArray(parsedVariations) ? parsedVariations : [],
             action: {
               label: 'Add +',
-              value: `Add ${item.title || item.name} to cart`
+              value: `Add ${item.title || item.name || src.name} to cart`
             }
           };
         });

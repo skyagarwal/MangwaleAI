@@ -21,9 +21,19 @@ async function bootstrap() {
   // Enable WebSocket support with Socket.IO adapter
   app.useWebSocketAdapter(new IoAdapter(app));
 
-  // 🔒 Security: HTTP security headers
+  // 🔒 Security: HTTP security headers with CSP
   app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP to not break WebSocket/API clients
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://apis.google.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", "ws:", "wss:", "https://chat.mangwale.ai", "https://new.mangwale.com", "https://maps.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        frameSrc: ["'self'", "https://new.mangwale.com", "https://accounts.google.com"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   }));
 
@@ -55,22 +65,28 @@ async function bootstrap() {
     exclude: ['health', 'ready', 'metrics'],
   });
 
-  // Enable CORS with proper configuration
+  // Enable CORS with strict origin whitelist
+  // Parse additional CORS origins from env (comma-separated)
+  const additionalCorsOrigins = process.env.ADDITIONAL_CORS_ORIGINS
+    ? process.env.ADDITIONAL_CORS_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+    : [];
+
   app.enableCors({
     origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3005',
       'https://chat.mangwale.ai',
       'https://admin.mangwale.ai',
-      /^https?:\/\/.*\.mangwale\.ai$/,
-      /^https?:\/\/192\.168\.\d+\.\d+:\d+$/, // LAN IPs
-      /^https?:\/\/100\.\d+\.\d+\.\d+:\d+$/, // Tailscale IPs
-      /^https?:\/\/10\.\d+\.\d+\.\d+:\d+$/, // Private network IPs
+      'https://mangwale.ai',
+      'https://test.mangwale.ai',
+      ...additionalCorsOrigins,
+      ...(process.env.NODE_ENV !== 'production' ? [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3005',
+      ] : []),
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Api-Key'],
   });
   
   logger.log('✅ CORS enabled for frontend origins');
@@ -96,22 +112,14 @@ async function bootstrap() {
       const resp = await axios.get(checkUrl, { timeout: 1500 });
       res.status(200).json({
         status: 'ready',
-        php: {
-          url: phpBaseUrl,
-          ok: true,
-          statusCode: resp.status,
-        },
+        php: { ok: true, statusCode: resp.status },
         latencyMs: Date.now() - start,
         timestamp: new Date().toISOString(),
       });
     } catch (e: any) {
       res.status(503).json({
         status: 'degraded',
-        php: {
-          url: phpBaseUrl,
-          ok: false,
-          error: e?.message || 'unknown',
-        },
+        php: { ok: false, error: 'Service unavailable' },
         latencyMs: Date.now() - start,
         timestamp: new Date().toISOString(),
       });

@@ -483,7 +483,10 @@ export class SearchSuggestionsService implements OnModuleInit, OnModuleDestroy {
 
     try {
       // Determine module and category index
-      const mId = moduleId || 4; // Default to food module
+      if (!moduleId) {
+        this.logger.warn('getPopularCategories called without moduleId, defaulting to food');
+      }
+      const mId = moduleId || 4;
       const categoryIndex = mId === 5 ? 'ecom_categories' : 'food_categories';
       
       // Fetch categories directly from the categories index

@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Get, Logger, Param, Query } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SearchService } from '../services/search.service';
 import { OpenSearchService } from '../services/opensearch.service';
 import { ModuleService } from '../services/module.service';
@@ -15,6 +16,7 @@ export class SearchController {
     private readonly openSearchService: OpenSearchService,
     private readonly moduleService: ModuleService,
     private readonly externalVendorService: ExternalVendorService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post()
@@ -122,7 +124,7 @@ export class SearchController {
   @Get('external')
   async searchExternalVendor(@Query() query: Record<string, string>): Promise<any> {
     const q = query.q || '';
-    const city = query.city || 'Nashik';
+    const city = query.city || this.configService.get('geo.defaultCity');
     const type = (query.type as any) || 'restaurant';
     const radius = parseInt(query.radius || '10000', 10);
     

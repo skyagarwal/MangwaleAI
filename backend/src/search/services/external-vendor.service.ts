@@ -71,7 +71,7 @@ export class ExternalVendorService {
       city?: string;
     }
   ): Promise<ExternalSearchResult> {
-    const { location, type = 'restaurant', radius = 10000, city = 'Nashik' } = options || {};
+    const { location, type = 'restaurant', radius = 10000, city = this.configService.get<string>('geo.defaultCity') || 'Nashik' } = options || {};
     
     // Build cache key
     const cacheKey = `${query}_${city}_${type}_${location?.lat || 0}_${location?.lng || 0}`;
@@ -134,7 +134,8 @@ export class ExternalVendorService {
    * Search via PHP backend's place-api-autocomplete endpoint
    * Handles both old format (array of places) and new format (suggestions array)
    */
-  private async searchViaPhpApi(query: string, city: string = 'Nashik'): Promise<ExternalSearchResult> {
+  private async searchViaPhpApi(query: string, city?: string): Promise<ExternalSearchResult> {
+    city = city || this.configService.get<string>('geo.defaultCity') || 'Nashik';
     try {
       const searchText = `${query} ${city}`.trim();
       
@@ -169,7 +170,10 @@ export class ExternalVendorService {
       if (placesData && Array.isArray(placesData) && placesData.length > 0) {
         // Process results - for now, return with estimated coordinates (center of Nashik) 
         // since we can't get place details without Google API key
-        const NASHIK_CENTER = { lat: 19.9975, lng: 73.7898 };
+        const CITY_CENTER = {
+          lat: this.configService.get<number>('geo.defaultLatitude') || 19.9975,
+          lng: this.configService.get<number>('geo.defaultLongitude') || 73.7898,
+        };
         
         const results: GooglePlaceResult[] = placesData.slice(0, 5).map((place: any) => {
           const name = place.structured_formatting?.main_text || place.description?.split(',')[0] || query;
@@ -184,8 +188,8 @@ export class ExternalVendorService {
             name,
             address,
             formatted_address: fullAddress,
-            lat: NASHIK_CENTER.lat, // Default to city center
-            lng: NASHIK_CENTER.lng,
+            lat: CITY_CENTER.lat, // Default to city center
+            lng: CITY_CENTER.lng,
             types: place.types || [],
             maps_link: mapsSearchLink,
             // Flag to indicate coordinates are estimated
@@ -296,7 +300,7 @@ export class ExternalVendorService {
     }
 
     try {
-      const searchQuery = `${query} ${options.city || 'Nashik'} ${options.type || 'restaurant'}`.trim();
+      const searchQuery = `${query} ${options.city || this.configService.get<string>('geo.defaultCity') || 'Nashik'} ${options.type || 'restaurant'}`.trim();
       
       const params: any = {
         query: searchQuery,

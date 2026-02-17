@@ -148,8 +148,8 @@ export interface ContextualSuggestions {
 }
 
 @Injectable()
-export class UserContextService implements OnModuleInit {
-  private readonly logger = new Logger(UserContextService.name);
+export class EnvironmentalContextService implements OnModuleInit {
+  private readonly logger = new Logger(EnvironmentalContextService.name);
   
   // Weather cache (zone-wise)
   private weatherCache = new Map<string, WeatherContext>();
@@ -203,7 +203,7 @@ export class UserContextService implements OnModuleInit {
     const preferences = await this.getUserPreferences(userId);
     
     // Get local knowledge
-    const localKnowledge = await this.getLocalKnowledge(userInfo.cityName || 'Nashik');
+    const localKnowledge = await this.getLocalKnowledge(userInfo.cityName || this.configService.get('geo.defaultCity'));
     
     // Generate suggestions
     const suggestions = this.generateSuggestions(weather, dateTime, preferences, localKnowledge);
@@ -215,8 +215,8 @@ export class UserContextService implements OnModuleInit {
       language: userInfo.language || 'hi',
       zoneId,
       zoneName: userInfo.zoneName,
-      cityName: userInfo.cityName || 'Nashik',
-      stateName: userInfo.stateName || 'Maharashtra',
+      cityName: userInfo.cityName || this.configService.get('geo.defaultCity'),
+      stateName: userInfo.stateName || this.configService.get('geo.defaultState'),
       lat,
       lng,
       weather,
@@ -315,9 +315,8 @@ export class UserContextService implements OnModuleInit {
     lng?: number
   ): Promise<WeatherContext | null> {
     if (!lat || !lng) {
-      // Default to Nashik
-      lat = 19.9975;
-      lng = 73.7898;
+      lat = this.configService.get('geo.defaultLatitude');
+      lng = this.configService.get('geo.defaultLongitude');
     }
 
     switch (source.provider) {
@@ -883,7 +882,11 @@ export class UserContextService implements OnModuleInit {
       WHERE u.id = ${userId}
     `.catch(() => []);
     
-    return user[0] || { cityName: 'Nashik', stateName: 'Maharashtra', language: 'hi' };
+    return user[0] || {
+      cityName: this.configService.get('geo.defaultCity'),
+      stateName: this.configService.get('geo.defaultState'),
+      language: 'hi',
+    };
   }
 
   /**

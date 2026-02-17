@@ -243,7 +243,7 @@ export class EntityResolutionService {
       return {
         lat: context.userLocation.lat,
         lng: context.userLocation.lng,
-        city: context.userCity || 'Nashik',
+        city: context.userCity || this.configService.get('geo.defaultCity'),
         source: 'inferred',
       };
     }
@@ -263,11 +263,11 @@ export class EntityResolutionService {
       }
     }
 
-    // 4. Default to Nashik (business default)
+    // 4. Default to configured city
     return {
-      city: 'Nashik',
-      lat: 19.9975,
-      lng: 73.7898,
+      city: this.configService.get('geo.defaultCity'),
+      lat: this.configService.get('geo.defaultLatitude'),
+      lng: this.configService.get('geo.defaultLongitude'),
       source: 'inferred',
     };
   }

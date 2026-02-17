@@ -97,7 +97,12 @@ export const MODULE_NAMES: Record<number, string> = {
  * @returns Module type string (grocery, food, pharmacy, ecom, parcel)
  */
 export function getModuleTypeById(moduleId: number): string {
-  return MODULE_ID_TO_TYPE[moduleId] || 'ecom'; // Default to ecom if unknown
+  const type = MODULE_ID_TO_TYPE[moduleId];
+  if (!type) {
+    // Use a simple console.warn since this is a utility function without Logger DI
+    console.warn(`[module-id-mapping] Unknown module ID: ${moduleId}, returning 'unknown'`);
+  }
+  return type || 'unknown';
 }
 
 /**
@@ -105,8 +110,12 @@ export function getModuleTypeById(moduleId: number): string {
  * @param moduleType - Type string (grocery, food, etc.)
  * @returns Primary module ID for that type
  */
-export function getPrimaryModuleId(moduleType: string): number {
-  return PRIMARY_MODULE_IDS[moduleType] || 5; // Default to Shop (ecom)
+export function getPrimaryModuleId(moduleType: string): number | undefined {
+  const id = PRIMARY_MODULE_IDS[moduleType];
+  if (id === undefined) {
+    console.warn(`[module-id-mapping] Unknown module type: '${moduleType}', returning undefined`);
+  }
+  return id;
 }
 
 /**
