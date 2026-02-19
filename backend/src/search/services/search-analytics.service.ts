@@ -10,6 +10,7 @@ export interface SearchLog {
   executionTimeMs: number;
   sessionId?: string;
   userId?: string;
+  platform?: string;
 }
 
 @Injectable()
@@ -42,12 +43,19 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
           execution_time_ms INTEGER,
           session_id VARCHAR(100),
           user_id VARCHAR(100),
+          platform VARCHAR(20) DEFAULT 'unknown',
           created_at TIMESTAMP DEFAULT NOW()
         );
-        
+
         CREATE INDEX IF NOT EXISTS idx_search_logs_created_at ON search_logs(created_at);
         CREATE INDEX IF NOT EXISTS idx_search_logs_query ON search_logs(query);
+        CREATE INDEX IF NOT EXISTS idx_search_logs_platform ON search_logs(platform);
       `);
+
+      // Add platform column if missing (migration for existing tables)
+      await client.query(`
+        ALTER TABLE search_logs ADD COLUMN IF NOT EXISTS platform VARCHAR(20) DEFAULT 'unknown'
+      `).catch(() => {});
       
       client.release();
       this.logger.log('✅ Search Analytics initialized (table: search_logs)');
@@ -63,9 +71,9 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
   async logSearch(log: SearchLog): Promise<void> {
     try {
       await this.pool.query(
-        `INSERT INTO search_logs 
-         (id, query, search_type, filters, results_count, execution_time_ms, session_id, user_id)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        `INSERT INTO search_logs
+         (id, query, search_type, filters, results_count, execution_time_ms, session_id, user_id, platform)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
         [
           randomUUID(),
           log.query,
@@ -75,6 +83,7 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
           log.executionTimeMs,
           log.sessionId || null,
           log.userId || null,
+          log.platform || 'unknown',
         ]
       );
     } catch (error) {
@@ -177,6 +186,114 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       this.logger.error(`Failed to get last search: ${error.message}`);
       return null;
+    }
+  }
+
+  /**
+   * Channel breakdown - searches grouped by platform
+   */
+  async getChannelBreakdown(days: number = 7) {
+    try {
+      const result = await this.pool.query(
+        `SELECT
+           COALESCE(platform, 'unknown') as platform,
+           COUNT(*) as searches,
+           COUNT(DISTINCT COALESCE(user_id, session_id)) as unique_users,
+           COUNT(*) FILTER (WHERE results_count = 0) as zero_results,
+           AVG(execution_time_ms) as avg_time
+         FROM search_logs
+         WHERE created_at >= NOW() - INTERVAL '${days} days'
+         GROUP BY COALESCE(platform, 'unknown')
+         ORDER BY searches DESC`
+      );
+
+      return result.rows.map(r => {
+        const searches = parseInt(r.searches);
+        const zeroResults = parseInt(r.zero_results);
+        return {
+          platform: r.platform,
+          searches,
+          uniqueUsers: parseInt(r.unique_users),
+          zeroResultsRate: searches > 0 ? zeroResults / searches : 0,
+          avgTimeMs: Math.round(parseFloat(r.avg_time) || 0),
+        };
+      });
+    } catch (error) {
+      this.logger.error(`Failed to get channel breakdown: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
+   * Top queries filtered by platform
+   */
+  async getTopQueriesByChannel(days: number = 7, platform?: string, limit: number = 20) {
+    try {
+      const conditions = [`created_at >= NOW() - INTERVAL '${days} days'`];
+      const params: any[] = [limit];
+
+      if (platform && platform !== 'all') {
+        conditions.push(`platform = $2`);
+        params.push(platform);
+      }
+
+      const result = await this.pool.query(
+        `SELECT
+           query,
+           COUNT(*) as search_count,
+           AVG(results_count) as avg_results,
+           AVG(execution_time_ms) as avg_time,
+           COUNT(DISTINCT COALESCE(user_id, session_id)) as unique_users,
+           COALESCE(platform, 'unknown') as primary_platform
+         FROM search_logs
+         WHERE ${conditions.join(' AND ')}
+         GROUP BY query, COALESCE(platform, 'unknown')
+         ORDER BY search_count DESC
+         LIMIT $1`,
+        params
+      );
+
+      return result.rows.map((r, idx) => ({
+        rank: idx + 1,
+        query: r.query,
+        searchCount: parseInt(r.search_count),
+        avgResults: Math.round(parseFloat(r.avg_results) || 0),
+        avgTimeMs: Math.round(parseFloat(r.avg_time) || 0),
+        uniqueUsers: parseInt(r.unique_users),
+        platform: r.primary_platform,
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to get top queries by channel: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
+   * Search volume broken down by platform over time
+   */
+  async getVolumeByChannel(days: number = 7, granularity: string = 'day') {
+    try {
+      const dateTrunc = granularity === 'hour' ? `DATE_TRUNC('hour', created_at)` : `DATE(created_at)`;
+
+      const result = await this.pool.query(
+        `SELECT
+           ${dateTrunc} as period,
+           COALESCE(platform, 'unknown') as platform,
+           COUNT(*) as search_count
+         FROM search_logs
+         WHERE created_at >= NOW() - INTERVAL '${days} days'
+         GROUP BY ${dateTrunc}, COALESCE(platform, 'unknown')
+         ORDER BY period ASC, platform`
+      );
+
+      return result.rows.map(r => ({
+        period: r.period,
+        platform: r.platform,
+        searchCount: parseInt(r.search_count),
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to get volume by channel: ${error.message}`);
+      return [];
     }
   }
 }

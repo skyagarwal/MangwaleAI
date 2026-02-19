@@ -36,7 +36,7 @@ export class SearchService {
   /**
    * Universal search - keyword, semantic, or hybrid (DEFAULT: hybrid)
    */
-  async search(dto: SearchDto): Promise<SearchResultDto> {
+  async search(dto: SearchDto & { platform?: string; [key: string]: any }): Promise<SearchResultDto> {
     const startTime = Date.now();
     let result: SearchResultDto;
 
@@ -107,6 +107,7 @@ export class SearchService {
       filters: dto.filters,
       resultsCount: result.total,
       executionTimeMs: result.took,
+      platform: dto.platform,
     });
 
     return result;
@@ -615,6 +616,7 @@ export class SearchService {
       veg?: string;
       size?: number;
       semantic?: boolean;
+      platform?: string;
     } = {}
   ): Promise<SearchResultDto> {
     const startTime = Date.now();

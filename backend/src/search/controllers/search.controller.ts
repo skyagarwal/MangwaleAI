@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Logger, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Logger, Param, Query, Headers } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SearchService } from '../services/search.service';
 import { OpenSearchService } from '../services/opensearch.service';
@@ -20,24 +20,34 @@ export class SearchController {
   ) {}
 
   @Post()
-  async search(@Body() dto: SearchDto): Promise<SearchResultDto> {
-    this.logger.log(`Search request: "${dto.query}" (${dto.searchType}, ${dto.index})`);
-    return this.searchService.search(dto);
+  async search(
+    @Body() dto: SearchDto,
+    @Headers('x-platform') headerPlatform?: string,
+  ): Promise<SearchResultDto> {
+    const platform = headerPlatform || 'web';
+    this.logger.log(`Search request: "${dto.query}" (${dto.searchType}, ${dto.index}, platform: ${platform})`);
+    return this.searchService.search({ ...dto, platform });
   }
 
   @Get('unified')
-  async unifiedSearch(@Query() query: Record<string, string>): Promise<any> {
+  async unifiedSearch(
+    @Query() query: Record<string, string>,
+    @Headers('x-platform') headerPlatform?: string,
+  ): Promise<any> {
     const q = query.q || '';
     this.logger.log(`Unified search: "${q}" (module_id: ${query.module_id || 'all'}, zone_id: ${query.zone_id || 'any'})`);
-    
+
     return this.searchService.unifiedSearch(q, query);
   }
 
   @Get('food')
-  async searchFood(@Query() query: Record<string, string>): Promise<any> {
+  async searchFood(
+    @Query() query: Record<string, string>,
+    @Headers('x-platform') headerPlatform?: string,
+  ): Promise<any> {
     const q = query.q || '';
     this.logger.log(`Food search: "${q}" (veg: ${query.veg || 'all'}, semantic: ${query.semantic || 'false'})`);
-    
+
     return this.searchService.moduleSearch('food', q, query);
   }
 

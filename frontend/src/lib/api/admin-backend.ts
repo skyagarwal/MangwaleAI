@@ -656,6 +656,34 @@ class AdminBackendClient {
     })
   }
 
+  async getSearchChannels(days?: number): Promise<Record<string, unknown>> {
+    const params = new URLSearchParams()
+    if (days) params.set('days', String(days))
+    return this.request(`/admin/search/analytics/channels?${params}`)
+  }
+
+  async getTopQueriesByChannel(days?: number, platform?: string, limit?: number): Promise<Record<string, unknown>> {
+    const params = new URLSearchParams()
+    if (days) params.set('days', String(days))
+    if (platform) params.set('platform', platform)
+    if (limit) params.set('limit', String(limit))
+    return this.request(`/admin/search/analytics/top-queries-by-channel?${params}`)
+  }
+
+  async getSearchTrending(days?: number, moduleId?: number): Promise<Record<string, unknown>> {
+    const params = new URLSearchParams()
+    if (days) params.set('days', String(days))
+    if (moduleId) params.set('module_id', String(moduleId))
+    return this.request(`/admin/search/analytics/trending?${params}`)
+  }
+
+  async getSearchVolumeByChannel(days?: number, granularity?: string): Promise<Record<string, unknown>> {
+    const params = new URLSearchParams()
+    if (days) params.set('days', String(days))
+    if (granularity) params.set('granularity', granularity)
+    return this.request(`/admin/search/analytics/volume-by-channel?${params}`)
+  }
+
   // ==========================================
   // Scraper Admin
   // ==========================================

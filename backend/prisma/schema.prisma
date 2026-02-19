@@ -2021,10 +2021,12 @@ model search_logs {
   execution_time_ms Int?
   session_id        String?   @db.VarChar(100)
   user_id           String?   @db.VarChar(100)
+  platform          String?   @db.VarChar(20)
   created_at        DateTime? @default(now()) @db.Timestamp(6)
 
   @@index([created_at], map: "idx_search_logs_created_at")
   @@index([query], map: "idx_search_logs_query")
+  @@index([platform], map: "idx_search_logs_platform")
 }
 
 model ABTest {

@@ -1,6 +1,10 @@
-import { Controller, Get, Query, Logger, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Logger, Post, Body, UseGuards, Inject, Optional } from '@nestjs/common';
 import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { Pool } from 'pg';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { SearchAnalyticsService } from '../services/search-analytics.service';
+import { firstValueFrom } from 'rxjs';
 
 /**
  * Search Analytics Admin Controller
@@ -19,8 +23,13 @@ import { Pool } from 'pg';
 export class SearchAnalyticsAdminController {
   private readonly logger = new Logger(SearchAnalyticsAdminController.name);
   private pool: Pool;
+  private readonly searchApiUrl: string;
 
-  constructor() {
+  constructor(
+    private readonly analyticsService: SearchAnalyticsService,
+    @Optional() private readonly httpService?: HttpService,
+    @Optional() private readonly configService?: ConfigService,
+  ) {
     const databaseUrl = process.env.DATABASE_URL ||
       'postgresql://mangwale_config:config_secure_pass_2024@mangwale_postgres:5432/headless_mangwale?schema=public';
 
@@ -30,6 +39,7 @@ export class SearchAnalyticsAdminController {
       idleTimeoutMillis: 30000,
     });
 
+    this.searchApiUrl = this.configService?.get('SEARCH_API_URL') || 'http://localhost:3100';
     this.logger.log('✅ SearchAnalyticsAdminController initialized');
   }
 
@@ -490,7 +500,7 @@ export class SearchAnalyticsAdminController {
 
     try {
       const result = await this.pool.query(
-        `SELECT * FROM search_logs 
+        `SELECT * FROM search_logs
          WHERE created_at >= NOW() - INTERVAL '${days} days'
          ORDER BY created_at DESC
          LIMIT $1`,
@@ -508,6 +518,179 @@ export class SearchAnalyticsAdminController {
       };
     } catch (error) {
       this.logger.error(`Export failed: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Channel breakdown - searches grouped by platform (WhatsApp/Web/App)
+   *
+   * GET /admin/search/analytics/channels?days=7
+   */
+  @Get('channels')
+  async getChannelBreakdown(@Query('days') days?: string) {
+    const daysNum = parseInt(days || '7');
+    try {
+      const channels = await this.analyticsService.getChannelBreakdown(daysNum);
+      return {
+        success: true,
+        data: {
+          period: `${daysNum} days`,
+          channels,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Channel breakdown failed: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Top queries filtered by channel/platform
+   *
+   * GET /admin/search/analytics/top-queries-by-channel?days=7&platform=whatsapp&limit=20
+   */
+  @Get('top-queries-by-channel')
+  async getTopQueriesByChannel(
+    @Query('days') days?: string,
+    @Query('platform') platform?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const daysNum = parseInt(days || '7');
+    const limitNum = parseInt(limit || '20');
+    try {
+      const queries = await this.analyticsService.getTopQueriesByChannel(daysNum, platform, limitNum);
+      return {
+        success: true,
+        data: {
+          period: `${daysNum} days`,
+          platform: platform || 'all',
+          queries,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Top queries by channel failed: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Trending queries proxy - fetches from Search API ClickHouse analytics
+   *
+   * GET /admin/search/analytics/trending?days=7&module_id=4
+   */
+  @Get('trending')
+  async getTrending(
+    @Query('days') days?: string,
+    @Query('module_id') moduleId?: string,
+  ) {
+    const daysNum = parseInt(days || '7');
+    try {
+      // Try to proxy to Search API ClickHouse-powered trending endpoint
+      if (this.httpService) {
+        try {
+          const params: Record<string, any> = { window: `${daysNum}d` };
+          if (moduleId) params.module_id = moduleId;
+
+          const response = await firstValueFrom(
+            this.httpService.get(`${this.searchApiUrl}/analytics/trending`, {
+              params,
+              timeout: 5000,
+            }),
+          );
+
+          if (response.data) {
+            return {
+              success: true,
+              source: 'clickhouse',
+              data: response.data,
+            };
+          }
+        } catch (proxyError) {
+          this.logger.warn(`Search API trending proxy failed: ${proxyError.message}, falling back to PG`);
+        }
+      }
+
+      // Fallback: compute trending from search_logs in PostgreSQL
+      const result = await this.pool.query(
+        `WITH current_period AS (
+           SELECT query, COUNT(*) as current_count
+           FROM search_logs
+           WHERE created_at >= NOW() - INTERVAL '${daysNum} days'
+           GROUP BY query
+           HAVING COUNT(*) >= 3
+         ),
+         previous_period AS (
+           SELECT query, COUNT(*) as prev_count
+           FROM search_logs
+           WHERE created_at >= NOW() - INTERVAL '${daysNum * 2} days'
+           AND created_at < NOW() - INTERVAL '${daysNum} days'
+           GROUP BY query
+         )
+         SELECT
+           c.query,
+           c.current_count as count,
+           COALESCE(p.prev_count, 0) as prev_count,
+           CASE
+             WHEN COALESCE(p.prev_count, 0) = 0 THEN 100
+             ELSE ROUND(((c.current_count - p.prev_count)::numeric / p.prev_count * 100))
+           END as trend_pct
+         FROM current_period c
+         LEFT JOIN previous_period p ON c.query = p.query
+         ORDER BY
+           CASE
+             WHEN COALESCE(p.prev_count, 0) = 0 THEN c.current_count * 2
+             ELSE c.current_count - p.prev_count
+           END DESC
+         LIMIT 30`,
+      );
+
+      return {
+        success: true,
+        source: 'postgresql',
+        data: {
+          period: `${daysNum} days`,
+          queries: result.rows.map((r, idx) => ({
+            rank: idx + 1,
+            query: r.query,
+            count: parseInt(r.count),
+            prevCount: parseInt(r.prev_count),
+            trendPct: parseInt(r.trend_pct),
+            velocity: parseInt(r.trend_pct) > 20 ? 'rising' : parseInt(r.trend_pct) < -20 ? 'falling' : 'stable',
+            module: 'food', // Default; PG doesn't store module
+          })),
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Trending query failed: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Search volume broken down by channel over time
+   *
+   * GET /admin/search/analytics/volume-by-channel?days=7&granularity=day
+   */
+  @Get('volume-by-channel')
+  async getVolumeByChannel(
+    @Query('days') days?: string,
+    @Query('granularity') granularity?: string,
+  ) {
+    const daysNum = parseInt(days || '7');
+    const gran = granularity === 'hour' ? 'hour' : 'day';
+    try {
+      const volume = await this.analyticsService.getVolumeByChannel(daysNum, gran);
+      return {
+        success: true,
+        data: {
+          period: `${daysNum} days`,
+          granularity: gran,
+          volume,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Volume by channel failed: ${error.message}`);
       return { success: false, error: error.message };
     }
   }

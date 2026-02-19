@@ -272,6 +272,7 @@ export class SearchExecutor implements ActionExecutor {
       const useSmartSearch = config.useSmartSearch || config.smartSearch || false;
       const queryMode = config.queryMode as string; // 'multi-term', 'recommendation'
       const userId = context.data._user_id || context.data.userId;
+      const platform = context.data.platform || 'unknown';
 
       // 🎯 SMART RECOMMENDATION & MULTI-TERM MODE
       // recommendation: Time-of-day aware terms + user history + personalization + diversity
@@ -358,6 +359,7 @@ export class SearchExecutor implements ActionExecutor {
               searchType: 'hybrid',
               limit: resultsPerTerm,
               filters,  // 🔧 FIX: Pass veg preference + module_id filters
+              platform,
             });
             
             const items = (termResults.results || []).map((hit: any) => ({
@@ -621,7 +623,7 @@ export class SearchExecutor implements ActionExecutor {
               }
               
               // 📊 Track the not-found store for business intelligence
-              this.trackNotFoundStore(requestedStoreName, userId, lat, lng).catch(() => {});
+              this.trackNotFoundStore(requestedStoreName, userId, lat, lng, platform).catch(() => {});
             }
           } catch (err) {
             storeResolutionStatus = 'not_found';
@@ -738,6 +740,7 @@ export class SearchExecutor implements ActionExecutor {
           radius_km: parseFloat(radius) || 10,
           size: limit,
           semantic: true,
+          platform,
         });
 
         return this.formatSearchResults(results, limit);
@@ -868,6 +871,7 @@ export class SearchExecutor implements ActionExecutor {
         query,
         limit: searchLimit,
         filters,
+        platform,
       });
 
       // Flatten results for easier template access - extract source and add id
@@ -1421,6 +1425,7 @@ export class SearchExecutor implements ActionExecutor {
     userId?: string,
     lat?: number | string,
     lng?: number | string,
+    platform?: string,
   ): Promise<void> {
     try {
       // Log for analytics/monitoring
@@ -1439,6 +1444,7 @@ export class SearchExecutor implements ActionExecutor {
           resultsCount: 0,
           executionTimeMs: 0,
           userId: userId,
+          platform: platform,
         });
       }
     } catch (error) {
