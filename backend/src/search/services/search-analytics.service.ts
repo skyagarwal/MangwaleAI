@@ -49,12 +49,16 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
 
         CREATE INDEX IF NOT EXISTS idx_search_logs_created_at ON search_logs(created_at);
         CREATE INDEX IF NOT EXISTS idx_search_logs_query ON search_logs(query);
-        CREATE INDEX IF NOT EXISTS idx_search_logs_platform ON search_logs(platform);
       `);
 
       // Add platform column if missing (migration for existing tables)
       await client.query(`
         ALTER TABLE search_logs ADD COLUMN IF NOT EXISTS platform VARCHAR(20) DEFAULT 'unknown'
+      `).catch(() => {});
+
+      // Create platform index (after column is guaranteed to exist)
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_search_logs_platform ON search_logs(platform)
       `).catch(() => {});
       
       client.release();
