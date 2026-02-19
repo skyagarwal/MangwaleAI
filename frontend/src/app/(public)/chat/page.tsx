@@ -964,8 +964,8 @@ function ChatContent() {
   }, [sessionIdState, _hasHydrated, authData])
 
   // Helper to check if a message is an internal action (should not be displayed)
-  const isInternalAction = (text: string): boolean => {
-    const lowerText = text.toLowerCase().trim()
+  const isInternalAction = (text: string | number): boolean => {
+    const lowerText = String(text).toLowerCase().trim()
     
     // Exact matches for internal actions
     const internalActions = [
@@ -1038,8 +1038,9 @@ function ChatContent() {
     return false
   }
 
-  const handleSend = (textInput?: string, buttonAction?: string, displayLabel?: string) => {
-    const messageText = textInput || input.trim()
+  const handleSend = (textInput?: string | number, buttonAction?: string | number, displayLabel?: string) => {
+    // Coerce to string — button values can be numeric (e.g., category IDs like 14)
+    const messageText = String(textInput ?? '') || input.trim()
     if (!messageText) return
 
     if (!isConnected) {
@@ -1090,7 +1091,7 @@ function ChatContent() {
         sessionId: sessionIdState,
         platform: 'web',
         type: buttonAction ? 'button_click' : 'text',
-        action: buttonAction,
+        action: buttonAction ? String(buttonAction) : undefined,
         // Include auth in every message to ensure session has auth even if join was missed
         // 🔧 FIX: Include email and name for Google OAuth users who don't have userId/token yet
         auth: authData ? {
@@ -2138,10 +2139,11 @@ function ChatContent() {
                               {message.buttons && message.buttons.length > 0 && (
                                 <div className={`mt-3 pt-2.5 border-t border-gray-100 ${voiceCallMode ? 'flex flex-col gap-2' : 'flex flex-wrap gap-2'}`}>
                                   {message.buttons.map((button, index) => {
-                                    const isCheckout = button.label?.toLowerCase().includes('checkout') || button.value?.toLowerCase().includes('checkout')
-                                    const isViewCart = button.label?.toLowerCase().includes('cart') || button.value?.toLowerCase().includes('cart')
-                                    const isConfirm = button.label?.toLowerCase().includes('confirm') || button.value === 'yes' || button.action === 'yes'
-                                    const isCancel = button.label?.toLowerCase().includes('cancel') || button.value === 'cancel' || button.action === 'cancel'
+                                    const btnVal = String(button.value ?? '').toLowerCase()
+                                    const isCheckout = button.label?.toLowerCase().includes('checkout') || btnVal.includes('checkout')
+                                    const isViewCart = button.label?.toLowerCase().includes('cart') || btnVal.includes('cart')
+                                    const isConfirm = button.label?.toLowerCase().includes('confirm') || btnVal === 'yes' || button.action === 'yes'
+                                    const isCancel = button.label?.toLowerCase().includes('cancel') || btnVal === 'cancel' || button.action === 'cancel'
 
                                     return (
                                     <button
