@@ -631,14 +631,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         }
         
         // Known intent values that need conversion to natural language for NLU
+        // NOTE: Do NOT add flow-internal button values here (browse_menu, popular, surprise)
+        // — those need to pass through as-is for the flow's decision nodes to match
         const intentValueMap: Record<string, string> = {
           'order_food': 'I want to order food',
           'parcel_booking': 'I want to book a parcel',
           'search_product': 'I want to search for products',
           'help': 'I need help',
-          'popular': 'Show me popular items',
-          'browse_menu': 'Show me the menu',
-          'surprise': 'Surprise me with something',
         };
         
         // Check if button value is a known intent that needs conversion
@@ -654,7 +653,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           this.logger.log(`✨ Using button value: "${processedMessage}"`);
         }
         // Preserve structured button values (item_ID, category_ID, etc.) — don't strip underscores
-        else if (message && /^(item_\d+|category_\d+|store_\d+|skip_location|search_different|view_cart|show_cart|browse_menu|clear_cart|add_more)$/i.test(message)) {
+        // Also preserves flow-internal buttons: browse_menu, popular, surprise
+        else if (message && /^(item_\d+|category_\d+|store_\d+|skip_location|search_different|view_cart|show_cart|browse_menu|popular|surprise|clear_cart|add_more)$/i.test(message)) {
           processedMessage = message;
           this.logger.log(`✨ Using structured button value: "${processedMessage}"`);
         } else {
