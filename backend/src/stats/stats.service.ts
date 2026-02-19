@@ -72,11 +72,17 @@ export class StatsService {
     // Count messages from sessions (estimate based on flow runs)
     const messagesProcessed = todayRuns;
 
+    // Count unique modules (agent types)
+    const modules = await this.prisma.flow.findMany({
+      select: { module: true },
+      distinct: ['module'],
+    });
+
     return {
-      totalAgents: 9, // Static for now - could count unique flow modules
-      activeModels: 5, // Static for now
+      totalAgents: modules.length,
+      activeModels: modules.length,
       todayMessages: messagesProcessed,
-      todaySearches: Math.round(todayRuns * 1.5), // Estimate: 1.5 searches per conversation
+      todaySearches: 0,
       avgResponseTime,
       successRate: parseFloat(successRate.toFixed(1)),
       conversationsToday: todayRuns,
@@ -87,29 +93,34 @@ export class StatsService {
   }
 
   async getAgentStats() {
-    // Group flows by module
+    // Get flows and count runs per flow separately (no relation in schema)
     const flows = await this.prisma.flow.findMany({
       select: {
         id: true,
         name: true,
         module: true,
         enabled: true,
-        flowRuns: {
-          select: {
-            id: true,
-          },
-        },
       },
     });
 
-    const agentStats = flows.map((flow) => ({
-      id: `agent_${flow.module}`,
-      name: `${flow.module.charAt(0).toUpperCase() + flow.module.slice(1)} Agent`,
-      module: flow.module,
-      status: flow.enabled ? 'active' : 'inactive',
-      messagesHandled: flow.flowRuns.length,
-      accuracy: Math.random() * 10 + 90, // Mock accuracy for now
-    }));
+    const agentStats = await Promise.all(
+      flows.map(async (flow) => {
+        const total = await this.prisma.flowRun.count({
+          where: { flowId: flow.id },
+        });
+        const completed = await this.prisma.flowRun.count({
+          where: { flowId: flow.id, status: 'completed' },
+        });
+        return {
+          id: `agent_${flow.module}`,
+          name: `${flow.module.charAt(0).toUpperCase() + flow.module.slice(1)} Agent`,
+          module: flow.module,
+          status: flow.enabled ? 'active' : 'inactive',
+          messagesHandled: total,
+          accuracy: total > 0 ? parseFloat(((completed / total) * 100).toFixed(1)) : 0,
+        };
+      }),
+    );
 
     return {
       agents: agentStats,
@@ -119,26 +130,25 @@ export class StatsService {
   }
 
   async getFlowStats() {
-    const flows = await this.prisma.flow.findMany({
-      include: {
-        flowRuns: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
+    const flows = await this.prisma.flow.findMany();
 
-    return flows.map((flow) => ({
-      id: flow.id,
-      name: flow.name,
-      module: flow.module,
-      enabled: flow.enabled,
-      status: flow.status,
-      totalRuns: flow.flowRuns.length,
-      createdAt: flow.createdAt,
-      updatedAt: flow.updatedAt,
-    }));
+    return Promise.all(
+      flows.map(async (flow) => {
+        const totalRuns = await this.prisma.flowRun.count({
+          where: { flowId: flow.id },
+        });
+        return {
+          id: flow.id,
+          name: flow.name,
+          module: flow.module,
+          enabled: flow.enabled,
+          status: flow.status,
+          totalRuns,
+          createdAt: flow.createdAt,
+          updatedAt: flow.updatedAt,
+        };
+      }),
+    );
   }
 
   private async getRecentActivity() {
@@ -147,23 +157,26 @@ export class StatsService {
       orderBy: {
         startedAt: 'desc',
       },
-      include: {
-        flow: {
-          select: {
-            name: true,
-            module: true,
-          },
-        },
-      },
     });
 
-    return recentRuns.map((run) => ({
-      id: run.id,
-      type: run.status === 'completed' ? 'success' : 'error',
-      message: `${run.flow.name} - ${run.status}`,
-      time: this.getRelativeTime(run.startedAt),
-      status: run.status === 'completed' ? 'success' : run.status === 'active' ? 'info' : 'error',
-    }));
+    // Look up flow names separately (no relation in schema)
+    const flowIds = [...new Set(recentRuns.map((r) => r.flowId))];
+    const flows = await this.prisma.flow.findMany({
+      where: { id: { in: flowIds } },
+      select: { id: true, name: true, module: true },
+    });
+    const flowMap = new Map(flows.map((f) => [f.id, f]));
+
+    return recentRuns.map((run) => {
+      const flow = flowMap.get(run.flowId);
+      return {
+        id: run.id,
+        type: run.status === 'completed' ? 'success' : 'error',
+        message: `${flow?.name || 'Unknown'} - ${run.status}`,
+        time: this.getRelativeTime(run.startedAt),
+        status: run.status === 'completed' ? 'success' : run.status === 'active' ? 'info' : 'error',
+      };
+    });
   }
 
   private getRelativeTime(date: Date): string {
@@ -189,30 +202,23 @@ export class StatsService {
     // Find flows for this module
     const flows = await this.prisma.flow.findMany({
       where: { module },
-      include: {
-        flowRuns: {
-          select: {
-            id: true,
-            status: true,
-            startedAt: true,
-          },
-        },
-      },
     });
 
-    // Calculate stats
-    const totalRuns = flows.reduce((sum, flow) => sum + flow.flowRuns.length, 0);
-    const completedRuns = flows.reduce(
-      (sum, flow) => sum + flow.flowRuns.filter((r) => r.status === 'completed').length,
-      0,
-    );
-    
-    const todayRuns = flows.reduce(
-      (sum, flow) =>
-        sum +
-        flow.flowRuns.filter((r) => r.startedAt >= today && r.startedAt < tomorrow).length,
-      0,
-    );
+    const flowIds = flows.map((f) => f.id);
+
+    // Calculate stats using separate queries (no relation in schema)
+    const totalRuns = await this.prisma.flowRun.count({
+      where: { flowId: { in: flowIds } },
+    });
+    const completedRuns = await this.prisma.flowRun.count({
+      where: { flowId: { in: flowIds }, status: 'completed' },
+    });
+    const todayRuns = await this.prisma.flowRun.count({
+      where: {
+        flowId: { in: flowIds },
+        startedAt: { gte: today, lt: tomorrow },
+      },
+    });
 
     const successRate = totalRuns > 0 ? (completedRuns / totalRuns) * 100 : 0;
 
@@ -222,7 +228,7 @@ export class StatsService {
       conversationsToday: todayRuns,
       completedOrders: completedRuns,
       successRate: parseFloat(successRate.toFixed(1)),
-      averageSatisfaction: 4.2, // Mock for now - would come from customer ratings
+      averageSatisfaction: 0,
       activeFlows: flows.filter((f) => f.enabled).length,
       totalFlows: flows.length,
       supportedIntents: this.getModuleIntents(module),

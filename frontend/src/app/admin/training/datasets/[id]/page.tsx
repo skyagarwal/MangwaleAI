@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Edit, Trash2, Download, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Download, Upload, Database } from 'lucide-react';
 import TrainingConfigModal, {
   TrainingConfig,
 } from '@/components/TrainingConfigModal';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface TrainingExample {
   id: string;
@@ -15,56 +16,59 @@ interface TrainingExample {
   confidence?: number;
 }
 
+interface DatasetInfo {
+  id: string;
+  name: string;
+  type: string;
+  module: string;
+  exampleCount: number;
+}
+
 export default function DatasetDetailPage({ params }: { params: { id: string } }) {
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
-  const datasetName = 'Food NLU Dataset v2';
+  const [dataset, setDataset] = useState<DatasetInfo | null>(null);
+  const [examples, setExamples] = useState<TrainingExample[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    loadDataset();
+  }, [params.id]);
+
+  const loadDataset = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [dsData, examplesData] = await Promise.all([
+        adminBackendClient.getDataset(params.id),
+        adminBackendClient.getDatasetExamples(params.id),
+      ]);
+      setDataset(dsData as unknown as DatasetInfo);
+      setExamples((examplesData || []) as unknown as TrainingExample[]);
+    } catch (err) {
+      console.error('Failed to load dataset:', err);
+      setError('Failed to load dataset. The training API may be unavailable.');
+      setDataset(null);
+      setExamples([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleStartTraining = (config: TrainingConfig) => {
     console.log('Starting training with config:', config);
-    // TODO: API call to start training job
-    // In real implementation, this would POST to /api/training/jobs
+    adminBackendClient.startTrainingJob({
+      datasetId: params.id,
+      epochs: config.epochs,
+      batchSize: config.batchSize,
+      learningRate: config.learningRate,
+    }).then(() => {
+      alert('Training job started successfully!');
+    }).catch((err) => {
+      console.error('Failed to start training:', err);
+      alert('Failed to start training job. Please try again.');
+    });
   };
-
-  const [examples] = useState<TrainingExample[]>([
-    {
-      id: '1',
-      text: 'I want to order pizza',
-      intent: 'order_food',
-      entities: [{ type: 'food_item', value: 'pizza' }],
-      confidence: 0.95,
-    },
-    {
-      id: '2',
-      text: 'Show me veg restaurants near me',
-      intent: 'search_restaurant',
-      entities: [
-        { type: 'dietary', value: 'veg' },
-        { type: 'location', value: 'near me' },
-      ],
-      confidence: 0.92,
-    },
-    {
-      id: '3',
-      text: 'Track my order #12345',
-      intent: 'track_order',
-      entities: [{ type: 'order_id', value: '12345' }],
-      confidence: 0.98,
-    },
-    {
-      id: '4',
-      text: 'Cancel my food order',
-      intent: 'cancel_order',
-      entities: [{ type: 'order_type', value: 'food' }],
-      confidence: 0.89,
-    },
-    {
-      id: '5',
-      text: 'What are today\'s special offers?',
-      intent: 'check_offers',
-      entities: [{ type: 'time', value: 'today' }],
-      confidence: 0.87,
-    },
-  ]);
 
   const [filter, setFilter] = useState('all');
   const intents = Array.from(new Set(examples.map((e) => e.intent)));
@@ -72,8 +76,30 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
   const filteredExamples =
     filter === 'all' ? examples : examples.filter((e) => e.intent === filter);
 
+  const datasetName = dataset?.name || `Dataset ${params.id}`;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-gray-900 mb-2">Loading...</div>
+          <div className="text-gray-600">Fetching dataset details...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* Error Message */}
+      {error && (
+        <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
+          <div className="flex items-center gap-2 text-yellow-800">
+            <span className="font-medium">{error}</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <Link
@@ -86,10 +112,10 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Food NLU Dataset v2
+              {datasetName}
             </h1>
             <p className="text-gray-600 mt-1">
-              {examples.length} training examples • NLU • food module
+              {examples.length} training examples{dataset?.type ? ` • ${dataset.type.toUpperCase()}` : ''}{dataset?.module ? ` • ${dataset.module} module` : ''}
             </p>
           </div>
           <div className="flex gap-3">
@@ -125,47 +151,66 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
         </div>
         <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
           <div className="text-2xl font-bold text-gray-900">
-            {(
-              examples.reduce((sum, e) => sum + (e.confidence || 0), 0) /
-              examples.length
-            ).toFixed(2)}
+            {examples.length > 0
+              ? (
+                  examples.reduce((sum, e) => sum + (e.confidence || 0), 0) /
+                  examples.length
+                ).toFixed(2)
+              : '--'}
           </div>
           <div className="text-sm text-gray-600">Avg Confidence</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
           <div className="text-2xl font-bold text-gray-900">
-            {examples.reduce((sum, e) => sum + e.entities.length, 0)}
+            {examples.reduce((sum, e) => sum + (e.entities?.length || 0), 0)}
           </div>
           <div className="text-sm text-gray-600">Total Entities</div>
         </div>
       </div>
 
+      {/* Empty State */}
+      {examples.length === 0 && !error && (
+        <div className="bg-white rounded-xl p-12 shadow-md border-2 border-gray-100 text-center">
+          <Database size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Training Examples</h3>
+          <p className="text-gray-600 mb-6">
+            This dataset has no training examples yet. Add examples manually or import from a file.
+          </p>
+          <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium">
+            <Plus size={20} />
+            Add First Example
+          </button>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-            filter === 'all'
-              ? 'bg-[#059211] text-white'
-              : 'bg-white border-2 border-gray-200 hover:border-[#059211]'
-          }`}
-        >
-          All ({examples.length})
-        </button>
-        {intents.map((intent) => (
+      {examples.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto pb-2">
           <button
-            key={intent}
-            onClick={() => setFilter(intent)}
+            onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-              filter === intent
+              filter === 'all'
                 ? 'bg-[#059211] text-white'
                 : 'bg-white border-2 border-gray-200 hover:border-[#059211]'
             }`}
           >
-            {intent} ({examples.filter((e) => e.intent === intent).length})
+            All ({examples.length})
           </button>
-        ))}
-      </div>
+          {intents.map((intent) => (
+            <button
+              key={intent}
+              onClick={() => setFilter(intent)}
+              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
+                filter === intent
+                  ? 'bg-[#059211] text-white'
+                  : 'bg-white border-2 border-gray-200 hover:border-[#059211]'
+              }`}
+            >
+              {intent} ({examples.filter((e) => e.intent === intent).length})
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Examples List */}
       <div className="space-y-3">
@@ -190,7 +235,7 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
                     {example.intent}
                   </span>
                 </div>
-                {example.entities.length > 0 && (
+                {example.entities && example.entities.length > 0 && (
                   <div className="flex items-start gap-2">
                     <span className="text-sm text-gray-600">Entities:</span>
                     <div className="flex flex-wrap gap-2">
@@ -229,7 +274,8 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
         </Link>
         <button
           onClick={() => setIsTrainingModalOpen(true)}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium"
+          disabled={examples.length === 0}
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Start Training with this Dataset
         </button>

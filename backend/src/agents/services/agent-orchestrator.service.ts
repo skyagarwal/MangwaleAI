@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject, forwardRef, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef, OnModuleInit, Optional } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
@@ -27,6 +27,8 @@ import { SentimentAnalysisService } from './sentiment-analysis.service';
 import { AdvancedLearningService } from './advanced-learning.service';
 import { FlowDispatcherService } from './flow-dispatcher.service';
 import { GameHandlerService } from './game-handler.service';
+import { RagDocumentService } from '../../llm/services/rag-document.service';
+import { NerEntityExtractorService } from '../../nlu/services/ner-entity-extractor.service';
 // import { LanguageDetectionService } from './language-detection.service'; // FILE MISSING
 
 /**
@@ -124,6 +126,8 @@ export class AgentOrchestratorService implements OnModuleInit {
     private advancedLearning: AdvancedLearningService,
     private flowDispatcher: FlowDispatcherService,
     private gameHandler: GameHandlerService,
+    @Optional() private ragDocumentService: RagDocumentService,
+    @Optional() private nerEntityExtractor: NerEntityExtractorService,
     // private languageDetectionService: LanguageDetectionService, // FILE MISSING
     @Inject(forwardRef(() => SentryService)) private sentryService: SentryService,
     // Inject all agents
@@ -702,6 +706,45 @@ export class AgentOrchestratorService implements OnModuleInit {
       context.entities = routing.entities;
       context.confidence = routing.confidence;
 
+      // NER Entity Extraction: Extract food, store, location, quantity, preference
+      // and save to session so flows can access pre-extracted entities
+      if (this.nerEntityExtractor && message.length > 2) {
+        try {
+          const nerResult = await this.nerEntityExtractor.extract(message);
+          const extractedEntities = {
+            food: nerResult.food_reference || [],
+            store: nerResult.store_reference || null,
+            location: nerResult.location_reference || null,
+            quantity: nerResult.quantity || null,
+            preference: nerResult.preference || [],
+            _source: nerResult._source,
+            _confidence: nerResult._confidence,
+          };
+
+          // Save to session for flow context access
+          await this.sessionService.saveSession(phoneNumber, {
+            data: {
+              ...session?.data,
+              _extracted_entities: extractedEntities,
+              _nlu_confidence: routing.confidence,
+              _nlu_intent: routing.intent,
+            },
+          });
+
+          // Also merge into routing entities so flow initialContext gets them
+          routing.entities = {
+            ...routing.entities,
+            _extracted_entities: extractedEntities,
+            _nlu_confidence: routing.confidence,
+            _nlu_intent: routing.intent,
+          };
+
+          this.logger.log(`NER entities extracted: food=${JSON.stringify(extractedEntities.food)}, store=${extractedEntities.store}, location=${extractedEntities.location}, qty=${extractedEntities.quantity}`);
+        } catch (nerError) {
+          this.logger.debug(`NER extraction skipped: ${nerError.message}`);
+        }
+      }
+
       // Log user message with NLU classification to PostgreSQL
       const flowContext = session?.data?.flowContext;
       await this.conversationLogger.logUserMessage({
@@ -768,6 +811,7 @@ export class AgentOrchestratorService implements OnModuleInit {
         'add_to_cart': { action: 'add_to_cart', module: 'food' },
         'checkout': { action: 'checkout', module: 'food' },
         'track_order': { action: 'track_order', module: 'tracking' },
+        'order_history': { action: 'order_history', module: 'tracking' },
         'cancel_order': { action: 'cancel_order', module: 'tracking' },
         'book_parcel': { action: 'book_delivery', module: 'parcel' },
         'parcel_booking': { action: 'book_delivery', module: 'parcel' },
@@ -936,7 +980,7 @@ export class AgentOrchestratorService implements OnModuleInit {
       
       // 🤔 Handle unknown intent with low confidence - show help menu
       // This prevents greeting flow from matching gibberish/unknown messages
-      if (routing.intent === 'unknown' && routing.confidence < 0.6) {
+      if (routing.intent === 'unknown' && routing.confidence < 0.65) {
         this.logger.log(`🤔 Unknown intent with low confidence (${routing.confidence}) - showing help menu`);
         return {
           response: this.generateClarificationMenu(message),
@@ -945,11 +989,11 @@ export class AgentOrchestratorService implements OnModuleInit {
           metadata: { intent: 'unknown_clarification' }
         };
       }
-      
+
       // 🤔 Handle ANY intent with very low confidence - likely gibberish
       // If confidence is below threshold, the model is unsure - ask for clarification
       // Excludes greeting, chitchat (conversational), and food/order intents
-      const lowConfidenceThreshold = 0.55; // Lowered from 0.60 for better chitchat handling
+      const lowConfidenceThreshold = 0.50;
       const protectedIntents = ['greeting', 'chitchat', 'order_food', 'search_product', 'parcel_booking', 'track_order', 'farewell', 'feedback'];
       
       // Also detect potential gibberish: short messages with no real words
@@ -989,8 +1033,9 @@ export class AgentOrchestratorService implements OnModuleInit {
           'create_parcel_order': { action: 'create_order', module: 'parcel' },
           'checkout': { action: 'checkout', module: 'food' },
           'track_order': { action: 'track_order', module: 'tracking' },
+          'order_history': { action: 'order_history', module: 'tracking' },
         };
-        
+
         // 🔧 FIX: Do NOT block flow starts for auth here!
         // The flow engine's internal state machine (e.g., parcel flow's check_auth_before_flow)
         // handles auth properly by reading session data. This duplicate check was the ROOT CAUSE
@@ -1711,12 +1756,26 @@ ${systemPrompt}`;
     }
     
     try {
+      // 📚 RAG: Query knowledge base for relevant context
+      let ragContext = '';
+      if (this.ragDocumentService) {
+        try {
+          const ragResults = await this.ragDocumentService.search(context.message, { limit: 3, minScore: 0.5 });
+          if (ragResults && ragResults.length > 0) {
+            ragContext = `\n\n=== KNOWLEDGE BASE ===\nUse the following verified information to answer the user's question:\n${ragResults.map(r => r.content).join('\n---\n')}`;
+            this.logger.log(`📚 RAG: Found ${ragResults.length} relevant documents for "${context.message.substring(0, 40)}..."`);
+          }
+        } catch (ragErr) {
+          this.logger.debug(`RAG search skipped: ${ragErr.message}`);
+        }
+      }
+
       // 🌐 Language-aware system prompt
       const detectedLang = context.session.data?.detected_language || 'en';
       // const langInstruction = this.languageDetectionService.getLanguageInstruction(detectedLang); // FILE MISSING
       const langInstruction = 'Respond in the same language as the user.'; // FALLBACK
-      const languageAwareSystemPrompt = `${systemPrompt}\n\nIMPORTANT LANGUAGE INSTRUCTION:\n${langInstruction}\nALWAYS respond in the SAME language as the user's input. If user speaks Hinglish, you MUST respond in Hinglish.`;
-      
+      const languageAwareSystemPrompt = `${systemPrompt}${ragContext}\n\nIMPORTANT LANGUAGE INSTRUCTION:\n${langInstruction}\nALWAYS respond in the SAME language as the user's input. If user speaks Hinglish, you MUST respond in Hinglish.`;
+
       // Use local LLM service (vLLM + cloud failover) instead of calling an external Admin Backend.
       // This avoids long hangs/timeouts when ADMIN_BACKEND_URL is not running.
       const completion = await this.llmService.chat({
@@ -3156,7 +3215,7 @@ Kya chahiye aapko?`;
     return [
       { id: 'btn_food', label: '🍔 Order Food', value: 'order_food', type: 'quick_reply' },
       { id: 'btn_parcel', label: '📦 Send Parcel', value: 'parcel_booking', type: 'quick_reply' },
-      { id: 'btn_shop', label: '🛒 Shop Online', value: 'search_product', type: 'quick_reply' },
+      { id: 'btn_track', label: '📍 Track Order', value: 'track_order', type: 'quick_reply' },
       { id: 'btn_help', label: '❓ Help', value: 'help', type: 'quick_reply' },
     ];
   }

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  ChevronLeft, 
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  ChevronLeft,
   ChevronRight,
   Edit2,
   Eye,
@@ -14,6 +14,7 @@ import {
   Filter,
   ArrowUpDown
 } from 'lucide-react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface TrainingExample {
   id: string;
@@ -50,12 +51,14 @@ export default function ReviewQueuePage() {
   const loadExamples = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/admin/learning/pending?filter=${filter}&page=${page}&limit=20`);
-      const data = await response.json();
-      setExamples(data.examples);
-      setTotal(data.total);
+      const data = await adminBackendClient.getPendingReviews(filter === 'all' ? undefined : filter) as any;
+      const items = data.data || data.examples || [];
+      setExamples(items);
+      setTotal(data.count || data.total || items.length);
     } catch (error) {
       console.error('Failed to load examples:', error);
+      setExamples([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
@@ -63,21 +66,21 @@ export default function ReviewQueuePage() {
 
   const loadIntents = async () => {
     try {
-      const response = await fetch('/api/admin/learning/intents');
-      const data = await response.json();
-      setIntents(data);
+      const data = await adminBackendClient.getLearningIntents() as any;
+      const intentList = data.data || data || [];
+      setIntents(intentList.map((i: any) => ({
+        name: i.intent || i.name || i,
+        count: i.count || 0,
+      })));
     } catch (error) {
       console.error('Failed to load intents:', error);
+      setIntents([]);
     }
   };
 
   const approveExample = async (id: string, correctedIntent?: string) => {
     try {
-      await fetch(`/api/admin/learning/${id}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correctedIntent }),
-      });
+      await adminBackendClient.approveTraining(id);
       setExamples(prev => prev.filter(e => e.id !== id));
       setSelectedExample(null);
       setTotal(prev => prev - 1);
@@ -88,11 +91,7 @@ export default function ReviewQueuePage() {
 
   const rejectExample = async (id: string, reason?: string) => {
     try {
-      await fetch(`/api/admin/learning/${id}/reject`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
-      });
+      await adminBackendClient.rejectTraining(id, reason);
       setExamples(prev => prev.filter(e => e.id !== id));
       setSelectedExample(null);
       setTotal(prev => prev - 1);

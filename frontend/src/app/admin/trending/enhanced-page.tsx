@@ -70,8 +70,7 @@ export default function EnhancedTrendingPage() {
     setLoading(true);
     try {
       // Load zones from API
-      const apiUrl = process.env.NEXT_PUBLIC_SEARCH_API_URL || 'http://localhost:3100';
-      const response = await fetch(`${apiUrl}/admin/zones`);
+      const response = await fetch('/api/search-admin/zones');
       if (response.ok) {
         const data = await response.json();
         setZones(data.zones || zones);

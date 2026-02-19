@@ -1,38 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Server, Zap, Activity, Settings, RefreshCw, 
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Server, Zap, Settings, RefreshCw,
   CheckCircle, XCircle, AlertCircle, Cpu, HardDrive,
-  Thermometer, TrendingUp, Eye, Terminal, Play, Square
+  Activity, Eye, Terminal
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface VllmStatus {
   status: 'healthy' | 'unhealthy' | 'offline';
   model: string | null;
-  uptime: number;
-  gpu: {
-    name: string;
-    utilization: number;
-    memory: {
-      used: number;
-      total: number;
-      percentage: number;
-    };
-    temperature: number;
-  } | null;
-  performance: {
-    requestsPerSecond: number;
-    avgLatency: number;
-    tokensPerSecond: number;
-  };
+  latency: number | null;
 }
 
 export default function VllmSettingsPage() {
+  const toast = useToast();
   const [vllmStatus, setVllmStatus] = useState<VllmStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
+  const [saving, setSaving] = useState(false);
+
   // vLLM Config
   const [vllmConfig, setVllmConfig] = useState({
     temperature: 0.7,
@@ -41,59 +30,77 @@ export default function VllmSettingsPage() {
     topK: 50,
   });
 
-  useEffect(() => {
-    loadVllmStatus();
-    // Refresh every 5 seconds
-    const interval = setInterval(loadVllmStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadVllmStatus = async () => {
+  const loadVllmStatus = useCallback(async () => {
     try {
-      setLoading(false);
-      // Fetch from vLLM API
-      const response = await fetch('/api/vllm/v1/models');
-      if (!response.ok) throw new Error('vLLM offline');
-      
-      const data = await response.json();
-      const model = data.data?.[0];
-      
-      // Mock GPU stats (in production, get from backend endpoint)
+      // Get health status from the NestJS backend (includes vLLM status + latency)
+      const healthData = await adminBackendClient.getSystemHealth() as {
+        services?: {
+          vllm?: { status: string; latency?: number };
+        };
+      };
+      const vllmHealth = healthData?.services?.vllm;
+      const isUp = vllmHealth?.status === 'up';
+
+      // If vLLM is up, also fetch the model name from vLLM's OpenAI API
+      let modelName: string | null = null;
+      if (isUp) {
+        try {
+          const modelsRes = await fetch('/api/vllm/v1/models');
+          if (modelsRes.ok) {
+            const modelsData = await modelsRes.json();
+            modelName = modelsData.data?.[0]?.id || null;
+          }
+        } catch {
+          // Model name fetch failed, that's okay — we still have health info
+        }
+      }
+
       setVllmStatus({
-        status: 'healthy',
-        model: model?.id || null,
-        uptime: Date.now() - (performance.now() * 1000),
-        gpu: {
-          name: 'NVIDIA RTX 3060',
-          utilization: Math.floor(Math.random() * 30) + 40, // 40-70%
-          memory: {
-            used: 10240,
-            total: 12288,
-            percentage: 83,
-          },
-          temperature: Math.floor(Math.random() * 10) + 65, // 65-75°C
-        },
-        performance: {
-          requestsPerSecond: Math.random() * 2,
-          avgLatency: Math.random() * 100 + 50,
-          tokensPerSecond: Math.random() * 50 + 20,
-        },
+        status: isUp ? 'healthy' : 'offline',
+        model: modelName,
+        latency: vllmHealth?.latency ?? null,
       });
-    } catch (error) {
-      setLoading(false);
+    } catch {
       setVllmStatus({
         status: 'offline',
         model: null,
-        uptime: 0,
-        gpu: null,
-        performance: {
-          requestsPerSecond: 0,
-          avgLatency: 0,
-          tokensPerSecond: 0,
-        },
+        latency: null,
       });
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  const loadConfig = useCallback(async () => {
+    try {
+      const configData = await adminBackendClient.getConfigCategory('vllm') as {
+        configs?: Array<{ key: string; value: string }>;
+      };
+      const configs = configData?.configs;
+      if (Array.isArray(configs)) {
+        const configMap: Record<string, string> = {};
+        for (const c of configs) {
+          configMap[c.key] = c.value;
+        }
+        setVllmConfig((prev) => ({
+          temperature: configMap['vllm.temperature'] ? parseFloat(configMap['vllm.temperature']) : prev.temperature,
+          maxTokens: configMap['vllm.max_tokens'] ? parseInt(configMap['vllm.max_tokens'], 10) : prev.maxTokens,
+          topP: configMap['vllm.top_p'] ? parseFloat(configMap['vllm.top_p']) : prev.topP,
+          topK: configMap['vllm.top_k'] ? parseInt(configMap['vllm.top_k'], 10) : prev.topK,
+        }));
+      }
+    } catch {
+      // Config not saved yet — use defaults
+    }
+  }, []);
+
+  useEffect(() => {
+    loadVllmStatus();
+    loadConfig();
+    // Refresh status every 30 seconds
+    const interval = setInterval(loadVllmStatus, 30000);
+    return () => clearInterval(interval);
+  }, [loadVllmStatus, loadConfig]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -102,21 +109,18 @@ export default function VllmSettingsPage() {
   };
 
   const updateVllmConfig = async () => {
+    setSaving(true);
     try {
-      // TODO: Save to backend
-      console.log('Updating vLLM config:', vllmConfig);
-      alert('vLLM configuration saved successfully!');
+      await adminBackendClient.updateConfig('vllm.temperature', String(vllmConfig.temperature));
+      await adminBackendClient.updateConfig('vllm.max_tokens', String(vllmConfig.maxTokens));
+      await adminBackendClient.updateConfig('vllm.top_p', String(vllmConfig.topP));
+      await adminBackendClient.updateConfig('vllm.top_k', String(vllmConfig.topK));
+      toast.success('vLLM configuration saved successfully');
     } catch (error) {
       console.error('Failed to update config:', error);
-      alert('Failed to save configuration');
-    }
-  };
-
-  const getStatusColor = (status: VllmStatus['status']) => {
-    switch (status) {
-      case 'healthy': return 'text-green-600 bg-green-100 border-green-300';
-      case 'unhealthy': return 'text-yellow-600 bg-yellow-100 border-yellow-300';
-      case 'offline': return 'text-red-600 bg-red-100 border-red-300';
+      toast.error('Failed to save configuration');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -162,10 +166,10 @@ export default function VllmSettingsPage() {
       </div>
 
       {/* Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className={`rounded-xl p-6 border-2 ${
-          vllmStatus?.status === 'healthy' 
-            ? 'bg-green-50 border-green-200' 
+          vllmStatus?.status === 'healthy'
+            ? 'bg-green-50 border-green-200'
             : vllmStatus?.status === 'offline'
             ? 'bg-red-50 border-red-200'
             : 'bg-yellow-50 border-yellow-200'
@@ -192,34 +196,27 @@ export default function VllmSettingsPage() {
         <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
           <div className="flex items-center gap-3 mb-2 text-gray-600">
             <Zap size={20} />
-            <span className="text-sm font-medium">Performance</span>
+            <span className="text-sm font-medium">Latency</span>
           </div>
           <div className="text-2xl font-bold text-gray-900">
-            {vllmStatus?.performance.tokensPerSecond.toFixed(1) || '0'} tok/s
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
-          <div className="flex items-center gap-3 mb-2 text-gray-600">
-            <Activity size={20} />
-            <span className="text-sm font-medium">Requests</span>
-          </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {vllmStatus?.performance.requestsPerSecond.toFixed(2) || '0'}/s
+            {vllmStatus?.latency != null ? `${vllmStatus.latency} ms` : 'N/A'}
           </div>
         </div>
       </div>
 
-      {vllmStatus?.status === 'healthy' && vllmStatus.gpu && (
+      {vllmStatus?.status === 'healthy' && (
         <>
-          {/* GPU Stats */}
+          {/* GPU Hardware Info (static — real-time metrics require nvidia-smi integration) */}
           <div className="bg-white rounded-xl shadow-md border-2 border-gray-100 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
               <Cpu size={24} className="text-[#059211]" />
-              GPU Statistics
+              GPU Hardware
             </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <p className="text-xs text-gray-500 mb-6">
+              Static hardware info. Real-time utilization, temperature, and memory metrics require nvidia-smi integration (not yet available).
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* GPU Name */}
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border-2 border-blue-200">
                 <div className="flex items-center gap-2 text-blue-700 mb-2">
@@ -227,99 +224,39 @@ export default function VllmSettingsPage() {
                   <span className="text-sm font-medium">GPU</span>
                 </div>
                 <div className="text-lg font-bold text-blue-900 mb-1">
-                  {vllmStatus.gpu.name}
+                  NVIDIA RTX 3060
                 </div>
                 <div className="text-xs text-blue-700">
-                  12 GB GDDR6
+                  Mercury (192.168.0.151)
                 </div>
               </div>
 
-              {/* Memory Usage */}
+              {/* VRAM */}
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border-2 border-purple-200">
                 <div className="flex items-center gap-2 text-purple-700 mb-2">
                   <HardDrive size={18} />
                   <span className="text-sm font-medium">VRAM</span>
                 </div>
-                <div className="text-lg font-bold text-purple-900 mb-2">
-                  {vllmStatus.gpu.memory.used} MB
-                </div>
-                <div className="bg-purple-200 rounded-full h-3 mb-1">
-                  <div
-                    className="bg-purple-600 h-3 rounded-full transition-all duration-500"
-                    style={{ width: `${vllmStatus.gpu.memory.percentage}%` }}
-                  />
+                <div className="text-lg font-bold text-purple-900 mb-1">
+                  12 GB GDDR6
                 </div>
                 <div className="text-xs text-purple-700">
-                  {vllmStatus.gpu.memory.percentage}% of {vllmStatus.gpu.memory.total} MB
+                  Total available memory
                 </div>
               </div>
 
-              {/* Utilization */}
+              {/* Model Info */}
               <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border-2 border-green-200">
                 <div className="flex items-center gap-2 text-green-700 mb-2">
                   <Activity size={18} />
-                  <span className="text-sm font-medium">Utilization</span>
+                  <span className="text-sm font-medium">Loaded Model</span>
                 </div>
-                <div className="text-lg font-bold text-green-900 mb-2">
-                  {vllmStatus.gpu.utilization}%
-                </div>
-                <div className="bg-green-200 rounded-full h-3 mb-1">
-                  <div
-                    className="bg-green-600 h-3 rounded-full transition-all duration-500"
-                    style={{ width: `${vllmStatus.gpu.utilization}%` }}
-                  />
+                <div className="text-sm font-bold text-green-900 mb-1 font-mono">
+                  {vllmStatus.model?.split('/').pop() || 'Unknown'}
                 </div>
                 <div className="text-xs text-green-700">
-                  {vllmStatus.gpu.utilization < 50 ? 'Low' : 
-                   vllmStatus.gpu.utilization < 80 ? 'Normal' : 'High'}
+                  Qwen2.5-7B AWQ (4-bit quantized)
                 </div>
-              </div>
-
-              {/* Temperature */}
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border-2 border-orange-200">
-                <div className="flex items-center gap-2 text-orange-700 mb-2">
-                  <Thermometer size={18} />
-                  <span className="text-sm font-medium">Temperature</span>
-                </div>
-                <div className="text-lg font-bold text-orange-900 mb-2">
-                  {vllmStatus.gpu.temperature}°C
-                </div>
-                <div className="text-xs text-orange-700">
-                  {vllmStatus.gpu.temperature < 70 ? '✓ Normal' : 
-                   vllmStatus.gpu.temperature < 80 ? '⚠ Warm' : '🔥 Hot'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="bg-white rounded-xl shadow-md border-2 border-gray-100 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <TrendingUp size={24} className="text-[#059211]" />
-              Performance Metrics
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 border-2 border-gray-200">
-                <div className="text-sm text-gray-600 mb-2">Requests per Second</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {vllmStatus.performance.requestsPerSecond.toFixed(2)}
-                </div>
-                <div className="text-xs text-gray-600">Real-time throughput</div>
-              </div>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 border-2 border-gray-200">
-                <div className="text-sm text-gray-600 mb-2">Average Latency</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {vllmStatus.performance.avgLatency.toFixed(0)} ms
-                </div>
-                <div className="text-xs text-gray-600">Response time</div>
-              </div>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 border-2 border-gray-200">
-                <div className="text-sm text-gray-600 mb-2">Tokens per Second</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {vllmStatus.performance.tokensPerSecond.toFixed(1)}
-                </div>
-                <div className="text-xs text-gray-600">Generation speed</div>
               </div>
             </div>
           </div>
@@ -455,9 +392,10 @@ export default function VllmSettingsPage() {
         <div className="flex gap-4">
           <button
             onClick={updateVllmConfig}
-            className="flex-1 px-6 py-4 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium text-lg"
+            disabled={saving}
+            className="flex-1 px-6 py-4 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium text-lg disabled:opacity-50"
           >
-            Save Configuration
+            {saving ? 'Saving...' : 'Save Configuration'}
           </button>
           <button
             onClick={() => setVllmConfig({ temperature: 0.7, maxTokens: 2048, topP: 0.9, topK: 50 })}

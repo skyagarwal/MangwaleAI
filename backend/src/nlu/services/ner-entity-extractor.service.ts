@@ -35,6 +35,7 @@ export interface ExtractedEntities {
   store_reference?: string;
   store_references?: Array<{ store: string; items: string[] }> | null;  // Multi-store orders
   quantity?: string | number;
+  item_quantities?: Array<{ item: string; quantity: string; unit?: string }> | null;  // Per-item quantities
   location_reference?: string;
   preference?: string[];
   original_text: string;
@@ -50,6 +51,7 @@ export class NerEntityExtractorService implements OnModuleInit {
   private nerServiceUrl: string;
   private searchServiceUrl: string;
   private nerAvailable = false;
+  private previousNerAvailable: boolean | null = null;
   private healthCheckInterval: NodeJS.Timeout;
   
   constructor(
@@ -64,7 +66,7 @@ export class NerEntityExtractorService implements OnModuleInit {
   async onModuleInit() {
     await this.checkNerHealth();
     
-    // Periodic health check every 30 seconds
+    // Periodic health check every 30 seconds (fast recovery when NER comes back)
     this.healthCheckInterval = setInterval(() => {
       this.checkNerHealth();
     }, 30000);
@@ -91,17 +93,25 @@ export class NerEntityExtractorService implements OnModuleInit {
       );
       
       this.nerAvailable = response.data?.model_loaded === true;
-      
-      if (this.nerAvailable) {
-        this.logger.log('✅ NER service available with model loaded');
-      } else {
-        this.logger.warn('⚠️ NER service available but model not loaded');
+
+      // Only log on status change
+      if (this.nerAvailable !== this.previousNerAvailable) {
+        if (this.nerAvailable) {
+          this.logger.log('NER service status changed: available');
+        } else {
+          this.logger.warn('NER service status changed: unavailable, using LLM fallback');
+        }
+        this.previousNerAvailable = this.nerAvailable;
       }
-      
+
       return this.nerAvailable;
     } catch (error) {
       this.nerAvailable = false;
-      this.logger.debug('NER service not available, will use LLM fallback');
+      // Only log on status change
+      if (this.previousNerAvailable !== false) {
+        this.logger.warn('NER service status changed: unavailable, using LLM fallback');
+        this.previousNerAvailable = false;
+      }
       return false;
     }
   }
@@ -118,26 +128,32 @@ export class NerEntityExtractorService implements OnModuleInit {
         const result = await this.extractWithNer(text);
         
         // 🏪🏪 MULTI-STORE DETECTION: If message hints at multiple stores,
-        // also call LLM to extract store_references (NER can't do this yet)
+        // also call LLM to extract store_references + item_quantities (NER can't do this yet)
         let storeReferences: Array<{ store: string; items: string[] }> | null = null;
+        let itemQuantities: Array<{ item: string; quantity: string; unit?: string }> | null = null;
         if (this.llmExtractor && this.detectMultiStoreHint(text)) {
           try {
             this.logger.log(`🏪🏪 Multi-store message detected, calling LLM for store_references...`);
             const llmResult = await this.llmExtractor.extract(text);
             storeReferences = llmResult.store_references || null;
+            itemQuantities = llmResult.item_quantities || null;
             if (storeReferences) {
               this.logger.log(`🏪🏪 LLM extracted store_references: ${JSON.stringify(storeReferences)}`);
+            }
+            if (itemQuantities) {
+              this.logger.log(`📦 LLM extracted item_quantities: ${JSON.stringify(itemQuantities)}`);
             }
           } catch (err) {
             this.logger.warn(`LLM multi-store extraction failed: ${err.message}`);
           }
         }
-        
+
         return {
           food_reference: result.food_reference,
           store_reference: result.store_reference,
           store_references: storeReferences,
           quantity: result.quantity,
+          item_quantities: itemQuantities,
           location_reference: result.location_reference,
           preference: result.preference,
           original_text: text,
@@ -161,6 +177,7 @@ export class NerEntityExtractorService implements OnModuleInit {
           store_reference: llmResult.store_reference,
           store_references: llmResult.store_references || null,  // Propagate multi-store extraction
           quantity: llmResult.quantity,
+          item_quantities: llmResult.item_quantities || null,  // Propagate per-item quantities
           location_reference: llmResult.location_reference,
           preference: llmResult.preference,
           original_text: text,

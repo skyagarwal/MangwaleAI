@@ -322,9 +322,9 @@ export default function LLMFailoverPage() {
               <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <span className="text-xl font-bold text-gray-400">1</span>
                 <div className="flex-1">
-                  <div className="font-semibold">IndicBERT (Local)</div>
+                  <div className="font-semibold">IndicBERTv2 (Mercury)</div>
                   <div className="text-sm text-gray-600">
-                    Trained model on port 7010 • 15ms latency • 98% accuracy • Free
+                    Trained model on Mercury:7012 • ~15ms latency • IndicBERTv2 • Free
                   </div>
                 </div>
                 <Badge className="bg-green-500">Primary</Badge>

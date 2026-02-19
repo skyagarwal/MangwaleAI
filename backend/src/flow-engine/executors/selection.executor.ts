@@ -30,7 +30,7 @@ interface SelectionResult {
     variation?: Array<{ type: string; price: string }>;
     variationLabel?: string;
   }>;
-  action: 'add_to_cart' | 'search_more' | 'checkout' | 'cancel' | 'search_items' | 'view_cart' | 'ask_distance' | 'unknown';
+  action: 'add_to_cart' | 'needs_variation' | 'search_more' | 'checkout' | 'cancel' | 'search_items' | 'view_cart' | 'ask_distance' | 'unknown';
   totalPrice: number;
   searchSuggestion?: string; // Items that weren't found - used to trigger re-search
   followUpResponse?: string; // Response for follow-up questions about results
@@ -59,7 +59,8 @@ export class SelectionExecutor implements ActionExecutor {
   ): Promise<ActionExecutionResult> {
     try {
       const userMessage = (context.data._user_message || context.data.user_message) as string;
-      const searchResults = context.data.search_results as { cards?: CardItem[]; items?: CardItem[] };
+      // Check search_results first, fallback to recommendation_results or fast_delivery_results
+      const searchResults = (context.data.search_results || context.data.recommendation_results || context.data.fast_delivery_results) as { cards?: CardItem[]; items?: CardItem[] };
       
       if (!userMessage) {
         return {
@@ -153,8 +154,68 @@ export class SelectionExecutor implements ActionExecutor {
       totalPrice: 0,
     };
 
-    // Check for "Add X to cart" format (from button clicks)
-    // Supports: "Add Paneer Tikka to cart", "Add Paneer Tikka to cart x2", 
+    // Check for "item_XXXX" format (direct item ID from card button clicks)
+    // Supports: "item_12345", "item_12345 x2", "item_12345 [500g]"
+    const itemIdMatch = lowerMessage.match(/^item_(\d+)(?:\s+x(\d+))?(?:\s+\[([^\]]+)\])?$/i);
+    if (itemIdMatch) {
+      const itemId = itemIdMatch[1];
+      const quantity = itemIdMatch[2] ? parseInt(itemIdMatch[2]) : 1;
+      const variationLabel = itemIdMatch[3] || null;
+      const matchedItem = this.findItemById(itemId, cards);
+      if (matchedItem) {
+        this.logger.log(`✅ Direct item ID match: item_${itemId} → "${matchedItem.itemName}"`);
+        matchedItem.quantity = quantity;
+        const card = cards[matchedItem.itemIndex];
+        const foodVariations = card.food_variations || [];
+        const hasVariations = foodVariations.length > 0 && foodVariations.some((g: any) => g.values?.length > 0);
+
+        if (variationLabel) {
+          for (const group of foodVariations) {
+            const matchedValue = (group.values || []).find(
+              (v: any) => v.label?.toLowerCase() === variationLabel.toLowerCase()
+            );
+            if (matchedValue) {
+              matchedItem.variation = [{ type: group.name, price: matchedValue.optionPrice || '0' }];
+              matchedItem.variationLabel = variationLabel;
+              const variationPrice = parseFloat(matchedValue.optionPrice || '0');
+              if (variationPrice) {
+                matchedItem.price = matchedItem.price + variationPrice;
+                if (matchedItem.rawPrice) matchedItem.rawPrice = matchedItem.rawPrice + variationPrice;
+              }
+              break;
+            }
+          }
+        } else if (hasVariations) {
+          const allVariationOptions: Array<{ label: string; price: string; group: string }> = [];
+          for (const group of foodVariations) {
+            for (const val of (group.values || [])) {
+              if (val.label) {
+                allVariationOptions.push({ label: val.label, price: val.optionPrice || '0', group: group.name || group.type || 'Size' });
+              }
+            }
+          }
+          if (allVariationOptions.length > 0) {
+            this.logger.log(`📦 Item "${matchedItem.itemName}" has ${allVariationOptions.length} variations — asking user to choose`);
+            result.action = 'needs_variation';
+            (result as any).variationItem = matchedItem;
+            (result as any).variationOptions = allVariationOptions;
+            (result as any).followUpResponse = `📦 **${matchedItem.itemName}** comes in different sizes:\n\n${
+              allVariationOptions.map((v, i) => `${i + 1}. **${v.label}** ${parseFloat(v.price) > 0 ? `(+₹${v.price})` : '(included)'}`).join('\n')
+            }\n\nWhich size would you like?`;
+            return result;
+          }
+        }
+
+        result.selectedItems.push(matchedItem);
+        result.action = 'add_to_cart';
+        result.totalPrice = matchedItem.price * matchedItem.quantity;
+        return result;
+      }
+      this.logger.warn(`⚠️ item_${itemId} not found in ${cards.length} search result cards`);
+    }
+
+    // Check for "Add X to cart" format (legacy text-based, from WhatsApp or typed input)
+    // Supports: "Add Paneer Tikka to cart", "Add Paneer Tikka to cart x2",
     //           "Add Paneer Tikka to cart [500g]", "Add Paneer Tikka to cart x2 [500g]"
     const addToCartMatch = lowerMessage.match(/^add\s+(.+)\s+to\s+cart(?:\s+x(\d+))?(?:\s+\[([^\]]+)\])?$/i);
     if (addToCartMatch) {
@@ -319,31 +380,96 @@ export class SelectionExecutor implements ActionExecutor {
     return result;
   }
 
-  private findItemByName(name: string, cards: CardItem[]): SelectionResult['selectedItems'][0] | null {
-    const lowerName = name.toLowerCase();
-    
+  private findItemById(id: string, cards: CardItem[]): SelectionResult['selectedItems'][0] | null {
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
-      const cardName = (card.name || '').toLowerCase();
-      
-      if (cardName === lowerName || cardName.includes(lowerName) || lowerName.includes(cardName)) {
+      if (String(card.id) === id) {
         return {
           itemIndex: i,
           itemId: card.id,
           itemName: card.name,
           quantity: 1,
           price: this.parsePrice(card.price),
-          rawPrice: card.rawPrice, // Numeric price for order
+          rawPrice: card.rawPrice,
           storeId: card.storeId,
-          moduleId: card.moduleId, // Important for order placement
+          moduleId: card.moduleId,
           storeName: card.storeName,
           storeLat: card.storeLat,
           storeLng: card.storeLng,
         };
       }
     }
-    
     return null;
+  }
+
+  private findItemByName(name: string, cards: CardItem[]): SelectionResult['selectedItems'][0] | null {
+    const lowerName = name.toLowerCase().trim();
+
+    // Priority 1: Exact match
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const cardName = (card.name || '').toLowerCase().trim();
+      if (cardName === lowerName) {
+        return this.buildItemResult(card, i);
+      }
+    }
+
+    // Priority 2: Card name starts with search term (e.g., "chicken pizza" matches "Chicken Pizza [Medium]")
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      const cardName = (card.name || '').toLowerCase().trim();
+      if (cardName.startsWith(lowerName)) {
+        return this.buildItemResult(card, i);
+      }
+    }
+
+    // Priority 3: Search term contains full card name (e.g., "add chicken pizza special" contains "chicken pizza")
+    // Sort by longest card name first to prefer more specific matches
+    const candidates = cards
+      .map((card, i) => ({ card, index: i, name: (card.name || '').toLowerCase().trim() }))
+      .filter(c => lowerName.includes(c.name) && c.name.length > 0)
+      .sort((a, b) => b.name.length - a.name.length);
+
+    if (candidates.length > 0) {
+      return this.buildItemResult(candidates[0].card, candidates[0].index);
+    }
+
+    // Priority 4: Card name contains search term (e.g., "Chicken Tikka Pizza" contains "chicken pizza" → no, use word overlap)
+    // Word-level overlap: prefer card with most matching words
+    const searchWords = lowerName.split(/\s+/).filter(w => w.length > 2);
+    if (searchWords.length > 0) {
+      let bestMatch: { card: CardItem; index: number; score: number } | null = null;
+      for (let i = 0; i < cards.length; i++) {
+        const cardName = (cards[i].name || '').toLowerCase().trim();
+        const cardWords = cardName.split(/\s+/);
+        const matchCount = searchWords.filter(sw => cardWords.some(cw => cw.includes(sw) || sw.includes(cw))).length;
+        const score = matchCount / searchWords.length;
+        if (score >= 0.5 && (!bestMatch || score > bestMatch.score || (score === bestMatch.score && cardName.length > bestMatch.card.name.length))) {
+          bestMatch = { card: cards[i], index: i, score };
+        }
+      }
+      if (bestMatch) {
+        return this.buildItemResult(bestMatch.card, bestMatch.index);
+      }
+    }
+
+    return null;
+  }
+
+  private buildItemResult(card: CardItem, index: number): SelectionResult['selectedItems'][0] {
+    return {
+      itemIndex: index,
+      itemId: card.id,
+      itemName: card.name,
+      quantity: 1,
+      price: this.parsePrice(card.price),
+      rawPrice: card.rawPrice,
+      storeId: card.storeId,
+      moduleId: card.moduleId,
+      storeName: card.storeName,
+      storeLat: card.storeLat,
+      storeLng: card.storeLng,
+    };
   }
 
   private parseNumberSelections(message: string, cards: CardItem[]): SelectionResult['selectedItems'] {
@@ -723,7 +849,9 @@ export class SelectionExecutor implements ActionExecutor {
         itemName: bestMatch.card.name,
         quantity: 1,
         price: this.parsePrice(bestMatch.card.price),
+        rawPrice: bestMatch.card.rawPrice,
         storeId: bestMatch.card.storeId,
+        moduleId: bestMatch.card.moduleId,
         storeName: bestMatch.card.storeName,
         storeLat: bestMatch.card.storeLat,
         storeLng: bestMatch.card.storeLng,

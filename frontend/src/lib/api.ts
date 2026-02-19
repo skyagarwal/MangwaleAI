@@ -79,8 +79,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      if (typeof window !== 'undefined') {
+      // Don't redirect for auth endpoints (login, OTP, social-login)
+      const url = error.config?.url || '';
+      const isAuthEndpoint = url.includes('/auth/');
+      if (!isAuthEndpoint && typeof window !== 'undefined') {
         localStorage.removeItem('auth-storage');
         window.location.href = '/login';
       }

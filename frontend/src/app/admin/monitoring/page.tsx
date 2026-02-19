@@ -22,7 +22,7 @@ import {
   Wifi
 } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+// All fetch URLs use /api/* paths which are proxied by Next.js to the NestJS backend
 
 interface LLMCosts {
   [provider: string]: {
@@ -105,7 +105,7 @@ export default function MonitoringDashboard() {
 
       // Fetch LLM costs
       try {
-        const costsRes = await fetch(`${API_URL}/monitoring/llm/costs`);
+        const costsRes = await fetch('/api/monitoring/llm/costs');
         if (costsRes.ok) {
           const costsData = await costsRes.json();
           setLLMCosts(costsData);
@@ -116,7 +116,7 @@ export default function MonitoringDashboard() {
 
       // Fetch analytics summary
       try {
-        const analyticsRes = await fetch(`${API_URL}/monitoring/analytics/summary?timeRange=${timeRange}`);
+        const analyticsRes = await fetch(`/api/monitoring/analytics/summary?timeRange=${timeRange}`);
         if (analyticsRes.ok) {
           const analyticsData = await analyticsRes.json();
           setAnalytics(analyticsData);
@@ -125,29 +125,20 @@ export default function MonitoringDashboard() {
         console.error('Error fetching analytics:', e);
       }
 
-      // Fetch alerts from both old and new endpoints
+      // Fetch alerts
       try {
-        const [oldAlertsRes, newAlertsRes] = await Promise.all([
-          fetch(`${API_URL}/monitoring/alerts`).catch(() => null),
-          fetch('/api/monitoring/alerts').catch(() => null),
-        ]);
-        
-        const combinedAlerts: Alert[] = [];
-        if (oldAlertsRes?.ok) {
-          const oldData = await oldAlertsRes.json();
-          combinedAlerts.push(...(oldData.alerts || []));
-        }
-        if (newAlertsRes?.ok) {
-          const newData = await newAlertsRes.json();
-          const formattedAlerts = (newData.alerts || []).map((a: any) => ({
+        const alertsRes = await fetch('/api/monitoring/alerts');
+        if (alertsRes.ok) {
+          const alertsData = await alertsRes.json();
+          const formattedAlerts = (alertsData.alerts || []).map((a: any) => ({
             id: a.id,
             type: a.type,
+            provider: a.provider,
             message: a.message,
-            timestamp: new Date(a.timestamp).getTime(),
+            timestamp: typeof a.timestamp === 'number' ? a.timestamp : new Date(a.timestamp).getTime(),
           }));
-          combinedAlerts.push(...formattedAlerts);
+          setAlerts(formattedAlerts);
         }
-        setAlerts(combinedAlerts);
       } catch (e) {
         console.error('Error fetching alerts:', e);
       }

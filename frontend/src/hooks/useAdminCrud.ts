@@ -4,7 +4,10 @@
  */
 import { useState, useCallback } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || 'http://localhost:3100';
+// Search API admin endpoints. Uses Next.js proxy to avoid direct port 3100 calls.
+// Endpoints in this file use /admin/... paths.
+// Next.js rewrite: /api/search-admin/:path* → http://localhost:3100/admin/:path*
+const API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || '';
 
 // ============================================
 // Types
@@ -148,7 +151,16 @@ async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  // When no explicit API URL is configured, proxy through Next.js:
+  // /admin/items → /api/search-admin/items
+  let url: string;
+  if (API_URL) {
+    url = `${API_URL}${endpoint}`;
+  } else {
+    // Strip /admin/ prefix and use the Next.js proxy path
+    url = `/api/search-admin${endpoint.replace(/^\/admin/, '')}`;
+  }
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

@@ -137,15 +137,91 @@ export class SearchExecutor implements ActionExecutor {
       if (type === 'categories') {
         const limit = config.limit || 8;
         this.logger.debug(`Fetching popular categories from ${index}`);
-        
+
         const categories = await this.searchService.getPopularCategories(index, limit);
-        
+
         this.logger.debug(`Fetched categories: ${JSON.stringify(categories)}`);
-        
+
         return {
           success: true,
           output: categories,
           event: 'success'
+        };
+      }
+
+      // Handle Category Browsing (get items by category_id)
+      if (type === 'category_items') {
+        const categoryId = Number(config.categoryId);
+        if (!categoryId || isNaN(categoryId)) {
+          this.logger.warn(`Invalid categoryId: ${config.categoryId}`);
+          return { success: false, output: [], event: 'no_items' };
+        }
+
+        const moduleId = index.includes('ecom') ? 5 : 4;
+        const size = config.size || config.limit || 10;
+        const zone_id = config.zone_id || context.data.zone_id;
+        const lat = config.lat ? parseFloat(config.lat) : undefined;
+        const lon = config.lng ? parseFloat(config.lng) : undefined;
+
+        this.logger.log(`📋 Category browse: categoryId=${categoryId}, moduleId=${moduleId}, zone=${zone_id}`);
+
+        const items = await this.searchService.getCategoryItems(categoryId, moduleId, {
+          zone_id: zone_id ? Number(zone_id) : undefined,
+          lat, lon, size,
+        });
+
+        if (!items.length) {
+          return { success: true, output: { items: [], total: 0, hasResults: false, cards: [] }, event: 'no_items' };
+        }
+
+        // Filter test data first
+        const filtered = this.filterTestData(items);
+
+        // S3 base URL for images
+        const s3BaseUrl = this.configService?.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
+        const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, s3BaseUrl);
+
+        // Build cards in same format as standard search (lines ~995-1046)
+        const cards = filtered.slice(0, size).map((item: any) => {
+          const foodVariations = item.food_variations || item.variations || [];
+          const parsedVariations = typeof foodVariations === 'string' ? (() => { try { return JSON.parse(foodVariations); } catch { return []; } })() : foodVariations;
+
+          return {
+            id: item.id,
+            name: item.name || item.description?.substring(0, 50),
+            description: item.category_name || item.description,
+            price: item.price ? `₹${item.price}` : undefined,
+            rawPrice: item.price,
+            image: getImageUrl(item),
+            rating: item.avg_rating || '0.0',
+            deliveryTime: item.delivery_time || '30-45 min',
+            category: item.category_name,
+            storeName: item.store_name,
+            storeId: item.store_id,
+            moduleId: item.module_id || moduleId,
+            veg: item.veg,
+            cardType: 'food',
+            has_variant: Array.isArray(parsedVariations) && parsedVariations.length > 0 ? 1 : (item.has_variant || 0),
+            food_variations: Array.isArray(parsedVariations) ? parsedVariations : [],
+            action: {
+              label: 'Add +',
+              value: `item_${item.id}`,
+            },
+          };
+        });
+
+        const output = {
+          items: filtered,
+          total: filtered.length,
+          hasResults: cards.length > 0,
+          cards,
+        };
+
+        this.logger.log(`📋 Category browse: ${cards.length} items (cards) for category ${categoryId}`);
+        return {
+          success: true,
+          output,
+          event: cards.length > 0 ? 'items_found' : 'no_items',
         };
       }
 
@@ -263,6 +339,15 @@ export class SearchExecutor implements ActionExecutor {
         const allItems: any[] = [];
         const seenIds = new Set<string | number>();
         
+        // 🔧 FIX: Always include module_id=4 filter for food recommendations
+        if (index.includes('food') && !filters.find(f => f.field === 'module_id')) {
+          filters.push({ field: 'module_id', operator: 'equals', value: 4 });
+        }
+
+        if (filters.length > 0) {
+          this.logger.log(`🔍 Recommendation filters: ${JSON.stringify(filters)}`);
+        }
+
         // Search each term separately for diversity
         for (const term of termsToSearch) {
           try {
@@ -272,6 +357,7 @@ export class SearchExecutor implements ActionExecutor {
               index: 'food_items',
               searchType: 'hybrid',
               limit: resultsPerTerm,
+              filters,  // 🔧 FIX: Pass veg preference + module_id filters
             });
             
             const items = (termResults.results || []).map((hit: any) => ({
@@ -325,6 +411,31 @@ export class SearchExecutor implements ActionExecutor {
           }
         }
         
+        // 🍔 Module safety net: filter out non-food items (defense-in-depth)
+        if (index.includes('food')) {
+          const NON_FOOD_CATEGORIES = ['dog food', 'cat food', 'pet food', 'bird food', 'fish food', 'animal feed', 'pet supplies', 'pet care'];
+          const NON_FOOD_STORES = ['fins aquarium', 'pet shop', 'pet store', 'aquarium'];
+          const beforeFilter = allItems.length;
+          const filtered = allItems.filter((item: any) => {
+            const moduleId = Number(item.module_id);
+            const category = String(item.category_name || item.category || '').toLowerCase();
+            const storeName = String(item.store_name || item.storeName || '').toLowerCase();
+            const itemName = String(item.name || '').toLowerCase();
+            // Module filter
+            if (moduleId && moduleId !== 4 && moduleId !== 17) return false;
+            // Non-food category/store filter
+            if (NON_FOOD_CATEGORIES.some(c => category.includes(c))) return false;
+            if (NON_FOOD_STORES.some(s => storeName.includes(s))) return false;
+            if (itemName.includes('dog food') || itemName.includes('cat food') || itemName.includes('pet food')) return false;
+            return true;
+          });
+          if (beforeFilter !== filtered.length) {
+            this.logger.log(`🔒 Recommendation filter: ${beforeFilter} → ${filtered.length} (removed ${beforeFilter - filtered.length} non-food/pet items)`);
+          }
+          allItems.length = 0;
+          allItems.push(...filtered);
+        }
+
         // Diversify by store and limit
         const diversified = this.diversifyByStore(allItems, limit);
         
@@ -779,6 +890,25 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
 
+      // 🐕 NON-FOOD CATEGORY FILTER: Remove pet food, animal supplies etc. that are mis-categorized as food
+      if (isFoodSearch) {
+        const NON_FOOD_CATEGORIES = ['dog food', 'cat food', 'pet food', 'bird food', 'fish food', 'animal feed', 'pet supplies', 'pet care'];
+        const NON_FOOD_STORES = ['fins aquarium', 'pet shop', 'pet store', 'aquarium'];
+        const beforeCatFilter = flattenedItems.length;
+        flattenedItems = flattenedItems.filter((item: any) => {
+          const category = String(item.category_name || item.category || '').toLowerCase();
+          const storeName = String(item.store_name || item.storeName || '').toLowerCase();
+          const itemName = String(item.name || '').toLowerCase();
+          const isNonFoodCategory = NON_FOOD_CATEGORIES.some(c => category.includes(c));
+          const isNonFoodStore = NON_FOOD_STORES.some(s => storeName.includes(s));
+          const isNonFoodItem = itemName.includes('dog food') || itemName.includes('cat food') || itemName.includes('pet food');
+          return !isNonFoodCategory && !isNonFoodStore && !isNonFoodItem;
+        });
+        if (beforeCatFilter !== flattenedItems.length) {
+          this.logger.log(`🐕 Non-food filter: ${beforeCatFilter} → ${flattenedItems.length} (removed ${beforeCatFilter - flattenedItems.length} pet/non-food items)`);
+        }
+      }
+
       // 🧹 TEST DATA FILTER: Remove test stores, placeholder items, and demo data
       flattenedItems = this.filterTestData(flattenedItems);
 
@@ -919,6 +1049,7 @@ export class SearchExecutor implements ActionExecutor {
             distanceKm,
             distance: distanceText,
             veg: item.veg ?? src.veg,
+            cardType: index?.includes('ecom') ? 'product' : 'food',
             has_variant: (() => {
               if (Array.isArray(parsedVariations) && parsedVariations.length > 0) return 1;
               return item.has_variant || src.has_variant || 0;
@@ -926,7 +1057,7 @@ export class SearchExecutor implements ActionExecutor {
             food_variations: Array.isArray(parsedVariations) ? parsedVariations : [],
             action: {
               label: 'Add +',
-              value: `Add ${item.title || item.name || src.name} to cart`
+              value: `item_${item.id || src.id}`
             }
           };
         });
@@ -982,6 +1113,7 @@ export class SearchExecutor implements ActionExecutor {
 
   validate(config: Record<string, any>): boolean {
     if (config.type === 'categories') return true;
+    if (config.type === 'category_items') return !!config.categoryId;
     return !!(config.query || config.queryPath);
   }
 
@@ -1041,7 +1173,7 @@ export class SearchExecutor implements ActionExecutor {
         food_variations: item.food_variations || [],
         action: {
           label: 'Add +',
-          value: `Add ${item.name || item.title || item.item_name} to cart`
+          value: `item_${item.id}`
         }
       }));
     }
@@ -1113,7 +1245,7 @@ export class SearchExecutor implements ActionExecutor {
         food_variations: item.food_variations || [],
         action: {
           label: 'Add +',
-          value: `Add ${item.title || item.name} to cart`
+          value: `item_${item.id}`
         }
       }));
     }
@@ -1256,7 +1388,7 @@ export class SearchExecutor implements ActionExecutor {
         signals: item._signals,
         action: {
           label: 'Add +',
-          value: `Add ${item.name || item.title} to cart`
+          value: `item_${item.id}`
         }
       }));
     }

@@ -68,6 +68,7 @@ import { PricingModule } from '../pricing/pricing.module';
 import { ProfilesModule } from '../profiles/profiles.module';
 import { AuthModule } from '../auth/auth.module';
 import { ContextModule } from '../context/context.module';
+import { StoresModule } from '../stores/stores.module';
 import { ContextEnhancerService } from './services/context-enhancer.service';
 import { PricingValidatorService } from '../common/validators/pricing.validator';
 import { AuthValidatorService } from '../common/validators/auth.validator';
@@ -89,6 +90,7 @@ import { AddressValidatorService } from '../common/validators/address.validator'
     ProfilesModule,
     AuthModule, // For CentralizedAuthService in AuthExecutor
     ContextModule, // ✨ User Context (Weather, Festivals, City Knowledge)
+    StoresModule, // Store schedule/open-closed status
     forwardRef(() => AgentsModule), // Use forwardRef to avoid circular dependency
   ],
   controllers: [FlowBuilderController, FlowsController],

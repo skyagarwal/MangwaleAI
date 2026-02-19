@@ -94,8 +94,8 @@ class SearchMonitor {
             raw: call.endpoint,
             protocol: 'http',
             host: ['localhost'],
-            port: '3100',
-            path: call.endpoint.replace('http://localhost:3100/', '').split('/'),
+            port: '3200',
+            path: call.endpoint.replace(/https?:\/\/[^/]+\//, '').split('/'),
             query: Object.entries(call.params).map(([key, value]) => ({
               key,
               value: String(value),

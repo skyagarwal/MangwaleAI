@@ -52,7 +52,7 @@ export function ParcelCard({
   onAction
 }: ParcelCardProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full max-w-[360px]">
+    <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full max-w-full sm:max-w-[360px]">
       {/* Header - Porter style */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-white">
@@ -102,25 +102,25 @@ export function ParcelCard({
         </div>
 
         {/* Trip details */}
-        <div className="mt-4 flex items-center justify-between bg-gray-50 rounded-xl p-3">
-          <div className="flex items-center gap-4">
+        <div className="mt-4 flex items-center justify-between bg-gray-50 rounded-xl p-2.5 sm:p-3">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             {/* Vehicle type */}
-            <div className="text-center">
+            <div className="text-center shrink-0">
               <span className="text-2xl">{vehicleIcons[vehicleType]}</span>
               <p className="text-[10px] text-gray-500 capitalize mt-0.5">{vehicleType}</p>
             </div>
-            
+
             {/* Distance */}
             {distance && (
-              <div className="text-center border-l pl-4">
+              <div className="text-center border-l pl-2 sm:pl-4">
                 <p className="text-sm font-bold text-gray-900">{distance}</p>
                 <p className="text-[10px] text-gray-500">Distance</p>
               </div>
             )}
-            
+
             {/* ETA */}
             {estimatedTime && (
-              <div className="text-center border-l pl-4">
+              <div className="text-center border-l pl-2 sm:pl-4">
                 <div className="flex items-center gap-1 justify-center">
                   <Clock className="w-3 h-3 text-gray-400" />
                   <p className="text-sm font-bold text-gray-900">{estimatedTime}</p>
@@ -132,7 +132,7 @@ export function ParcelCard({
 
           {/* Price */}
           {price && (
-            <div className="text-right">
+            <div className="text-right shrink-0 pl-2">
               <p className="text-xl font-bold text-gray-900">{price}</p>
               <p className="text-[10px] text-gray-500">Total Fare</p>
             </div>

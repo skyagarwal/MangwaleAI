@@ -1,97 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-const MERCURY_TTS_URL = process.env.MERCURY_TTS_URL || 'http://localhost:7002';
+const BACKEND_URL = process.env.BACKEND_INTERNAL_URL || 'http://localhost:3200';
 
-export async function GET(request: NextRequest) {
+/**
+ * GET /api/voice/mercury/voices
+ * Proxies to NestJS backend which fetches voices from Mercury TTS
+ */
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider') || 'all';
-
-    // Fetch voices from Mercury TTS
-    const response = await fetch(`${MERCURY_TTS_URL}/voices`, {
-      headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(5000),
+    const response = await fetch(`${BACKEND_URL}/api/voice/mercury/voices`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch voices from Mercury');
+      throw new Error(`Backend returned ${response.status}`);
     }
 
     const data = await response.json();
-
-    // Mercury returns voices organized by provider
-    // {
-    //   "kokoro": ["af_sky", "af_sarah", ...],
-    //   "chatterbox": {
-    //     "voices": ["chotu", "meera", ...],
-    //     "languages": ["hi", "en", ...],
-    //     "emotions": ["neutral", "happy", ...],
-    //     "styles": ["default", "casual", ...]
-    //   }
-    // }
-
-    // Normalize response
-    const voices = {
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Mercury voices proxy failed:', error);
+    return NextResponse.json({
+      success: false,
       kokoro: {
-        voices: data.kokoro || [],
+        voices: ['af_heart', 'af_bella', 'am_adam', 'am_michael'],
         languages: ['en'],
-        description: 'High-quality English voices',
+        description: 'Kokoro TTS (offline)',
       },
       chatterbox: {
-        voices: data.chatterbox?.voices || [],
-        languages: data.chatterbox?.languages || [],
-        emotions: data.chatterbox?.emotions || [],
-        styles: data.chatterbox?.styles || [],
-        description: '30+ languages, 16 emotions, 9 styles',
-      }
-    };
-
-    if (provider !== 'all') {
-      return NextResponse.json({
-        success: true,
-        provider,
-        ...(voices[provider as keyof typeof voices] || {}),
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      voices,
-    });
-  } catch (error) {
-    console.error('Fetch voices error:', error);
-    
-    // Return fallback voices if Mercury is unavailable
-    return NextResponse.json({
-      success: true,
-      fallback: true,
-      voices: {
-        kokoro: {
-          voices: [
-            'af_sky', 'af_sarah', 'af_bella', 'af_nicole',
-            'am_adam', 'am_michael', 'af_heart',
-          ],
-          languages: ['en'],
-          description: 'High-quality English voices (offline)',
-        },
-        chatterbox: {
-          voices: ['chotu', 'meera', 'raj', 'priya', 'amit'],
-          languages: [
-            'hi', 'en', 'ta', 'te', 'bn', 'mr', 'gu', 'kn', 'ml', 'pa',
-            'or', 'as', 'ur', 'ne', 'si', 'ar', 'fr', 'de', 'es', 'pt',
-            'ru', 'ja', 'ko', 'zh', 'th', 'vi', 'id', 'ms', 'tl', 'sw'
-          ],
-          emotions: [
-            'neutral', 'happy', 'sad', 'angry', 'surprised', 'fearful',
-            'disgusted', 'excited', 'calm', 'confident', 'curious',
-            'hopeful', 'frustrated', 'loving', 'proud', 'anxious'
-          ],
-          styles: [
-            'default', 'casual', 'formal', 'cheerful', 'empathetic',
-            'professional', 'friendly', 'urgent', 'storytelling'
-          ],
-          description: '30+ languages, 16 emotions, 9 styles (offline)',
-        }
+        voices: ['chotu', 'default'],
+        languages: ['hi', 'en'],
+        emotions: ['helpful', 'happy', 'calm'],
+        styles: ['conversational', 'formal'],
+        description: 'Chatterbox TTS (offline)',
       },
     });
   }

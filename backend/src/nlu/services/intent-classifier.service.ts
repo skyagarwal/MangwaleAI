@@ -19,6 +19,21 @@ export class IntentClassifierService {
   private readonly nluEnabled: boolean;
   private readonly llmFallbackEnabled: boolean;
   private readonly confidenceThreshold: number;
+  private readonly llmTimeoutMs: number;
+
+  // All 33 canonical intents + extras for LLM fallback (single source of truth)
+  private static readonly AVAILABLE_INTENTS = [
+    'greeting', 'chitchat', 'order_food', 'parcel_booking', 'search_product',
+    'browse_menu', 'browse_category', 'browse_stores',
+    'ask_recommendation', 'ask_famous', 'ask_fastest_delivery',
+    'ask_price', 'ask_time',
+    'add_to_cart', 'view_cart', 'remove_from_cart', 'update_quantity',
+    'checkout', 'select_item',
+    'track_order', 'order_history', 'cancel_order', 'repeat_order', 'manage_address', 'use_saved',
+    'affirm', 'deny', 'confirm', 'cancel', 'restart', 'feedback',
+    'help', 'complaint', 'support_request', 'login',
+    'unknown',
+  ];
 
   constructor(
     private readonly config: ConfigService,
@@ -30,6 +45,7 @@ export class IntentClassifierService {
     this.nluEnabled = this.config.get('NLU_AI_ENABLED', 'true') === 'true';
     this.llmFallbackEnabled = this.config.get('NLU_LLM_FALLBACK_ENABLED', 'true') === 'true';
     this.confidenceThreshold = parseFloat(this.config.get('NLU_CONFIDENCE_THRESHOLD', '0.65'));
+    this.llmTimeoutMs = parseInt(this.config.get('NLU_LLM_TIMEOUT_MS', '10000'), 10);
   }
 
   async classify(
@@ -100,27 +116,12 @@ export class IntentClassifierService {
       if (this.llmFallbackEnabled) {
         this.logger.debug(`Trying LLM fallback for: "${text}"`);
         try {
-          const availableIntents = [
-            // Core intents
-            'greeting', 'chitchat', 'track_order', 'parcel_booking', 'cancel_order', 
-            'help', 'complaint', 'unknown', 'order_food', 'login',
-            // Menu & search
-            'browse_menu', 'search_product', 'browse_category', 'browse_stores',
-            // Order management
-            'repeat_order', 'manage_address', 
-            // Recommendations
-            'ask_recommendation', 'ask_famous', 'ask_fastest_delivery',
-            // Cart & checkout
-            'checkout', 'view_cart', 'clear_cart', 'remove_item', 'add_to_cart',
-            // Confirmations
-            'affirm', 'deny', 'confirm', 'cancel',
-            // Conversation control
-            'restart', 'feedback'
-          ];
-          
-          const llmResult = await this.llmIntentExtractor.extractIntent(text, language, availableIntents);
-          
-          if (llmResult.intent && llmResult.confidence >= 0.5) {
+          const llmResult = await Promise.race([
+            this.llmIntentExtractor.extractIntent(text, language, IntentClassifierService.AVAILABLE_INTENTS),
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`LLM timeout after ${this.llmTimeoutMs}ms`)), this.llmTimeoutMs)),
+          ]);
+
+          if (llmResult.intent && llmResult.confidence >= this.confidenceThreshold) {
             // Apply food override safety net for LLM results
             const safeResult = this.applyFoodOrderOverride(text, llmResult.intent, llmResult.confidence);
             this.logger.log(`✓ LLM: ${safeResult.intent} (${(safeResult.confidence * 100).toFixed(1)}%)${safeResult.overridden ? ' [FOOD OVERRIDE]' : ''}`);
@@ -161,11 +162,11 @@ export class IntentClassifierService {
       // Try LLM before falling back to heuristics
       if (this.llmFallbackEnabled) {
         try {
-          const llmResult = await this.llmIntentExtractor.extractIntent(text, language, [
-            'greeting', 'order_food', 'track_order', 'parcel_booking', 'cancel_order',
-            'help', 'complaint', 'browse_menu', 'checkout', 'view_cart', 'affirm', 'deny'
+          const llmResult = await Promise.race([
+            this.llmIntentExtractor.extractIntent(text, language, IntentClassifierService.AVAILABLE_INTENTS),
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`LLM timeout after ${this.llmTimeoutMs}ms`)), this.llmTimeoutMs)),
           ]);
-          if (llmResult.intent && llmResult.confidence >= 0.5) {
+          if (llmResult.intent && llmResult.confidence >= this.confidenceThreshold) {
             this.logger.log(`✓ LLM (after IndicBERT failure): ${llmResult.intent}`);
             return {
               intent: llmResult.intent,
@@ -190,14 +191,23 @@ export class IntentClassifierService {
   private priorityHeuristicCheck(text: string): IntentResult | null {
     const t = text.toLowerCase().trim();
 
-    // Order history / tracking
-    if (/\b(show|view|see|check|get|mera|mere|apna|apne)\b.*\border/i.test(t) ||
-        /\border.*(history|list|past|previous)\b/i.test(t) ||
+    // Order history (show/view past orders)
+    if (/\border.*(history|list|past|previous)\b/i.test(t) ||
         /\bmy\s+orders?\b/i.test(t) ||
-        /\btrack\b.*\border/i.test(t) ||
+        /\b(show|view|see)\b.*\borders?\b/i.test(t) ||
+        /\bpurane\b.*\border/i.test(t) ||
+        /\bpichle\b.*\border/i.test(t) ||
+        /\brecent\b.*\border/i.test(t)) {
+      return { intent: 'order_history', confidence: 0.95, language: 'auto', provider: 'heuristic-priority' };
+    }
+
+    // Order tracking (active order status)
+    if (/\btrack\b.*\border/i.test(t) ||
         /\border\b.*\bstatus/i.test(t) ||
         /\bdelivery\b.*\bstatus/i.test(t) ||
-        /\bwhere\b.*\bmy\b.*\border/i.test(t)) {
+        /\bwhere\b.*\bmy\b.*\border/i.test(t) ||
+        /\b(mera|mere)\b.*\border/i.test(t) ||
+        /\b(check|get)\b.*\border\b.*\bstatus/i.test(t)) {
       return { intent: 'track_order', confidence: 0.95, language: 'auto', provider: 'heuristic-priority' };
     }
 
@@ -214,6 +224,33 @@ export class IntentClassifierService {
     // Greeting - only exact short greetings
     if (/^(hi|hello|hey|namaste|namaskar|good\s+(morning|afternoon|evening))$/i.test(t)) {
       return { intent: 'greeting', confidence: 0.95, language: 'auto', provider: 'heuristic-priority' };
+    }
+
+    // Button action values — skip NLU entirely for known button patterns
+    // These are sent by the frontend when users click cards/buttons
+    if (/^item_\d+$/i.test(t)) {
+      return { intent: 'select_item', confidence: 0.99, language: 'auto', provider: 'heuristic-priority' };
+    }
+    if (/^(browse_menu|skip_location|search_different|view_cart|show_cart)$/i.test(t)) {
+      const buttonIntentMap: Record<string, string> = {
+        browse_menu: 'browse_menu',
+        skip_location: 'affirm',
+        search_different: 'browse_menu',
+        view_cart: 'view_cart',
+        show_cart: 'view_cart',
+      };
+      const mapped = buttonIntentMap[t] || 'unknown';
+      return { intent: mapped, confidence: 0.99, language: 'auto', provider: 'heuristic-priority' };
+    }
+
+    // Browse menu / category queries
+    if (/what.*categ/i.test(t) ||
+        /what.*catog/i.test(t) ||
+        /show.*categ/i.test(t) ||
+        /what.*you.*have/i.test(t) ||
+        /what.*menu/i.test(t) ||
+        /show.*menu/i.test(t)) {
+      return { intent: 'browse_menu', confidence: 0.92, language: 'auto', provider: 'heuristic-priority' };
     }
 
     // Conversational / capability questions → chitchat (goes to AI agent directly)
@@ -306,13 +343,18 @@ export class IntentClassifierService {
         /where.*order/i,
         /order.*status/i,
         /delivery.*status/i,
-        /order.*history/i,
-        /my.*order/i,
         /mera.*order/i,
         /aware.*order/i,
-        /previous.*order/i,
-        /past.*order/i,
+      ],
+      order_history: [
+        /order.*history/i,
+        /my.*order/i,
         /show.*order/i,
+        /past.*order/i,
+        /previous.*order/i,
+        /recent.*order/i,
+        /purane.*order/i,     // Hindi: old orders
+        /pichle.*order/i,     // Hindi: previous orders
       ],
       parcel_booking: [
         /send.*parcel/i,
@@ -368,6 +410,16 @@ export class IntentClassifierService {
         /kya\s*milega/i,
         /what.*options/i,
         /list.*items/i,
+        /what.*categ/i,        // "what all category you have", "what categories"
+        /what.*catog/i,        // "what all catogery" (common misspelling)
+        /show.*categ/i,        // "show categories"
+        /browse.*categ/i,      // "browse categories"
+        /categ.*list/i,        // "category list"
+        /categ.*dikhao/i,      // "category dikhao"
+        /what.*you.*have/i,    // "what all you have", "what do you have"
+        /kya.*kya.*milta/i,    // "kya kya milta hai"
+        /konsi.*categ/i,       // "konsi category"
+        /kaun.*si.*categ/i,    // "kaun si category"
       ],
       search_product: [
         /search/i, /find/i, /looking for/i, /show me/i,

@@ -53,6 +53,12 @@ export class TrainingController {
     return this.trainingService.stopJob(id);
   }
 
+  @Post('jobs/:id/pause')
+  async pauseTraining(@Param('id') id: string): Promise<any> {
+    this.logger.log(`Pause training job: ${id}`);
+    return this.trainingService.pauseJob(id);
+  }
+
   @Get('datasets')
   async getDatasets(): Promise<any> {
     return this.datasetService.getDatasets();
@@ -85,6 +91,40 @@ export class TrainingController {
     return this.datasetService.uploadFile(id, file);
   }
 
+  @Get('datasets/:id/examples')
+  async getDatasetExamples(@Param('id') id: string): Promise<any> {
+    return this.datasetService.getExamples(id);
+  }
+
+  @Post('datasets/:id/examples/bulk')
+  async bulkAddExamples(
+    @Param('id') id: string,
+    @Body('examples') examples: { text: string; intent: string; entities?: any }[],
+  ): Promise<any> {
+    this.logger.log(`Bulk add ${examples?.length || 0} examples to dataset ${id}`);
+    return this.datasetService.addExamples(id, examples || []);
+  }
+
+  @Delete('datasets/:id')
+  async deleteDataset(@Param('id') id: string): Promise<any> {
+    this.logger.log(`Delete dataset: ${id}`);
+    const deleted = await this.datasetService.deleteDataset(id);
+    return { success: deleted };
+  }
+
+  @Post('datasets/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadDataset(
+    @Body('name') name: string,
+    @Body('type') type: string,
+    @Body('description') description: string,
+    @UploadedFile() file?: Express.Multer.File,
+  ): Promise<DatasetResponseDto> {
+    this.logger.log(`Upload dataset: ${name} (${type})`);
+    const datasetDto: CreateDatasetDto = { name, type: type as any, description };
+    return this.datasetService.createDataset(datasetDto, file);
+  }
+
   @Get('datasets/:id/stats')
   async getDatasetStats(@Param('id') id: string): Promise<any> {
     return this.datasetService.getStats(id);
@@ -113,6 +153,18 @@ export class TrainingController {
   ): Promise<any> {
     this.logger.log(`Evaluate model: ${id} on dataset: ${datasetId}`);
     return this.modelTrainingService.evaluateModel(id, datasetId);
+  }
+
+  @Post('datasets/:id/push-labelstudio')
+  async pushToLabelStudio(@Param('id') id: string): Promise<any> {
+    this.logger.log(`Push dataset ${id} to Label Studio`);
+    return this.labelStudioService.pushDatasetToLabelStudio(id);
+  }
+
+  @Post('datasets/:id/pull-labelstudio')
+  async pullFromLabelStudio(@Param('id') id: string): Promise<any> {
+    this.logger.log(`Pull annotations from Label Studio for dataset ${id}`);
+    return this.labelStudioService.pullAnnotationsFromLabelStudio(id);
   }
 
   @Get('labelstudio/projects')

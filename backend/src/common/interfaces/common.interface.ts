@@ -10,6 +10,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   token?: string;
+  zoneId?: number;
   isPhoneVerified?: boolean;
   isEmailVerified?: boolean;
   hasPersonalInfo?: boolean;

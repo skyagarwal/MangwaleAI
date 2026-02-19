@@ -12,7 +12,7 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { UserContextService, UserContext, WeatherContext, DateTimeContext, ContextualSuggestions } from '../../context/services/user-context.service';
+import { EnvironmentalContextService, UserContext, WeatherContext, DateTimeContext, ContextualSuggestions } from '../../context/services/user-context.service';
 
 export interface EnhancedContext {
   // Weather Context
@@ -77,7 +77,7 @@ export class ContextEnhancerService {
   private contextCache = new Map<string, { data: EnhancedContext; timestamp: number }>();
   private readonly CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 
-  constructor(private readonly userContextService: UserContextService) {}
+  constructor(private readonly userContextService: EnvironmentalContextService) {}
 
   /**
    * Get enhanced context for a user

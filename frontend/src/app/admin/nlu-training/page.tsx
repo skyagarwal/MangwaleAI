@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 import { 
   Brain, 
   Play, 
@@ -85,79 +86,87 @@ export default function NLUTrainingPage() {
   const [batchSize, setBatchSize] = useState(16);
   const [learningRate, setLearningRate] = useState(0.00003);
   
-  const MERCURY_NLU = 'http://localhost:7010';
-  const JUPITER_NLU = 'http://localhost:7010';
-  const TRAINING_SERVER = 'http://localhost:8082';
-  const BACKEND_API = '/api/admin/learning';
+  // All calls go through the NestJS backend proxy to avoid CORS issues.
+  // The backend proxies to Mercury (192.168.0.151) training server.
 
   const fetchStatus = useCallback(async () => {
     try {
-      // Fetch Mercury NLU health
+      // Fetch NLU health (Mercury + Training Server) via backend proxy
       try {
-        const mercuryRes = await fetch(`${MERCURY_NLU}/healthz`, { 
-          signal: AbortSignal.timeout(3000) 
-        });
-        if (mercuryRes.ok) {
-          setMercuryHealth(await mercuryRes.json());
+        const healthData = await adminBackendClient.getNluHealth() as any;
+        const data = healthData.data || healthData;
+        if (data.mercury_nlu) {
+          const m = data.mercury_nlu;
+          if (m.status === 'ok' || m.status === 'healthy') {
+            setMercuryHealth({
+              status: m.status,
+              encoder: m.encoder || m.model || 'IndicBERTv2',
+              intent_count: m.intent_count || 33,
+              encoder_loaded: m.encoder_loaded !== false,
+              intent_loaded: m.intent_loaded !== false,
+            });
+          } else {
+            setMercuryHealth(null);
+          }
+        } else {
+          setMercuryHealth(null);
         }
+        // Jupiter is same-host fallback, show as secondary
+        setJupiterHealth(null);
       } catch {
         setMercuryHealth(null);
-      }
-
-      // Fetch Jupiter NLU health
-      try {
-        const jupiterRes = await fetch(`${JUPITER_NLU}/healthz`, { 
-          signal: AbortSignal.timeout(3000) 
-        });
-        if (jupiterRes.ok) {
-          setJupiterHealth(await jupiterRes.json());
-        }
-      } catch {
         setJupiterHealth(null);
       }
 
-      // Fetch Training Server status
+      // Fetch Training Server status via backend proxy
       try {
-        const trainingRes = await fetch(`${TRAINING_SERVER}/status`, { 
-          signal: AbortSignal.timeout(3000) 
-        });
-        if (trainingRes.ok) {
-          const data = await trainingRes.json();
+        const tsData = await adminBackendClient.getTrainingServerStatus() as any;
+        const data = tsData.data || tsData;
+        if (data && data.status) {
           setTrainingStatus(data);
           setTrainingInProgress(data.active_training_jobs > 0);
+        } else {
+          setTrainingStatus(null);
         }
       } catch {
         setTrainingStatus(null);
       }
 
-      // Fetch available models
+      // Fetch available models via backend proxy
       try {
-        const modelsRes = await fetch(`${TRAINING_SERVER}/models`, { 
-          signal: AbortSignal.timeout(3000) 
-        });
-        if (modelsRes.ok) {
-          const data = await modelsRes.json();
-          setModels(data.models || []);
-        }
+        const modelsData = await adminBackendClient.getAvailableModels() as any;
+        const data = modelsData.data || modelsData;
+        setModels(Array.isArray(data) ? data : data.models || []);
       } catch {
         setModels([]);
       }
 
-      // Check for active training job
+      // Check for active training job via backend proxy
       try {
-        const jobsRes = await fetch(`${TRAINING_SERVER}/jobs?limit=1`, { 
-          signal: AbortSignal.timeout(3000) 
-        });
-        if (jobsRes.ok) {
-          const data = await jobsRes.json();
-          if (data.jobs?.length > 0) {
-            const latestJob = data.jobs[0];
-            if (latestJob.status === 'running' || latestJob.status === 'queued') {
-              setCurrentJob(latestJob);
-              setTrainingInProgress(true);
-            } else {
-              setCurrentJob(latestJob);
-            }
+        const historyData = await adminBackendClient.getTrainingHistory() as any;
+        const history = historyData.data || historyData;
+        if (Array.isArray(history) && history.length > 0) {
+          const latest = history[0];
+          if (latest.status === 'running' || latest.status === 'queued') {
+            setCurrentJob({
+              job_id: latest.id || latest.model_version || 'unknown',
+              status: latest.status,
+              progress: latest.progress || 0,
+              message: latest.notes || 'Training in progress',
+            });
+            setTrainingInProgress(true);
+          } else {
+            setCurrentJob({
+              job_id: latest.id || latest.model_version || 'unknown',
+              status: latest.status || 'completed',
+              progress: 100,
+              message: latest.notes || 'Completed',
+              results: latest.accuracy ? {
+                accuracy: latest.accuracy,
+                f1_macro: latest.f1_macro || 0,
+                f1_weighted: latest.f1_weighted || 0,
+              } : undefined,
+            });
           }
         }
       } catch {}
@@ -175,21 +184,16 @@ export default function NLUTrainingPage() {
 
   const startTraining = async () => {
     if (trainingInProgress) return;
-    
+
     setTrainingInProgress(true);
     try {
-      const response = await fetch(`${BACKEND_API}/trigger-retraining`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          adminId: 'admin',
-          reason: 'Manual training from admin dashboard',
-          epochs: epochs,
-          outputName: `indicbert_v${Date.now()}`
-        })
-      });
-      
-      const data = await response.json();
+      const data = await adminBackendClient.triggerRetraining({
+        adminId: 'admin',
+        reason: 'Manual training from admin dashboard',
+        epochs: epochs,
+        outputName: `indicbert_v${Date.now()}`
+      }) as any;
+
       if (data.success && data.jobId) {
         setCurrentJob({
           job_id: data.jobId,
@@ -201,9 +205,9 @@ export default function NLUTrainingPage() {
         alert(data.error || 'Failed to start training');
         setTrainingInProgress(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to start training:', error);
-      alert('Failed to connect to training server');
+      alert(error.message || 'Failed to connect to training server');
       setTrainingInProgress(false);
     }
   };
@@ -211,18 +215,15 @@ export default function NLUTrainingPage() {
   const deployModel = async (modelName: string) => {
     setDeployingModel(modelName);
     try {
-      const response = await fetch(`${TRAINING_SERVER}/deploy/${modelName}`, {
-        method: 'POST'
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
+      const data = await adminBackendClient.deployModel({ modelName }) as any;
+      if (data.success) {
         alert(`Model ${modelName} deployed! Restart NLU service to activate.`);
       } else {
-        alert(data.message || 'Deployment failed');
+        alert(data.error || 'Deployment failed');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Deployment failed:', error);
-      alert('Failed to deploy model');
+      alert(error.message || 'Failed to deploy model');
     } finally {
       setDeployingModel(null);
     }

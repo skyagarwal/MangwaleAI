@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { 
+import {
   Mic, Volume2, Settings, RefreshCw, CheckCircle, XCircle, AlertCircle,
   Play, Square, Upload, Download, Globe, Zap, Activity,
   Languages, Clock, Gauge, Server, Sliders, TestTube, FileAudio,
-  Brain, Waves, Radio, Speaker, Cpu, HardDrive, Phone, 
+  Brain, Waves, Radio, Speaker, Cpu, HardDrive, Phone,
   Smile, MessageSquare, Sparkles
 } from 'lucide-react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 // Mercury Service Status Types
 interface MercuryStatus {
@@ -47,6 +48,16 @@ interface MercuryStatus {
     memoryTotal: string;
     utilization: string;
   };
+  gpus: Array<{
+    host: string;
+    name: string;
+    memoryTotal: string;
+    memoryUsed: string;
+    memoryFree: string;
+    utilization: string;
+    temperature: string;
+    services: string[];
+  }>;
 }
 
 interface VoicesData {
@@ -106,73 +117,71 @@ export default function VoiceSettingsPage() {
   // Fetch Mercury status
   const fetchMercuryStatus = useCallback(async () => {
     try {
-      const response = await fetch('/api/voice/mercury/status');
-      if (response.ok) {
-        const data = await response.json();
-        console.log('✅ Mercury API response:', data);
-        
-        // Transform API response to match component interface
-        if (data.success && data.mercury) {
-          const transformed = {
-            connected: data.mercury.asr.status === 'healthy' && data.mercury.tts.status === 'healthy',
-            services: {
-              asr: {
-                healthy: data.mercury.asr.status === 'healthy',
-                latency: data.mercury.asr.latency || 0,
-                provider: 'Whisper',
-                model: 'faster-whisper-large-v3',
-                gpu: data.mercury.asr.gpu?.name || 'Unknown',
-              },
-              tts: {
-                healthy: data.mercury.tts.status === 'healthy',
-                latency: data.mercury.tts.latency || 0,
-                provider: 'Chatterbox + Kokoro',
-                voices: data.mercury.tts.voices?.chatterbox?.voices || [],
-                cachedPhrases: 0,
-              },
-              orchestrator: {
-                healthy: data.mercury.orchestrator.status === 'healthy',
-                latency: data.mercury.orchestrator.latency || 0,
-                activeSessions: 0,
-                features: ['VAD', 'Turn Manager', 'Session Manager', 'LLM'],
-              },
-              nerve: {
-                healthy: data.mercury.nerve.status === 'healthy',
-                latency: data.mercury.nerve.latency || 0,
-                activeCalls: data.mercury.nerve.activeCalls || 0,
-                providers: ['Twilio', 'Plivo'],
-                ttsCached: data.mercury.nerve.ttsCacheSize || 0,
-              },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await adminBackendClient.getMercuryStatus() as Record<string, any>;
+      console.log('Mercury API response:', data);
+
+      // Transform API response to match component interface
+      if (data.success && data.mercury) {
+        const transformed = {
+          connected: data.mercury.asr.status === 'healthy' && data.mercury.tts.status === 'healthy',
+          services: {
+            asr: {
+              healthy: data.mercury.asr.status === 'healthy',
+              latency: data.mercury.asr.latency || 0,
+              provider: 'Whisper',
+              model: 'faster-whisper-large-v3',
+              gpu: data.mercury.asr.gpu?.name || 'Unknown',
             },
-            gpu: {
-              name: data.mercury.asr.gpu?.name || data.mercury.tts.gpu?.name || 'N/A',
-              memoryUsed: '4GB',
-              memoryTotal: '12GB',
-              utilization: '45%',
+            tts: {
+              healthy: data.mercury.tts.status === 'healthy',
+              latency: data.mercury.tts.latency || 0,
+              provider: 'Chatterbox + Kokoro',
+              voices: data.mercury.tts.voices?.chatterbox?.voices || [],
+              cachedPhrases: 0,
             },
-          };
-          console.log('✅ Transformed status:', transformed);
-          setMercuryStatus(transformed);
-        } else {
-          console.error('❌ Invalid Mercury status response:', data);
-        }
+            orchestrator: {
+              healthy: data.mercury.orchestrator.status === 'healthy',
+              latency: data.mercury.orchestrator.latency || 0,
+              activeSessions: 0,
+              features: ['VAD', 'Turn Manager', 'Session Manager', 'LLM'],
+            },
+            nerve: {
+              healthy: data.mercury.nerve.status === 'healthy',
+              latency: data.mercury.nerve.latency || 0,
+              activeCalls: data.mercury.nerve.activeCalls || 0,
+              providers: ['Twilio', 'Plivo'],
+              ttsCached: data.mercury.nerve.ttsCacheSize || 0,
+            },
+          },
+          gpu: {
+            name: data.mercury.asr.gpu || data.mercury.tts.gpu || 'RTX 3060 12GB',
+            memoryUsed: data.gpus?.[1]?.memoryUsed || 'N/A',
+            memoryTotal: data.gpus?.[1]?.memoryTotal || '12GB',
+            utilization: data.gpus?.[1]?.utilization || 'N/A',
+          },
+          gpus: data.gpus || [],
+        };
+        console.log('Transformed status:', transformed);
+        setMercuryStatus(transformed);
       } else {
-        console.error('❌ API response not OK:', response.status);
+        console.error('Invalid Mercury status response:', data);
       }
     } catch (error) {
-      console.error('❌ Failed to fetch Mercury status:', error);
+      console.error('Failed to fetch Mercury status:', error);
     }
   }, []);
 
   // Fetch available voices
   const fetchVoices = useCallback(async () => {
     try {
-      const response = await fetch('/api/voice/mercury/voices');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.voices) {
-          setVoices(data.voices);
-        }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await adminBackendClient.getMercuryVoices() as Record<string, any>;
+      if (data.kokoro || data.chatterbox) {
+        setVoices({
+          kokoro: data.kokoro || { voices: [], languages: [], description: '' },
+          chatterbox: data.chatterbox || { voices: [], languages: [], emotions: [], styles: [], description: '' },
+        });
       }
     } catch (error) {
       console.error('Failed to fetch voices:', error);
@@ -252,24 +261,16 @@ export default function VoiceSettingsPage() {
 
   const transcribeAudio = async () => {
     if (!audioBlob) return;
-    
+
     setIsTranscribing(true);
     try {
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('language', asrLanguage);
-      
-      const response = await fetch('/api/asr/transcribe', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setTranscription(data.text || data.transcription || '');
-      } else {
-        throw new Error('Transcription failed');
-      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await adminBackendClient.transcribeAudio(formData) as Record<string, any>;
+      setTranscription(data.text || data.transcription || '');
     } catch (error) {
       console.error('Transcription error:', error);
       setTranscription('Error: Failed to transcribe audio');
@@ -321,49 +322,40 @@ export default function VoiceSettingsPage() {
   // Generate speech using Mercury TTS
   const generateSpeech = async () => {
     if (!ttsText.trim()) return;
-    
+
     setIsGenerating(true);
     try {
       const startTime = Date.now();
-      const response = await fetch('/api/voice/mercury/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: ttsText,
-          voice: selectedVoice,
-          language: selectedLanguage,
-          emotion: selectedEmotion,
-          style: selectedStyle,
-          speed: ttsSpeed,
-          provider: ttsProvider,
-          // Chatterbox advanced parameters (improves speed from 13s to 6s!)
-          exaggeration: ttsProvider === 'chatterbox' ? ttsExaggeration : undefined,
-          cfg_weight: ttsProvider === 'chatterbox' ? ttsCfgWeight : undefined,
-          pitch: ttsProvider === 'chatterbox' ? ttsPitch : undefined,
-        }),
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const latency = Date.now() - startTime;
-        
-        if (data.success && (data.audioUrl || data.audio)) {
-          // Handle both audioUrl and base64 audio
-          const audioUrl = data.audioUrl || `data:audio/wav;base64,${data.audio}`;
-          setTtsAudioUrl(audioUrl);
-          setLastTtsLatency(data.latency || latency);
-          
-          // Auto-play
-          if (audioRef.current) {
-            audioRef.current.src = audioUrl;
-            audioRef.current.play().catch(err => console.log('Autoplay prevented:', err));
-          }
-        } else {
-          throw new Error(data.error || 'TTS generation failed - no audio returned');
+      const data = await adminBackendClient.generateTts({
+        text: ttsText,
+        voice: selectedVoice,
+        language: selectedLanguage,
+        emotion: selectedEmotion,
+        style: selectedStyle,
+        speed: ttsSpeed,
+        provider: ttsProvider,
+        // Chatterbox advanced parameters (improves speed from 13s to 6s!)
+        exaggeration: ttsProvider === 'chatterbox' ? ttsExaggeration : undefined,
+        cfg_weight: ttsProvider === 'chatterbox' ? ttsCfgWeight : undefined,
+        pitch: ttsProvider === 'chatterbox' ? ttsPitch : undefined,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as Record<string, any>;
+
+      const latency = Date.now() - startTime;
+
+      if (data.success && (data.audioUrl || data.audio)) {
+        // Handle both audioUrl and base64 audio
+        const audioUrl = data.audioUrl || `data:audio/wav;base64,${data.audio}`;
+        setTtsAudioUrl(audioUrl);
+        setLastTtsLatency(data.latency || latency);
+
+        // Auto-play
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl;
+          audioRef.current.play().catch(err => console.log('Autoplay prevented:', err));
         }
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: TTS generation failed`);
+        throw new Error(data.error || 'TTS generation failed - no audio returned');
       }
     } catch (error) {
       console.error('TTS error:', error);
@@ -440,12 +432,68 @@ export default function VoiceSettingsPage() {
               Mercury Stack {mercuryStatus?.connected ? 'Connected' : 'Disconnected'}
             </h3>
             <p className={`text-sm ${mercuryStatus?.connected ? 'text-green-600' : 'text-red-600'}`}>
-              192.168.0.151 • {mercuryStatus?.gpu?.name || 'GPU Unknown'}
-              {mercuryStatus?.gpu && ` • ${mercuryStatus.gpu.memoryUsed}/${mercuryStatus.gpu.memoryTotal} (${mercuryStatus.gpu.utilization})`}
+              192.168.0.151 • {mercuryStatus?.gpus?.length || 0} GPUs active
             </p>
           </div>
         </div>
       </div>
+
+      {/* GPU Cards */}
+      {mercuryStatus?.gpus && mercuryStatus.gpus.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {mercuryStatus.gpus.map((gpu, idx) => (
+            <div key={idx} className="bg-white rounded-xl shadow-md border-2 border-gray-100 p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <Cpu size={20} className="text-yellow-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">{gpu.name}</h4>
+                    <p className="text-xs text-gray-500">{gpu.host}</p>
+                  </div>
+                </div>
+                <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Active</span>
+              </div>
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="text-xs text-gray-500">Used</div>
+                  <div className="font-bold text-sm text-gray-900">{gpu.memoryUsed}</div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="text-xs text-gray-500">Total</div>
+                  <div className="font-bold text-sm text-gray-900">{gpu.memoryTotal}</div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="text-xs text-gray-500">Temp</div>
+                  <div className="font-bold text-sm text-gray-900">{gpu.temperature}</div>
+                </div>
+              </div>
+              {/* Memory usage bar */}
+              <div className="mb-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      parseInt(gpu.memoryUsed) / parseInt(gpu.memoryTotal) > 0.9 ? 'bg-red-500' :
+                      parseInt(gpu.memoryUsed) / parseInt(gpu.memoryTotal) > 0.7 ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}
+                    style={{ width: `${(parseInt(gpu.memoryUsed) / parseInt(gpu.memoryTotal) * 100).toFixed(0)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>{gpu.memoryFree} free</span>
+                  <span>GPU: {gpu.utilization}</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {gpu.services.map(s => (
+                  <span key={s} className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">{s}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-gray-200 pb-2">
@@ -1086,22 +1134,25 @@ export default function VoiceSettingsPage() {
             <div className="col-span-2 bg-gray-50 rounded-lg p-4">
               <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                 <Cpu size={18} />
-                GPU Status
+                GPU Status ({mercuryStatus?.gpus?.length || 0} GPUs)
               </h4>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <div className="text-xs text-gray-500">GPU</div>
-                  <div className="font-medium">{mercuryStatus?.gpu?.name || 'RTX 3060'}</div>
+              {mercuryStatus?.gpus && mercuryStatus.gpus.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {mercuryStatus.gpus.map((gpu, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 border border-gray-200">
+                      <div className="font-medium text-gray-900 text-sm">{gpu.name}</div>
+                      <div className="text-xs text-gray-500 mb-2">{gpu.host}</div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div><span className="text-gray-500">Used:</span> <span className="font-medium">{gpu.memoryUsed}</span></div>
+                        <div><span className="text-gray-500">Total:</span> <span className="font-medium">{gpu.memoryTotal}</span></div>
+                        <div><span className="text-gray-500">Temp:</span> <span className="font-medium">{gpu.temperature}</span></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <div className="text-xs text-gray-500">Memory</div>
-                  <div className="font-medium">{mercuryStatus?.gpu?.memoryUsed || '4GB'} / {mercuryStatus?.gpu?.memoryTotal || '12GB'}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500">Utilization</div>
-                  <div className="font-medium">{mercuryStatus?.gpu?.utilization || '45%'}</div>
-                </div>
-              </div>
+              ) : (
+                <div className="text-sm text-gray-500">Loading GPU information...</div>
+              )}
             </div>
           </div>
         </div>

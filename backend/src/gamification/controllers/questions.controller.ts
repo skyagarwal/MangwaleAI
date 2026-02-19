@@ -34,16 +34,17 @@ export class QuestionsController {
         where: { enabled: true },
       });
 
+      // No game session tracking table exists yet — return zeros for play stats
       const analytics = questions.map(q => ({
         id: q.id,
         questionText: q.questionText,
         gameType: q.gameType,
         difficulty: q.difficulty,
-        timesPlayed: Math.floor(Math.random() * 100),
-        correctAnswers: Math.floor(Math.random() * 60),
-        incorrectAnswers: Math.floor(Math.random() * 40),
-        successRate: 50 + Math.random() * 40,
-        avgTimeSpent: 3 + Math.random() * 7,
+        timesPlayed: 0,
+        correctAnswers: 0,
+        incorrectAnswers: 0,
+        successRate: 0,
+        avgTimeSpent: 0,
       }));
 
       return {
@@ -64,13 +65,15 @@ export class QuestionsController {
     try {
       const totalQuestions = await this.prisma.gameQuestion.count();
 
+      // No game session tracking table exists yet — return zeros for play stats
       return {
         success: true,
         data: {
-          totalGamesPlayed: Math.floor(Math.random() * 1000),
-          totalQuestionsAnswered: Math.floor(Math.random() * 5000),
-          overallSuccessRate: 50 + Math.random() * 30,
-          mostPlayedGameType: 'intent_quest',
+          totalQuestions,
+          totalGamesPlayed: 0,
+          totalQuestionsAnswered: 0,
+          overallSuccessRate: 0,
+          mostPlayedGameType: null,
           hardestQuestion: null,
           easiestQuestion: null,
         },

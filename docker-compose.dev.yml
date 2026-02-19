@@ -12,10 +12,10 @@ services:
     container_name: mangwale_dev_postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_USER=mangwale_config
-      - POSTGRES_PASSWORD=config_secure_pass_2024
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-config_secure_pass_2024}
       - POSTGRES_DB=headless_mangwale
     volumes:
       - postgres-dev-data:/var/lib/postgresql/data
@@ -32,7 +32,7 @@ services:
     container_name: mangwale_dev_redis
     restart: unless-stopped
     ports:
-      - "6381:6379"
+      - "127.0.0.1:6381:6379"
     volumes:
       - redis-dev-data:/data
     networks:
@@ -40,9 +40,9 @@ services:
       search_search-network:
         aliases:
           - search-redis
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy noeviction --requirepass ${REDIS_PASSWORD:-mangwale_redis_secure_2024}
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-mangwale_redis_secure_2024}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -127,11 +127,11 @@ services:
       start_period: 60s
     environment:
       - NODE_ENV=development
-      - PORT=3000
+      - PORT=3200
       - TZ=Asia/Kolkata
       
       # Database
-      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      - DATABASE_URL=postgresql://mangwale_config:${POSTGRES_PASSWORD:-config_secure_pass_2024}@postgres:5432/headless_mangwale?schema=public
       
       # Redis
       - REDIS_HOST=redis
@@ -239,8 +239,8 @@ services:
       - traefik.http.routers.chat-backend-api.service=mangwale-backend
       - traefik.http.routers.chat-backend-api.priority=20
       
-      # Backend service on port 3000
-      - traefik.http.services.mangwale-backend.loadbalancer.server.port=3000
+      # Backend service on port 3200
+      - traefik.http.services.mangwale-backend.loadbalancer.server.port=3200
     depends_on:
       postgres:
         condition: service_healthy
@@ -299,7 +299,7 @@ services:
       - TZ=Asia/Kolkata
       
       # Database
-      - DATABASE_URL=postgresql://mangwale_config:config_secure_pass_2024@postgres:5432/headless_mangwale?schema=public
+      - DATABASE_URL=postgresql://mangwale_config:${POSTGRES_PASSWORD:-config_secure_pass_2024}@postgres:5432/headless_mangwale?schema=public
       
       # Redis
       - REDIS_URL=redis://redis:6379
@@ -362,7 +362,7 @@ services:
       - DJANGO_DB=default
       - POSTGRE_NAME=headless_mangwale
       - POSTGRE_USER=mangwale_config
-      - POSTGRE_PASSWORD=config_secure_pass_2024
+      - POSTGRE_PASSWORD=${POSTGRES_PASSWORD:-config_secure_pass_2024}
       - POSTGRE_PORT=5432
       - POSTGRE_HOST=postgres
     volumes:

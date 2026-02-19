@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 import { firstValueFrom } from 'rxjs';
 
@@ -283,19 +284,37 @@ export class NerveService {
         updateFields.ended_at = new Date();
       }
 
-      // Update by call_id or call_sid
-      const whereClause = call_id ? `id = '${call_id}'` : `call_sid = '${call_sid}'`;
-      
-      const setClauses = Object.entries(updateFields)
-        .map(([key, value]) => {
-          if (value instanceof Date) {
-            return `${key} = '${value.toISOString()}'`;
-          }
-          return `${key} = '${value}'`;
-        })
-        .join(', ');
+      // Update by call_id or call_sid using safe parameterized queries
+      // Whitelist allowed column names for dynamic SET clause
+      const ALLOWED_COLUMNS = [
+        'status', 'dtmf_digits', 'prep_time_minutes', 'rejection_reason',
+        'recording_url', 'answered_at', 'ended_at', 'updated_at', 'metadata',
+      ];
 
-      await this.prisma.$executeRawUnsafe(`UPDATE voice_calls SET ${setClauses} WHERE ${whereClause}`);
+      const setFragments: Prisma.Sql[] = [];
+      const entries = Object.entries(updateFields);
+      for (const [key, value] of entries) {
+        if (!ALLOWED_COLUMNS.includes(key)) {
+          this.logger.warn(`Skipping disallowed column in voice_calls update: ${key}`);
+          continue;
+        }
+        const col = Prisma.raw(key);
+        if (value instanceof Date) {
+          setFragments.push(Prisma.sql`${col} = ${value.toISOString()}::timestamptz`);
+        } else {
+          setFragments.push(Prisma.sql`${col} = ${String(value)}`);
+        }
+      }
+
+      if (setFragments.length === 0) return;
+
+      const setClause = Prisma.join(setFragments, ', ');
+
+      if (call_id) {
+        await this.prisma.$executeRaw`UPDATE voice_calls SET ${setClause} WHERE id = ${call_id}`;
+      } else {
+        await this.prisma.$executeRaw`UPDATE voice_calls SET ${setClause} WHERE call_sid = ${call_sid}`;
+      }
       
       // Emit event for order system to react
       this.emitCallEvent(callbackData);
@@ -340,31 +359,50 @@ export class NerveService {
   /**
    * Get call history for an order
    */
+  async getRecentCalls(limit = 50): Promise<any[]> {
+    try {
+      const calls = await this.prisma.$queryRaw`
+        SELECT * FROM voice_calls ORDER BY initiated_at DESC LIMIT ${limit}
+      `;
+      return calls as any[];
+    } catch {
+      return [];
+    }
+  }
+
   async getOrderCallHistory(orderId: number): Promise<any[]> {
-    const calls = await this.prisma.$queryRaw`
-      SELECT * FROM voice_calls WHERE order_id = ${orderId} ORDER BY initiated_at DESC
-    `;
-    return calls as any[];
+    try {
+      const calls = await this.prisma.$queryRaw`
+        SELECT * FROM voice_calls WHERE order_id = ${orderId} ORDER BY initiated_at DESC
+      `;
+      return calls as any[];
+    } catch {
+      return [];
+    }
   }
 
   /**
    * Get call stats
    */
   async getCallStats(period = '7d'): Promise<any> {
-    const days = period === '24h' ? 1 : period === '7d' ? 7 : 30;
-    
-    const stats = await this.prisma.$queryRaw`
-      SELECT 
-        call_type,
-        status,
-        COUNT(*) as count,
-        AVG(duration_seconds) as avg_duration
-      FROM voice_calls
-      WHERE initiated_at > NOW() - INTERVAL '${days} days'
-      GROUP BY call_type, status
-    `;
-    
-    return stats;
+    try {
+      const days = period === '24h' ? 1 : period === '7d' ? 7 : 30;
+
+      const stats = await this.prisma.$queryRaw`
+        SELECT
+          call_type,
+          status,
+          COUNT(*) as count,
+          AVG(duration_seconds) as avg_duration
+        FROM voice_calls
+        WHERE initiated_at > NOW() - INTERVAL '${days} days'
+        GROUP BY call_type, status
+      `;
+
+      return stats;
+    } catch {
+      return { total: 0, calls: [], message: 'voice_calls table not yet created' };
+    }
   }
 
   /**

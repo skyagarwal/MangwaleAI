@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { DynamicConfigService } from './dynamic-config.service';
 import { ConfigController } from './config.controller';
 import { DatabaseModule } from '../database/database.module';
+import { AdminModule } from '../admin/admin.module';
 
 /**
  * Config Module
@@ -23,7 +24,7 @@ import { DatabaseModule } from '../database/database.module';
  */
 @Global() // Make available app-wide without importing
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AdminModule],
   controllers: [ConfigController],
   providers: [DynamicConfigService],
   exports: [DynamicConfigService],

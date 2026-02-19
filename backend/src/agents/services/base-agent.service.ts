@@ -82,9 +82,15 @@ export abstract class BaseAgent {
 
         // Execute function
         const functionName = response.functionCall.name;
-        const functionArgs = typeof response.functionCall.arguments === 'string' 
-          ? JSON.parse(response.functionCall.arguments)
-          : response.functionCall.arguments;
+        let functionArgs: any;
+        try {
+          functionArgs = typeof response.functionCall.arguments === 'string'
+            ? JSON.parse(response.functionCall.arguments)
+            : response.functionCall.arguments;
+        } catch {
+          this.logger.warn(`Failed to parse function args for ${functionName}, using empty object`);
+          functionArgs = {};
+        }
 
         this.logger.log(
           `Agent ${config.id} calling function: ${functionName}`,

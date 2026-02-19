@@ -21,6 +21,7 @@ import { RetrainingCoordinatorService } from './services/retraining-coordinator.
 import { LearningAdminController } from './controllers/learning-admin.controller';
 import { DatabaseModule } from '../database/database.module';
 import { HealingModule } from '../healing/healing.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { HealingModule } from '../healing/healing.module';
     ConfigModule,
     DatabaseModule,
     HealingModule,
+    AdminModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [

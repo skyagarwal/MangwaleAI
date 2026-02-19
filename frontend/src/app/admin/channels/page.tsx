@@ -8,6 +8,7 @@ import {
   Clock, Shield, Users, Mic, Volume2, Calendar
 } from 'lucide-react';
 import { useToast } from '@/components/shared';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface ChannelConfig {
   id: string;
@@ -76,11 +77,8 @@ export default function ChannelsPage() {
 
   const loadExotelStatus = async () => {
     try {
-      const response = await fetch('/api/exotel/health');
-      if (response.ok) {
-        const data = await response.json();
-        setExotelStatus(data);
-      }
+      const data = await adminBackendClient.getExotelHealth();
+      setExotelStatus(data as unknown as ExotelStatus);
     } catch (error) {
       console.error('Failed to load Exotel status:', error);
       setExotelStatus({ enabled: false, features: {} });
@@ -90,94 +88,44 @@ export default function ChannelsPage() {
   const loadChannels = async () => {
     setLoading(true);
     try {
-      // Load channel configurations from backend
-      const response = await fetch('/api/channels');
-      if (response.ok) {
-        const data = await response.json();
-        setChannels(data.channels || []);
-      } else {
-        // Default configuration
-        setChannels([
-          {
-            id: 'whatsapp-main',
-            name: 'WhatsApp Business',
-            platform: 'whatsapp',
-            status: 'active',
-            lastActivity: new Date(),
-            messagesTotal: 15234,
-            messagesToday: 127,
-            config: {
-              phoneNumberId: '908689285655004',
-              wabaId: '1538156784195596',
-              businessName: 'Mangwale',
-              businessPhone: '+91 97301 99571',
-              apiVersion: 'v24.0',
-              webhookUrl: 'https://api.mangwale.ai/api/webhook/whatsapp',
-            },
-            capabilities: WHATSAPP_CAPABILITIES,
-          },
-          {
-            id: 'voice-exotel',
-            name: 'Voice (Exotel)',
-            platform: 'voice',
-            status: exotelStatus?.enabled ? 'active' : 'inactive',
-            lastActivity: new Date(),
-            messagesTotal: 3421,
-            messagesToday: 45,
-            config: {
-              serviceUrl: 'Mercury (192.168.0.151:3100)',
-              provider: 'Exotel Cloud API',
-              features: 'IVR, Click-to-Call, Number Masking',
-              truecaller: 'Verified Calls Enabled',
-            },
-            capabilities: VOICE_CAPABILITIES,
-          },
-          {
-            id: 'telegram-main',
-            name: 'Telegram Bot',
-            platform: 'telegram',
-            status: 'inactive',
-            config: {
-              botUsername: '@MangwaleBot',
-              webhookUrl: 'https://api.mangwale.ai/api/webhook/telegram',
-            },
-            capabilities: [
-              'Text Messages',
-              'Inline Keyboards',
-              'Reply Keyboards',
-              'Images & Media',
-              'Location Sharing',
-              'Contact Cards',
-              'Polls',
-            ],
-          },
-          {
-            id: 'web-chat',
-            name: 'Web Chat',
-            platform: 'web',
-            status: 'active',
-            lastActivity: new Date(),
-            messagesTotal: 8921,
-            messagesToday: 89,
-            config: {
-              widgetUrl: 'https://chat.mangwale.ai',
-              wsEndpoint: 'wss://api.mangwale.ai/socket',
-            },
-            capabilities: [
-              'Text Messages',
-              'Interactive Buttons',
-              'Product Cards',
-              'Image Upload',
-              'Location Sharing',
-              'Voice Messages',
-              'Real-time Updates',
-            ],
-          },
-        ]);
-      }
+      const data = await adminBackendClient.getChannels();
+      const result = data as Record<string, Record<string, unknown>>;
+      const rawChannels = (result?.data?.channels || result?.channels || []) as Array<Record<string, unknown>>;
+
+      // Map backend channel data to frontend ChannelConfig format
+      const platformMap: Record<string, ChannelConfig['platform']> = {
+        whatsapp: 'whatsapp',
+        telegram: 'telegram',
+        webchat: 'web',
+        'sms-msg91': 'sms',
+        'sms-twilio': 'sms',
+        instagram: 'web',
+      };
+
+      const capabilitiesMap: Record<string, string[]> = {
+        whatsapp: WHATSAPP_CAPABILITIES,
+        voice: VOICE_CAPABILITIES,
+        telegram: ['Text Messages', 'Inline Keyboards', 'Reply Keyboards', 'Images & Media', 'Location Sharing', 'Contact Cards', 'Polls'],
+        webchat: ['Text Messages', 'Interactive Buttons', 'Product Cards', 'Image Upload', 'Location Sharing', 'Voice Messages', 'Real-time Updates'],
+        'sms-msg91': ['SMS Messages', 'DLT Templates', 'Delivery Reports'],
+        'sms-twilio': ['SMS Messages', 'MMS', 'Delivery Reports'],
+        instagram: ['Direct Messages', 'Story Replies'],
+      };
+
+      const mapped: ChannelConfig[] = rawChannels.map((ch) => ({
+        id: String(ch.id),
+        name: String(ch.name),
+        platform: platformMap[String(ch.id)] || 'web',
+        status: (ch.status as ChannelConfig['status']) || (ch.enabled ? 'active' : 'inactive'),
+        config: (ch.config as Record<string, string>) || {},
+        capabilities: capabilitiesMap[String(ch.id)] || [],
+      }));
+
+      setChannels(mapped);
     } catch (error) {
       console.error('Failed to load channels:', error);
       toast.error('Failed to load channel configurations');
+      setChannels([]);
     } finally {
       setLoading(false);
     }
@@ -189,37 +137,31 @@ export default function ChannelsPage() {
       const channel = channels.find(c => c.id === channelId);
       if (!channel) return;
 
-      if (channel.platform === 'whatsapp') {
-        // Test WhatsApp by sending a test message
-        const response = await fetch('/api/channels/test', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ channelId, platform: 'whatsapp' }),
-        });
-        
-        if (response.ok) {
-          toast.success('WhatsApp connection test successful!');
-        } else {
-          toast.error('WhatsApp connection test failed');
-        }
-      } else if (channel.platform === 'voice') {
+      if (channel.platform === 'voice') {
         // Test Exotel connection
-        const response = await fetch('/api/exotel/health');
-        if (response.ok) {
-          const data = await response.json();
+        try {
+          const data = await adminBackendClient.getExotelHealth() as unknown as ExotelStatus;
           if (data.enabled) {
             toast.success('Voice (Exotel) service is connected and healthy!');
             setExotelStatus(data);
           } else {
             toast.warning('Exotel service is offline or unavailable');
           }
-        } else {
+        } catch {
           toast.error('Failed to connect to Exotel service');
         }
       } else {
-        toast.info(`Testing ${channel.name}...`);
-        await new Promise(r => setTimeout(r, 1000));
-        toast.success(`${channel.name} is working correctly!`);
+        // Test channel via backend
+        try {
+          const result = await adminBackendClient.testChannel(channelId, channel.platform);
+          if ((result as Record<string, unknown>).success) {
+            toast.success(`${channel.name} connection test successful!`);
+          } else {
+            toast.error(`${channel.name} connection test failed`);
+          }
+        } catch {
+          toast.error(`${channel.name} test failed`);
+        }
       }
     } catch (error) {
       toast.error('Channel test failed');

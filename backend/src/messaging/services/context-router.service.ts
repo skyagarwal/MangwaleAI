@@ -150,6 +150,17 @@ export class ContextRouterService implements OnModuleInit {
       this.logRoutingDecision(response.routedTo, startTime);
     } catch (error) {
       this.logger.error(`❌ Routing failed: ${error.message}`, error.stack);
+      // Send fallback error message to user so they know something went wrong
+      try {
+        if (event.channel === 'whatsapp' && this.whatsappService) {
+          await this.whatsappService.sendText(
+            event.identifier,
+            "Sorry, something went wrong processing your message. Please try again.",
+          );
+        }
+      } catch (fallbackErr) {
+        this.logger.error(`❌ Even fallback message failed: ${fallbackErr.message}`);
+      }
     }
   }
 
@@ -1361,7 +1372,15 @@ export class ContextRouterService implements OnModuleInit {
         this.logger.log(`✅ [ASYNC] Response sent via ${platform}`);
       }
     } catch (error) {
-      this.logger.error(`❌ Failed to send async response: ${error.message}`);
+      this.logger.error(`❌ Failed to send async response: ${error.message}`, error.stack);
+      // Try sending plain text as fallback (buttons/list may have failed due to formatting)
+      try {
+        if (event.channel === 'whatsapp' && this.whatsappService) {
+          await this.whatsappService.sendText(event.identifier, response.message);
+        }
+      } catch (fallbackErr) {
+        this.logger.error(`❌ Even plain text fallback failed: ${fallbackErr.message}`);
+      }
     }
   }
 

@@ -337,7 +337,19 @@ class ChatWebSocketClient {
   // Send a message
   sendMessage(payload: SendMessagePayload) {
     if (!this.socket?.connected) {
-      throw new Error('WebSocket not connected')
+      console.warn('⚠️ Socket not connected — queuing message for delivery after reconnect')
+      // Queue message to send after reconnect instead of throwing
+      const retryHandler = () => {
+        console.log('📤 Retrying queued message after reconnect')
+        this.socket?.emit('message:send', payload)
+        this.socket?.off('connect', retryHandler)
+      }
+      this.socket?.on('connect', retryHandler)
+      // Also try to trigger reconnect
+      if (this.socket && !this.socket.connected) {
+        this.socket.connect()
+      }
+      return
     }
     console.log('📤 Sending message:', payload)
     this.socket.emit('message:send', payload)
@@ -351,7 +363,15 @@ class ChatWebSocketClient {
   // Handle option click
   handleOptionClick(payload: OptionClickPayload) {
     if (!this.socket?.connected) {
-      throw new Error('WebSocket not connected')
+      console.warn('⚠️ Socket not connected — queuing option click for delivery after reconnect')
+      const retryHandler = () => {
+        console.log('🖱️ Retrying queued option click after reconnect')
+        this.socket?.emit('option:click', payload)
+        this.socket?.off('connect', retryHandler)
+      }
+      this.socket?.on('connect', retryHandler)
+      if (this.socket && !this.socket.connected) this.socket.connect()
+      return
     }
     console.log('🖱️ Handling option click:', payload)
     this.socket.emit('option:click', payload)
@@ -360,7 +380,18 @@ class ChatWebSocketClient {
   // Update location
   updateLocation(sessionId: string, lat: number, lng: number, zoneId?: number) {
     console.log('📍 Updating location:', { sessionId, lat, lng, zoneId })
-    this.socket?.emit('location:update', { sessionId, lat, lng, zoneId })
+    if (!this.socket?.connected) {
+      console.warn('⚠️ Socket not connected for location update — will retry after reconnect')
+      // Queue location update to send after reconnect
+      const retryHandler = () => {
+        console.log('📍 Retrying location update after reconnect')
+        this.socket?.emit('location:update', { sessionId, lat, lng, zoneId })
+        this.socket?.off('connect', retryHandler)
+      }
+      this.socket?.on('connect', retryHandler)
+      return
+    }
+    this.socket.emit('location:update', { sessionId, lat, lng, zoneId })
   }
 
   // ===== CENTRALIZED AUTH METHODS =====

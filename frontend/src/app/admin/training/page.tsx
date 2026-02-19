@@ -134,8 +134,8 @@ export default function TrainingPage() {
         setJobs(mappedJobs);
       } catch (err) {
         console.error('Failed to fetch training data:', err);
-        setError('Failed to load training data. Using sample data.');
-        // Fallback to sample data on error
+        setError('Failed to load training data. The training API may be unavailable.');
+        // Clear data on error
         loadSampleData();
       } finally {
         setLoading(false);
@@ -145,98 +145,9 @@ export default function TrainingPage() {
   }, []);
 
   const loadSampleData = () => {
-    // Sample data as fallback
-    setDatasets([
-      {
-        id: 'ds_food_v2',
-        name: 'Food NLU Dataset v2',
-        type: 'nlu',
-        module: 'food',
-        examples: 2450,
-        created: '2025-10-25',
-        status: 'ready',
-      },
-      {
-        id: 'ds_ecom_v1',
-        name: 'Ecom NLU Dataset v1',
-        type: 'nlu',
-        module: 'ecom',
-        examples: 1820,
-        created: '2025-10-24',
-        status: 'ready',
-      },
-      {
-        id: 'ds_parcel_v1',
-        name: 'Parcel NLU Dataset v1',
-        type: 'nlu',
-        module: 'parcel',
-        examples: 1350,
-        created: '2025-10-23',
-        status: 'ready',
-      },
-      {
-        id: 'ds_asr_hindi',
-        name: 'Hindi ASR Dataset',
-        type: 'asr',
-        module: 'global',
-        examples: 5600,
-        created: '2025-10-20',
-        status: 'ready',
-      },
-    ]);
-
-    setJobs([
-      {
-        id: 'job_001',
-        name: 'Food NLU v2 Training',
-        type: 'nlu-train',
-        status: 'training',
-        dataset: 'ds_food_v2',
-        progress: 0.65,
-        accuracy: 0.89,
-        loss: 0.234,
-        startTime: '10 minutes ago',
-        epoch: 7,
-        totalEpochs: 10,
-      },
-      {
-        id: 'job_002',
-        name: 'Ecom Product Classification',
-        type: 'nlu-train',
-        status: 'queued',
-        dataset: 'ds_ecom_v1',
-        progress: 0,
-        startTime: 'Not started',
-        totalEpochs: 15,
-      },
-      {
-        id: 'job_003',
-        name: 'Hindi ASR Model Training',
-        type: 'asr-finetune',
-        status: 'completed',
-        dataset: 'ds_asr_hindi',
-        progress: 1.0,
-        accuracy: 0.96,
-        loss: 0.089,
-        startTime: '2 hours ago',
-        duration: '45 minutes',
-        epoch: 20,
-        totalEpochs: 20,
-      },
-      {
-        id: 'job_004',
-        name: 'Parcel Intent Model',
-        type: 'nlu-train',
-        status: 'failed',
-        dataset: 'ds_parcel_v1',
-        progress: 0.45,
-        accuracy: 0.67,
-        loss: 0.543,
-        startTime: '1 day ago',
-        epoch: 5,
-        totalEpochs: 10,
-      },
-    ]);
+    // No sample data - show empty states
+    setDatasets([]);
+    setJobs([]);
   };
 
   const handleCreateDataset = async (data: DatasetFormData) => {
@@ -525,6 +436,22 @@ export default function TrainingPage() {
       {/* Datasets Tab */}
       {activeTab === 'datasets' && (
         <div className="space-y-4">
+          {datasets.length === 0 && (
+            <div className="bg-white rounded-xl p-12 shadow-md border-2 border-gray-100 text-center">
+              <Database size={48} className="mx-auto text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Training Datasets</h3>
+              <p className="text-gray-600 mb-6">
+                Upload or create your first dataset to start training AI models.
+              </p>
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#059211] to-[#047a0e] text-white rounded-lg hover:shadow-lg transition-all font-medium"
+              >
+                <Plus size={20} />
+                Create Your First Dataset
+              </button>
+            </div>
+          )}
           {datasets.map((dataset) => (
             <div
               key={dataset.id}
@@ -612,6 +539,15 @@ export default function TrainingPage() {
       {/* Training Jobs Tab */}
       {activeTab === 'jobs' && (
         <div className="space-y-4">
+          {jobs.length === 0 && (
+            <div className="bg-white rounded-xl p-12 shadow-md border-2 border-gray-100 text-center">
+              <TrendingUp size={48} className="mx-auto text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Training Jobs</h3>
+              <p className="text-gray-600">
+                Training jobs will appear here once you start training a dataset. Create a dataset first, then click &quot;Start Training&quot;.
+              </p>
+            </div>
+          )}
           {jobs.map((job) => (
             <div
               key={job.id}

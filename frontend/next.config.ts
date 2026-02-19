@@ -97,7 +97,27 @@ const nextConfig: NextConfig = {
         // NOTE: WebSocket (/socket.io) is handled DIRECTLY by Traefik with higher priority
         // Do NOT proxy WebSocket through Next.js - it doesn't support WebSocket upgrades properly
         // Traefik route: chat-ws (priority 100) routes /socket.io to backend
-        
+
+        // Search API stats (no /admin prefix on Search API)
+        {
+          source: '/api/search-admin/stats/:path*',
+          destination: 'http://localhost:3100/stats/:path*',
+        },
+        // Search API sync routes (no /admin prefix on Search API)
+        {
+          source: '/api/search-admin/sync/:path*',
+          destination: 'http://localhost:3100/sync/:path*',
+        },
+        // Search API analytics routes
+        {
+          source: '/api/search-admin/analytics/:path*',
+          destination: 'http://localhost:3100/v2/analytics/:path*',
+        },
+        // Search API admin CRUD routes (items, stores, categories)
+        {
+          source: '/api/search-admin/:path*',
+          destination: 'http://localhost:3100/admin/:path*',
+        },
         // Proxy specific API paths to backend - EXCLUDING TTS and ASR which have local handlers
         // Auth routes
         {
@@ -154,10 +174,10 @@ const nextConfig: NextConfig = {
           source: '/api/profile/:path*',
           destination: `${backendUrl}/api/profile/:path*`,
         },
-        // Health routes
+        // Health routes (excluded from NestJS global prefix)
         {
-          source: '/api/health/:path*',
-          destination: `${backendUrl}/api/health/:path*`,
+          source: '/api/health',
+          destination: `${backendUrl}/health`,
         },
         // Users routes
         {
@@ -193,33 +213,153 @@ const nextConfig: NextConfig = {
         // Analytics routes
         {
           source: '/api/analytics/:path*',
-          destination: `${backendUrl}/analytics/:path*`,
+          destination: `${backendUrl}/api/analytics/:path*`,
+        },
+        // Trending routes
+        {
+          source: '/api/trending/:path*',
+          destination: `${backendUrl}/api/trending/:path*`,
+        },
+        {
+          source: '/api/trending',
+          destination: `${backendUrl}/api/trending`,
         },
         // Stats routes
         {
           source: '/api/stats/:path*',
-          destination: `${backendUrl}/stats/:path*`,
+          destination: `${backendUrl}/api/stats/:path*`,
         },
         // Broadcast routes
         {
           source: '/api/broadcast/:path*',
           destination: `${backendUrl}/api/broadcast/:path*`,
         },
+        // NLU routes (intent classification, entity extraction, training data)
+        {
+          source: '/api/nlu/:path*',
+          destination: `${backendUrl}/api/nlu/:path*`,
+        },
+        // Flow engine routes
+        {
+          source: '/api/flows/:path*',
+          destination: `${backendUrl}/api/flows/:path*`,
+        },
+        // Agent routes
+        {
+          source: '/api/agents/:path*',
+          destination: `${backendUrl}/api/agents/:path*`,
+        },
+        // Training routes (datasets, jobs, Label Studio)
+        {
+          source: '/api/training/:path*',
+          destination: `${backendUrl}/api/training/:path*`,
+        },
+        // Model routes
+        {
+          source: '/api/models/:path*',
+          destination: `${backendUrl}/api/models/:path*`,
+        },
+        // Settings routes
+        {
+          source: '/api/settings/:path*',
+          destination: `${backendUrl}/api/settings/:path*`,
+        },
+        // Search routes (items, stores, suggest, health)
+        {
+          source: '/api/search/:path*',
+          destination: `${backendUrl}/api/search/:path*`,
+        },
+        // RAG document routes
+        {
+          source: '/api/rag/:path*',
+          destination: `${backendUrl}/api/rag/:path*`,
+        },
+        // Profiles routes (stores, vendors, riders)
+        {
+          source: '/api/profiles/:path*',
+          destination: `${backendUrl}/api/profiles/:path*`,
+        },
+        // Context routes (weather, time, festivals)
+        {
+          source: '/api/context/:path*',
+          destination: `${backendUrl}/api/context/:path*`,
+        },
+        // Data sources routes
+        {
+          source: '/api/data-sources/:path*',
+          destination: `${backendUrl}/api/data-sources/:path*`,
+        },
+        // Scraper routes
+        {
+          source: '/api/scraper/:path*',
+          destination: `${backendUrl}/api/scraper/:path*`,
+        },
+        // Gamification routes (questions, settings, training-samples, stats)
+        {
+          source: '/api/gamification/:path*',
+          destination: `${backendUrl}/api/gamification/:path*`,
+        },
+        // AI routes (semantic cache, conversation memory)
+        {
+          source: '/api/ai/:path*',
+          destination: `${backendUrl}/api/ai/:path*`,
+        },
+        // LLM routes (providers, failover, chat)
+        {
+          source: '/api/llm/:path*',
+          destination: `${backendUrl}/api/llm/:path*`,
+        },
+        // Monitoring routes
+        {
+          source: '/api/monitoring/:path*',
+          destination: `${backendUrl}/api/monitoring/:path*`,
+        },
+        // Exotel/Nerve routes
+        {
+          source: '/api/exotel/:path*',
+          destination: `${backendUrl}/api/exotel/:path*`,
+        },
+        // Learning routes (corrections, self-learning)
+        {
+          source: '/api/learning/:path*',
+          destination: `${backendUrl}/api/learning/:path*`,
+        },
+        // Config routes
+        {
+          source: '/api/config/:path*',
+          destination: `${backendUrl}/api/config/:path*`,
+        },
+        // Webhooks routes
+        {
+          source: '/api/webhooks/:path*',
+          destination: `${backendUrl}/api/webhooks/:path*`,
+        },
+        // Database routes
+        {
+          source: '/api/database/:path*',
+          destination: `${backendUrl}/api/database/:path*`,
+        },
+        // vLLM direct proxy (OpenAI-compatible API on local GPU)
+        {
+          source: '/api/vllm/:path*',
+          destination: 'http://localhost:8002/:path*',
+        },
       ],
       fallback: [],
     };
   },
   
-  // Ensure proper CORS for API routes
+  // Security headers for all routes
   async headers() {
     return [
       {
-        source: '/api/:path*',
+        source: '/:path*',
         headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=(self)' },
         ],
       },
     ];

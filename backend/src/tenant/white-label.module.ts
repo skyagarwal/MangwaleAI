@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WhiteLabelService } from './services/white-label.service';
 import { WhiteLabelAdminController } from './controllers/white-label-admin.controller';
+import { AdminModule } from '../admin/admin.module';
 
 /**
  * 🎨 White-Label Module
@@ -12,6 +13,7 @@ import { WhiteLabelAdminController } from './controllers/white-label-admin.contr
  * - CSS variable generation
  */
 @Module({
+  imports: [AdminModule],
   controllers: [WhiteLabelAdminController],
   providers: [WhiteLabelService],
   exports: [WhiteLabelService],

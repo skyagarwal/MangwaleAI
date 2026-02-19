@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Query, Logger, HttpCode, Param, Delete, Headers, UnauthorizedException, RawBodyRequest, Req } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { Controller, Get, Post, Body, Query, Logger, HttpCode, Param, Delete, Headers, UnauthorizedException, RawBodyRequest, Req, UseGuards } from '@nestjs/common';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { SessionService } from '../../session/session.service';
 import { MessageService } from '../services/message.service';
 import { AgentOrchestratorService } from '../../agents/services/agent-orchestrator.service';
@@ -12,7 +13,9 @@ import { firstValueFrom } from 'rxjs';
 import { MessageGatewayService } from '../../messaging/services/message-gateway.service';
 import { WhatsAppCloudService } from '../services/whatsapp-cloud.service';
 import * as crypto from 'crypto';
+import { Request } from 'express';
 
+@SkipThrottle({ default: true })
 @Controller('webhook/whatsapp')
 export class WebhookController {
   private readonly logger = new Logger(WebhookController.name);
@@ -40,12 +43,14 @@ export class WebhookController {
   }
 
   @Get('session/:phoneNumber')
+  @UseGuards(AdminAuthGuard)
   async getSession(@Param('phoneNumber') phoneNumber: string): Promise<any> {
     const session = await this.sessionService.getSession(phoneNumber);
     return session || { message: 'No session found' };
   }
 
   @Delete('session/:phoneNumber')
+  @UseGuards(AdminAuthGuard)
   async deleteSession(@Param('phoneNumber') phoneNumber: string): Promise<any> {
     await this.sessionService.deleteSession(phoneNumber);
     this.logger.log(`🗑️ Session deleted for ${phoneNumber}`);
@@ -53,12 +58,14 @@ export class WebhookController {
   }
 
   @Get('messages/:phoneNumber')
+  @UseGuards(AdminAuthGuard)
   async getBotMessages(@Param('phoneNumber') phoneNumber: string): Promise<any> {
     const messages = await this.sessionService.getBotMessages(phoneNumber);
     return { phoneNumber, messages, count: messages.length };
   }
 
   @Get('sessions')
+  @UseGuards(AdminAuthGuard)
   async getAllSessions(): Promise<any> {
     const sessions = await this.sessionService.getAllSessions();
     return { total: sessions.length, sessions };
@@ -83,35 +90,46 @@ export class WebhookController {
 
   @Post()
   @HttpCode(200)
-  @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 requests per minute per IP
+  @SkipThrottle({ default: false })
+  @Throttle({ default: { limit: 300, ttl: 60000 } }) // 300 requests per minute per IP
   async receive(
     @Body() payload: any,
     @Headers('x-hub-signature-256') hubSignature: string,
+    @Req() req: RawBodyRequest<Request>,
   ): Promise<{ status: string }> {
+    // Verify WhatsApp webhook signature (HMAC-SHA256) — MANDATORY
+    // These checks must be outside try-catch so NestJS returns proper 401
+    if (!this.appSecret) {
+      this.logger.error('WHATSAPP_APP_SECRET not configured — rejecting all webhooks for security');
+      throw new UnauthorizedException('Webhook signature verification not configured');
+    }
+
+    if (!hubSignature) {
+      this.logger.warn('Missing WhatsApp webhook signature - rejecting');
+      throw new UnauthorizedException('Missing webhook signature');
+    }
+
+    const rawBody = req.rawBody;
+    if (!rawBody || rawBody.length === 0) {
+      this.logger.error('Raw body not available — ensure rawBody: true in NestFactory.create()');
+      throw new UnauthorizedException('Webhook verification failed');
+    }
+
+    const expectedSignature = 'sha256=' + crypto
+      .createHmac('sha256', this.appSecret)
+      .update(rawBody)
+      .digest('hex');
+
+    if (!crypto.timingSafeEqual(
+      Buffer.from(expectedSignature),
+      Buffer.from(hubSignature),
+    )) {
+      this.logger.warn('Invalid WhatsApp webhook signature - rejecting');
+      throw new UnauthorizedException('Invalid webhook signature');
+    }
+
     try {
-      // Verify WhatsApp webhook signature (HMAC-SHA256)
-      // When WHATSAPP_APP_SECRET is configured, ALL requests MUST have valid signature
-      if (this.appSecret) {
-        if (!hubSignature) {
-          this.logger.warn('⚠️ Missing WhatsApp webhook signature - rejecting');
-          throw new UnauthorizedException('Missing webhook signature');
-        }
-
-        const expectedSignature = 'sha256=' + crypto
-          .createHmac('sha256', this.appSecret)
-          .update(JSON.stringify(payload))
-          .digest('hex');
-
-        if (!crypto.timingSafeEqual(
-          Buffer.from(expectedSignature),
-          Buffer.from(hubSignature),
-        )) {
-          this.logger.warn('⚠️ Invalid WhatsApp webhook signature - rejecting');
-          throw new UnauthorizedException('Invalid webhook signature');
-        }
-      }
-
-      this.logger.debug('📨 Webhook received');
+      this.logger.debug('Webhook received');
       this.logger.debug(`📋 Payload structure: ${JSON.stringify(payload, null, 2)}`);
 
       if (!payload.entry?.[0]?.changes?.[0]?.value) {
@@ -243,15 +261,14 @@ export class WebhookController {
         this.logger.log(`📍 Saved location to session: ${locationData.latitude}, ${locationData.longitude}`);
       }
       
-      // Log user message to PostgreSQL (for continuous learning)
-      await this.conversationLogger.logUserMessage({
+      // Log user message to PostgreSQL (non-blocking — don't let DB failure kill message pipeline)
+      this.conversationLogger.logUserMessage({
         phone: from,
         userId,
         messageText,
         platform: 'whatsapp',
         sessionId: from,
-        // Voice messages are logged the same way - ASR transcription becomes the message
-      });
+      }).catch(err => this.logger.warn(`Failed to log user message: ${err.message}`));
       
       this.logger.log(`✅ User message logged to database`);
 
@@ -310,12 +327,15 @@ export class WebhookController {
         return '';
       }
 
-      // 3. Transcribe using ASR service
-      const transcription = await this.asrService.transcribe({
-        audioData: audioBuffer,
-        language: 'auto', // Auto-detect Hindi or English
-        provider: 'auto',
-      });
+      // 3. Transcribe using ASR service (with 15s timeout to avoid blocking if Mercury ASR is down)
+      const transcription = await Promise.race([
+        this.asrService.transcribe({
+          audioData: audioBuffer,
+          language: 'auto', // Auto-detect Hindi or English
+          provider: 'auto',
+        }),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('ASR transcription timed out after 15s')), 15000)),
+      ]);
 
       this.logger.log(`🎤 Transcription complete: "${transcription.text}" (confidence: ${transcription.confidence}, language: ${transcription.language})`);
       

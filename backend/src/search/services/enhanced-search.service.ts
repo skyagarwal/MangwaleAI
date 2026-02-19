@@ -115,6 +115,7 @@ export class EnhancedSearchService {
       if (options.lat) params.lat = options.lat;
       if (options.lng) params.lon = options.lng;
       if (options.userId) params.user_id = options.userId;
+      if (options.zoneId) params.zone_id = options.zoneId;
 
       this.logger.log(`🗣️ Conversational Search: "${query}"`);
 
@@ -192,6 +193,7 @@ export class EnhancedSearchService {
       if (options.userId) params.user_id = options.userId; // For personalization
       if (options.lat) params.lat = options.lat;
       if (options.lng) params.lon = options.lng;
+      if (options.zoneId) params.zone_id = options.zoneId;
 
       this.logger.log(`🔄 Multi-stage Search: "${query}" (user: ${options.userId || 'anonymous'})`);
 
@@ -236,8 +238,7 @@ export class EnhancedSearchService {
    * 3. Uses conversational search for NLP queries
    * 4. Uses multi-stage for other queries
    * 5. Applies personalization if user_id provided
-   * 6. ⚠️ WORKAROUND: Applies store_id filter in backend (API ignores it)
-   * 
+   *
    * @param query User's raw query
    * @param options Search options
    * @returns Best possible search results
@@ -258,12 +259,16 @@ export class EnhancedSearchService {
 
     if (isConversational) {
       // Use conversational search for NLP queries
+      if (!options.moduleId) {
+        this.logger.warn(`smartSearch (conversational) called without moduleId for query "${query}" — no module filter applied`);
+      }
       const convResult = await this.conversationalSearch(query, {
-        moduleId: options.moduleId || 4,
+        moduleId: options.moduleId,
         size: options.size || 20,
         userId: options.userId,
         lat: options.lat,
         lng: options.lng,
+        zoneId: options.zone_id,
       });
 
       result = {
@@ -286,49 +291,27 @@ export class EnhancedSearchService {
       };
     } else {
       // Use multi-stage search for regular queries
-      // Request more results if filtering by store (workaround for API not filtering)
-      const requestSize = options.storeId ? (options.size || 20) * 5 : (options.size || 20);
-      
+      // Search API now handles store_id filtering at the OpenSearch query level
+      if (!options.moduleId) {
+        this.logger.warn(`smartSearch (multistage) called without moduleId for query "${query}" — no module filter applied`);
+      }
       const msResult = await this.multistageSearch(
         understanding.expanded || understanding.corrected,
         {
-          moduleId: options.moduleId || 4,
-          size: requestSize,
+          moduleId: options.moduleId,
+          size: options.size || 20,
           storeId: options.storeId,
           veg: options.veg,
           userId: options.userId,
           lat: options.lat,
           lng: options.lng,
+          zoneId: options.zone_id,
         }
       );
 
-      // ⚠️ WORKAROUND: Search API v2/v3 multistage endpoint ignores store_id filter
-      // We apply the filter here in backend until the API is fixed
-      // See GAP_ANALYSIS_ARCHITECTURE.md - GAP 2
-      let filteredItems = msResult.items;
-      if (options.storeId) {
-        const beforeCount = filteredItems.length;
-        filteredItems = filteredItems.filter((item: any) => {
-          const itemStoreId = item.store_id || item.storeId;
-          return itemStoreId === options.storeId || 
-                 String(itemStoreId) === String(options.storeId);
-        });
-        const afterCount = filteredItems.length;
-        
-        if (beforeCount !== afterCount) {
-          this.logger.log(
-            `🏪 Store filter applied in backend: ${beforeCount} → ${afterCount} results ` +
-            `(store_id: ${options.storeId}) [API workaround]`
-          );
-        }
-        
-        // Trim to requested size
-        filteredItems = filteredItems.slice(0, options.size || 20);
-      }
-
       result = {
-        items: filteredItems,
-        total: filteredItems.length, // Update total after filtering
+        items: msResult.items,
+        total: msResult.total,
         query: {
           original: query,
           understood: understanding.corrected,
@@ -431,6 +414,7 @@ export interface ConversationalSearchOptions {
   userId?: number;
   lat?: number;
   lng?: number;
+  zoneId?: number;
 }
 
 export interface ConversationalSearchResult {
@@ -459,6 +443,7 @@ export interface MultistageSearchOptions {
   userId?: number;
   lat?: number;
   lng?: number;
+  zoneId?: number;
 }
 
 export interface MultistageSearchResult {

@@ -7,12 +7,14 @@
  * to avoid duplication with existing user_profiles system
  */
 
-import { Controller, Get, Post, Put, Param, Query, Body, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Query, Body, Logger, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { StoreSyncService } from '../services/store-sync.service';
 import { VendorProfileService } from '../services/vendor-profile.service';
 import { RiderProfileService } from '../services/rider-profile.service';
 
 @Controller('profiles')
+@UseGuards(AdminAuthGuard)
 export class ProfilesController {
   private readonly logger = new Logger(ProfilesController.name);
 

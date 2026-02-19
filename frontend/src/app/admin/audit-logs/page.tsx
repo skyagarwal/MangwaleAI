@@ -57,49 +57,7 @@ export default function AuditLogsPage() {
       }
     } catch (error) {
       console.error('Error loading audit logs:', error);
-      // Load mock data on error
-      setLogs([
-        {
-          id: '1',
-          timestamp: new Date(Date.now() - 3600000).toISOString(),
-          user: 'admin@mangwale.ai',
-          action: 'CREATE',
-          resource: 'Training Job',
-          details: 'Started NLU training job for food module',
-          ip: '192.168.1.100',
-          status: 'success',
-        },
-        {
-          id: '2',
-          timestamp: new Date(Date.now() - 7200000).toISOString(),
-          user: 'system',
-          action: 'UPDATE',
-          resource: 'Flow',
-          details: 'Auto-saved flow configuration changes',
-          ip: '127.0.0.1',
-          status: 'success',
-        },
-        {
-          id: '3',
-          timestamp: new Date(Date.now() - 10800000).toISOString(),
-          user: 'admin@mangwale.ai',
-          action: 'DELETE',
-          resource: 'Dataset',
-          details: 'Cleaned up old training dataset',
-          ip: '192.168.1.100',
-          status: 'success',
-        },
-        {
-          id: '4',
-          timestamp: new Date(Date.now() - 14400000).toISOString(),
-          user: 'unknown',
-          action: 'LOGIN',
-          resource: 'Auth',
-          details: 'Failed login attempt with invalid credentials',
-          ip: '203.0.113.42',
-          status: 'failure',
-        },
-      ]);
+      setLogs([]);
     } finally {
       setLoading(false);
     }
@@ -114,14 +72,6 @@ export default function AuditLogsPage() {
       }
     } catch (error) {
       console.error('Error loading stats:', error);
-      setStats({
-        total_logs: 156,
-        logs_24h: 23,
-        logs_7d: 89,
-        success_rate: 94,
-        action_breakdown: { CREATE: 45, UPDATE: 67, DELETE: 12, LOGIN: 32 },
-        resource_breakdown: { Flow: 34, Model: 28, User: 45, Dataset: 23 },
-      });
     }
   };
 

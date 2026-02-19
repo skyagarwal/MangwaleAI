@@ -652,6 +652,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           // Message contains the actual button value (e.g., "2" for address selection)
           processedMessage = message;
           this.logger.log(`✨ Using button value: "${processedMessage}"`);
+        }
+        // Preserve structured button values (item_ID, category_ID, etc.) — don't strip underscores
+        else if (message && /^(item_\d+|category_\d+|store_\d+|skip_location|search_different|view_cart|show_cart|browse_menu|clear_cart|add_more)$/i.test(message)) {
+          processedMessage = message;
+          this.logger.log(`✨ Using structured button value: "${processedMessage}"`);
         } else {
           // Message is just the action ID, convert it to natural language
           processedMessage = this.convertButtonActionToMessage(payload.action, payload.metadata);

@@ -55,8 +55,9 @@ export class PhpAddressService extends PhpApiService {
         updatedAt: addr.updated_at ? new Date(addr.updated_at) : undefined,
       }));
 
-      this.logger.log(`✅ Fetched ${addresses.length} saved addresses`);
-      return addresses;
+      const deduplicated = this.deduplicateAddresses(addresses);
+      this.logger.log(`✅ Fetched ${addresses.length} addresses, ${deduplicated.length} after dedup`);
+      return deduplicated;
     } catch (error) {
       this.logger.error(`Failed to fetch addresses: ${error.message}`);
       return [];
@@ -178,6 +179,57 @@ export class PhpAddressService extends PhpApiService {
         message: error.message,
       };
     }
+  }
+
+  /**
+   * Deduplicate addresses by text and coordinates
+   */
+  private deduplicateAddresses(addresses: Address[]): Address[] {
+    if (addresses.length <= 1) return addresses;
+
+    const unique: Address[] = [];
+
+    for (const addr of addresses) {
+      const isDuplicate = unique.some(existing => {
+        // Same address text (case-insensitive, trimmed)
+        const sameText = existing.address && addr.address &&
+          existing.address.trim().toLowerCase() === addr.address.trim().toLowerCase();
+
+        // Same coordinates within ~11 meters
+        const sameLoc = existing.latitude && addr.latitude &&
+          existing.longitude && addr.longitude &&
+          Math.abs(parseFloat(String(existing.latitude)) - parseFloat(String(addr.latitude))) < 0.0001 &&
+          Math.abs(parseFloat(String(existing.longitude)) - parseFloat(String(addr.longitude))) < 0.0001;
+
+        return sameText || sameLoc;
+      });
+
+      if (!isDuplicate) {
+        unique.push(addr);
+      } else {
+        // If duplicate but newer, replace the existing one
+        const existingIdx = unique.findIndex(existing => {
+          const sameText = existing.address && addr.address &&
+            existing.address.trim().toLowerCase() === addr.address.trim().toLowerCase();
+          const sameLoc = existing.latitude && addr.latitude &&
+            existing.longitude && addr.longitude &&
+            Math.abs(parseFloat(String(existing.latitude)) - parseFloat(String(addr.latitude))) < 0.0001 &&
+            Math.abs(parseFloat(String(existing.longitude)) - parseFloat(String(addr.longitude))) < 0.0001;
+          return sameText || sameLoc;
+        });
+
+        if (existingIdx >= 0) {
+          const existing = unique[existingIdx];
+          const existingTime = existing.updatedAt?.getTime() || existing.id || 0;
+          const newTime = addr.updatedAt?.getTime() || addr.id || 0;
+          if (newTime > existingTime) {
+            unique[existingIdx] = addr;
+          }
+        }
+      }
+    }
+
+    return unique;
   }
 
   /**

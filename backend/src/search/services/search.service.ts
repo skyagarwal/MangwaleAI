@@ -379,6 +379,38 @@ export class SearchService {
     }
   }
 
+  /**
+   * Get items by category ID using the dedicated category endpoint
+   * This properly filters by category_id (unlike the general search endpoint)
+   */
+  async getCategoryItems(categoryId: number, moduleId: number = 4, options?: { zone_id?: number; lat?: number; lon?: number; size?: number }): Promise<any[]> {
+    try {
+      const module = moduleId === 4 ? 'food' : 'ecom';
+      const params: Record<string, any> = {
+        module_id: moduleId,
+        category_id: categoryId,
+      };
+      if (options?.zone_id) params.zone_id = options.zone_id;
+      if (options?.lat) params.lat = options.lat;
+      if (options?.lon) params.lon = options.lon;
+      if (options?.size) params.size = options.size;
+
+      const response = await firstValueFrom(
+        this.httpService.get(`${this.searchApiUrl}/search/${module}/category`, {
+          params,
+          timeout: 5000,
+        }),
+      );
+
+      const items = response.data?.items || [];
+      this.logger.log(`Category ${categoryId} (${module}): ${items.length} items found`);
+      return items;
+    } catch (error) {
+      this.logger.warn(`getCategoryItems failed for category ${categoryId}: ${error.message}`);
+      return [];
+    }
+  }
+
   private async keywordSearch(dto: SearchDto): Promise<SearchResultDto> {
     return this.openSearchService.keywordSearch(
       dto.query,

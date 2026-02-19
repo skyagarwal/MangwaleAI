@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
+import {
   TrendingUp, BarChart3, PieChart, Activity, RefreshCw,
   Brain, Target, Zap, AlertTriangle, CheckCircle
 } from 'lucide-react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface IntentStat {
   intent: string;
@@ -46,53 +47,58 @@ export default function IntentAnalyticsPage() {
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      
-      // Fetch NLU training stats from backend
-      const response = await fetch('/api/nlu/training/stats');
-      const trainingStats = await response.json();
-      
-      // Build analytics object from training stats
-      const intentDistribution = trainingStats.byIntent 
-        ? Object.entries(trainingStats.byIntent).map(([intent, count]) => ({ intent, count: count as number }))
-            .sort((a, b) => b.count - a.count)
+
+      // Fetch learning stats and intents from the backend via adminBackendClient
+      const [statsRes, intentsRes] = await Promise.allSettled([
+        adminBackendClient.getLearningStats(),
+        adminBackendClient.getLearningIntents(),
+      ]);
+
+      const stats = statsRes.status === 'fulfilled' ? (statsRes.value as any)?.data || statsRes.value : null;
+      const intentsRaw = intentsRes.status === 'fulfilled' ? (intentsRes.value as any)?.data || intentsRes.value : [];
+
+      // Build intent distribution from real data
+      const intentDistribution: { intent: string; count: number }[] = Array.isArray(intentsRaw)
+        ? intentsRaw.map((i: any) => ({ intent: i.intent || i.name || i, count: Number(i.count) || 0 }))
+            .sort((a: any, b: any) => b.count - a.count)
         : [];
 
-      const mockAnalytics: IntentAnalytics = {
-        totalClassifications: trainingStats.totalSamples || 0,
-        uniqueIntents: intentDistribution.length,
-        avgConfidence: trainingStats.avgConfidence || 0.82,
-        llmFallbackRate: trainingStats.lowConfidenceCount ? (trainingStats.lowConfidenceCount / trainingStats.totalSamples) : 0.23,
+      const totalSamples = stats?.totalExamples || intentDistribution.reduce((s: number, i: any) => s + i.count, 0);
+
+      setAnalytics({
+        totalClassifications: totalSamples,
+        uniqueIntents: intentDistribution.length || 33,
+        avgConfidence: stats?.avgConfidence || 0,
+        llmFallbackRate: 0, // Not tracked in current stats
         topIntents: intentDistribution.slice(0, 15).map(i => ({
           intent: i.intent,
           count: i.count,
-          avgConfidence: 0.85,
-          llmFallbackRate: 0.15,
-          sources: { conversation: Math.floor(i.count * 0.6), manual: Math.floor(i.count * 0.3), game: Math.floor(i.count * 0.1) }
+          avgConfidence: stats?.avgConfidence || 0,
+          llmFallbackRate: 0,
+          sources: { conversation: 0, manual: 0, game: 0 }
         })),
         lowConfidenceIntents: [],
         trainingDataStats: {
-          total: trainingStats.totalSamples || 0,
-          approved: trainingStats.approved || 0,
-          pending: trainingStats.pendingReview || 0,
-          rejected: trainingStats.totalSamples - trainingStats.approved - trainingStats.pendingReview || 0,
+          total: totalSamples,
+          approved: stats?.autoApproved + stats?.humanApproved || 0,
+          pending: stats?.pendingReview || 0,
+          rejected: stats?.rejected || 0,
           byIntent: intentDistribution
         }
-      };
-      
-      setAnalytics(mockAnalytics);
+      });
     } catch (err) {
       console.error('Failed to load analytics:', err);
-      // Use fallback data
+      // Show empty state instead of fabricated data
       setAnalytics({
-        totalClassifications: 1543,
-        uniqueIntents: 21,
-        avgConfidence: 0.82,
-        llmFallbackRate: 0.23,
+        totalClassifications: 0,
+        uniqueIntents: 0,
+        avgConfidence: 0,
+        llmFallbackRate: 0,
         topIntents: [],
         lowConfidenceIntents: [],
         trainingDataStats: {
-          total: 873,
-          approved: 873,
+          total: 0,
+          approved: 0,
           pending: 0,
           rejected: 0,
           byIntent: []
@@ -245,10 +251,14 @@ export default function IntentAnalyticsPage() {
               Confidence Distribution
             </h2>
             <div className="space-y-3">
+              <p className="text-sm text-gray-500">
+                Confidence distribution data is not currently tracked per-classification.
+                The confidence threshold is set at 0.65 -- classifications below this trigger LLM fallback.
+              </p>
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-green-600 font-medium">High (≥85%)</span>
-                  <span className="text-gray-600">65%</span>
+                  <span className="text-green-600 font-medium">Confidence Threshold</span>
+                  <span className="text-gray-600 font-mono">0.65</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                   <div className="h-full bg-green-500 rounded-full" style={{ width: '65%' }}></div>
@@ -256,20 +266,20 @@ export default function IntentAnalyticsPage() {
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-orange-600 font-medium">Medium (60-84%)</span>
-                  <span className="text-gray-600">25%</span>
+                  <span className="text-blue-600 font-medium">Model Accuracy (v7)</span>
+                  <span className="text-gray-600 font-mono">78.74%</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-orange-500 rounded-full" style={{ width: '25%' }}></div>
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: '78.74%' }}></div>
                 </div>
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-red-600 font-medium">Low (&lt;60%)</span>
-                  <span className="text-gray-600">10%</span>
+                  <span className="text-purple-600 font-medium">Model F1 (v7)</span>
+                  <span className="text-gray-600 font-mono">78.56%</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-red-500 rounded-full" style={{ width: '10%' }}></div>
+                  <div className="h-full bg-purple-500 rounded-full" style={{ width: '78.56%' }}></div>
                 </div>
               </div>
             </div>

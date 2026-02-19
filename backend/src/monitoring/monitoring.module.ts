@@ -6,11 +6,12 @@ import { SentryService } from './sentry.service';
 import { StructuredLoggerService } from './structured-logger.service';
 import { LokiLoggerService } from './loki-logger.service';
 import { MonitoringController } from './monitoring.controller';
+import { DockerController } from './docker.controller';
 
 @Global() // Make services available globally
 @Module({
   imports: [ConfigModule, HttpModule],
-  controllers: [MonitoringController],
+  controllers: [MonitoringController, DockerController],
   providers: [PerformanceMonitoringService, SentryService, StructuredLoggerService, LokiLoggerService],
   exports: [PerformanceMonitoringService, SentryService, StructuredLoggerService, LokiLoggerService],
 })

@@ -1,28 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
 import {
   LayoutDashboard,
   Brain,
   Search,
   Webhook,
   FileText,
-  Settings,
   ChevronDown,
   Menu,
   X,
   LogOut,
-  Eye,
   Gamepad2,
   Sparkles,
   GraduationCap,
   Database,
   Users,
-  GitBranch,
-  Bell,
   Megaphone,
+  Monitor,
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -44,8 +42,6 @@ const navigation = [
     children: [
       { name: 'Learning Dashboard', href: '/admin/learning' },
       { name: 'Review Queue', href: '/admin/learning/review' },
-      { name: 'Training Data', href: '/admin/learning/data' },
-      { name: 'Model Performance', href: '/admin/learning/performance' },
       { name: 'Label Studio', href: '/admin/learning/label-studio' },
     ],
   },
@@ -58,7 +54,6 @@ const navigation = [
       { name: 'Scraper Jobs', href: '/admin/scraper?tab=jobs' },
       { name: 'Store Mappings', href: '/admin/scraper?tab=mappings' },
       { name: 'Pricing Intel', href: '/admin/scraper?tab=pricing' },
-      { name: 'Health Monitor', href: '/admin/data-sources/health' },
     ],
   },
   {
@@ -66,24 +61,7 @@ const navigation = [
     icon: Users,
     children: [
       { name: 'Admin Users', href: '/admin/users' },
-      { name: 'Roles & Permissions', href: '/admin/users/roles' },
       { name: 'Activity Log', href: '/admin/users/activity' },
-    ],
-  },
-  {
-    name: 'Vision & Safety',
-    icon: Eye,
-    children: [
-      { name: 'Rider Compliance', href: '/admin/vision' },
-      { name: 'Employee Enrollment', href: '/admin/vision/enrollment' },
-      { name: 'Employee Management', href: '/admin/vision/employees' },
-      { name: 'Live Monitoring', href: '/admin/vision/monitoring' },
-      { name: 'Analytics', href: '/admin/vision/analytics' },
-      { name: 'Menu OCR', href: '/admin/vision/menu-ocr' },
-      { name: 'Camera Management', href: '/admin/vision/cameras' },
-      { name: 'Camera Enrollment', href: '/admin/vision/camera-enrollment' },
-      { name: 'Object Counting', href: '/admin/vision/counting' },
-      { name: 'Zone Configuration', href: '/admin/vision/zones' },
     ],
   },
   {
@@ -107,6 +85,8 @@ const navigation = [
       { name: 'NER Entities', href: '/admin/ner-entities' },
       { name: 'Training', href: '/admin/training' },
       { name: 'Flows', href: '/admin/flows' },
+      { name: 'Semantic Cache', href: '/admin/semantic-cache' },
+      { name: 'Exotel Voice', href: '/admin/exotel' },
     ],
   },
   {
@@ -127,6 +107,7 @@ const navigation = [
       { name: 'User Insights', href: '/admin/user-insights' },
       { name: 'Conversation Memory', href: '/admin/conversation-memory' },
       { name: 'RAG Documents', href: '/admin/rag-documents' },
+      { name: 'Recommendations', href: '/admin/recommendations' },
     ],
   },
   {
@@ -151,20 +132,8 @@ const navigation = [
     children: [
       { name: 'Webhooks', href: '/admin/webhooks' },
       { name: 'API Keys', href: '/admin/api-keys' },
-    ],
-  },
-  {
-    name: 'Modules',
-    icon: Settings,
-    children: [
-      { name: 'Food Module', href: '/admin/modules/food' },
-      { name: 'Ecom Module', href: '/admin/modules/ecom' },
-      { name: 'Parcel Module', href: '/admin/modules/parcel' },
-      { name: 'Ride Module', href: '/admin/modules/ride' },
-      { name: 'Health Module', href: '/admin/modules/health' },
-      { name: 'Rooms Module', href: '/admin/modules/rooms' },
-      { name: 'Movies Module', href: '/admin/modules/movies' },
-      { name: 'Services Module', href: '/admin/modules/services' },
+      { name: 'Channels', href: '/admin/channels' },
+      { name: 'White-Label', href: '/admin/tenants' },
     ],
   },
   {
@@ -176,11 +145,21 @@ const navigation = [
     ],
   },
   {
+    name: 'System',
+    icon: Monitor,
+    children: [
+      { name: 'System Settings', href: '/admin/settings' },
+      { name: 'System Monitoring', href: '/admin/monitoring' },
+    ],
+  },
+  {
     name: 'Audit Logs',
     href: '/admin/audit-logs',
     icon: FileText,
   },
 ];
+
+const AUTH_FREE_PATHS = ['/admin/login', '/admin/forgot-password'];
 
 export default function AdminLayout({
   children,
@@ -189,8 +168,38 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { isAuthenticated, _hasHydrated, user, clearAuth } = useAdminAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Vision & Safety']);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  // Auth-free pages (login, forgot-password) render without sidebar
+  const isAuthFreePage = AUTH_FREE_PATHS.includes(pathname);
+
+  // Redirect to login if not authenticated (after hydration)
+  useEffect(() => {
+    if (_hasHydrated && !isAuthenticated && !isAuthFreePage) {
+      router.push('/admin/login');
+    }
+  }, [_hasHydrated, isAuthenticated, isAuthFreePage, router]);
+
+  // Auth-free pages: render children only, no sidebar
+  if (isAuthFreePage) {
+    return <>{children}</>;
+  }
+
+  // Wait for hydration to prevent flash
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Not authenticated — redirect is happening via useEffect
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const toggleExpanded = (name: string) => {
     setExpandedItems((prev) =>
@@ -201,12 +210,8 @@ export default function AdminLayout({
   };
 
   const handleLogout = () => {
-    // Clear any admin session/token if stored
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('admin-token');
-      localStorage.removeItem('admin-session');
-    }
-    router.push('/login');
+    clearAuth();
+    router.push('/admin/login');
   };
 
   return (
@@ -301,8 +306,18 @@ export default function AdminLayout({
           })}
         </nav>
 
+        {/* Admin user info + Logout */}
         <div className="border-t p-4">
-          <button className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg w-full transition-colors">
+          {user && (
+            <div className="px-3 py-2 mb-2">
+              <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+            </div>
+          )}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg w-full transition-colors"
+          >
             <LogOut size={20} />
             <span>Logout</span>
           </button>

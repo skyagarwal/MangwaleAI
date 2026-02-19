@@ -15,10 +15,10 @@ export const orderTrackingFlow: FlowDefinition = {
   name: 'Order Tracking Flow',
   description: 'Track orders, view history, cancel or reorder',
   module: 'general',
-  trigger: 'track_order|cancel_order|repeat_order|reorder',
+  trigger: 'track_order|order_history|cancel_order|repeat_order|reorder',
   version: '1.0.0',
   enabled: true,
-  initialState: 'init',
+  initialState: 'check_auth',
   finalStates: ['end_flow'],
   
   contextSchema: {
@@ -28,12 +28,55 @@ export const orderTrackingFlow: FlowDefinition = {
   },
   
   states: {
+    // Auth guard - check if user is authenticated before showing orders
+    check_auth: {
+      type: 'decision',
+      description: 'Check if user is authenticated before showing orders',
+      conditions: [
+        {
+          expression: 'context.auth_token || context.authenticated',
+          event: 'authenticated',
+        },
+      ],
+      transitions: {
+        authenticated: 'init',
+        default: 'request_login',
+      },
+    },
+
+    // Ask user to login
+    request_login: {
+      type: 'wait',
+      description: 'Ask user to login to see orders',
+      onEntry: [
+        {
+          id: 'login_prompt',
+          executor: 'response',
+          config: {
+            message: 'Please log in to view your orders.',
+            metadata: { action: 'trigger_auth_modal', responseType: 'request_phone' },
+            buttons: [
+              { id: 'login', label: 'Login', value: '__LOGIN__' },
+            ],
+          },
+        },
+      ],
+      transitions: {
+        user_message: 'check_auth',
+        default: 'check_auth',
+      },
+    },
+
     // Initial state - check what user wants to do based on trigger intent or message
     init: {
       type: 'decision',
       description: 'Determine what tracking action to take based on intent or message',
       conditions: [
         // Check trigger intent first (from NLU classification)
+        {
+          expression: 'context._trigger_intent === "order_history"',
+          event: 'wants_history',
+        },
         {
           expression: 'context._trigger_intent === "cancel_order"',
           event: 'wants_cancel',
@@ -134,7 +177,7 @@ export const orderTrackingFlow: FlowDefinition = {
           id: 'get_running',
           executor: 'php_api',
           config: {
-            action: 'get_running_orders',
+            action: 'get_all_running_orders',
             token: '{{auth_token}}',
           },
           output: 'running_orders',
@@ -477,7 +520,7 @@ Keep under 300 chars.`,
           id: 'get_history',
           executor: 'php_api',
           config: {
-            action: 'get_customer_orders',
+            action: 'get_all_customer_orders',
             token: '{{auth_token}}',
             limit: 10,
           },

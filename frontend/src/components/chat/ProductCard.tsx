@@ -1,4 +1,4 @@
-import { Star, Clock, MapPin, Plus, Minus } from 'lucide-react'
+import { Star, Clock, MapPin, Plus, Minus, Loader2, Check } from 'lucide-react'
 import Image from 'next/image'
 import { useState, useEffect, memo } from 'react'
 import type { ProductCard as ProductCardType, VariantOption } from '@/types/chat'
@@ -83,6 +83,17 @@ const FOOD_EMOJIS: Record<string, string> = {
   default: '🍽️',
 };
 
+// Vehicle emoji mapping for parcel category cards
+const VEHICLE_EMOJIS: Record<string, string> = {
+  bike: '🏍️',
+  auto: '🛺',
+  'mini-truck': '🚐',
+  'mini truck': '🚐',
+  truck: '🚛',
+  van: '🚐',
+  default: '🚗',
+};
+
 /**
  * Get appropriate food emoji based on item name
  */
@@ -95,6 +106,21 @@ function getFoodEmoji(name?: string): string {
     }
   }
   return FOOD_EMOJIS.default;
+}
+
+/**
+ * Get appropriate emoji based on item name and card type
+ */
+function getItemEmoji(name?: string, cardType?: string): string {
+  if (cardType === 'vehicle') {
+    if (!name) return VEHICLE_EMOJIS.default;
+    const lower = name.toLowerCase();
+    for (const [key, emoji] of Object.entries(VEHICLE_EMOJIS)) {
+      if (lower.includes(key)) return emoji;
+    }
+    return VEHICLE_EMOJIS.default;
+  }
+  return getFoodEmoji(name);
 }
 
 /**
@@ -145,10 +171,17 @@ function getNextImageUrl(image: string, currentUrl: string): string | null {
   const filename = extractImageFilename(image);
   if (!filename) return null;
   
-  // If current URL was the original full URL (non-product path),
-  // fall back to /product/ path sources
+  // If current URL was the original full URL (non-product path like /parcel_category/),
+  // don't try product fallbacks — just fail and show emoji
   const isOriginalFullUrl = image.startsWith('http') && currentUrl === image;
   if (isOriginalFullUrl) {
+    try {
+      const originalPath = new URL(image).pathname;
+      // Only try product fallbacks for /product/ paths
+      if (!originalPath.includes('/product/')) {
+        return null;
+      }
+    } catch { /* fall through */ }
     return `${IMAGE_SOURCES[0]}/${filename}`;
   }
   
@@ -181,6 +214,7 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
   const [isVisible, setIsVisible] = useState(false)
   const [selectedVariation, setSelectedVariation] = useState<{ type: string; price: string; label: string } | null>(null)
   const [quantity, setQuantity] = useState(1)
+  const [addFeedback, setAddFeedback] = useState<'idle' | 'adding' | 'added'>('idle')
   
   // Trigger animation on mount with stagger delay - slide from sides
   useEffect(() => {
@@ -255,33 +289,31 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
     return price
   })()
 
-  // Get food emoji for this item
-  const foodEmoji = getFoodEmoji(card.name)
+  // Get emoji for this item (food or vehicle based on cardType)
+  const foodEmoji = getItemEmoji(card.name, card.cardType)
 
-  // Compact card — small tile for 2-column grid layout
-  // Mobile-first, Swiggy/Zomato style mini card
+  // Compact card — full-image card with text overlay
+  // Mobile-first, Instagram/Zomato style image-forward card
   if (compact) {
     const hasVariations = card.has_variant === 1 && card.food_variations && card.food_variations.length > 0
-    
+
     return (
-      <div 
+      <div
         className={`
-          bg-white rounded-xl
-          w-full
-          border border-gray-100 hover:border-orange-200
+          rounded-xl w-full
           transition-all duration-200 ease-out
           overflow-hidden shadow-sm hover:shadow-md
-          ${isVisible 
-            ? 'opacity-100 translate-y-0' 
+          ${isVisible
+            ? 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-3'
           }
         `}
         style={{ transitionDelay: `${index * 40}ms` }}
       >
-        {/* Image section - top of card */}
-        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden">
+        {/* Full image card with overlay */}
+        <div className="relative w-full aspect-[4/5] bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden rounded-xl">
           {imageError || !card.image ? (
-            <div className="w-full h-full flex items-center justify-center text-4xl">
+            <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-orange-100 to-amber-100">
               {foodEmoji}
             </div>
           ) : (
@@ -291,92 +323,77 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
               fill
               className="object-cover"
               onError={handleImageError}
-              unoptimized
+              loading="lazy"
               sizes="(max-width: 640px) 45vw, 180px"
             />
           )}
-          {/* Veg/Non-veg badge - top-left */}
-          {showVegIndicator && (
-            <div className={`absolute top-1.5 left-1.5 w-4 h-4 border-[1.5px] rounded-sm flex items-center justify-center bg-white/90 backdrop-blur-sm ${isVeg ? 'border-green-600' : 'border-red-600'}`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${isVeg ? 'bg-green-600' : 'bg-red-600'}`} />
-            </div>
-          )}
-          {/* Rating badge - top-right */}
-          {card.rating !== undefined && card.rating > 0 && (
-            <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-white/90 backdrop-blur-sm text-[10px] px-1.5 py-0.5 rounded-md shadow-sm">
-              <Star className="w-2.5 h-2.5 fill-orange-400 text-orange-400" />
-              <span className="font-semibold text-gray-800">{typeof card.rating === 'number' ? card.rating.toFixed(1) : card.rating}</span>
-            </div>
-          )}
-        </div>
 
-        {/* Info section */}
-        <div className="px-2 pt-1.5 pb-2">
-          {/* Name */}
-          <h4 className="font-semibold text-[13px] text-gray-900 leading-tight line-clamp-2 min-h-[32px]">{card.name}</h4>
-          
-          {/* Store + meta row */}
-          <div className="flex items-center gap-1 mt-0.5 min-h-[16px]">
-            {card.storeName && (
-              <p className="text-[10px] text-gray-500 truncate flex-1">{card.storeName}</p>
-            )}
-            {card.deliveryTime && (
-              <span className="text-[10px] text-gray-400 flex items-center gap-0.5 shrink-0">
-                <Clock className="w-2.5 h-2.5" />
-                {card.deliveryTime}
-              </span>
-            )}
+          {/* Top badges row */}
+          <div className="absolute top-1.5 left-1.5 right-1.5 flex items-start justify-between">
+            {/* Veg/Non-veg badge */}
+            {showVegIndicator ? (
+              <div className={`w-4 h-4 border-[1.5px] rounded-sm flex items-center justify-center bg-white/90 backdrop-blur-sm ${isVeg ? 'border-green-600' : 'border-red-600'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${isVeg ? 'bg-green-600' : 'bg-red-600'}`} />
+              </div>
+            ) : <div />}
+            {/* Rating or Closed badge */}
+            {card.isOpen === false ? (
+              <div className="bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded-md font-semibold">
+                Closed
+              </div>
+            ) : card.rating !== undefined && card.rating > 0 ? (
+              <div className="flex items-center gap-0.5 bg-white/90 backdrop-blur-sm text-[9px] px-1.5 py-0.5 rounded-md">
+                <Star className="w-2.5 h-2.5 fill-orange-400 text-orange-400" />
+                <span className="font-semibold text-gray-800">{typeof card.rating === 'number' ? card.rating.toFixed(1) : card.rating}</span>
+              </div>
+            ) : null}
           </div>
 
-          {/* Food Variations (compact) - if item has variants */}
-          {hasVariations && (
-            <div className="mt-1.5">
-              {card.food_variations!.map((variation, vIdx) => (
-                <div key={vIdx} className="flex flex-wrap gap-1">
-                  {variation.values.slice(0, 4).map((option, optIdx) => {
-                    const isSelected = selectedVariation?.label === option.label && 
+          {/* Bottom overlay — name, store, price, ADD */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pt-8 pb-1.5 px-2">
+            <h4 className="font-bold text-[11px] text-white leading-tight line-clamp-1 drop-shadow-sm">{card.name}</h4>
+            {card.storeName && (
+              <p className="text-[9px] text-white/75 truncate mt-0.5">{card.storeName}
+                {card.deliveryTime && <span className="ml-1 text-white/60">• {card.deliveryTime}</span>}
+              </p>
+            )}
+
+            {/* Variations inline */}
+            {hasVariations && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {card.food_variations!.slice(0, 1).map((variation, vIdx) => (
+                  variation.values.slice(0, 3).map((option, optIdx) => {
+                    const isSelected = selectedVariation?.label === option.label &&
                                      selectedVariation?.type === variation.name
-                    const optionPrice = parseFloat(option.optionPrice || '0')
-                    
                     return (
                       <button
-                        key={optIdx}
+                        key={`${vIdx}-${optIdx}`}
                         onClick={() => handleFoodVariationSelect({
                           name: variation.name,
                           label: option.label,
                           optionPrice: option.optionPrice
                         })}
-                        className={`px-1.5 py-1 text-[10px] rounded-md border transition-all leading-none ${
-                          isSelected 
-                            ? 'bg-orange-500 text-white border-orange-500 font-semibold' 
-                            : 'bg-gray-50 text-gray-600 border-gray-200 active:bg-orange-50'
+                        className={`px-1.5 py-0.5 text-[9px] rounded border leading-none ${
+                          isSelected
+                            ? 'bg-orange-500 text-white border-orange-400 font-semibold'
+                            : 'bg-white/20 text-white border-white/30 backdrop-blur-sm'
                         }`}
                       >
                         {option.label}
-                        {optionPrice > 0 && <span className="ml-0.5 opacity-80">+₹{optionPrice}</span>}
                       </button>
                     )
-                  })}
-                </div>
-              ))}
-            </div>
-          )}
+                  })
+                ))}
+              </div>
+            )}
 
-          {/* Price + ADD row */}
-          <div className="flex items-center justify-between mt-2 gap-1">
-            <div className="flex items-center gap-1 min-w-0">
-              {currentPrice && (
-                <span className="text-sm font-bold text-gray-900 whitespace-nowrap">{currentPrice}</span>
-              )}
-              {card.distance && (
-                <span className="text-[9px] text-gray-400 truncate">{card.distance}</span>
-              )}
-            </div>
-            
-            {/* ADD / Qty controls */}
-            {quantity <= 1 ? (
+            {/* Price + ADD row */}
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-[12px] font-bold text-white">{currentPrice}</span>
               <button
                 onClick={() => {
+                  if (addFeedback !== 'idle') return
+                  setAddFeedback('adding')
                   const actionValue = card.action?.value || ''
                   onAction(actionValue, {
                     item_id: card.id,
@@ -387,44 +404,21 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
                     }] : undefined,
                     variationLabel: selectedVariation?.label
                   })
+                  setTimeout(() => setAddFeedback('added'), 300)
+                  setTimeout(() => setAddFeedback('idle'), 1500)
                 }}
-                className="bg-white border-2 border-green-500 text-green-600 hover:bg-green-500 hover:text-white text-xs font-bold py-1.5 px-3 rounded-lg transition-all active:scale-95 shrink-0"
+                disabled={addFeedback !== 'idle'}
+                className={`text-[10px] font-bold py-0.5 px-2.5 rounded-md transition-all active:scale-95 ${
+                  addFeedback === 'added'
+                    ? 'bg-green-500 text-white'
+                    : addFeedback === 'adding'
+                      ? 'bg-white/30 text-white'
+                      : 'bg-white text-green-600 font-bold'
+                }`}
               >
-                ADD
+                {addFeedback === 'adding' ? '...' : addFeedback === 'added' ? '✓' : 'ADD'}
               </button>
-            ) : (
-              <div className="flex items-center border-2 border-green-500 rounded-lg overflow-hidden shrink-0">
-                <button
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-7 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 active:bg-green-100 transition-colors"
-                >
-                  <Minus className="w-3 h-3" />
-                </button>
-                <span className="w-6 h-8 flex items-center justify-center text-xs font-bold text-gray-900 bg-green-50">{quantity}</span>
-                <button
-                  onClick={() => {
-                    setQuantity(q => {
-                      const newQ = Math.min(20, q + 1)
-                      // Auto-add on increment
-                      const actionValue = card.action?.value || ''
-                      onAction(actionValue, {
-                        item_id: card.id,
-                        quantity: newQ,
-                        variation: selectedVariation ? [{
-                          type: selectedVariation.type,
-                          price: selectedVariation.price
-                        }] : undefined,
-                        variationLabel: selectedVariation?.label
-                      })
-                      return newQ
-                    })
-                  }}
-                  className="w-7 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 active:bg-green-100 transition-colors"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -600,6 +594,8 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
             </div>
             <button
               onClick={() => {
+                if (addFeedback !== 'idle') return
+                setAddFeedback('adding')
                 const actionValue = card.action?.value || ''
                 onAction(actionValue, {
                   item_id: card.id,
@@ -611,17 +607,45 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
                   variationLabel: selectedVariation?.label
                 })
                 setQuantity(1) // Reset after adding
+                setTimeout(() => setAddFeedback('added'), 300)
+                setTimeout(() => setAddFeedback('idle'), 1500)
               }}
-              className="flex-1 bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm active:scale-95"
+              disabled={addFeedback !== 'idle'}
+              className={`flex-1 font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm active:scale-95 ${
+                addFeedback === 'added'
+                  ? 'bg-orange-500 border-2 border-orange-500 text-white'
+                  : addFeedback === 'adding'
+                    ? 'bg-orange-50 border-2 border-orange-400 text-orange-400 opacity-80'
+                    : 'bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white'
+              }`}
             >
-              <Plus className="w-4 h-4" />
-              ADD
+              {addFeedback === 'adding' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Adding...
+                </>
+              ) : addFeedback === 'added' ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Added
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  ADD
+                </>
+              )}
             </button>
           </div>
         </div>
 
         {/* Right side - Image with emoji fallback and CDN cascade */}
         <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 relative">
+          {card.isOpen === false && (
+            <div className="absolute top-0 right-0 z-10 bg-red-500 text-white text-[9px] px-1 py-0.5 rounded-bl-md font-semibold">
+              Closed
+            </div>
+          )}
           <div className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 shadow-sm flex items-center justify-center">
             {imageError || !card.image ? (
               <div className="w-full h-full flex items-center justify-center text-4xl sm:text-5xl">
@@ -635,7 +659,7 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
                 height={96}
                 className="w-full h-full object-cover"
                 onError={handleImageError}
-                unoptimized
+                loading="lazy"
               />
             )}
           </div>

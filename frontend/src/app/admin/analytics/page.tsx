@@ -68,7 +68,7 @@ interface HealthStatus {
   timestamp: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+const API_BASE = '';
 
 export default function AnalyticsDashboard() {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
@@ -110,7 +110,7 @@ export default function AnalyticsDashboard() {
   }, []);
 
   const exportCSV = async (type: string) => {
-    window.open(`${API_BASE}/api/analytics/export?type=${type}`, '_blank');
+    window.open(`/api/analytics/export?type=${type}`, '_blank');
   };
 
   if (loading) {

@@ -3,6 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 import { SearchController } from './controllers/search.controller';
 import { SearchAnalyticsController } from './controllers/analytics.controller';
 import { SearchSuggestionsController } from './controllers/suggestions.controller';
+import { SearchAnalyticsAdminController } from './controllers/search-analytics-admin.controller';
 import { SearchService } from './services/search.service';
 import { SearchAnalyticsService } from './services/search-analytics.service';
 import { SearchSuggestionsService } from './services/search-suggestions.service';
@@ -17,6 +18,7 @@ import { ExternalVendorService } from './services/external-vendor.service';
 import { QueryExpansionService } from './services/query-expansion.service';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 import { NluModule } from '../nlu/nlu.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -26,8 +28,9 @@ import { NluModule } from '../nlu/nlu.module';
     }),
     PhpIntegrationModule,
     forwardRef(() => NluModule), // For UnifiedEmbeddingService using IndicBERT
+    AdminModule, // For AdminAuthGuard in SearchAnalyticsAdminController
   ],
-  controllers: [SearchController, SearchAnalyticsController, SearchSuggestionsController],
+  controllers: [SearchController, SearchAnalyticsController, SearchSuggestionsController, SearchAnalyticsAdminController],
   providers: [
     SearchService,
     SearchAnalyticsService,

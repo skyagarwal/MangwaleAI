@@ -4,7 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/shared";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { ClientLogger } from "@/components/ClientLogger";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

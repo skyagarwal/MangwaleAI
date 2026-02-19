@@ -339,10 +339,30 @@ export class PhpApiExecutor implements ActionExecutor {
       // CUSTOMER ORDER MANAGEMENT
       // ============================================
       case 'get_customer_orders':
-        return this.orderService.getOrders(config.token, config.limit || 10);
+        return this.orderService.getOrders(config.token, config.limit || 10, 1, config.moduleId);
+
+      case 'get_all_customer_orders': {
+        const [foodOrders, parcelOrders] = await Promise.all([
+          this.orderService.getOrders(config.token, config.limit || 10, 1, '4'),
+          this.orderService.getOrders(config.token, config.limit || 10, 1, '3'),
+        ]);
+        return [...foodOrders, ...parcelOrders].sort((a, b) =>
+          ((b.createdAt as any)?.getTime?.() || 0) - ((a.createdAt as any)?.getTime?.() || 0)
+        );
+      }
 
       case 'get_running_orders':
-        return this.orderService.getRunningOrders(config.token);
+        return this.orderService.getRunningOrders(config.token, config.moduleId);
+
+      case 'get_all_running_orders': {
+        const [foodRunning, parcelRunning] = await Promise.all([
+          this.orderService.getRunningOrders(config.token, '4'),
+          this.orderService.getRunningOrders(config.token, '3'),
+        ]);
+        return [...foodRunning, ...parcelRunning].sort((a, b) =>
+          ((b.createdAt as any)?.getTime?.() || 0) - ((a.createdAt as any)?.getTime?.() || 0)
+        );
+      }
 
       case 'get_order_details':
       case 'get_order_status_details': // Alias for YAML V2 flows

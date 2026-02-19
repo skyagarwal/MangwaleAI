@@ -10,6 +10,7 @@ export interface EnhancedVoiceInputHandle {
   start: () => Promise<void>;
   stop: () => void;
   isRecording: () => boolean;
+  releaseStream: () => void;
 }
 
 interface EnhancedVoiceInputProps {
@@ -21,6 +22,7 @@ interface EnhancedVoiceInputProps {
   showSettings?: boolean;
   autoSend?: boolean;
   autoStopOnSilence?: boolean;
+  keepStreamAlive?: boolean;
 }
 
 interface VoiceSettings {
@@ -38,6 +40,7 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
   enableStreaming = true,
   showSettings = false,
   autoStopOnSilence = false,
+  keepStreamAlive = false,
 }, ref) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -97,21 +100,36 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
       mediaRecorderRef.current = null;
     }
 
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
+    // When keepStreamAlive is true, preserve the raw MediaStream so
+    // subsequent start() calls can reuse it without needing getUserMedia()
+    // (which would require a fresh user gesture and get blocked by browsers).
+    if (!keepStreamAlive) {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
     }
 
     if (audioContextRef.current) {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
+  }, [keepStreamAlive]);
+
+  // Fully release the MediaStream — call when voice call mode ends
+  const releaseStream = useCallback(() => {
+    console.log('🎤 Releasing stream...');
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
   }, []);
 
-  // Cleanup on unmount
+  // Cleanup on unmount — always fully release stream to prevent mic leaks
   useEffect(() => {
     return () => {
       stopRecording();
+      releaseStream();
       if (websocketRef.current) {
         websocketRef.current.close();
       }
@@ -122,7 +140,7 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
         audioContextRef.current.close();
       }
     };
-  }, [stopRecording]);
+  }, [stopRecording, releaseStream]);
 
   useEffect(() => {
     isRecordingRef.current = isRecording;
@@ -352,19 +370,29 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
   const startRecording = useCallback(async () => {
     setError(null);
     console.log('🎤 Starting recording...');
-    
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          sampleRate: 16000,
-        } 
-      });
 
-      console.log('🎤 Microphone access granted');
-      streamRef.current = stream;
+    try {
+      // Reuse existing stream if keepStreamAlive left one active
+      let stream: MediaStream;
+      const existingStream = streamRef.current;
+      const hasActiveTrack = existingStream?.getAudioTracks().some(t => t.readyState === 'live');
+
+      if (existingStream && hasActiveTrack) {
+        console.log('🎤 Reusing existing MediaStream (keepStreamAlive)');
+        stream = existingStream;
+      } else {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            sampleRate: 16000,
+          }
+        });
+        console.log('🎤 Microphone access granted');
+        streamRef.current = stream;
+      }
+
       recordingStartedAtRef.current = Date.now();
       startAudioVisualization(stream);
 
@@ -398,7 +426,10 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
       mediaRecorder.onstop = async () => {
         console.log('🎤 Recording stopped, uploading...');
         await uploadForTranscription();
-        stream.getTracks().forEach((track) => track.stop());
+        // Only release stream tracks if we're not keeping it alive for voice call loop
+        if (!keepStreamAlive) {
+          stream.getTracks().forEach((track) => track.stop());
+        }
       };
 
       mediaRecorder.start(1000); // Capture in 1s chunks
@@ -411,7 +442,7 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
       console.error('Error accessing microphone:', error);
       setError('Microphone access denied');
     }
-  }, [enableStreaming, startAudioVisualization, startStreamingASR, uploadForTranscription]);
+  }, [enableStreaming, keepStreamAlive, startAudioVisualization, startStreamingASR, uploadForTranscription]);
 
   useImperativeHandle(ref, () => ({
     start: async () => {
@@ -423,7 +454,8 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
       stopRecording();
     },
     isRecording: () => isRecordingRef.current,
-  }), [isProcessing, startRecording, stopRecording]);
+    releaseStream,
+  }), [isProcessing, startRecording, stopRecording, releaseStream]);
 
   const toggleRecording = useCallback(() => {
     if (isRecording) {

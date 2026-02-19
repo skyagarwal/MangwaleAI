@@ -1,8 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { Brain, Settings, TrendingUp, Activity, Users, Zap, Loader2 } from 'lucide-react';
-import { useToast } from '@/components/shared';
+import { Brain, Settings, TrendingUp, Activity, Users, Zap, Loader2, AlertCircle } from 'lucide-react';
 import { mangwaleAIClient } from '@/lib/api/mangwale-ai';
 import { InfoTooltip } from '@/components/shared/InfoTooltip';
 
@@ -13,7 +12,6 @@ const moduleConfigs = {
     color: 'from-orange-600 to-orange-700',
     description: 'Manage food ordering agent and restaurant search',
     intents: ['order_food', 'search_restaurant', 'modify_order', 'track_order'],
-    stats: { conversations: 1247, orders: 892, satisfaction: 4.5 }
   },
   ecom: {
     name: 'E-commerce',
@@ -21,7 +19,6 @@ const moduleConfigs = {
     color: 'from-blue-600 to-blue-700',
     description: 'Manage e-commerce agent and product search',
     intents: ['search_product', 'add_to_cart', 'checkout', 'track_order'],
-    stats: { conversations: 2134, orders: 1456, satisfaction: 4.3 }
   },
   parcel: {
     name: 'Parcel Delivery',
@@ -29,7 +26,6 @@ const moduleConfigs = {
     color: 'from-purple-600 to-purple-700',
     description: 'Manage parcel booking and tracking agent',
     intents: ['book_parcel', 'track_parcel', 'modify_booking', 'cancel_booking'],
-    stats: { conversations: 892, bookings: 645, satisfaction: 4.6 }
   },
   ride: {
     name: 'Ride Hailing',
@@ -37,7 +33,6 @@ const moduleConfigs = {
     color: 'from-green-600 to-green-700',
     description: 'Manage ride booking and tracking agent',
     intents: ['book_ride', 'track_ride', 'cancel_ride', 'rate_driver'],
-    stats: { conversations: 3421, rides: 2890, satisfaction: 4.4 }
   },
   health: {
     name: 'Healthcare',
@@ -45,7 +40,6 @@ const moduleConfigs = {
     color: 'from-red-600 to-red-700',
     description: 'Manage healthcare services agent',
     intents: ['book_doctor', 'book_lab', 'order_medicine', 'track_prescription'],
-    stats: { conversations: 567, appointments: 423, satisfaction: 4.7 }
   },
   rooms: {
     name: 'Hotel Booking',
@@ -53,7 +47,6 @@ const moduleConfigs = {
     color: 'from-indigo-600 to-indigo-700',
     description: 'Manage hotel and room booking agent',
     intents: ['search_hotel', 'book_room', 'modify_booking', 'cancel_booking'],
-    stats: { conversations: 445, bookings: 312, satisfaction: 4.5 }
   },
   movies: {
     name: 'Movie Tickets',
@@ -61,7 +54,6 @@ const moduleConfigs = {
     color: 'from-pink-600 to-pink-700',
     description: 'Manage movie ticket booking agent',
     intents: ['search_movie', 'book_ticket', 'select_seats', 'cancel_booking'],
-    stats: { conversations: 678, tickets: 1234, satisfaction: 4.6 }
   },
   services: {
     name: 'Home Services',
@@ -69,7 +61,6 @@ const moduleConfigs = {
     color: 'from-yellow-600 to-yellow-700',
     description: 'Manage home services booking agent',
     intents: ['book_service', 'track_service', 'rate_provider', 'reschedule'],
-    stats: { conversations: 234, bookings: 189, satisfaction: 4.4 }
   }
 };
 
@@ -87,9 +78,9 @@ interface ModuleStats {
 export default function ModulePage({ params }: { params: Promise<{ module: string }> }) {
   const { module } = use(params);
   const config = moduleConfigs[module as keyof typeof moduleConfigs];
-  const toast = useToast();
   const [stats, setStats] = useState<ModuleStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadModuleStats();
@@ -98,11 +89,12 @@ export default function ModulePage({ params }: { params: Promise<{ module: strin
   const loadModuleStats = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await mangwaleAIClient.getModuleStats(module);
       setStats(data);
-    } catch (error) {
-      console.error('Failed to load module stats:', error);
-      toast.error('Failed to load module statistics');
+    } catch (err) {
+      console.error('Failed to load module stats:', err);
+      setError('Failed to load module statistics');
     } finally {
       setLoading(false);
     }
@@ -138,6 +130,14 @@ export default function ModulePage({ params }: { params: Promise<{ module: strin
         </div>
         <p className="text-white/90">{config.description}</p>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
+          <AlertCircle size={20} />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -207,53 +207,12 @@ export default function ModulePage({ params }: { params: Promise<{ module: strin
           <Settings size={20} />
           Agent Configuration
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">NLU Model</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-              <option>nlu_{module}_v1</option>
-              <option>nlu_{module}_v2</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">LLM Model</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-              <option>llama-3-8b</option>
-              <option>gpt-4-turbo</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confidence Threshold</label>
-            <input
-              type="number"
-              defaultValue="0.75"
-              step="0.05"
-              min="0"
-              max="1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Fallback Agent</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-              <option>agent_general</option>
-              <option>agent_support</option>
-            </select>
-          </div>
-        </div>
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={() => toast.success('Agent configuration saved')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-          >
-            Save Changes
-          </button>
-          <button
-            onClick={() => toast.info('Testing agent...')}
-            className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
-          >
-            Test Agent
-          </button>
+        <div className="p-6 bg-gray-50 rounded-lg text-center text-gray-500">
+          <Settings size={32} className="mx-auto mb-3 text-gray-400" />
+          <p className="font-medium text-gray-700 mb-1">Per-module agent configuration is not yet available.</p>
+          <p className="text-sm">
+            Use the <a href="/admin/agent-settings" className="text-blue-600 hover:underline">Agent Settings</a> page to configure global NLU and LLM settings.
+          </p>
         </div>
       </div>
 

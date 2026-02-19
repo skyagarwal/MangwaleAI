@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../../database/prisma.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -20,7 +21,7 @@ export class DatasetService {
   private datasets: Map<string, Dataset> = new Map();
   private readonly datasetsDir = '/tmp/datasets'; // In production, use configurable path
 
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
     this.ensureDatasetsDir();
   }
 
@@ -42,10 +43,10 @@ export class DatasetService {
 
   async createDataset(datasetInfo: any, file?: Express.Multer.File): Promise<Dataset> {
     const id = `dataset-${Date.now()}`;
-    
+
     let filePath: string | undefined;
     let size = 0;
-    
+
     if (file) {
       filePath = path.join(this.datasetsDir, `${id}-${file.originalname}`);
       await fs.writeFile(filePath, file.buffer);
@@ -59,7 +60,7 @@ export class DatasetService {
       description: datasetInfo.description || '',
       filePath,
       size,
-      recordCount: 0, // Will be calculated when parsing the file
+      recordCount: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -100,13 +101,100 @@ export class DatasetService {
       recordCount: dataset.recordCount,
       createdAt: dataset.createdAt,
       updatedAt: dataset.updatedAt,
-      // Additional stats based on dataset type
       stats: this.calculateDatasetStats(dataset),
     };
   }
 
+  async getExamples(datasetId: string): Promise<any[]> {
+    const dataset = this.datasets.get(datasetId);
+
+    try {
+      const rows = await this.prisma.nluTrainingData.findMany({
+        where: {
+          reviewStatus: { in: ['approved', 'pending', 'auto_approved'] },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 500,
+      });
+
+      return rows.map(r => ({
+        id: r.id,
+        text: r.text,
+        intent: r.intent,
+        entities: r.entities,
+        confidence: r.confidence,
+        source: r.source,
+        reviewStatus: r.reviewStatus,
+        language: r.language,
+        createdAt: r.createdAt,
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to get examples for dataset ${datasetId}: ${error.message}`);
+      return [];
+    }
+  }
+
+  async addExamples(datasetId: string, examples: { text: string; intent: string; entities?: any }[]): Promise<{ added: number; skipped: number }> {
+    let added = 0;
+    let skipped = 0;
+
+    for (const ex of examples) {
+      try {
+        await this.prisma.nluTrainingData.create({
+          data: {
+            text: ex.text,
+            intent: ex.intent,
+            entities: ex.entities || {},
+            confidence: 1.0,
+            source: 'manual',
+            reviewStatus: 'approved',
+            language: 'en',
+          },
+        });
+        added++;
+      } catch (error) {
+        // Unique constraint on text — skip duplicates
+        if (error.code === 'P2002') {
+          skipped++;
+        } else {
+          this.logger.error(`Failed to add example "${ex.text}": ${error.message}`);
+          skipped++;
+        }
+      }
+    }
+
+    // Update dataset record count
+    const dataset = this.datasets.get(datasetId);
+    if (dataset) {
+      dataset.recordCount += added;
+      dataset.updatedAt = new Date();
+    }
+
+    this.logger.log(`Bulk add to dataset ${datasetId}: ${added} added, ${skipped} skipped`);
+    return { added, skipped };
+  }
+
+  async deleteDataset(id: string): Promise<boolean> {
+    const dataset = this.datasets.get(id);
+    if (!dataset) {
+      return false;
+    }
+
+    // Clean up file if exists
+    if (dataset.filePath) {
+      try {
+        await fs.unlink(dataset.filePath);
+      } catch {
+        // File may already be gone
+      }
+    }
+
+    this.datasets.delete(id);
+    this.logger.log(`Deleted dataset: ${id}`);
+    return true;
+  }
+
   private calculateDatasetStats(dataset: Dataset): any {
-    // Placeholder for actual stats calculation
     return {
       format: 'json',
       encoding: 'utf-8',

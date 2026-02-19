@@ -14,6 +14,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { ScraperAdminController } from './controllers/scraper-admin.controller';
 import { ScraperKnowledgeService } from './services/scraper-knowledge.service';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ScraperKnowledgeService } from './services/scraper-knowledge.service';
       maxRedirects: 5,
     }),
     ConfigModule,
+    AdminModule,
   ],
   controllers: [ScraperAdminController],
   providers: [ScraperKnowledgeService],

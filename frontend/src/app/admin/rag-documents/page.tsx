@@ -50,7 +50,7 @@ interface SearchResult {
   metadata: any;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+const API_BASE = '';
 
 export default function RagDocumentsPage() {
   const [documents, setDocuments] = useState<RagDocument[]>([]);
@@ -92,51 +92,21 @@ export default function RagDocumentsPage() {
   const fetchDocuments = useCallback(async () => {
     try {
       setLoading(true);
-      // Note: This would need a list endpoint in the backend
-      // For now, we'll use stats and show sample data
       await fetchStats();
-      
-      // Sample documents for UI demonstration
-      setDocuments([
-        {
-          document_id: 'doc-1',
-          title: 'Restaurant Menu Guidelines',
-          source: 'admin-upload',
-          category: 'operations',
-          tags: ['menu', 'guidelines'],
-          chunks_count: 12,
-          created_at: '2025-12-15T10:30:00Z',
-          file_type: 'pdf',
-          file_size: 245000,
-        },
-        {
-          document_id: 'doc-2',
-          title: 'Food Safety Standards',
-          source: 'admin-upload',
-          category: 'compliance',
-          tags: ['safety', 'fssai'],
-          chunks_count: 25,
-          created_at: '2025-12-14T14:20:00Z',
-          file_type: 'docx',
-          file_size: 128000,
-        },
-        {
-          document_id: 'doc-3',
-          title: 'Delivery SOP',
-          source: 'admin-upload',
-          category: 'operations',
-          tags: ['delivery', 'sop'],
-          chunks_count: 8,
-          created_at: '2025-12-13T09:15:00Z',
-          file_type: 'txt',
-          file_size: 32000,
-        },
-      ]);
-      
+
+      const response = await fetch(`${API_BASE}/api/rag/documents`);
+      if (response.ok) {
+        const data = await response.json();
+        setDocuments(data.documents || []);
+      } else {
+        setDocuments([]);
+      }
+
       setError(null);
     } catch (err) {
       console.error('Failed to fetch documents:', err);
       setError('Failed to load documents');
+      setDocuments([]);
     } finally {
       setLoading(false);
     }

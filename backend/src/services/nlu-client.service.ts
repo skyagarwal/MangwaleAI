@@ -412,21 +412,20 @@ export class NluClientService {
   private async llmFallbackClassify(text: string, context?: Record<string, any>): Promise<NluClassificationResult> {
     try {
       const availableIntents = [
-        // Customer intents
-        'greeting',
-        'parcel_booking',
-        'track_order',
-        'order_food',
-        'browse_menu',
-        'search_product',
-        'earn',
-        'cancel_order',
-        'support_request',
+        // Customer intents (all 33 canonical + extras)
+        'greeting', 'chitchat', 'order_food', 'parcel_booking', 'search_product',
+        'browse_menu', 'browse_category', 'browse_stores',
+        'ask_recommendation', 'ask_famous', 'ask_fastest_delivery', 'ask_price', 'ask_time',
+        'add_to_cart', 'view_cart', 'remove_from_cart', 'update_quantity',
+        'checkout', 'select_item',
+        'track_order', 'cancel_order', 'repeat_order', 'manage_address', 'use_saved',
+        'affirm', 'deny', 'confirm', 'cancel', 'restart', 'feedback',
+        'help', 'complaint', 'support_request', 'login', 'earn',
         'needs_clarification',
         // Vendor intents (restaurant/store owners)
         'vendor_orders',        // "aaj kitne orders aaye?", "today's orders"
         'vendor_accept_order',  // "order accept karo", "confirm order"
-        'vendor_reject_order',  // "order reject karo", "cancel order"  
+        'vendor_reject_order',  // "order reject karo", "cancel order"
         'vendor_mark_ready',    // "order ready hai", "ready for pickup"
         'vendor_earnings',      // "aaj ki kamai", "today's earnings"
         'vendor_menu',          // "menu dikhao", "disable item"
@@ -440,7 +439,7 @@ export class NluClientService {
         'rider_online',         // "online karo", "go online"
         'rider_offline',        // "offline karo", "go offline"
         'rider_login',          // "rider login", "delivery man login"
-        'unknown'
+        'unknown',
       ];
 
       // Build LLM context from the passed context

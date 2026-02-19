@@ -6,6 +6,7 @@
  */
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
@@ -317,28 +318,21 @@ export class RiderProfileService implements OnModuleInit {
     metric: 'rating' | 'deliveries' | 'speed',
     limit: number = 10
   ): Promise<RiderProfile[]> {
-    let orderBy: string;
-    
-    switch (metric) {
-      case 'rating':
-        orderBy = 'avg_rating DESC NULLS LAST';
-        break;
-      case 'deliveries':
-        orderBy = 'total_deliveries DESC NULLS LAST';
-        break;
-      case 'speed':
-        orderBy = 'avg_delivery_time ASC NULLS LAST';
-        break;
-      default:
-        orderBy = 'avg_rating DESC NULLS LAST';
-    }
+    // Whitelist ORDER BY clauses to prevent SQL injection
+    const ALLOWED_ORDER_BY: Record<string, string> = {
+      'rating': 'avg_rating DESC NULLS LAST',
+      'deliveries': 'total_deliveries DESC NULLS LAST',
+      'speed': 'avg_delivery_time ASC NULLS LAST',
+    };
 
-    const riders = await this.prisma.$queryRawUnsafe(`
-      SELECT * FROM rider_profiles 
+    const orderBy = Prisma.raw(ALLOWED_ORDER_BY[metric] || ALLOWED_ORDER_BY['rating']);
+
+    const riders = await this.prisma.$queryRaw<any[]>`
+      SELECT * FROM rider_profiles
       WHERE is_active = true
       ORDER BY ${orderBy}
       LIMIT ${limit}
-    `) as any[];
+    `;
 
     return riders.map(r => this.mapRiderRow(r));
   }

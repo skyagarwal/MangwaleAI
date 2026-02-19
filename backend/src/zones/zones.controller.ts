@@ -12,6 +12,31 @@ export class ZonesController {
   constructor(private readonly zoneService: ZoneService) {}
 
   /**
+   * GET /zones
+   * Returns all zones with basic info for admin CRUD
+   */
+  @Get()
+  async getAllZones() {
+    try {
+      const zones = await this.zoneService.getAllZones();
+      return zones.map((zone) => ({
+        id: zone.id,
+        name: zone.name,
+        status: zone.status,
+        coordinates: this.parseCoordinates(zone),
+        modules: this.extractModuleTypes(zone),
+        delivery_fee: (zone.modules as any)?.[0]?.pivot?.minimum_shipping_charge || 0,
+        min_order: (zone.modules as any)?.[0]?.pivot?.minimum_order_amount || 0,
+        cash_on_delivery: zone.cash_on_delivery,
+        digital_payment: zone.digital_payment,
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to fetch zones: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
    * GET /zones/boundaries
    * Returns all active zones with their polygon coordinates for map visualization
    * 

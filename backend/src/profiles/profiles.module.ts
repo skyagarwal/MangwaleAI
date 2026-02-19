@@ -13,6 +13,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '../database/database.module';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
+import { AdminModule } from '../admin/admin.module';
 
 // Services
 import { StoreSyncService } from './services/store-sync.service';
@@ -28,6 +29,7 @@ import { ProfilesController } from './controllers/profiles.controller';
     PhpIntegrationModule,
     HttpModule,
     ConfigModule,
+    AdminModule,
   ],
   controllers: [
     ProfilesController,

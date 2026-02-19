@@ -107,28 +107,22 @@ class MangwaleAIClient {
     // Use consistent recipientId - CRITICAL: Same ID for both API calls
     const recipientId = sessionId || phoneNumber || `web-${Date.now()}`
     
-    console.log('🔌 API Client - Sending to:', recipientId)
-    
     // Send message to backend (Next.js proxy will forward /api/chat/send to backend:3200/api/chat/send)
-    const sendResponse = await this.request<{ ok: boolean }>('/chat/send', {
+    await this.request<{ ok: boolean }>('/chat/send', {
       method: 'POST',
       body: JSON.stringify({
         recipientId,
         text: message,
       }),
     })
-    console.log('📤 Send result:', sendResponse)
 
     // Wait a bit for backend to process (backend needs time to generate response)
-    console.log('⏳ Waiting 500ms for backend processing...')
     await new Promise(resolve => setTimeout(resolve, 500))
 
     // Get response messages using SAME recipientId
-    console.log('📥 Fetching messages from:', recipientId)
     const result = await this.request<{ ok: boolean; messages: Array<{ message: string; timestamp: number }> }>(
       `/chat/messages/${recipientId}`
     )
-    console.log('📨 Received:', result.messages?.length || 0, 'messages')
 
     // Convert to ChatMessage format
     const messages: ChatMessage[] = result.messages.map((msg, idx) => ({

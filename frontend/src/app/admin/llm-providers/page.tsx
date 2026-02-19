@@ -59,10 +59,10 @@ export default function LlmProvidersPage() {
         status: 'healthy',
         model: model?.id || null,
         gpu: {
-          name: 'NVIDIA RTX 3060',
-          utilization: Math.floor(Math.random() * 30) + 40,
-          memory: { used: 10240, total: 12288, percentage: 83 },
-          temperature: Math.floor(Math.random() * 10) + 65,
+          name: 'RTX 3060 12GB',
+          utilization: 0,
+          memory: { used: 0, total: 12288, percentage: 0 },
+          temperature: 0,
         },
       });
     } catch {
@@ -233,12 +233,12 @@ export default function LlmProvidersPage() {
                 <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-green-200">
                   <Activity size={18} className="text-green-600 mb-1" />
                   <div className="text-xs text-gray-600 mb-1">Util</div>
-                  <div className="text-sm font-bold text-green-900">{vllmStatus.gpu.utilization}%</div>
+                  <div className="text-sm font-bold text-green-900">{vllmStatus.gpu.utilization > 0 ? `${vllmStatus.gpu.utilization}%` : 'N/A'}</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur rounded-lg p-3 border border-orange-200">
                   <Thermometer size={18} className="text-orange-600 mb-1" />
                   <div className="text-xs text-gray-600 mb-1">Temp</div>
-                  <div className="text-sm font-bold text-orange-900">{vllmStatus.gpu.temperature}°C</div>
+                  <div className="text-sm font-bold text-orange-900">{vllmStatus.gpu.temperature > 0 ? `${vllmStatus.gpu.temperature}°C` : 'N/A'}</div>
                 </div>
               </div>
 

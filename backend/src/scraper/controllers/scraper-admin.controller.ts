@@ -8,8 +8,9 @@
  * - Trigger manual scrape jobs
  */
 
-import { Controller, Get, Post, Body, Query, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Logger, OnModuleInit, OnModuleDestroy, UseGuards } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { Pool } from 'pg';
@@ -42,6 +43,7 @@ interface StoreMapping {
 }
 
 @Controller('admin/scraper')
+@UseGuards(AdminAuthGuard)
 export class ScraperAdminController implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ScraperAdminController.name);
   private readonly scraperServiceUrl: string;

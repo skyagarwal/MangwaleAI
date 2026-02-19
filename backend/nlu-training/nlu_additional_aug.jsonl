@@ -1,0 +1,87 @@
+{"text": "kuch naya batao", "intent": "chitchat"}
+{"text": "aaj boring din hai", "intent": "chitchat"}
+{"text": "tum funny ho", "intent": "chitchat"}
+{"text": "haha mazedaar", "intent": "chitchat"}
+{"text": "kya scene hai", "intent": "chitchat"}
+{"text": "sab mast?", "intent": "chitchat"}
+{"text": "tu mera dost hai", "intent": "chitchat"}
+{"text": "kya bolti public", "intent": "chitchat"}
+{"text": "life mein kya chal raha hai", "intent": "chitchat"}
+{"text": "bore ho raha hun yaar", "intent": "chitchat"}
+{"text": "kuch interesting ho raha hai kya", "intent": "chitchat"}
+{"text": "tum robot ho ya insaan", "intent": "chitchat"}
+{"text": "tumse baat karke accha laga", "intent": "chitchat"}
+{"text": "aur sunao kya haal chaal", "intent": "chitchat"}
+{"text": "time pass ho raha hai", "intent": "chitchat"}
+{"text": "random question hai", "intent": "chitchat"}
+{"text": "bas chill kar raha hun", "intent": "chitchat"}
+{"text": "मज़ा आ रहा है", "intent": "chitchat"}
+{"text": "क्या बोलती पब्लिक", "intent": "chitchat"}
+{"text": "order 2 ghante late aaya", "intent": "complaint"}
+{"text": "khane mein keeda tha", "intent": "complaint"}
+{"text": "packaging toot gayi thi", "intent": "complaint"}
+{"text": "roti sukhi thi bahut", "intent": "complaint"}
+{"text": "dal mein namak nahi tha", "intent": "complaint"}
+{"text": "order cancel nahi ho raha", "intent": "complaint"}
+{"text": "delivery boy ne galat jagah rakh diya", "intent": "complaint"}
+{"text": "cold drink nahi di thi order mein", "intent": "complaint"}
+{"text": "receipt galat hai", "intent": "complaint"}
+{"text": "weight kam hai item ka", "intent": "complaint"}
+{"text": "freshness zero tha", "intent": "complaint"}
+{"text": "hygiene bahut kharab thi", "intent": "complaint"}
+{"text": "seal tuti hui thi", "intent": "complaint"}
+{"text": "leakage tha packaging mein", "intent": "complaint"}
+{"text": "aadha order hi aaya", "intent": "complaint"}
+{"text": "wrong flavor diya", "intent": "complaint"}
+{"text": "expired product mila", "intent": "complaint"}
+{"text": "restaurant ne galat item bheja", "intent": "complaint"}
+{"text": "size galat hai jo manga tha woh nahi aaya", "intent": "complaint"}
+{"text": "lukewarm tha sara khana", "intent": "complaint"}
+{"text": "half cooked tha chicken", "intent": "complaint"}
+{"text": "rotten vegetables the", "intent": "complaint"}
+{"text": "chhota portion bahut", "intent": "complaint"}
+{"text": "plastic mila khane mein", "intent": "complaint"}
+{"text": "oil bahut zyada tha", "intent": "complaint"}
+{"text": "bilkul bland tha khana", "intent": "complaint"}
+{"text": "bahut late delivery 3 hour lag gaye", "intent": "complaint"}
+{"text": "driver rude behave kiya", "intent": "complaint"}
+{"text": "galat bill kata hai extra charge laga diya", "intent": "complaint"}
+{"text": "order confirm hua tha par cancel ho gaya", "intent": "complaint"}
+{"text": "app crash ho gaya payment ke time", "intent": "complaint"}
+{"text": "notification nahi aaya order ka", "intent": "complaint"}
+{"text": "customer care pe koi uthata hi nahi", "intent": "complaint"}
+{"text": "bhai kaise ho", "intent": "greeting"}
+{"text": "arre hello ji", "intent": "greeting"}
+{"text": "namaste bhai sahab", "intent": "greeting"}
+{"text": "kya haal bhai", "intent": "greeting"}
+{"text": "hey mangwale bot", "intent": "greeting"}
+{"text": "suno na", "intent": "greeting"}
+{"text": "bolo bhai", "intent": "greeting"}
+{"text": "chaliye shuru karte hai", "intent": "greeting"}
+{"text": "good morning ji", "intent": "greeting"}
+{"text": "shubh din", "intent": "greeting"}
+{"text": "namaskar ji", "intent": "greeting"}
+{"text": "kya kar rahe ho", "intent": "greeting"}
+{"text": "kem cho bhai", "intent": "greeting"}
+{"text": "ji namaste", "intent": "greeting"}
+{"text": "hello ji kaisa chal raha", "intent": "greeting"}
+{"text": "hi bro kya scene", "intent": "greeting"}
+{"text": "yo wassup", "intent": "greeting"}
+{"text": "namaste dost", "intent": "greeting"}
+{"text": "hello bot ji", "intent": "greeting"}
+{"text": "arrey bhai sunno", "intent": "greeting"}
+{"text": "haan bhai bol", "intent": "greeting"}
+{"text": "shubh sandhya ji", "intent": "greeting"}
+{"text": "good afternoon ji", "intent": "greeting"}
+{"text": "hey bhai", "intent": "greeting"}
+{"text": "ram ram bhai", "intent": "greeting"}
+{"text": "adab", "intent": "greeting"}
+{"text": "pranam ji", "intent": "greeting"}
+{"text": "hi mangwale kaise ho", "intent": "greeting"}
+{"text": "salam bhai", "intent": "greeting"}
+{"text": "kurta pajama dikhao", "intent": "search_product"}
+{"text": "perfume search karo", "intent": "search_product"}
+{"text": "backpack dhoondo", "intent": "search_product"}
+{"text": "umbrella milega kya", "intent": "search_product"}
+{"text": "sports shoes search", "intent": "search_product"}
+{"text": "protein powder dikhao", "intent": "search_product"}

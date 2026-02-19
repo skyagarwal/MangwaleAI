@@ -1,23 +1,11 @@
 import { Controller, Get, Put, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DynamicConfigService } from './dynamic-config.service';
-
-/**
- * Admin Config Controller
- * 
- * Manage bot configuration without redeployment:
- * - List all configs
- * - Update config values
- * - Create new configs
- * - Delete configs
- * - Refresh cache
- * 
- * @requires Admin authentication (implement AdminGuard)
- */
+import { AdminAuthGuard } from '../admin/guards/admin-auth.guard';
 
 @ApiTags('Admin - Configuration')
 @Controller('admin/config')
-// @UseGuards(AdminGuard) // TODO: Add admin authentication
+@UseGuards(AdminAuthGuard)
 export class ConfigController {
   constructor(private readonly configService: DynamicConfigService) {}
 

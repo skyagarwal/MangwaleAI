@@ -134,6 +134,7 @@ export const INTENT_AGENT_MAP: Record<string, AgentType> = {
   // Order intents
   add_to_cart: AgentType.ORDER,
   track_order: AgentType.ORDER,
+  order_history: AgentType.ORDER,
   order_status: AgentType.ORDER,
   where_is_order: AgentType.ORDER,
   cancel_order: AgentType.ORDER,

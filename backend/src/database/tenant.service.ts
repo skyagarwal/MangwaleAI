@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from './prisma.service';
 
 export interface TenantData {
@@ -110,55 +111,47 @@ export class TenantService {
    * Update tenant settings
    */
   async updateTenant(id: string, data: Partial<TenantData>): Promise<TenantData | null> {
-    // Build update query dynamically
-    const updates: string[] = [];
-    const values: any[] = [];
+    // Build update query dynamically using Prisma.sql fragments
+    const setFragments: Prisma.Sql[] = [];
 
     if (data.name !== undefined) {
-      updates.push('name = $' + (values.length + 2));
-      values.push(data.name);
+      setFragments.push(Prisma.sql`name = ${data.name}`);
     }
     if (data.domain !== undefined) {
-      updates.push('domain = $' + (values.length + 2));
-      values.push(data.domain);
+      setFragments.push(Prisma.sql`domain = ${data.domain}`);
     }
     if (data.logo !== undefined) {
-      updates.push('logo = $' + (values.length + 2));
-      values.push(data.logo);
+      setFragments.push(Prisma.sql`logo = ${data.logo}`);
     }
     if (data.primaryColor !== undefined) {
-      updates.push('primary_color = $' + (values.length + 2));
-      values.push(data.primaryColor);
+      setFragments.push(Prisma.sql`primary_color = ${data.primaryColor}`);
     }
     if (data.features !== undefined) {
-      updates.push('features = $' + (values.length + 2) + '::jsonb');
-      values.push(JSON.stringify(data.features));
+      setFragments.push(Prisma.sql`features = ${JSON.stringify(data.features)}::jsonb`);
     }
     if (data.settings !== undefined) {
-      updates.push('settings = $' + (values.length + 2) + '::jsonb');
-      values.push(JSON.stringify(data.settings));
+      setFragments.push(Prisma.sql`settings = ${JSON.stringify(data.settings)}::jsonb`);
     }
     if (data.isActive !== undefined) {
-      updates.push('is_active = $' + (values.length + 2));
-      values.push(data.isActive);
+      setFragments.push(Prisma.sql`is_active = ${data.isActive}`);
     }
 
-    if (updates.length === 0) {
+    if (setFragments.length === 0) {
       return this.getTenant(id);
     }
 
-    updates.push('updated_at = NOW()');
+    setFragments.push(Prisma.sql`updated_at = NOW()`);
+
+    const setClause = Prisma.join(setFragments, ', ');
 
     try {
-      const tenant = await this.prisma.$queryRawUnsafe<TenantData[]>(
-        `UPDATE tenants SET ${updates.join(', ')}
-         WHERE id = $1
+      const tenant = await this.prisma.$queryRaw<TenantData[]>`
+        UPDATE tenants SET ${setClause}
+         WHERE id = ${id}
          RETURNING id, name, domain, logo, primary_color as "primaryColor",
                    features, settings, is_active as "isActive",
-                   created_at as "createdAt", updated_at as "updatedAt"`,
-        id,
-        ...values,
-      );
+                   created_at as "createdAt", updated_at as "updatedAt"
+      `;
 
       // Invalidate cache
       this.tenantCache.delete(id);

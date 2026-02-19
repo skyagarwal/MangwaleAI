@@ -31,7 +31,7 @@ interface TopQuery {
   tokensSaved: number;
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3200';
+const BACKEND_URL = '';
 
 export default function SemanticCachePage() {
   const [stats, setStats] = useState<CacheStats | null>(null);

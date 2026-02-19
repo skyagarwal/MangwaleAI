@@ -48,7 +48,7 @@ export default function LabelStudioPage() {
   const testConnection = useCallback(async () => {
     setTesting(true);
     try {
-      const response = await fetch('/api/admin/settings/labelstudio/test');
+      const response = await fetch('/api/settings/labelstudio/test');
       const data = await response.json();
       setConnection(data);
     } catch (error) {
@@ -70,10 +70,10 @@ export default function LabelStudioPage() {
 
   const loadSettings = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/settings');
+      const response = await fetch('/api/settings');
       const data = await response.json();
       const urlSetting = (Array.isArray(data) ? data : []).find(
-        (s: { key: string }) => s.key === 'LABEL_STUDIO_URL'
+        (s: { key: string }) => s.key === 'label-studio-url'
       );
       if (urlSetting) setLsUrl(urlSetting.value);
     } catch {

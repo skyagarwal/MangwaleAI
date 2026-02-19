@@ -16,6 +16,7 @@ async function bootstrap() {
   
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
+    rawBody: true,
   });
 
   // Enable WebSocket support with Socket.IO adapter

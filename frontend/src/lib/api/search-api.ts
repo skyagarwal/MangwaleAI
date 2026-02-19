@@ -1,4 +1,4 @@
-// API Client for Search API (Port 3100)
+// API Client for Search (proxied through NestJS backend at /api/search)
 
 import type {
   ModuleType,
@@ -9,7 +9,9 @@ import type {
   TrendingQuery,
 } from '@/types/search'
 
-const SEARCH_API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || 'http://localhost:3100'
+// Use the NestJS backend proxy (/api/search) instead of calling Search API (port 3100) directly.
+// Next.js rewrites /api/search/:path* → backend:3200/api/search/:path*
+const SEARCH_API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || '/api'
 
 interface SearchOptions {
   module: ModuleType

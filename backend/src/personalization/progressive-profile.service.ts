@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 
 /**
@@ -294,62 +295,53 @@ export class ProgressiveProfileService {
         return;
       }
 
+      // Use Prisma.raw() for whitelisted column name (validated above)
+      const col = Prisma.raw(mapping.field);
+
       if (mapping.merge && mapping.isJsonb) {
         // Merge into JSONB field (e.g. personality_traits)
         const jsonValue = JSON.stringify({ [questionId]: answer });
-        await this.prisma.$executeRawUnsafe(
-          `INSERT INTO user_profiles (user_id, ${mapping.field}, last_profile_question_at, profile_questions_this_week, updated_at)
-           VALUES ($1, $2::jsonb, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP)
+        await this.prisma.$executeRaw`
+          INSERT INTO user_profiles (user_id, ${col}, last_profile_question_at, profile_questions_this_week, updated_at)
+           VALUES (${userId}, ${jsonValue}::jsonb, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP)
            ON CONFLICT (user_id) DO UPDATE SET
-             ${mapping.field} = COALESCE(user_profiles.${mapping.field}, '{}'::jsonb) || $2::jsonb,
+             ${col} = COALESCE(user_profiles.${col}, '{}'::jsonb) || ${jsonValue}::jsonb,
              last_profile_question_at = CURRENT_TIMESTAMP,
              profile_questions_this_week = COALESCE(user_profiles.profile_questions_this_week, 0) + 1,
              profile_completeness = LEAST(100, COALESCE(user_profiles.profile_completeness, 0) + 10),
-             updated_at = CURRENT_TIMESTAMP`,
-          userId,
-          jsonValue,
-        );
+             updated_at = CURRENT_TIMESTAMP`;
       } else if (mapping.isJsonb) {
         // Set JSONB field
         const jsonValue = JSON.stringify({ [answer]: 1 });
-        await this.prisma.$executeRawUnsafe(
-          `UPDATE user_profiles SET
-             ${mapping.field} = $1::jsonb,
+        await this.prisma.$executeRaw`
+          UPDATE user_profiles SET
+             ${col} = ${jsonValue}::jsonb,
              last_profile_question_at = CURRENT_TIMESTAMP,
              profile_questions_this_week = COALESCE(profile_questions_this_week, 0) + 1,
              profile_completeness = LEAST(100, COALESCE(profile_completeness, 0) + 10),
              updated_at = CURRENT_TIMESTAMP
-           WHERE user_id = $2`,
-          jsonValue,
-          userId,
-        );
+           WHERE user_id = ${userId}`;
       } else if (mapping.field === 'allergies') {
         // Array field
         const arrayValue = answer === 'none' ? '{}' : `{${answer}}`;
-        await this.prisma.$executeRawUnsafe(
-          `UPDATE user_profiles SET
-             allergies = $1::text[],
+        await this.prisma.$executeRaw`
+          UPDATE user_profiles SET
+             allergies = ${arrayValue}::text[],
              last_profile_question_at = CURRENT_TIMESTAMP,
              profile_questions_this_week = COALESCE(profile_questions_this_week, 0) + 1,
              profile_completeness = LEAST(100, COALESCE(profile_completeness, 0) + 10),
              updated_at = CURRENT_TIMESTAMP
-           WHERE user_id = $2`,
-          arrayValue,
-          userId,
-        );
+           WHERE user_id = ${userId}`;
       } else {
         // Simple text field
-        await this.prisma.$executeRawUnsafe(
-          `UPDATE user_profiles SET
-             ${mapping.field} = $1,
+        await this.prisma.$executeRaw`
+          UPDATE user_profiles SET
+             ${col} = ${answer},
              last_profile_question_at = CURRENT_TIMESTAMP,
              profile_questions_this_week = COALESCE(profile_questions_this_week, 0) + 1,
              profile_completeness = LEAST(100, COALESCE(profile_completeness, 0) + 10),
              updated_at = CURRENT_TIMESTAMP
-           WHERE user_id = $2`,
-          answer,
-          userId,
-        );
+           WHERE user_id = ${userId}`;
       }
 
       this.logger.log(`✅ Profile updated for user ${userId}`);

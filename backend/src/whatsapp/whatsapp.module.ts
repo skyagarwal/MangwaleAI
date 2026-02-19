@@ -9,6 +9,7 @@ import { SessionModule } from '../session/session.module';
 import { AgentsModule } from '../agents/agents.module';
 import { DatabaseModule } from '../database/database.module';
 import { AsrModule } from '../asr/asr.module';
+import { AdminModule } from '../admin/admin.module';
 
 /**
  * WhatsAppModule - Multi-Channel Architecture
@@ -33,6 +34,7 @@ import { AsrModule } from '../asr/asr.module';
     AgentsModule,
     DatabaseModule,
     AsrModule, // For voice message transcription
+    AdminModule,
   ],
   controllers: [WebhookController],
   providers: [MessageService, WhatsAppCloudService],

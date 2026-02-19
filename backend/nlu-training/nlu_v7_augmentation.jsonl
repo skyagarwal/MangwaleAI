@@ -1,0 +1,240 @@
+{"text": "haan ye sahi hai", "intent": "confirm"}
+{"text": "haan bilkul", "intent": "confirm"}
+{"text": "ha ji", "intent": "confirm"}
+{"text": "yes proceed", "intent": "confirm"}
+{"text": "theek hai confirm karo", "intent": "confirm"}
+{"text": "ho gaya", "intent": "confirm"}
+{"text": "sahi hai", "intent": "confirm"}
+{"text": "pakka", "intent": "confirm"}
+{"text": "ji haan", "intent": "confirm"}
+{"text": "bilkul sahi hai ye", "intent": "confirm"}
+{"text": "haan yahi", "intent": "confirm"}
+{"text": "haan chalega", "intent": "confirm"}
+{"text": "ha bhai sahi hai", "intent": "confirm"}
+{"text": "confirmed", "intent": "confirm"}
+{"text": "sure", "intent": "confirm"}
+{"text": "definitely yes", "intent": "confirm"}
+{"text": "haan ji theek hai", "intent": "confirm"}
+{"text": "ho jayega ye", "intent": "confirm"}
+{"text": "sab sahi hai", "intent": "confirm"}
+{"text": "yes final hai", "intent": "confirm"}
+{"text": "ha ye wala", "intent": "confirm"}
+{"text": "ji bilkul", "intent": "confirm"}
+{"text": "okay done", "intent": "confirm"}
+{"text": "manzoor hai", "intent": "confirm"}
+{"text": "haan proceed karo", "intent": "confirm"}
+{"text": "ji sahi hai", "intent": "confirm"}
+{"text": "ye theek hai", "intent": "confirm"}
+{"text": "ok confirm", "intent": "confirm"}
+{"text": "acha theek hai", "intent": "confirm"}
+{"text": "haan bhai ye wala", "intent": "confirm"}
+{"text": "ha sab correct hai", "intent": "confirm"}
+{"text": "yes go ahead", "intent": "confirm"}
+{"text": "agree", "intent": "confirm"}
+{"text": "hmm theek hai", "intent": "confirm"}
+{"text": "hnji", "intent": "confirm"}
+{"text": "hanji bilkul", "intent": "confirm"}
+{"text": "ekdum sahi", "intent": "confirm"}
+{"text": "perfect hai ye", "intent": "confirm"}
+{"text": "yep sahi hai", "intent": "confirm"}
+{"text": "ha chalo", "intent": "confirm"}
+{"text": "aaj mausam kaisa hai", "intent": "chitchat"}
+{"text": "kuch naya batao", "intent": "chitchat"}
+{"text": "bore ho raha hu", "intent": "chitchat"}
+{"text": "kya chal raha hai aaj kal", "intent": "chitchat"}
+{"text": "joke sunao", "intent": "chitchat"}
+{"text": "ek joke sunao bhai", "intent": "chitchat"}
+{"text": "tum robot ho ya insaan", "intent": "chitchat"}
+{"text": "tumhari age kya hai", "intent": "chitchat"}
+{"text": "tum kab se kaam kar rahe ho", "intent": "chitchat"}
+{"text": "tumhara naam kya hai", "intent": "chitchat"}
+{"text": "kya tum sab jaante ho", "intent": "chitchat"}
+{"text": "funny baat batao", "intent": "chitchat"}
+{"text": "tumse baat karke acha laga", "intent": "chitchat"}
+{"text": "timepass ho raha hai", "intent": "chitchat"}
+{"text": "kuch mazedaar sunao", "intent": "chitchat"}
+{"text": "aaj kya special hai", "intent": "chitchat"}
+{"text": "tum samajhdar ho", "intent": "chitchat"}
+{"text": "smart bot", "intent": "chitchat"}
+{"text": "accha bot hai tu", "intent": "chitchat"}
+{"text": "kitne intelligent ho tum", "intent": "chitchat"}
+{"text": "tumhe kaun banaya", "intent": "chitchat"}
+{"text": "who made you", "intent": "chitchat"}
+{"text": "are you real", "intent": "chitchat"}
+{"text": "can you think", "intent": "chitchat"}
+{"text": "kya tum insaan jaise sochte ho", "intent": "chitchat"}
+{"text": "interesting hai tum", "intent": "chitchat"}
+{"text": "baat karte hai thodi", "intent": "chitchat"}
+{"text": "bore ho gya yaar", "intent": "chitchat"}
+{"text": "weather kaisa hai aaj", "intent": "chitchat"}
+{"text": "aaj garmi hai bahut", "intent": "chitchat"}
+{"text": "barish ho rahi hai bahar", "intent": "chitchat"}
+{"text": "cricket ka score kya hai", "intent": "chitchat"}
+{"text": "aaj match hai kya", "intent": "chitchat"}
+{"text": "kya kar sakte ho tum", "intent": "chitchat"}
+{"text": "tumhare paas feelings hai kya", "intent": "chitchat"}
+{"text": "mujhe hasao", "intent": "chitchat"}
+{"text": "koi shayari sunao", "intent": "chitchat"}
+{"text": "aur bata kya scene hai", "intent": "chitchat"}
+{"text": "bas yun hi baat karne aaya", "intent": "chitchat"}
+{"text": "tell me a fun fact", "intent": "chitchat"}
+{"text": "dominos ka menu dikhao", "intent": "browse_menu"}
+{"text": "hotel ka menu", "intent": "browse_menu"}
+{"text": "kya kya milta hai wahan", "intent": "browse_menu"}
+{"text": "restaurant ka menu batao", "intent": "browse_menu"}
+{"text": "iske menu me kya kya hai", "intent": "browse_menu"}
+{"text": "is restaurant me kya milega", "intent": "browse_menu"}
+{"text": "pura menu dekhna hai", "intent": "browse_menu"}
+{"text": "ye dukaan me kya bikta hai", "intent": "browse_menu"}
+{"text": "iska full menu dikha do", "intent": "browse_menu"}
+{"text": "items list do iska", "intent": "browse_menu"}
+{"text": "kya available hai is shop me", "intent": "browse_menu"}
+{"text": "menu open karo", "intent": "browse_menu"}
+{"text": "what all do they serve", "intent": "browse_menu"}
+{"text": "menu card do", "intent": "browse_menu"}
+{"text": "ye restaurant kya serve karta hai", "intent": "browse_menu"}
+{"text": "yahan pe kya milta hai", "intent": "browse_menu"}
+{"text": "menu batao iska", "intent": "browse_menu"}
+{"text": "is hotel ki dish list do", "intent": "browse_menu"}
+{"text": "kya kya bechte hai ye", "intent": "browse_menu"}
+{"text": "inke items dikhao", "intent": "browse_menu"}
+{"text": "pizza hut me kya hai", "intent": "browse_menu"}
+{"text": "cafe ka menu chahiye", "intent": "browse_menu"}
+{"text": "iske paas kya options hai", "intent": "browse_menu"}
+{"text": "ye wale shop ka menu", "intent": "browse_menu"}
+{"text": "dish ki list de do", "intent": "browse_menu"}
+{"text": "available items bata do", "intent": "browse_menu"}
+{"text": "iske yahan kya bikta hai", "intent": "browse_menu"}
+{"text": "store ki listing dikhao", "intent": "browse_menu"}
+{"text": "kya kya serve karte hai ye", "intent": "browse_menu"}
+{"text": "menu list chahiye", "intent": "browse_menu"}
+{"text": "ye shop me kya hai", "intent": "browse_menu"}
+{"text": "mcdonalds ka menu dikhao", "intent": "browse_menu"}
+{"text": "restaurant me available items", "intent": "browse_menu"}
+{"text": "inki menu list do", "intent": "browse_menu"}
+{"text": "khana kya kya hai idhar", "intent": "browse_menu"}
+{"text": "cart me daal do", "intent": "add_to_cart"}
+{"text": "ye add karo", "intent": "add_to_cart"}
+{"text": "2 aur dalo", "intent": "add_to_cart"}
+{"text": "isko bhi add", "intent": "add_to_cart"}
+{"text": "ye item add kar do", "intent": "add_to_cart"}
+{"text": "cart me rakh do", "intent": "add_to_cart"}
+{"text": "ye bhi chahiye add karo", "intent": "add_to_cart"}
+{"text": "ek aur add karo ye wala", "intent": "add_to_cart"}
+{"text": "ye bhi daal do cart me", "intent": "add_to_cart"}
+{"text": "add to cart", "intent": "add_to_cart"}
+{"text": "cart me add kar do ye", "intent": "add_to_cart"}
+{"text": "isko cart me daalo", "intent": "add_to_cart"}
+{"text": "ye wala add", "intent": "add_to_cart"}
+{"text": "3 plate daal do", "intent": "add_to_cart"}
+{"text": "isko bhi rakh lo", "intent": "add_to_cart"}
+{"text": "ye bhi le lo", "intent": "add_to_cart"}
+{"text": "add this item", "intent": "add_to_cart"}
+{"text": "cart me shamil karo", "intent": "add_to_cart"}
+{"text": "ek aur plate add", "intent": "add_to_cart"}
+{"text": "ye item bhi daal do", "intent": "add_to_cart"}
+{"text": "haan ye bhi add karo", "intent": "add_to_cart"}
+{"text": "isko select karo", "intent": "add_to_cart"}
+{"text": "ye mangwana hai add karo", "intent": "add_to_cart"}
+{"text": "2 samosa cart me daalo", "intent": "add_to_cart"}
+{"text": "ek pizza add kar do", "intent": "add_to_cart"}
+{"text": "dosa bhi add karo", "intent": "add_to_cart"}
+{"text": "ye dono add karo", "intent": "add_to_cart"}
+{"text": "chai bhi daal do", "intent": "add_to_cart"}
+{"text": "lassi add kar do", "intent": "add_to_cart"}
+{"text": "ye dessert bhi add", "intent": "add_to_cart"}
+{"text": "extra 1 aur daal do", "intent": "add_to_cart"}
+{"text": "side order bhi add karo", "intent": "add_to_cart"}
+{"text": "ek cold drink bhi add", "intent": "add_to_cart"}
+{"text": "ye combo add karo", "intent": "add_to_cart"}
+{"text": "biryani bhi cart me daalo", "intent": "add_to_cart"}
+{"text": "mera order kahan hai", "intent": "track_order"}
+{"text": "delivery kab aayegi", "intent": "track_order"}
+{"text": "rider kahan hai", "intent": "track_order"}
+{"text": "order ka status batao", "intent": "track_order"}
+{"text": "abhi kahan tak aaya hai", "intent": "track_order"}
+{"text": "delivery boy kahan pahuncha", "intent": "track_order"}
+{"text": "order track karo", "intent": "track_order"}
+{"text": "kitna time aur lagega", "intent": "track_order"}
+{"text": "kab tak aayega", "intent": "track_order"}
+{"text": "rider ka location batao", "intent": "track_order"}
+{"text": "order dispatch hua kya", "intent": "track_order"}
+{"text": "kya order nikal gaya", "intent": "track_order"}
+{"text": "abhi order ki kya status hai", "intent": "track_order"}
+{"text": "delivery partner kahan hai", "intent": "track_order"}
+{"text": "mera parcel kab aayega", "intent": "track_order"}
+{"text": "order accept hua kya", "intent": "track_order"}
+{"text": "pakka dispatch ho gaya na", "intent": "track_order"}
+{"text": "estimated time batao", "intent": "track_order"}
+{"text": "order aane me kitna time", "intent": "track_order"}
+{"text": "kya order ban raha hai", "intent": "track_order"}
+{"text": "delivery ka ETA kya hai", "intent": "track_order"}
+{"text": "order live track karo", "intent": "track_order"}
+{"text": "order kahan tak pahucha batao", "intent": "track_order"}
+{"text": "rider ne pick up kiya kya", "intent": "track_order"}
+{"text": "mera food kab aayega", "intent": "track_order"}
+{"text": "order kitna door hai abhi", "intent": "track_order"}
+{"text": "kitne minute me aayega", "intent": "track_order"}
+{"text": "tracking id do", "intent": "track_order"}
+{"text": "order me kitna time bacha", "intent": "track_order"}
+{"text": "delivery status check karo", "intent": "track_order"}
+{"text": "payment fail ho gaya", "intent": "payment_issue"}
+{"text": "paisa kat gaya order nahi hua", "intent": "payment_issue"}
+{"text": "UPI se nahi ho raha", "intent": "payment_issue"}
+{"text": "transaction fail ho gayi", "intent": "payment_issue"}
+{"text": "paise debit ho gaye lekin order nahi", "intent": "payment_issue"}
+{"text": "payment stuck hai", "intent": "payment_issue"}
+{"text": "amount deduct ho gaya", "intent": "payment_issue"}
+{"text": "paisa katta par order place nahi hua", "intent": "payment_issue"}
+{"text": "online payment me error aa raha", "intent": "payment_issue"}
+{"text": "phonepe se payment nahi ho raha", "intent": "payment_issue"}
+{"text": "gpay se pay nahi ho raha", "intent": "payment_issue"}
+{"text": "card se payment decline ho gaya", "intent": "payment_issue"}
+{"text": "payment process nahi ho rahi", "intent": "payment_issue"}
+{"text": "double payment ho gaya", "intent": "payment_issue"}
+{"text": "do baar paisa kata", "intent": "payment_issue"}
+{"text": "payment gateway error", "intent": "payment_issue"}
+{"text": "OTP nahi aa raha payment ke liye", "intent": "payment_issue"}
+{"text": "payment timeout ho gaya", "intent": "payment_issue"}
+{"text": "UPI pin daala par fail", "intent": "payment_issue"}
+{"text": "paytm se payment issue", "intent": "payment_issue"}
+{"text": "amount pending dikha raha", "intent": "payment_issue"}
+{"text": "bank se paisa gaya par confirm nahi hua", "intent": "payment_issue"}
+{"text": "payment retry kaise karu", "intent": "payment_issue"}
+{"text": "paise wapas kab aayenge", "intent": "payment_issue"}
+{"text": "transaction pending hai", "intent": "payment_issue"}
+{"text": "payment mode change nahi ho raha", "intent": "payment_issue"}
+{"text": "COD nahi mil raha option", "intent": "payment_issue"}
+{"text": "wallet se pay nahi ho raha", "intent": "payment_issue"}
+{"text": "paisa debit hua order fail", "intent": "payment_issue"}
+{"text": "upi transaction fail", "intent": "payment_issue"}
+{"text": "nahi chahiye", "intent": "deny"}
+{"text": "mat karo", "intent": "deny"}
+{"text": "nope", "intent": "deny"}
+{"text": "bilkul nahi", "intent": "deny"}
+{"text": "nahi nahi", "intent": "deny"}
+{"text": "no thanks", "intent": "deny"}
+{"text": "ye nahi chahiye mujhe", "intent": "deny"}
+{"text": "rehne do", "intent": "deny"}
+{"text": "chhodh do", "intent": "deny"}
+{"text": "nahi yaar", "intent": "deny"}
+{"text": "mat bhejo ye", "intent": "deny"}
+{"text": "nahi re", "intent": "deny"}
+{"text": "mujhe interest nahi hai", "intent": "deny"}
+{"text": "nahi bhai", "intent": "deny"}
+{"text": "no no", "intent": "deny"}
+{"text": "nako", "intent": "deny"}
+{"text": "nahh", "intent": "deny"}
+{"text": "I don't want this", "intent": "deny"}
+{"text": "not interested", "intent": "deny"}
+{"text": "rehne do bhai", "intent": "deny"}
+{"text": "nahi lena", "intent": "deny"}
+{"text": "mat do ye", "intent": "deny"}
+{"text": "chhodo ye", "intent": "deny"}
+{"text": "naah", "intent": "deny"}
+{"text": "pass", "intent": "deny"}
+{"text": "isko hata do", "intent": "deny"}
+{"text": "nahi pasand", "intent": "deny"}
+{"text": "nhi", "intent": "deny"}
+{"text": "nai chahiye", "intent": "deny"}
+{"text": "ye mat karo", "intent": "deny"}

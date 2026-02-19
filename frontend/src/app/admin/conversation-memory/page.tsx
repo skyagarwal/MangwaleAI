@@ -50,7 +50,7 @@ interface SearchResult {
   score: number;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+const API_BASE = '';
 
 export default function ConversationMemoryPage() {
   const [stats, setStats] = useState<MemoryStats | null>(null);
@@ -74,15 +74,6 @@ export default function ConversationMemoryPage() {
       }
     } catch (err) {
       console.error('Failed to fetch stats:', err);
-      // Set sample stats
-      setStats({
-        totalMemories: 0,
-        uniqueSessions: 0,
-        uniqueUsers: 0,
-        memoriesLast24h: 0,
-        memoriesLast7d: 0,
-        avgMemoriesPerSession: 0,
-      });
     }
   };
 

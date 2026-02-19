@@ -66,71 +66,26 @@ export default function ZonesPage() {
   const loadZones = async () => {
     try {
       const response = await fetch('/api/zones');
-      if (response.ok) {
-        const data = await response.json();
-        setZones(data.zones || []);
-        setStats({
-          total_zones: data.zones?.length || 0,
-          active_zones: data.zones?.filter((z: DeliveryZone) => z.is_active).length || 0,
-          total_pincodes: data.zones?.reduce((acc: number, z: DeliveryZone) => acc + (z.pincodes?.length || 0), 0) || 0,
-          cities_covered: new Set(data.zones?.map((z: DeliveryZone) => z.city)).size || 0,
-        });
+      if (!response.ok) {
+        throw new Error(`Failed to load zones: ${response.statusText}`);
       }
+      const data = await response.json();
+      const zoneList = data.zones || [];
+      setZones(zoneList);
+      setStats({
+        total_zones: zoneList.length,
+        active_zones: zoneList.filter((z: DeliveryZone) => z.is_active).length,
+        total_pincodes: zoneList.reduce((acc: number, z: DeliveryZone) => acc + (z.pincodes?.length || 0), 0),
+        cities_covered: new Set(zoneList.map((z: DeliveryZone) => z.city)).size,
+      });
     } catch (error) {
       console.error('Failed to load zones:', error);
-      // Load mock data for demo
-      const mockZones: DeliveryZone[] = [
-        {
-          id: 1,
-          name: 'Indore Central',
-          city: 'Indore',
-          state: 'Madhya Pradesh',
-          pincode_start: '452001',
-          pincode_end: '452010',
-          pincodes: ['452001', '452002', '452003', '452004', '452005'],
-          delivery_fee: 25,
-          min_order_value: 100,
-          estimated_time_minutes: 35,
-          is_active: true,
-          priority: 1,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          name: 'Vijay Nagar',
-          city: 'Indore',
-          state: 'Madhya Pradesh',
-          pincodes: ['452010', '452011', '452012'],
-          delivery_fee: 30,
-          min_order_value: 150,
-          estimated_time_minutes: 40,
-          is_active: true,
-          priority: 2,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          name: 'Palasia',
-          city: 'Indore',
-          state: 'Madhya Pradesh',
-          pincodes: ['452001', '452018'],
-          delivery_fee: 20,
-          min_order_value: 100,
-          estimated_time_minutes: 30,
-          is_active: true,
-          priority: 1,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ];
-      setZones(mockZones);
+      setZones([]);
       setStats({
-        total_zones: mockZones.length,
-        active_zones: mockZones.filter(z => z.is_active).length,
-        total_pincodes: mockZones.reduce((acc, z) => acc + (z.pincodes?.length || 0), 0),
-        cities_covered: new Set(mockZones.map(z => z.city)).size,
+        total_zones: 0,
+        active_zones: 0,
+        total_pincodes: 0,
+        cities_covered: 0,
       });
     } finally {
       setLoading(false);

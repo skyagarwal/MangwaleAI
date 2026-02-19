@@ -338,8 +338,15 @@ Respond in JSON:
       });
 
       const responseText = result.content || '';
-      const parsed = JSON.parse(responseText);
-      
+      let parsed: any;
+      try {
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        parsed = JSON.parse(jsonMatch ? jsonMatch[0] : responseText);
+      } catch {
+        this.logger.warn(`Failed to parse LLM classification response: ${responseText}`);
+        throw new Error('LLM classification returned invalid JSON');
+      }
+
       return {
         isQuestion: parsed.isQuestion,
         type: parsed.type || 'generic',

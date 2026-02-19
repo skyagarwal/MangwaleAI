@@ -145,6 +145,7 @@ export class LlmIntentExtractorService {
     // Fallback to hardcoded intents if DB is empty or failed
     if (!intentList) {
       const intentDescriptions = {
+        // Core intents
         'order_food': 'User wants to order food/meals FROM A RESTAURANT (pizza, biryani, burger, etc.).',
         'browse_menu': 'User wants to SEE RESTAURANTS or MENUS. INCLUDES: "what is open now", "which restaurants are available", "show open restaurants", "show menu", "what can I order", "any restro open". Use for restaurant availability questions.',
         'browse_category': 'User wants to browse a specific food category like "pizza section", "biryani category", "chinese food dikhao", "desserts kya hai".',
@@ -152,14 +153,33 @@ export class LlmIntentExtractorService {
         'ask_recommendation': 'User asking for RECOMMENDATIONS or BEST options: "best biryani", "konsa restaurant achha hai", "top rated food", "recommend karo", "suggest karo", "which is best", "nashik ki best misal". Use when user asks for quality/rating based suggestions.',
         'ask_famous': 'User asking about FAMOUS/POPULAR items: "sabse famous kya hai", "trending kya hai", "log kya khate hai", "popular dishes". Use for popularity-based queries.',
         'ask_fastest_delivery': 'User wants FAST/URGENT delivery: "jaldi khana chahiye", "kahan se jaldi milega", "fastest delivery", "urgent food", "abhi chahiye", "turant". Use for speed-based queries.',
+        'ask_price': 'User asking about price/cost: "kitne ka hai", "price kya hai", "how much", "cost of", "rate batao".',
+        'ask_time': 'User asking about delivery time/ETA: "kitna time lagega", "kab tak aayega", "delivery time", "how long".',
         'track_order': 'User asking about order location/status ("where is my order", "track delivery")',
         'cancel_order': 'User wants to cancel an existing order',
         'repeat_order': 'User wants to repeat a previous order ("repeat last order", "same as before")',
         'parcel_booking': 'User wants to send/book a parcel/courier/package. INCLUDES sending home-cooked food to friends/family ("send food to my friend", "pickup from home").',
         'search_product': 'User searching for SPECIFIC PRODUCTS in E-COMMERCE (groceries, electronics, clothing, accessories). NOT for restaurants or food ordering. Examples: "find headphones", "show me laptops", "looking for shoes".',
+        // Cart & checkout
+        'add_to_cart': 'User wants to add a specific item to their cart: "add this", "ye daal do", "add 2 paneer butter masala".',
+        'view_cart': 'User wants to see their cart contents: "show cart", "my cart", "cart dikhao", "what is in my cart".',
+        'remove_from_cart': 'User wants to remove a specific item from cart: "remove pizza from cart", "hatao", "cart se nikalo".',
+        'update_quantity': 'User wants to change quantity of an item in cart: "increase to 3", "ek aur add karo", "quantity badhao".',
+        'checkout': 'User ready to place order and pay: "checkout", "place order", "proceed to payment", "pay now", "order karo".',
+        'select_item': 'User selecting a specific item from search results or menu: "this one", "number 2", "ye wala".',
+        'use_saved': 'User wants to use a previously saved address/payment method: "use my home address", "saved address use karo".',
+        // Confirmations & conversation control
+        'affirm': 'User confirming/agreeing: "yes", "ok", "sure", "haan", "ji", "theek hai". Short affirmative responses.',
+        'deny': 'User declining/refusing: "no", "nahi", "nope", "mat karo". Short negative responses.',
+        'confirm': 'User explicitly confirming an action: "confirm", "yes confirm", "pakka". Stronger than affirm.',
+        'cancel': 'User wants to cancel current action or conversation: "cancel", "ruko", "stop".',
+        'restart': 'User wants to start over: "restart", "start fresh", "reset", "naya shuru karo".',
+        'feedback': 'User giving feedback about service: "great service", "bahut acha", "not good", "need improvement".',
+        // Support & auth
         'earn': 'User wants to play games, earn money, rewards, or see leaderboard',
         'help': 'User explicitly needs help/support/assistance with a specific problem. NOT for capability questions like "what can you do" (use chitchat for those).',
         'complaint': 'User complaining about service/product (wrong item, damaged, refund)',
+        'support_request': 'User requesting customer support or wanting to talk to a human agent.',
         'greeting': 'User greeting (hi, hello, hey, namaste)',
         'chitchat': 'Casual conversation, small talk, pleasantries, OR capability questions: "how are you", "kaise hai", "what can you do", "what can you do for me", "what are your capabilities", "what services do you offer", "kya kya kar sakte ho", "merry christmas", "happy diwali", "thank you", "same to you", "what\'s up", "chotu" (bot name). Use for conversational questions about the bot itself.',
         'login': 'User wants to login, sign in, register, or check authentication status',

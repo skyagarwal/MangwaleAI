@@ -1,9 +1,10 @@
-import { Controller, Get, Query, Logger, Post, Body } from '@nestjs/common';
+import { Controller, Get, Query, Logger, Post, Body, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { Pool } from 'pg';
 
 /**
- * 📊 Search Analytics Admin Controller
- * 
+ * Search Analytics Admin Controller
+ *
  * Comprehensive search analytics for admin dashboard:
  * - Search volume trends
  * - Top queries (with/without results)
@@ -14,6 +15,7 @@ import { Pool } from 'pg';
  */
 
 @Controller('admin/search/analytics')
+@UseGuards(AdminAuthGuard)
 export class SearchAnalyticsAdminController {
   private readonly logger = new Logger(SearchAnalyticsAdminController.name);
   private pool: Pool;

@@ -167,7 +167,7 @@ export default function ExotelPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Service Status</h3>
-                <p className="text-sm text-gray-500">Mercury (192.168.0.151:3100)</p>
+                <p className="text-sm text-gray-500">NestJS Backend (localhost:3200)</p>
               </div>
             </div>
             {status && getStatusBadge(status.status === 'ok')}
@@ -359,7 +359,7 @@ export default function ExotelPage() {
                 </p>
                 <div className="flex items-center gap-2 text-sm text-red-600">
                   <Activity size={16} />
-                  <span>WebSocket: ws://localhost:3100/voice-stream/ws</span>
+                  <span>WebSocket: ws://localhost:3200/voice-stream/ws</span>
                 </div>
               </div>
             </div>
@@ -411,7 +411,7 @@ export default function ExotelPage() {
                   </label>
                   <input
                     type="text"
-                    value="http://localhost:3100"
+                    value="http://localhost:3200/api/exotel"
                     disabled
                     className="w-full px-4 py-2 bg-gray-100 border-2 border-gray-200 rounded-lg"
                   />

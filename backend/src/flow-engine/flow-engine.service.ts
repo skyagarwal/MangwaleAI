@@ -202,6 +202,14 @@ export class FlowEngineService {
       }
     }
 
+    // INJECT NER ENTITIES FROM SESSION (extracted by orchestrator before flow start)
+    if (session?.data?._extracted_entities) {
+      context.data._extracted_entities = session.data._extracted_entities;
+      context.data._nlu_confidence = session.data._nlu_confidence;
+      context.data._nlu_intent = session.data._nlu_intent;
+      this.logger.log(`NER entities injected into flow context: food=${JSON.stringify(session.data._extracted_entities.food || [])}, store=${session.data._extracted_entities.store || 'none'}`);
+    }
+
     // 🌤️ INJECT ENHANCED CONTEXT (Weather, Festivals, Meal Time, Local Knowledge)
     // This makes Chotu's responses contextual and personalized!
     if (this.contextEnhancer) {
@@ -378,6 +386,13 @@ export class FlowEngineService {
       }
     }
 
+    // REFRESH NER ENTITIES FROM SESSION (extracted by orchestrator before flow dispatch)
+    if (session?.data?._extracted_entities) {
+      context.data._extracted_entities = session.data._extracted_entities;
+      context.data._nlu_confidence = session.data._nlu_confidence;
+      context.data._nlu_intent = session.data._nlu_intent;
+    }
+
     // Store user message in context
     this.contextService.set(context, '_user_message', message);
     this.contextService.set(context, '_last_message_at', new Date());
@@ -390,18 +405,31 @@ export class FlowEngineService {
     // This allows executors to make decisions based on the user's detected intent
     // Feature-flagged: USE_INTENT_AWARE_FLOWS
     const intentAwareEnabled = this.featureFlags?.useIntentAwareFlows(sessionId) ?? true;
-    
-    if (intent && intentAwareEnabled) {
-      this.contextService.set(context, '_current_intent', intent);
-      this.contextService.set(context, '_intent_confidence', intentConfidence || 0);
-      this.logger.log(`🎯 Injected intent into flow context: ${intent} (${(intentConfidence || 0) * 100}%)`);
-      
+
+    // Quick heuristic check: detect obvious intent switches even if NLU confidence is borderline
+    // This runs BEFORE full NLU injection to catch clear cross-flow messages
+    let detectedIntent = intent;
+    let detectedConfidence = intentConfidence || 0;
+    if (message && intentAwareEnabled) {
+      const heuristicResult = this.quickHeuristicIntentCheck(message);
+      if (heuristicResult && (!intent || detectedConfidence < heuristicResult.confidence)) {
+        detectedIntent = heuristicResult.intent;
+        detectedConfidence = heuristicResult.confidence;
+        this.logger.log(`Heuristic override: ${heuristicResult.intent} (${heuristicResult.confidence}) over NLU: ${intent} (${intentConfidence})`);
+      }
+    }
+
+    if (detectedIntent && intentAwareEnabled) {
+      this.contextService.set(context, '_current_intent', detectedIntent);
+      this.contextService.set(context, '_intent_confidence', detectedConfidence);
+      this.logger.log(`Injected intent into flow context: ${detectedIntent} (${(detectedConfidence * 100).toFixed(0)}%)`);
+
       // Handle special intents that should interrupt the flow
       // Feature-flagged: USE_FLOW_INTERRUPTION
       const flowInterruptionEnabled = this.featureFlags?.useFlowInterruption() ?? true;
-      
-      if (flowInterruptionEnabled && this.isInterruptingIntent(intent, intentConfidence || 0)) {
-        this.logger.log(`🛑 Interrupting intent detected: ${intent}`);
+
+      if (flowInterruptionEnabled && this.isInterruptingIntent(detectedIntent, detectedConfidence)) {
+        this.logger.log(`Interrupting intent detected: ${detectedIntent}`);
         this.contextService.set(context, '_intent_interrupt', true);
       }
     }
@@ -1213,6 +1241,43 @@ export class FlowEngineService {
   }
 
   /**
+   * Quick heuristic intent check for mid-flow interruption detection.
+   * Only detects OBVIOUS, unambiguous intent switches using keywords.
+   * This is intentionally limited to high-confidence patterns to avoid
+   * false positives that would disrupt active flows.
+   */
+  private quickHeuristicIntentCheck(message: string): { intent: string; confidence: number } | null {
+    const t = message.toLowerCase().trim();
+
+    // Parcel booking - very explicit keywords
+    if (/\b(send\s*parcel|book\s*parcel|courier\s*bhej|parcel\s*book)\b/i.test(t)) {
+      return { intent: 'parcel_booking', confidence: 0.92 };
+    }
+
+    // Order food - very explicit
+    if (/\b(order\s*food|food\s*order|khana\s*order|i\s*want\s*to\s*eat)\b/i.test(t)) {
+      return { intent: 'order_food', confidence: 0.90 };
+    }
+
+    // Track order
+    if (/\b(track\s*(my\s*)?order|where\s*is\s*my\s*order|order\s*status)\b/i.test(t)) {
+      return { intent: 'track_order', confidence: 0.92 };
+    }
+
+    // Cancel/stop - high priority
+    if (/^(cancel|stop|exit|quit|ruko|band\s*karo)$/i.test(t)) {
+      return { intent: 'cancel', confidence: 0.95 };
+    }
+
+    // Help
+    if (/^(help|madad|help\s*me)$/i.test(t)) {
+      return { intent: 'help', confidence: 0.92 };
+    }
+
+    return null;
+  }
+
+  /**
    * Get flow-specific help text based on current state
    */
   async getFlowHelp(sessionId: string): Promise<string> {
@@ -1411,13 +1476,14 @@ export class FlowEngineService {
       this.contextService.set(context, '_last_response', null);
     }
 
-    const searchResults = this.contextService.get(context, 'search_results');
-    const cards = searchResults?.cards || this.contextService.get(context, '_cards');
-
     let responseMessage: string = defaultMessage;
     let responseButtons: any[] | undefined;
     let responseCards: any[] | undefined;
     let responseMetadata: any | undefined;
+    // Only use search_results.cards as fallback when NO response executor ran
+    // (i.e., no _last_response). If a response executor ran and produced no cards,
+    // that's intentional — don't leak stale search cards into the response.
+    let cards: any | undefined;
 
     if (lastResponse) {
       if (typeof lastResponse === 'object' && lastResponse !== null) {
@@ -1452,6 +1518,10 @@ export class FlowEngineService {
           responseButtons = buttons;
         }
       }
+    } else {
+      // No response executor ran — fall back to search_results cards from context
+      const searchResults = this.contextService.get(context, 'search_results');
+      cards = searchResults?.cards || this.contextService.get(context, '_cards');
     }
 
     return { responseMessage, responseButtons, responseCards, responseMetadata, cards };

@@ -45,7 +45,7 @@ interface InsightType {
   count: number;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+const API_BASE = '';
 
 export default function UserInsightsPage() {
   const [insights, setInsights] = useState<Insight[]>([]);

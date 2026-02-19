@@ -225,20 +225,33 @@ export class SelfLearningService {
     priority?: 'all' | 'priority' | 'normal',
     limit: number = 50
   ): Promise<TrainingExample[]> {
-    let query = `
-      SELECT * FROM nlu_training_data 
-      WHERE status = 'pending_review'
-    `;
-    
+    let results: any[];
+
     if (priority === 'priority') {
-      query += ` AND priority = 'priority'`;
+      results = await this.prisma.$queryRaw`
+        SELECT * FROM nlu_training_data
+        WHERE status = 'pending_review'
+          AND priority = 'priority'
+        ORDER BY priority DESC, created_at ASC
+        LIMIT ${limit}
+      `;
     } else if (priority === 'normal') {
-      query += ` AND priority = 'normal'`;
+      results = await this.prisma.$queryRaw`
+        SELECT * FROM nlu_training_data
+        WHERE status = 'pending_review'
+          AND priority = 'normal'
+        ORDER BY priority DESC, created_at ASC
+        LIMIT ${limit}
+      `;
+    } else {
+      results = await this.prisma.$queryRaw`
+        SELECT * FROM nlu_training_data
+        WHERE status = 'pending_review'
+        ORDER BY priority DESC, created_at ASC
+        LIMIT ${limit}
+      `;
     }
-    
-    query += ` ORDER BY priority DESC, created_at ASC LIMIT ${limit}`;
-    
-    const results = await this.prisma.$queryRawUnsafe(query) as any[];
+
     return results;
   }
 

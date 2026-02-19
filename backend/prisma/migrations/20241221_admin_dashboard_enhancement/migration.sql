@@ -221,12 +221,11 @@ CREATE INDEX IF NOT EXISTS idx_admin_activity_created ON admin_activity_log(crea
 CREATE INDEX IF NOT EXISTS idx_data_source_usage_source ON data_source_usage_log(source_id);
 CREATE INDEX IF NOT EXISTS idx_data_source_usage_created ON data_source_usage_log(created_at);
 
--- Insert default super admin (password: MangwaleAdmin2024!)
--- IMPORTANT: Change this password immediately in production
+-- Insert default super admin (change password after first login)
 INSERT INTO admin_users (email, password_hash, name, role, is_active, created_at)
 VALUES (
-    'admin@mangwale.in',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4kQ2wfXqD8/xVqai', -- Change this hash
+    'admin@mangwale.ai',
+    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4kQ2wfXqD8/xVqai',
     'Super Admin',
     'super_admin',
     true,

@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Query, Logger } from '@nestjs/common';
 import { UserProfilingService } from './user-profiling.service';
 import { ConversationAnalyzerService } from './conversation-analyzer.service';
+import { PrismaService } from '../database/prisma.service';
 
 /**
  * Personalization API Controller
@@ -18,6 +19,7 @@ export class PersonalizationController {
   constructor(
     private readonly userProfilingService: UserProfilingService,
     private readonly conversationAnalyzerService: ConversationAnalyzerService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -171,7 +173,7 @@ export class PersonalizationController {
 
     try {
       // Get user profile directly
-      const profile = await this.userProfilingService.getProfile(parsedUserId);
+      const profile = await this.userProfilingService.getProfile(parsedUserId) as any;
 
       if (!profile) {
         return { error: 'Profile not found — user may not have interacted yet' };
@@ -200,10 +202,63 @@ export class PersonalizationController {
   }
 
   /**
+   * List All User Profiles (paginated)
+   *
+   * GET /personalization/profiles?page=1&limit=50&search=
+   */
+  @Get('profiles')
+  async listProfiles(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '50',
+    @Query('search') search?: string,
+  ) {
+    try {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const limitNum = Math.min(100, parseInt(limit, 10) || 50);
+      const offset = (pageNum - 1) * limitNum;
+
+      let profiles: any[];
+      let total: any[];
+
+      if (search) {
+        profiles = await this.prisma.$queryRawUnsafe(
+          `SELECT * FROM user_profiles WHERE phone LIKE $1 OR CAST(user_id AS TEXT) LIKE $1 ORDER BY updated_at DESC NULLS LAST LIMIT $2 OFFSET $3`,
+          `%${search}%`, limitNum, offset,
+        );
+        total = await this.prisma.$queryRawUnsafe(
+          `SELECT COUNT(*)::int as count FROM user_profiles WHERE phone LIKE $1 OR CAST(user_id AS TEXT) LIKE $1`,
+          `%${search}%`,
+        );
+      } else {
+        profiles = await this.prisma.$queryRawUnsafe(
+          `SELECT * FROM user_profiles ORDER BY updated_at DESC NULLS LAST LIMIT $1 OFFSET $2`,
+          limitNum, offset,
+        );
+        total = await this.prisma.$queryRawUnsafe(
+          `SELECT COUNT(*)::int as count FROM user_profiles`,
+        );
+      }
+
+      return {
+        success: true,
+        data: profiles,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: total[0]?.count || 0,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Failed to list profiles: ${error.message}`);
+      return { success: false, data: [], error: error.message };
+    }
+  }
+
+  /**
    * Get User Profile Summary
-   * 
+   *
    * Get user's current profile data
-   * 
+   *
    * GET /personalization/profile?userId=123
    */
   @Get('profile')
@@ -214,7 +269,7 @@ export class PersonalizationController {
     }
 
     try {
-      const profile = await this.userProfilingService.getProfile(parsedUserId);
+      const profile = await this.userProfilingService.getProfile(parsedUserId) as any;
 
       if (!profile) {
         return { error: 'Profile not found' };

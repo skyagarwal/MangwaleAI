@@ -1,91 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const MERCURY_TTS_URL = process.env.MERCURY_TTS_URL || 'http://localhost:7002';
+const BACKEND_URL = process.env.BACKEND_INTERNAL_URL || 'http://localhost:3200';
 
+/**
+ * POST /api/voice/mercury/tts
+ * Proxies to NestJS backend which calls Mercury TTS service
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { 
-      text, 
-      voice = 'chotu', 
-      language = 'hi',
-      emotion = 'helpful',
-      style = 'conversational',
-      speed = 1.0,
-      exaggeration = 0.3, // Lower default for faster generation
-      cfg_weight = 0.4,   // Lower default for faster generation
-      pitch = 1.0,
-      provider = 'chatterbox' // kokoro or chatterbox
-    } = body;
 
-    if (!text) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Text is required' 
+    if (!body.text) {
+      return NextResponse.json({
+        success: false,
+        error: 'Text is required',
       }, { status: 400 });
     }
 
-    const startTime = Date.now();
-
-    // Call Mercury TTS service with all Chatterbox parameters
-    const ttsPayload: any = {
-      text,
-      voice,
-      language,
-      emotion,
-      style,
-      speed,
-      provider,
-    };
-
-    // Add Chatterbox-specific parameters (significantly improves speed!)
-    if (provider === 'chatterbox') {
-      ttsPayload.exaggeration = exaggeration;
-      ttsPayload.cfg_weight = cfg_weight;
-      ttsPayload.pitch = pitch;
-    }
-
-    const response = await fetch(`${MERCURY_TTS_URL}/synthesize`, {
+    const response = await fetch(`${BACKEND_URL}/api/voice/mercury/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ttsPayload),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Mercury TTS error:', errorText);
-      return NextResponse.json({
-        success: false,
-        error: 'TTS synthesis failed',
-        details: errorText,
-      }, { status: response.status });
+      throw new Error(`Backend returned ${response.status}`);
     }
 
-    // Get the audio buffer
-    const audioBuffer = await response.arrayBuffer();
-    const latency = Date.now() - startTime;
+    const data = await response.json();
 
-    // Return audio as base64
-    const base64Audio = Buffer.from(audioBuffer).toString('base64');
+    // Add audioUrl if not present (for frontend compatibility)
+    if (data.success && data.audio && !data.audioUrl) {
+      data.audioUrl = `data:audio/wav;base64,${data.audio}`;
+    }
 
-    return NextResponse.json({
-      success: true,
-      audio: base64Audio,
-      audioUrl: `data:audio/wav;base64,${base64Audio}`,
-      latency,
-      provider,
-      voice,
-      language,
-      emotion,
-      style,
-      speed,
-      exaggeration: ttsPayload.exaggeration,
-      cfg_weight: ttsPayload.cfg_weight,
-      pitch: ttsPayload.pitch,
-    });
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('TTS synthesis error:', error);
+    console.error('TTS proxy error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to synthesize speech',

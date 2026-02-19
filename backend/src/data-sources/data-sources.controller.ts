@@ -8,8 +8,9 @@
  * - LLM prompt configuration
  */
 
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Logger, OnModuleInit, OnModuleDestroy, UseGuards } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { AdminAuthGuard } from '../admin/guards/admin-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
 import { firstValueFrom } from 'rxjs';
@@ -71,6 +72,7 @@ interface CreateDataSourceDto {
 }
 
 @Controller('admin/data-sources')
+@UseGuards(AdminAuthGuard)
 export class DataSourcesController implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(DataSourcesController.name);
   private pool: Pool;

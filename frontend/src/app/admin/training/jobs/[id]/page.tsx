@@ -39,22 +39,8 @@ export default function TrainingJobDetailPage() {
 
   const [job, setJob] = useState<TrainingJob | null>(null);
   const [loading, setLoading] = useState(true);
-  const [metrics] = useState<TrainingMetrics[]>([
-    { epoch: 1, accuracy: 0.65, loss: 0.892, valAccuracy: 0.62, valLoss: 0.934, time: '1.2s' },
-    { epoch: 2, accuracy: 0.73, loss: 0.654, valAccuracy: 0.71, valLoss: 0.689, time: '1.1s' },
-    { epoch: 3, accuracy: 0.79, loss: 0.512, valAccuracy: 0.76, valLoss: 0.547, time: '1.2s' },
-    { epoch: 4, accuracy: 0.83, loss: 0.423, valAccuracy: 0.81, valLoss: 0.456, time: '1.1s' },
-    { epoch: 5, accuracy: 0.86, loss: 0.362, valAccuracy: 0.84, valLoss: 0.398, time: '1.2s' },
-    { epoch: 6, accuracy: 0.88, loss: 0.314, valAccuracy: 0.86, valLoss: 0.352, time: '1.1s' },
-    { epoch: 7, accuracy: 0.89, loss: 0.278, valAccuracy: 0.87, valLoss: 0.319, time: '1.2s' },
-  ]);
-  const [logs, setLogs] = useState<LogEntry[]>([
-    {
-      timestamp: new Date().toISOString(),
-      message: 'Training job started',
-      type: 'info'
-    }
-  ]);
+  const [metrics] = useState<TrainingMetrics[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
 
   // WebSocket connection for real-time updates
   const { isConnected } = useTrainingWebSocket({
@@ -130,7 +116,8 @@ export default function TrainingJobDetailPage() {
     );
   }
 
-  const currentEpoch = metrics[metrics.length - 1];
+  const currentEpoch = metrics.length > 0 ? metrics[metrics.length - 1] : null;
+  const firstEpoch = metrics.length > 0 ? metrics[0] : null;
   const progress = job.progress;
 
   return (
@@ -229,127 +216,143 @@ export default function TrainingJobDetailPage() {
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
-          <div className="text-sm text-gray-600 mb-1">Training Accuracy</div>
-          <div className="text-3xl font-bold text-green-600">
-            {(currentEpoch.accuracy * 100).toFixed(1)}%
+      {currentEpoch && firstEpoch ? (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
+            <div className="text-sm text-gray-600 mb-1">Training Accuracy</div>
+            <div className="text-3xl font-bold text-green-600">
+              {(currentEpoch.accuracy * 100).toFixed(1)}%
+            </div>
+            <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
+              <TrendingUp size={12} />
+              +{((currentEpoch.accuracy - firstEpoch.accuracy) * 100).toFixed(1)}%
+            </div>
           </div>
-          <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
-            <TrendingUp size={12} />
-            +{((currentEpoch.accuracy - metrics[0].accuracy) * 100).toFixed(1)}%
+          <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
+            <div className="text-sm text-gray-600 mb-1">Validation Accuracy</div>
+            <div className="text-3xl font-bold text-blue-600">
+              {(currentEpoch.valAccuracy * 100).toFixed(1)}%
+            </div>
+            <div className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+              <TrendingUp size={12} />
+              +{((currentEpoch.valAccuracy - firstEpoch.valAccuracy) * 100).toFixed(1)}%
+            </div>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
+            <div className="text-sm text-gray-600 mb-1">Training Loss</div>
+            <div className="text-3xl font-bold text-orange-600">
+              {currentEpoch.loss.toFixed(3)}
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              Started: {firstEpoch.loss.toFixed(3)}
+            </div>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
+            <div className="text-sm text-gray-600 mb-1">Validation Loss</div>
+            <div className="text-3xl font-bold text-purple-600">
+              {currentEpoch.valLoss.toFixed(3)}
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              Started: {firstEpoch.valLoss.toFixed(3)}
+            </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
-          <div className="text-sm text-gray-600 mb-1">Validation Accuracy</div>
-          <div className="text-3xl font-bold text-blue-600">
-            {(currentEpoch.valAccuracy * 100).toFixed(1)}%
-          </div>
-          <div className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-            <TrendingUp size={12} />
-            +{((currentEpoch.valAccuracy - metrics[0].valAccuracy) * 100).toFixed(1)}%
-          </div>
+      ) : (
+        <div className="bg-white rounded-xl p-8 shadow-md border-2 border-gray-100 text-center">
+          <TrendingUp size={36} className="mx-auto text-gray-300 mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">No Metrics Available</h3>
+          <p className="text-gray-600 text-sm">
+            Training metrics will appear here once the job starts processing epochs.
+          </p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
-          <div className="text-sm text-gray-600 mb-1">Training Loss</div>
-          <div className="text-3xl font-bold text-orange-600">
-            {currentEpoch.loss.toFixed(3)}
-          </div>
-          <div className="text-xs text-gray-600 mt-1">
-            Started: {metrics[0].loss.toFixed(3)}
-          </div>
-        </div>
-        <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-100">
-          <div className="text-sm text-gray-600 mb-1">Validation Loss</div>
-          <div className="text-3xl font-bold text-purple-600">
-            {currentEpoch.valLoss.toFixed(3)}
-          </div>
-          <div className="text-xs text-gray-600 mt-1">
-            Started: {metrics[0].valLoss.toFixed(3)}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Training History Table */}
       <div className="bg-white rounded-xl shadow-md border-2 border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-lg font-bold text-gray-900">Training History</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Epoch
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Training Acc
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Training Loss
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Val Acc
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Val Loss
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Time
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {metrics.map((metric) => (
-                <tr
-                  key={metric.epoch}
-                  className={
-                    metric.epoch === currentEpoch.epoch
-                      ? 'bg-green-50'
-                      : 'hover:bg-gray-50'
-                  }
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">
-                        {metric.epoch}
-                      </span>
-                      {metric.epoch === currentEpoch.epoch && (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
-                          <CheckCircle size={14} />
-                          Current
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-green-600">
-                      {(metric.accuracy * 100).toFixed(2)}%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">
-                      {metric.loss.toFixed(4)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-blue-600">
-                      {(metric.valAccuracy * 100).toFixed(2)}%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">
-                      {metric.valLoss.toFixed(4)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {metric.time}
-                  </td>
+        {metrics.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            No training epochs recorded yet. Metrics will populate as the job progresses.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Epoch
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Training Acc
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Training Loss
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Val Acc
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Val Loss
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Time
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {metrics.map((metric) => (
+                  <tr
+                    key={metric.epoch}
+                    className={
+                      currentEpoch && metric.epoch === currentEpoch.epoch
+                        ? 'bg-green-50'
+                        : 'hover:bg-gray-50'
+                    }
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-gray-900">
+                          {metric.epoch}
+                        </span>
+                        {currentEpoch && metric.epoch === currentEpoch.epoch && (
+                          <span className="flex items-center gap-1 text-xs text-green-600">
+                            <CheckCircle size={14} />
+                            Current
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-medium text-green-600">
+                        {(metric.accuracy * 100).toFixed(2)}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-900">
+                        {metric.loss.toFixed(4)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-medium text-blue-600">
+                        {(metric.valAccuracy * 100).toFixed(2)}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-900">
+                        {metric.valLoss.toFixed(4)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {metric.time}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Live Training Logs */}

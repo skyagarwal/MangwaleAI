@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Search, Clock, CheckCircle2, XCircle, Eye, Download, Filter } from 'lucide-react';
+import { FileText, Search, Clock, CheckCircle2, XCircle, Eye, Download, Filter, AlertCircle, RefreshCw } from 'lucide-react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
 
 interface QueryLog {
   id: string;
@@ -17,14 +18,45 @@ interface QueryLog {
 }
 
 export default function SearchLogsPage() {
-  const [logs, setLogs] = useState<QueryLog[]>([
-    { id: '1', timestamp: '2026-01-02 15:45:23', query: 'pizza delivery', module: 'food', results_count: 45, response_time: 125, ip_address: '192.168.1.100', status: 'success' },
-    { id: '2', timestamp: '2026-01-02 15:44:18', query: 'biryani', module: 'food', results_count: 32, response_time: 98, ip_address: '192.168.1.101', status: 'success' },
-    { id: '3', timestamp: '2026-01-02 15:43:45', query: '', module: 'ecom', results_count: 0, response_time: 45, ip_address: '192.168.1.102', status: 'error', filters: { veg: 1 } },
-  ]);
-
+  const [logs, setLogs] = useState<QueryLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedLog, setSelectedLog] = useState<QueryLog | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [days, setDays] = useState(7);
+
+  const fetchLogs = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await adminBackendClient.exportSearchLogs({ days, limit: 100 }) as any;
+      if (result.success && result.data?.rows) {
+        setLogs(result.data.rows.map((row: any, idx: number) => ({
+          id: row.id || String(idx),
+          timestamp: row.created_at ? new Date(row.created_at).toLocaleString() : 'N/A',
+          query: row.query || '',
+          module: row.module || 'unknown',
+          results_count: row.results_count ?? 0,
+          response_time: row.execution_time_ms ?? 0,
+          user_id: row.user_id,
+          ip_address: row.ip_address || 'N/A',
+          status: (row.results_count ?? 0) > 0 ? 'success' as const : 'error' as const,
+          filters: row.filters,
+        })));
+      } else {
+        setLogs([]);
+      }
+    } catch (err: any) {
+      console.error('Error fetching search logs:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogs();
+  }, [days]);
 
   const filteredLogs = logs.filter(log => {
     if (filter === 'all') return true;
@@ -32,6 +64,14 @@ export default function SearchLogsPage() {
     if (filter === 'error') return log.status === 'error';
     return true;
   });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -43,15 +83,42 @@ export default function SearchLogsPage() {
               <h1 className="text-3xl font-bold">Search Query Logs</h1>
             </div>
             <p className="text-purple-100">
-              Track and analyze all search queries
+              Track and analyze all search queries (Last {days} days)
             </p>
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl transition-colors">
-            <Download size={20} />
-            Export
-          </button>
+          <div className="flex items-center gap-3">
+            <select
+              value={days}
+              onChange={(e) => setDays(Number(e.target.value))}
+              className="px-3 py-2 bg-white/20 text-white rounded-lg border border-white/30"
+            >
+              <option value={1} className="text-gray-900">1 day</option>
+              <option value={7} className="text-gray-900">7 days</option>
+              <option value={14} className="text-gray-900">14 days</option>
+              <option value={30} className="text-gray-900">30 days</option>
+            </select>
+            <button
+              onClick={fetchLogs}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl transition-colors"
+            >
+              <RefreshCw size={18} />
+              Refresh
+            </button>
+          </div>
         </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-800">{error}</p>
+            <button onClick={fetchLogs} className="text-sm text-red-600 hover:text-red-800 underline mt-1">
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-4 items-center">
         <div className="flex gap-2">
@@ -59,19 +126,19 @@ export default function SearchLogsPage() {
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg ${filter === 'all' ? 'bg-purple-600 text-white' : 'bg-white text-gray-700'}`}
           >
-            All
+            All ({logs.length})
           </button>
           <button
             onClick={() => setFilter('success')}
             className={`px-4 py-2 rounded-lg ${filter === 'success' ? 'bg-green-600 text-white' : 'bg-white text-gray-700'}`}
           >
-            Success
+            Success ({logs.filter(l => l.status === 'success').length})
           </button>
           <button
             onClick={() => setFilter('error')}
             className={`px-4 py-2 rounded-lg ${filter === 'error' ? 'bg-red-600 text-white' : 'bg-white text-gray-700'}`}
           >
-            Errors
+            Zero Results ({logs.filter(l => l.status === 'error').length})
           </button>
         </div>
       </div>
@@ -91,6 +158,15 @@ export default function SearchLogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
+              {filteredLogs.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    <Search className="mx-auto mb-2 text-gray-400" size={32} />
+                    <p className="font-medium">No search logs available</p>
+                    <p className="text-sm mt-1">Search logs will appear here once users start searching.</p>
+                  </td>
+                </tr>
+              )}
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

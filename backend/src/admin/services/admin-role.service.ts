@@ -149,7 +149,7 @@ export class AdminRoleService {
 
     // Update last login
     await this.prisma.$executeRaw`
-      UPDATE admin_users SET last_login_at = NOW() WHERE id = ${user.id}
+      UPDATE admin_users SET last_login_at = NOW() WHERE id = ${user.id}::uuid
     `;
 
     const adminUser: AdminUser = {
@@ -291,6 +291,41 @@ export class AdminRoleService {
     `;
 
     this.logger.log(`Admin ${adminId} deactivated by ${deactivatedBy}`);
+  }
+
+  /**
+   * Get admin by email (without password hash)
+   */
+  async getAdminByEmail(email: string): Promise<AdminUser | null> {
+    const result = await this.prisma.$queryRaw<any[]>`
+      SELECT id, email, name, role, is_active, created_at, last_login_at
+      FROM admin_users WHERE email = ${email} AND is_active = true
+    `;
+
+    if (result.length === 0) return null;
+
+    const user = result[0];
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role as AdminRole,
+      permissions: this.getPermissionsForRole(user.role),
+      isActive: user.is_active,
+      createdAt: user.created_at,
+      lastLoginAt: user.last_login_at,
+    };
+  }
+
+  /**
+   * Update admin password
+   */
+  async updatePassword(email: string, newPassword: string): Promise<void> {
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await this.prisma.$executeRaw`
+      UPDATE admin_users SET password_hash = ${hashedPassword} WHERE email = ${email}
+    `;
+    this.logger.log(`Password updated for admin: ${email}`);
   }
 
   private generateToken(user: AdminUser): string {

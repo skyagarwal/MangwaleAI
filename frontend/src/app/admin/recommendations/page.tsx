@@ -66,86 +66,10 @@ export default function RecommendationsPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Load from API or mock data
-      const enginesData: RecommendationEngine[] = [
-        {
-          id: 'collaborative',
-          name: 'Collaborative Filtering',
-          type: 'collaborative',
-          is_active: true,
-          weight: 0.35,
-          description: 'Recommends based on similar users\' behavior'
-        },
-        {
-          id: 'content-based',
-          name: 'Content-Based',
-          type: 'content-based',
-          is_active: true,
-          weight: 0.25,
-          description: 'Recommends based on product attributes'
-        },
-        {
-          id: 'trending',
-          name: 'Trending Products',
-          type: 'trending',
-          is_active: true,
-          weight: 0.2,
-          description: 'Shows currently popular products'
-        },
-        {
-          id: 'personalized',
-          name: 'User Personalization',
-          type: 'personalized',
-          is_active: true,
-          weight: 0.2,
-          description: 'AI-driven personalized recommendations'
-        },
-      ];
-
-      const statsData: RecommendationStats = {
-        total_recommendations_served: 45832,
-        click_through_rate: 12.4,
-        conversion_rate: 3.8,
-        avg_relevance_score: 0.72,
-        last_model_update: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const recentsData: RecentRecommendation[] = [
-        {
-          id: '1',
-          user_id: 'user_123',
-          product_ids: ['prod_1', 'prod_2', 'prod_3'],
-          engine: 'collaborative',
-          score: 0.85,
-          clicked: true,
-          converted: true,
-          timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        },
-        {
-          id: '2',
-          user_id: 'user_456',
-          product_ids: ['prod_4', 'prod_5'],
-          engine: 'trending',
-          score: 0.72,
-          clicked: true,
-          converted: false,
-          timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        },
-        {
-          id: '3',
-          user_id: 'user_789',
-          product_ids: ['prod_6', 'prod_7', 'prod_8', 'prod_9'],
-          engine: 'personalized',
-          score: 0.91,
-          clicked: false,
-          converted: false,
-          timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-        },
-      ];
-
-      setEngines(enginesData);
-      setStats(statsData);
-      setRecentRecs(recentsData);
+      // No backend recommendation engine exists yet
+      setEngines([]);
+      setStats(null);
+      setRecentRecs([]);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -168,30 +92,19 @@ export default function RecommendationsPage() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      await fetch('/api/recommendations/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
-      });
-      alert('Settings saved!');
+      // No backend endpoint for recommendation settings yet
+      // Settings are stored locally in state only
+      console.log('Recommendation settings (local only):', settings);
+      alert('Settings saved locally. A recommendation backend is not yet configured.');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Settings saved locally!');
     } finally {
       setSaving(false);
     }
   };
 
   const retrainModel = async () => {
-    if (!confirm('Start model retraining? This may take some time.')) return;
-    
-    try {
-      await fetch('/api/recommendations/retrain', { method: 'POST' });
-      alert('Model retraining started!');
-    } catch (error) {
-      console.error('Error starting retrain:', error);
-      alert('Retraining command sent!');
-    }
+    alert('Recommendation engine retraining is not yet available. No recommendation backend is configured.');
   };
 
   if (loading) {
@@ -245,7 +158,7 @@ export default function RecommendationsPage() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
               activeTab === tab.id ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
@@ -259,131 +172,145 @@ export default function RecommendationsPage() {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Recommendations Served</span>
-                <Package className="w-5 h-5 text-blue-400" />
-              </div>
-              <p className="text-2xl font-bold mt-2 text-white">
-                {stats?.total_recommendations_served.toLocaleString()}
+          {engines.length === 0 && !stats ? (
+            <div className="bg-gray-800 rounded-xl p-12 border border-gray-700 text-center">
+              <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-2">Coming Soon</h3>
+              <p className="text-gray-400 max-w-md mx-auto">
+                The recommendation engine is not yet configured. Once a recommendation backend is available,
+                this page will show real-time analytics, engine status, and recent recommendations.
               </p>
-              <p className="text-xs text-gray-500 mt-1">Last 24 hours</p>
             </div>
-
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Click-Through Rate</span>
-                <Target className="w-5 h-5 text-green-400" />
-              </div>
-              <p className="text-2xl font-bold mt-2 text-green-400">
-                {stats?.click_through_rate}%
-              </p>
-              <p className="text-xs text-gray-500 mt-1">+2.1% from last week</p>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Conversion Rate</span>
-                <ShoppingCart className="w-5 h-5 text-purple-400" />
-              </div>
-              <p className="text-2xl font-bold mt-2 text-purple-400">
-                {stats?.conversion_rate}%
-              </p>
-              <p className="text-xs text-gray-500 mt-1">+0.5% from last week</p>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Relevance Score</span>
-                <Zap className="w-5 h-5 text-orange-400" />
-              </div>
-              <p className="text-2xl font-bold mt-2 text-orange-400">
-                {stats?.avg_relevance_score}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Model accuracy</p>
-            </div>
-          </div>
-
-          {/* Engine Status */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4">Engine Status</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {engines.map((engine) => (
-                <div
-                  key={engine.id}
-                  className={`p-4 rounded-lg border ${
-                    engine.is_active ? 'border-green-500/30 bg-green-500/5' : 'border-gray-600 bg-gray-700/30'
-                  }`}
-                >
+          ) : (
+            <>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {engine.is_active ? (
-                        <CheckCircle className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <XCircle className="w-5 h-5 text-gray-500" />
-                      )}
-                      <span className="text-white font-medium">{engine.name}</span>
-                    </div>
-                    <span className="text-gray-400 text-sm">{(engine.weight * 100).toFixed(0)}%</span>
+                    <span className="text-gray-400">Recommendations Served</span>
+                    <Package className="w-5 h-5 text-blue-400" />
                   </div>
-                  <p className="text-gray-400 text-sm mt-2">{engine.description}</p>
+                  <p className="text-2xl font-bold mt-2 text-white">
+                    {stats?.total_recommendations_served.toLocaleString() ?? 0}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Last 24 hours</p>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Recent Recommendations */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4">Recent Recommendations</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-gray-400 border-b border-gray-700">
-                    <th className="pb-3">User</th>
-                    <th className="pb-3">Engine</th>
-                    <th className="pb-3">Products</th>
-                    <th className="pb-3">Score</th>
-                    <th className="pb-3">Clicked</th>
-                    <th className="pb-3">Converted</th>
-                    <th className="pb-3">Time</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-700">
-                  {recentRecs.map((rec) => (
-                    <tr key={rec.id}>
-                      <td className="py-3 text-gray-300">{rec.user_id}</td>
-                      <td className="py-3">
-                        <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs">
-                          {rec.engine}
-                        </span>
-                      </td>
-                      <td className="py-3 text-gray-300">{rec.product_ids.length} items</td>
-                      <td className="py-3 text-gray-300">{rec.score.toFixed(2)}</td>
-                      <td className="py-3">
-                        {rec.clicked ? (
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-gray-500" />
-                        )}
-                      </td>
-                      <td className="py-3">
-                        {rec.converted ? (
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-gray-500" />
-                        )}
-                      </td>
-                      <td className="py-3 text-gray-500 text-sm">
-                        {new Date(rec.timestamp).toLocaleTimeString()}
-                      </td>
-                    </tr>
+                <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Click-Through Rate</span>
+                    <Target className="w-5 h-5 text-green-400" />
+                  </div>
+                  <p className="text-2xl font-bold mt-2 text-green-400">
+                    {stats?.click_through_rate ?? 0}%
+                  </p>
+                </div>
+
+                <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Conversion Rate</span>
+                    <ShoppingCart className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <p className="text-2xl font-bold mt-2 text-purple-400">
+                    {stats?.conversion_rate ?? 0}%
+                  </p>
+                </div>
+
+                <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Relevance Score</span>
+                    <Zap className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <p className="text-2xl font-bold mt-2 text-orange-400">
+                    {stats?.avg_relevance_score ?? 0}
+                  </p>
+                </div>
+              </div>
+
+              {/* Engine Status */}
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4">Engine Status</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {engines.map((engine) => (
+                    <div
+                      key={engine.id}
+                      className={`p-4 rounded-lg border ${
+                        engine.is_active ? 'border-green-500/30 bg-green-500/5' : 'border-gray-600 bg-gray-700/30'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {engine.is_active ? (
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-gray-500" />
+                          )}
+                          <span className="text-white font-medium">{engine.name}</span>
+                        </div>
+                        <span className="text-gray-400 text-sm">{(engine.weight * 100).toFixed(0)}%</span>
+                      </div>
+                      <p className="text-gray-400 text-sm mt-2">{engine.description}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                </div>
+              </div>
+
+              {/* Recent Recommendations */}
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4">Recent Recommendations</h3>
+                {recentRecs.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">No recent recommendations</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-left text-gray-400 border-b border-gray-700">
+                          <th className="pb-3">User</th>
+                          <th className="pb-3">Engine</th>
+                          <th className="pb-3">Products</th>
+                          <th className="pb-3">Score</th>
+                          <th className="pb-3">Clicked</th>
+                          <th className="pb-3">Converted</th>
+                          <th className="pb-3">Time</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-700">
+                        {recentRecs.map((rec) => (
+                          <tr key={rec.id}>
+                            <td className="py-3 text-gray-300">{rec.user_id}</td>
+                            <td className="py-3">
+                              <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs">
+                                {rec.engine}
+                              </span>
+                            </td>
+                            <td className="py-3 text-gray-300">{rec.product_ids.length} items</td>
+                            <td className="py-3 text-gray-300">{rec.score.toFixed(2)}</td>
+                            <td className="py-3">
+                              {rec.clicked ? (
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-gray-500" />
+                              )}
+                            </td>
+                            <td className="py-3">
+                              {rec.converted ? (
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-gray-500" />
+                              )}
+                            </td>
+                            <td className="py-3 text-gray-500 text-sm">
+                              {new Date(rec.timestamp).toLocaleTimeString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -458,64 +385,12 @@ export default function RecommendationsPage() {
       {/* Analytics Tab */}
       {activeTab === 'analytics' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Performance by Engine */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Performance by Engine</h3>
-              <div className="space-y-4">
-                {[
-                  { name: 'Collaborative', ctr: 14.2, conv: 4.1, color: 'blue' },
-                  { name: 'Content-Based', ctr: 11.8, conv: 3.5, color: 'green' },
-                  { name: 'Trending', ctr: 9.5, conv: 2.8, color: 'orange' },
-                  { name: 'Personalized', ctr: 15.8, conv: 5.2, color: 'purple' },
-                ].map((eng) => (
-                  <div key={eng.name} className="flex items-center gap-4">
-                    <span className="text-gray-300 w-28">{eng.name}</span>
-                    <div className="flex-1">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-400">CTR: {eng.ctr}%</span>
-                        <span className="text-gray-400">Conv: {eng.conv}%</span>
-                      </div>
-                      <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full bg-${eng.color}-500`}
-                          style={{ width: `${eng.ctr * 5}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Model Info */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Model Information</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between py-2 border-b border-gray-700">
-                  <span className="text-gray-400">Last Training</span>
-                  <span className="text-white">
-                    {stats?.last_model_update ? new Date(stats.last_model_update).toLocaleString() : 'N/A'}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-gray-700">
-                  <span className="text-gray-400">Model Version</span>
-                  <span className="text-white">v2.3.1</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-gray-700">
-                  <span className="text-gray-400">Training Data Size</span>
-                  <span className="text-white">1.2M interactions</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-gray-700">
-                  <span className="text-gray-400">Active Users (7d)</span>
-                  <span className="text-white">8,432</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-400">Products in Catalog</span>
-                  <span className="text-white">2,156</span>
-                </div>
-              </div>
-            </div>
+          <div className="bg-gray-800 rounded-xl p-12 border border-gray-700 text-center">
+            <TrendingUp className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">Analytics Not Available</h3>
+            <p className="text-gray-400">
+              No recommendation backend is configured yet. Analytics data will appear here once the recommendation engine is active.
+            </p>
           </div>
         </div>
       )}
@@ -591,13 +466,13 @@ export default function RecommendationsPage() {
                   <label key={key} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg cursor-pointer">
                     <span className="text-gray-300">{label}</span>
                     <div 
-                      onClick={() => setSettings({ ...settings, [key]: !(settings as any)[key] })}
+                      onClick={() => setSettings({ ...settings, [key]: !(settings as Record<string, unknown>)[key] })}
                       className={`w-12 h-6 rounded-full relative transition-colors ${
-                        (settings as any)[key] ? 'bg-purple-600' : 'bg-gray-600'
+                        (settings as Record<string, unknown>)[key] ? 'bg-purple-600' : 'bg-gray-600'
                       }`}
                     >
                       <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                        (settings as any)[key] ? 'left-7' : 'left-1'
+                        (settings as Record<string, unknown>)[key] ? 'left-7' : 'left-1'
                       }`} />
                     </div>
                   </label>

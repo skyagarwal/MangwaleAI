@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
+import {
   Save, Loader2, MessageSquare, Smile, Frown, Meh, Volume2,
-  Globe, Palette, Sliders, Sparkles, RefreshCw, Copy, 
+  Globe, Palette, Sliders, Sparkles, RefreshCw, Copy,
   CheckCircle, Bot, Zap, Languages, Clock
 } from 'lucide-react';
+import { adminBackendClient } from '@/lib/api/admin-backend';
+import { useToast } from '@/components/shared';
 
 interface ToneSettings {
   personality: 'friendly' | 'professional' | 'casual' | 'formal';
@@ -90,6 +92,7 @@ export default function AgentSettingsPage() {
   const [activeTab, setActiveTab] = useState<'tone' | 'language' | 'response' | 'voice'>('tone');
   const [previewMessage, setPreviewMessage] = useState('');
   const [copied, setCopied] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     loadSettings();
@@ -97,13 +100,30 @@ export default function AgentSettingsPage() {
 
   const loadSettings = async () => {
     try {
-      const response = await fetch('/api/settings/agent');
-      if (response.ok) {
-        const data = await response.json();
-        setSettings(data);
+      // Try loading from config store (agent settings category)
+      const data = await adminBackendClient.getConfigCategory('agent') as {
+        configs?: Array<{ key: string; value: string }>;
+      };
+      const configs = data?.configs;
+      if (Array.isArray(configs) && configs.length > 0) {
+        const configMap: Record<string, string> = {};
+        for (const c of configs) {
+          configMap[c.key] = c.value;
+        }
+        // Parse stored JSON settings if available
+        if (configMap['agent.settings']) {
+          try {
+            const parsed = JSON.parse(configMap['agent.settings']);
+            setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+          } catch {
+            // Invalid JSON, use defaults
+          }
+        }
       }
+      // If no configs found, DEFAULT_SETTINGS remain in state
     } catch (error) {
-      console.error('Failed to load settings:', error);
+      // Config not saved yet — use defaults (this is expected on first load)
+      console.warn('Agent settings not configured yet, using defaults');
     } finally {
       setLoading(false);
     }
@@ -112,14 +132,12 @@ export default function AgentSettingsPage() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      await fetch('/api/settings/agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
-      });
-      // Show success
+      // Save as a JSON blob in the config store under agent category
+      await adminBackendClient.updateConfig('agent.settings', JSON.stringify(settings));
+      toast.success('Agent settings saved successfully');
     } catch (error) {
       console.error('Failed to save settings:', error);
+      toast.error('Failed to save settings');
     } finally {
       setSaving(false);
     }

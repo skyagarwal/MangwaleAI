@@ -141,6 +141,21 @@ export class NerveController {
 
   // ============== HISTORY & STATS ==============
 
+  @Get('stats')
+  @ApiOperation({ summary: 'Voice call stats (alias)', description: 'Alias for calls/stats' })
+  @ApiResponse({ status: 200, description: 'Call statistics' })
+  async getStats(@Query('period') period = '7d') {
+    return this.nerveService.getCallStats(period);
+  }
+
+  @Get('calls')
+  @ApiOperation({ summary: 'Recent calls list', description: 'Get recent voice calls' })
+  @ApiQuery({ name: 'limit', required: false, example: 50 })
+  @ApiResponse({ status: 200, description: 'Recent calls' })
+  async getRecentCalls(@Query('limit') limit = '50') {
+    return this.nerveService.getRecentCalls(parseInt(limit) || 50);
+  }
+
   @Get('calls/order/:orderId')
   @ApiOperation({ summary: 'Order call history', description: 'Get all voice calls for an order' })
   @ApiParam({ name: 'orderId', description: 'Order ID' })

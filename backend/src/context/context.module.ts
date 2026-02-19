@@ -13,7 +13,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { UserContextService } from './services/user-context.service';
+import { EnvironmentalContextService } from './services/user-context.service';
 import { ContextController } from './controllers/context.controller';
 import { DatabaseModule } from '../database/database.module';
 
@@ -31,10 +31,10 @@ import { DatabaseModule } from '../database/database.module';
     ContextController,
   ],
   providers: [
-    UserContextService,
+    EnvironmentalContextService,
   ],
   exports: [
-    UserContextService,
+    EnvironmentalContextService,
   ],
 })
 export class ContextModule {}

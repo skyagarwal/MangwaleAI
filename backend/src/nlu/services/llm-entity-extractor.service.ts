@@ -23,6 +23,7 @@ export interface LlmExtractedEntities {
   store_reference?: string | null;
   store_references?: Array<{ store: string; items: string[] }> | null;  // Multi-store orders
   quantity?: number | null;
+  item_quantities?: Array<{ item: string; quantity: string; unit?: string }> | null;  // Per-item quantities
   location_reference?: string | null;
   phone?: string | null;
   person_name?: string | null;
@@ -152,7 +153,9 @@ EXAMPLES:
 15. "paneer ki sabji with roti" → {"food_reference": ["paneer sabji", "roti"], "reasoning": "'paneer ki sabji' = paneer vegetable curry. 'with roti' = separate item."}
 16. "mujhe chicken biryani aur raita chahiye" → {"food_reference": ["chicken biryani", "raita"], "reasoning": "Two items connected by 'aur' (and)."}
 17. "sabji roti dal chawal" → {"food_reference": ["sabji", "roti", "dal", "chawal"], "reasoning": "Four separate food items listed without explicit separators."}
-18. "paneer butter masala with 4 roti" → {"food_reference": ["paneer butter masala", "roti"], "quantity": null, "reasoning": "Two items. Paneer butter masala (1) + roti (4). Note: quantity differs per item, extract both as items."}
+18. "paneer butter masala with 4 roti" → {"food_reference": ["paneer butter masala", "roti"], "quantity": null, "item_quantities": [{"item": "paneer butter masala", "quantity": "1"}, {"item": "roti", "quantity": "4"}], "reasoning": "Two items with different quantities."}
+19. "2 missal from tushar, 250g biscoff, 2 roti from inayat cafe" → {"food_reference": ["missal", "biscoff", "roti"], "store_references": [{"store": "tushar", "items": ["missal"]}, {"store": "inayat cafe", "items": ["roti"]}], "item_quantities": [{"item": "missal", "quantity": "2"}, {"item": "biscoff", "quantity": "250", "unit": "g"}, {"item": "roti", "quantity": "2"}], "reasoning": "Multi-store with per-item quantities."}
+20. "1 kg mali paneer from ganesh, gulkand 400g from daguteli" → {"food_reference": ["mali paneer", "gulkand"], "store_references": [{"store": "ganesh", "items": ["mali paneer"]}, {"store": "daguteli", "items": ["gulkand"]}], "item_quantities": [{"item": "mali paneer", "quantity": "1", "unit": "kg"}, {"item": "gulkand", "quantity": "400", "unit": "g"}], "reasoning": "Multi-store with weight-based quantities."}
 
 IMPORTANT HINDI FOOD PHRASES:
 - "X ke sabji" / "X ki sabji" / "X ka sabji" = "X vegetable curry" → treat as single food item "X sabji"
@@ -165,7 +168,8 @@ OUTPUT FORMAT (JSON only, no markdown):
   "food_reference": ["array of food items"] or null,
   "store_reference": "first/primary store name" or null,
   "store_references": [{"store": "store name", "items": ["items from this store"]}] or null,
-  "quantity": number or null,
+  "quantity": number or null (uniform quantity for all items, null if quantities differ per item),
+  "item_quantities": [{"item": "food name", "quantity": "number", "unit": "kg/g/plate/piece (optional)"}] or null (per-item quantities when items have different quantities),
   "location_reference": "location" or null,
   "phone": "phone number" or null,
   "person_name": "person name" or null,
@@ -233,12 +237,13 @@ IMPORTANT:
         : null;
 
       return {
-        food_reference: Array.isArray(parsed.food_reference) 
+        food_reference: Array.isArray(parsed.food_reference)
           ? parsed.food_reference.filter((f: any) => f && typeof f === 'string' && f.length > 1)
           : parsed.food_reference ? [parsed.food_reference] : undefined,
         store_reference: storeRef,
         store_references: this.parseStoreReferences(parsed.store_references),
         quantity: typeof parsed.quantity === 'number' ? parsed.quantity : null,
+        item_quantities: this.parseItemQuantities(parsed.item_quantities),
         location_reference: parsed.location_reference || null,
         phone: parsed.phone || null,
         person_name: parsed.person_name || null,
@@ -251,6 +256,24 @@ IMPORTANT:
       this.logger.warn(`Failed to parse LLM response: ${content}`);
       return { confidence: 0, reasoning: `Parse error: ${error.message}` };
     }
+  }
+
+  /**
+   * Parse and validate item_quantities array from LLM output
+   */
+  private parseItemQuantities(raw: any): Array<{ item: string; quantity: string; unit?: string }> | null {
+    if (!Array.isArray(raw) || raw.length === 0) return null;
+
+    const valid = raw.filter(iq =>
+      iq && typeof iq.item === 'string' && iq.item.length > 0 &&
+      (typeof iq.quantity === 'string' || typeof iq.quantity === 'number')
+    ).map(iq => ({
+      item: iq.item.toLowerCase().trim(),
+      quantity: String(iq.quantity),
+      ...(iq.unit ? { unit: String(iq.unit).toLowerCase().trim() } : {}),
+    }));
+
+    return valid.length > 0 ? valid : null;
   }
 
   private cleanCache(): void {

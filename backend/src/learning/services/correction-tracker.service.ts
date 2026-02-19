@@ -301,9 +301,10 @@ export class CorrectionTrackerService implements OnModuleInit {
     if (correctionIds.length === 0) return;
 
     // Mark corrections as patterns (used for training)
-    await this.prisma.$executeRawUnsafe(
-      `UPDATE nlu_corrections SET is_pattern = true, updated_at = NOW() WHERE id IN (${correctionIds.join(',')})`,
-    );
+    await this.prisma.$executeRaw`
+      UPDATE nlu_corrections SET is_pattern = true, updated_at = NOW()
+      WHERE id = ANY(${correctionIds}::int[])
+    `;
 
     this.logger.log(`Marked ${correctionIds.length} corrections as used for training`);
   }

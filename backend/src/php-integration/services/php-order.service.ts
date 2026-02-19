@@ -426,15 +426,19 @@ export class PhpOrderService extends PhpApiService {
   /**
    * Get user's order history
    */
-  async getOrders(token: string, limit: number = 10, offset: number = 1): Promise<Order[]> {
+  async getOrders(token: string, limit: number = 10, offset: number = 1, moduleId?: string): Promise<Order[]> {
     try {
-      this.logger.log('📋 Fetching order history');
+      this.logger.log(`📋 Fetching order history${moduleId ? ` (module ${moduleId})` : ''}`);
+
+      const headers: Record<string, string> = {};
+      if (moduleId) headers.moduleId = moduleId;
 
       const response: any = await this.authenticatedRequest(
         'get',
         '/api/v1/customer/order/list',
         token,
         { limit, offset },
+        headers,
       );
 
       // PHP API returns { total_size, limit, offset, orders: [...] }
@@ -471,15 +475,19 @@ export class PhpOrderService extends PhpApiService {
   /**
    * Get running/active orders
    */
-  async getRunningOrders(token: string): Promise<Order[]> {
+  async getRunningOrders(token: string, moduleId?: string): Promise<Order[]> {
     try {
-      this.logger.log('🚚 Fetching running orders');
+      this.logger.log(`🚚 Fetching running orders${moduleId ? ` (module ${moduleId})` : ''}`);
+
+      const headers: Record<string, string> = {};
+      if (moduleId) headers.moduleId = moduleId;
 
       const response: any = await this.authenticatedRequest(
         'get',
         '/api/v1/customer/order/running-orders',
         token,
         { limit: 10, offset: 1 },
+        headers,
       );
 
       // PHP API may return { orders: [...] } or a raw array

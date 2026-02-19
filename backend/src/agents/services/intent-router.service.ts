@@ -99,7 +99,7 @@ export class IntentRouterService {
       // Prioritize action intents over greeting/chitchat
       const actionIntents = [
         'order_food', 'search_product', 'book_parcel', 'parcel_booking',
-        'track_order', 'cancel_order', 'repeat_order', 'reorder', 'refund_request', 'schedule_delivery', 'login'
+        'track_order', 'order_history', 'cancel_order', 'repeat_order', 'reorder', 'refund_request', 'schedule_delivery', 'login'
       ];
       
       let finalIntent = classification.intent;
@@ -107,7 +107,7 @@ export class IntentRouterService {
       // FALLBACK: If NLU returns unknown or low confidence, try pattern matching
       const shouldTryPatterns = 
         finalIntent === 'unknown' || 
-        classification.confidence < 0.6 || 
+        classification.confidence < 0.65 || 
         this.hasMultipleIntents(context.message);
       
       if (shouldTryPatterns) {
@@ -211,6 +211,7 @@ export class IntentRouterService {
       book_parcel: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i, /\bpick\s*up\b/i, /\bdrop\b/i, /\bbike\b/i, /\bcoolie\b/i, /\bbhej/i, /\brider\b/i, /\bkuch.*bhej/i],
       parcel_booking: [/\bparcel\b/i, /\bpackage\b/i, /\bdeliver\b/i, /\bsend\b/i, /\bship\b/i, /\bcourier\b/i, /\bpick\s*up\b/i, /\bdrop\b/i, /\bbike\b/i, /\bcoolie\b/i, /\bbhej/i, /\brider\b/i, /\bkuch.*bhej/i],
       track_order: [/\btrack\b/i, /\bstatus\b/i, /\bwhere.*order\b/i, /\bkahan.*order\b/i],
+      order_history: [/\border.*history\b/i, /\bmy.*orders?\b/i, /\bpast.*order\b/i, /\bprevious.*order\b/i, /\bshow.*order\b/i],
       cancel_order: [/\bcancel\b/i, /\bstop.*order\b/i, /\bband.*order\b/i, /\bnahi.*chahiye\b/i],
       repeat_order: [/\brepeat\b/i, /\breorder\b/i, /\bphir\s*se\b/i, /\bwahi\s*order\b/i, /\blast\s*order\b/i, /\bsame\s*order\b/i],
       reorder: [/\brepeat\b/i, /\breorder\b/i, /\bphir\s*se\b/i, /\bwahi\s*order\b/i, /\blast\s*order\b/i, /\bsame\s*order\b/i],
@@ -254,6 +255,7 @@ export class IntentRouterService {
       // Order intents
       add_to_cart: AgentType.ORDER,
       check_order: AgentType.ORDER,
+      order_history: AgentType.ORDER,
 
       // Complaint intents
       quality_complaint: AgentType.COMPLAINTS,

@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { UpdateAgentDto } from '../dto/update-agent.dto';
 import { AgentRegistryService } from './agent-registry.service';
+import { NluClientService } from '../../services/nlu-client.service';
 
 @Injectable()
 export class AgentsService {
+  private readonly logger = new Logger(AgentsService.name);
+
   constructor(
     private prisma: PrismaService,
     private agentRegistry: AgentRegistryService,
+    private nluClient: NluClientService,
   ) {}
 
   /**
@@ -28,8 +32,8 @@ export class AgentsService {
   async getAgents() {
     // Include real registered agents info
     const registeredAgents = this.getRegisteredAgents();
-    
-    // Get all flows grouped by module (each module = one "module agent" for stats)
+
+    // Get all flows (no relation to flowRuns in schema)
     const flows = await this.prisma.flow.findMany({
       select: {
         id: true,
@@ -37,14 +41,27 @@ export class AgentsService {
         module: true,
         enabled: true,
         status: true,
-        flowRuns: {
-          select: {
-            id: true,
-            status: true,
-          },
-        },
       },
     });
+
+    // Get flow run counts grouped by flow_id and status
+    const runCounts = await this.prisma.flowRun.groupBy({
+      by: ['flowId', 'status'],
+      _count: { id: true },
+    });
+
+    // Build a map of flowId -> { total, completed }
+    const runMap = new Map<string, { total: number; completed: number }>();
+    for (const rc of runCounts) {
+      if (!runMap.has(rc.flowId)) {
+        runMap.set(rc.flowId, { total: 0, completed: 0 });
+      }
+      const entry = runMap.get(rc.flowId)!;
+      entry.total += rc._count.id;
+      if (rc.status === 'completed') {
+        entry.completed += rc._count.id;
+      }
+    }
 
     // Group by module to create agents
     const agentMap = new Map<string, {
@@ -66,8 +83,9 @@ export class AgentsService {
 
       const agent = agentMap.get(flow.module)!;
       agent.flows.push(flow);
-      agent.totalRuns += flow.flowRuns.length;
-      agent.successfulRuns += flow.flowRuns.filter(r => r.status === 'completed').length;
+      const runs = runMap.get(flow.id) || { total: 0, completed: 0 };
+      agent.totalRuns += runs.total;
+      agent.successfulRuns += runs.completed;
     });
 
     // Convert to module-based agent array (virtual agents for module stats)
@@ -106,27 +124,41 @@ export class AgentsService {
 
   async getAgent(id: string) {
     const module = id.replace('agent_', '');
-    
+
     const flows = await this.prisma.flow.findMany({
       where: { module },
-      include: {
-        flowRuns: {
-          orderBy: { startedAt: 'desc' },
-          take: 10,
-        },
-      },
     });
 
     if (flows.length === 0) {
       return null;
     }
 
-    const totalRuns = flows.reduce((sum, f) => sum + f.flowRuns.length, 0);
-    const successfulRuns = flows.reduce(
-      (sum, f) => sum + f.flowRuns.filter(r => r.status === 'completed').length,
-      0,
-    );
+    const flowIds = flows.map(f => f.id);
+
+    // Get run counts per flow
+    const runCounts = await this.prisma.flowRun.groupBy({
+      by: ['flowId', 'status'],
+      where: { flowId: { in: flowIds } },
+      _count: { id: true },
+    });
+    const flowRunMap = new Map<string, { total: number; completed: number }>();
+    for (const rc of runCounts) {
+      if (!flowRunMap.has(rc.flowId)) flowRunMap.set(rc.flowId, { total: 0, completed: 0 });
+      const e = flowRunMap.get(rc.flowId)!;
+      e.total += rc._count.id;
+      if (rc.status === 'completed') e.completed += rc._count.id;
+    }
+
+    const totalRuns = Array.from(flowRunMap.values()).reduce((s, e) => s + e.total, 0);
+    const successfulRuns = Array.from(flowRunMap.values()).reduce((s, e) => s + e.completed, 0);
     const accuracy = totalRuns > 0 ? (successfulRuns / totalRuns) * 100 : 0;
+
+    // Get recent runs
+    const recentRuns = await this.prisma.flowRun.findMany({
+      where: { flowId: { in: flowIds } },
+      orderBy: { startedAt: 'desc' },
+      take: 10,
+    });
 
     return {
       id,
@@ -135,12 +167,12 @@ export class AgentsService {
       icon: this.getModuleIcon(module),
       color: this.getModuleColor(module),
       status: flows.some(f => f.enabled) ? 'active' : 'inactive',
-      model: 'Llama 3 8B',
-      nluProvider: `nlu_${module}_v1`,
-      nluModel: `nlu_${module}_v1`, // Added for frontend
+      model: 'Qwen 2.5 7B AWQ',
+      nluProvider: 'IndicBERTv2',
+      nluModel: 'indicbert_active',
       accuracy: parseFloat(accuracy.toFixed(1)),
       messagesHandled: totalRuns,
-      confidenceThreshold: 0.7, // Default config
+      confidenceThreshold: 0.65,
       maxTokens: 2048,
       temperature: 0.7,
       systemPrompt: `You are a helpful ${module} assistant for Mangwale AI.`,
@@ -150,9 +182,9 @@ export class AgentsService {
         id: f.id,
         name: f.name,
         enabled: f.enabled,
-        runs: f.flowRuns.length,
+        runs: (flowRunMap.get(f.id) || { total: 0 }).total,
       })),
-      recentRuns: flows.flatMap(f => f.flowRuns).slice(0, 10).map(r => ({
+      recentRuns: recentRuns.map(r => ({
         id: r.id,
         flowId: r.flowId,
         status: r.status,
@@ -203,23 +235,17 @@ export class AgentsService {
 
     const flows = await this.prisma.flow.findMany({
       where: { module },
-      include: {
-        flowRuns: {
-          where: {
-            startedAt: {
-              gte: startDate,
-            },
-          },
-        },
-      },
     });
 
     if (flows.length === 0) {
       throw new NotFoundException(`Agent with id ${id} not found`);
     }
 
-    // Calculate metrics
-    const allRuns = flows.flatMap(f => f.flowRuns);
+    const flowIds = flows.map(f => f.id);
+    const allRuns = await this.prisma.flowRun.findMany({
+      where: { flowId: { in: flowIds }, startedAt: { gte: startDate } },
+      orderBy: { startedAt: 'desc' },
+    });
     const totalRuns = allRuns.length;
     const successfulRuns = allRuns.filter(r => r.status === 'completed').length;
     const successRate = totalRuns > 0 ? (successfulRuns / totalRuns) * 100 : 0;
@@ -267,16 +293,15 @@ export class AgentsService {
   async getAgentConversations(id: string, limit: number = 50) {
     const module = id.replace('agent_', '');
     
-    // Get flow runs for this module
+    // Get flows for this module, then get their runs
+    const moduleFlows = await this.prisma.flow.findMany({
+      where: { module },
+      select: { id: true },
+    });
+    const flowIds = moduleFlows.map(f => f.id);
     const flowRuns = await this.prisma.flowRun.findMany({
-      where: {
-        flow: {
-          module,
-        },
-      },
-      orderBy: {
-        startedAt: 'desc',
-      },
+      where: { flowId: { in: flowIds } },
+      orderBy: { startedAt: 'desc' },
       take: limit,
     });
 
@@ -311,29 +336,30 @@ export class AgentsService {
 
   async getAgentFlows(id: string) {
     const module = id.replace('agent_', '');
-    
+
     const flows = await this.prisma.flow.findMany({
       where: { module },
-      include: {
-        flowRuns: {
-          select: {
-            id: true,
-          },
-        },
-      },
     });
 
     if (flows.length === 0) {
       throw new NotFoundException(`Agent with id ${id} not found`);
     }
 
+    const flowIds = flows.map(f => f.id);
+    const runCounts = await this.prisma.flowRun.groupBy({
+      by: ['flowId'],
+      where: { flowId: { in: flowIds } },
+      _count: { id: true },
+    });
+    const countMap = new Map(runCounts.map(rc => [rc.flowId, rc._count.id]));
+
     return flows.map(flow => ({
       id: flow.id,
       name: flow.name,
       description: flow.description || '',
       enabled: flow.enabled,
-      steps: Array.isArray(flow.states) ? flow.states.length : Object.keys(flow.states || {}).length,
-      usageCount: flow.flowRuns.length,
+      steps: Array.isArray(flow.states) ? (flow.states as any[]).length : Object.keys(flow.states || {}).length,
+      usageCount: countMap.get(flow.id) || 0,
       createdAt: flow.createdAt.toISOString(),
       updatedAt: flow.updatedAt.toISOString(),
     }));
@@ -351,17 +377,25 @@ export class AgentsService {
       throw new NotFoundException(`Agent with id ${id} not found`);
     }
 
-    // Simple mock response for testing
-    // In production, this would call the actual NLU and LLM services
-    const mockIntents = ['greeting', 'book_order', 'check_status', 'help', 'cancel_order'];
-    const randomIntent = mockIntents[Math.floor(Math.random() * mockIntents.length)];
-    const confidence = 0.7 + Math.random() * 0.25; // 0.7 to 0.95
+    // Call real NLU service for intent classification
+    try {
+      const nluResult = await this.nluClient.classify(message);
 
-    return {
-      message: `This is a test response from the ${module} agent. You said: "${message}"`,
-      intent: randomIntent,
-      confidence: parseFloat(confidence.toFixed(2)),
-    };
+      return {
+        message: `Test response from the ${module} agent. You said: "${message}"`,
+        intent: nluResult.intent,
+        confidence: parseFloat(nluResult.confidence.toFixed(2)),
+        provider: nluResult.provider || 'unknown',
+      };
+    } catch (error) {
+      this.logger.warn(`NLU classification failed during agent test: ${error.message}`);
+      return {
+        message: `Agent testing could not classify intent — NLU service unavailable. You said: "${message}"`,
+        intent: 'unknown',
+        confidence: 0,
+        provider: 'none',
+      };
+    }
   }
 
   private getModuleIcon(module: string): string {

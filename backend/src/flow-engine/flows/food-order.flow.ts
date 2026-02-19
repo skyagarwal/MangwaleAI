@@ -31,7 +31,7 @@ export const foodOrderFlow: FlowDefinition = {
         {
           // If message is long enough and not just a greeting, assume it's a query
           // Check both user_message and _user_message to be safe
-          expression: '(context.user_message || context._user_message) && (context.user_message || context._user_message).length > 3 && !["hi", "hello", "hey", "start"].includes((context.user_message || context._user_message).toLowerCase())',
+          expression: '(context.user_message || context._user_message) && (context.user_message || context._user_message).length > 3 && !["hi", "hello", "hey", "start", "order_food", "order food", "food", "khana", "khaana"].includes((context.user_message || context._user_message).toLowerCase().trim())',
           event: 'has_query',
         }
       ],
@@ -65,11 +65,9 @@ export const foodOrderFlow: FlowDefinition = {
             skipResponse: true,
             saveToContext: {
               express_order_detection: {
-                is_express_order: false, // Default - will be determined by check_if_express_order
                 food_items: '{{nlu_result.entities.food_reference || []}}',
                 restaurant: '{{nlu_result.entities.store_reference || null}}',
                 delivery_address_type: '{{nlu_result.entities.location_reference || null}}',
-                is_complete: false, // Will be evaluated by decision state
               },
             },
           },
@@ -81,13 +79,14 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
-    // 🚀 Check if it's an express order
+    // 🚀 Check if it's an express order (food + restaurant both detected by NLU)
     check_if_express_order: {
       type: 'decision',
       description: 'Route to express checkout if complete order detected',
       conditions: [
         {
-          expression: 'context.express_order_detection?.is_express_order === true && context.express_order_detection?.is_complete === true',
+          // Express order = NLU extracted both food items AND a restaurant reference
+          expression: 'context.express_order_detection?.food_items?.length > 0 && context.express_order_detection?.restaurant',
           event: 'express_order',
         },
       ],
@@ -262,23 +261,8 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
-    // 📍 Check if we have user location before searching
-    check_location: {
-      type: 'decision',
-      description: 'Check if user location is available in session for geo-filtered search',
-      conditions: [
-        {
-          // Location exists in session from previous interaction
-          expression: 'context.location && context.location.lat && context.location.lng',
-          event: 'has_location',
-        }
-      ],
-      transitions: {
-        // 🔧 FIX: Must restore original query before NLU analysis
-        has_location: 'restore_original_query',
-        default: 'request_location',
-      },
-    },
+    // NOTE: Removed duplicate check_location state — identical to check_existing_location (line 197)
+    // and was never referenced as a transition target (dead code).
 
     // 📍 NEW: Request location from user
     request_location: {
@@ -358,32 +342,6 @@ export const foodOrderFlow: FlowDefinition = {
         location_shared: 'confirm_location_received', // GPS coordinates received - confirm and restore query
         skipped: 'restore_original_query', // Continue without location
         default: 'extract_location_from_text',
-      },
-    },
-
-    // 📍 NEW: Parse LOCATION: message and save to context, then restore query
-    parse_and_restore: {
-      type: 'action',
-      description: 'Parse GPS coordinates from message and save to context',
-      actions: [
-        {
-          id: 'parse_gps',
-          executor: 'response',
-          config: {
-            // Parse LOCATION:lat,lng format and save to context
-            saveToContext: {
-              location: {
-                lat: '{{_user_message.split(":")[1]?.split(",")[0]}}',
-                lng: '{{_user_message.split(":")[1]?.split(",")[1]}}',
-              },
-            },
-            event: 'parsed',
-          },
-        },
-      ],
-      transitions: {
-        parsed: 'confirm_location_received',
-        default: 'confirm_location_received',
       },
     },
 
@@ -505,13 +463,16 @@ export const foodOrderFlow: FlowDefinition = {
         success: 'check_search_query_exists',
         order_food: 'check_search_query_exists',
         search_product: 'check_search_query_exists',
-        browse_menu: 'check_search_query_exists',
+        browse_menu: 'show_categories',              // 🔧 FIX: Browse menu → show categories, not search
         browse_category: 'show_categories',
         browse_stores: 'show_partner_stores',  // User wants to see other stores/restaurants
         ask_recommendation: 'show_recommendations',
         ask_famous: 'show_recommendations',
         ask_fastest_delivery: 'search_fastest_delivery',
         check_availability: 'check_search_query_exists',
+        add_to_cart: 'process_selection',           // 🔧 FIX: Handle add-to-cart intent directly
+        view_cart: 'show_current_cart',              // 🔧 FIX: Handle view cart intent
+        checkout: 'check_auth_for_checkout',         // 🔧 FIX: Handle checkout intent
         default: 'check_search_query_exists',
       },
     },
@@ -535,19 +496,23 @@ export const foodOrderFlow: FlowDefinition = {
           // 🔒 SAFETY: Exclude common words that are NOT restaurant names
           // Pattern: store_reference exists AND is not in blocklist AND is not too short (less than 3 chars)
           expression: `(context.food_nlu?.entities?.store_reference || context.extracted_food?.restaurant) && 
-                       !["order", "food", "khana", "khaana", "eat", "want", "need", "send", "give", "menu", "show", "list", "what", "can", "i", "me", "my", "the", "a", "an", "delivery", "deliver", "home", "office", "ghar", "karo", "do", "please", "jaldi", "abhi", "fast", "quick", "now", "today", "tomorrow", "kuch", "something", "anything", "best", "famous", "popular", "good", "tasty", "cheap", "nearby", "near", "close", "around", "any", "other", "store", "restro", "restaurant", "shop", "dukan", "more", "different", "aur", "alag", "dusra", "koi", "bhi", "hotel", "cafe", "dhaba"].includes((context.food_nlu?.entities?.store_reference || context.extracted_food?.restaurant || "").toLowerCase()) &&
+                       !["order", "food", "khana", "khaana", "eat", "want", "need", "send", "give", "menu", "show", "list", "what", "can", "i", "me", "my", "the", "a", "an", "delivery", "deliver", "home", "office", "ghar", "karo", "do", "please", "jaldi", "abhi", "fast", "quick", "now", "today", "tomorrow", "kuch", "something", "anything", "best", "famous", "popular", "good", "tasty", "cheap", "nearby", "near", "close", "around", "any", "other", "store", "restro", "restaurant", "shop", "dukan", "more", "different", "aur", "alag", "dusra", "koi", "bhi", "hotel", "cafe", "dhaba", "browse", "search", "find", "look", "category", "categories", "open", "check", "tell", "suggest", "recommend"].includes((context.food_nlu?.entities?.store_reference || context.extracted_food?.restaurant || "").toLowerCase()) &&
                        (context.food_nlu?.entities?.store_reference || context.extracted_food?.restaurant || "").length >= 3`,
           event: 'restaurant_only',
         },
         {
           // SMART: If NLU extracted specific food items, proceed to search
           // food_reference contains actual food names like ["pizza", "biryani", "burger"]
-          expression: 'context.food_nlu?.entities?.food_reference && Array.isArray(context.food_nlu.entities.food_reference) && context.food_nlu.entities.food_reference.length > 0',
+          // 🔒 FILTER: Exclude vague generic terms that are NOT specific food items
+          expression: `context.food_nlu?.entities?.food_reference && Array.isArray(context.food_nlu.entities.food_reference) && context.food_nlu.entities.food_reference.length > 0 &&
+                       !context.food_nlu.entities.food_reference.every(ref => ["food", "khana", "khaana", "eat", "order", "item", "items", "menu", "something", "anything", "kuch", "order_food"].includes(String(ref).toLowerCase()))`,
           event: 'has_food_items',
         },
         {
           // SMART: If extracted_food.items has specific food items from NLU mapping
-          expression: 'context.extracted_food?.items && Array.isArray(context.extracted_food.items) && context.extracted_food.items.length > 0',
+          // 🔒 FILTER: Same vague term filter applied
+          expression: `context.extracted_food?.items && Array.isArray(context.extracted_food.items) && context.extracted_food.items.length > 0 &&
+                       !context.extracted_food.items.every(ref => ["food", "khana", "khaana", "eat", "order", "item", "items", "menu", "something", "anything", "kuch", "order_food"].includes(String(ref).toLowerCase()))`,
           event: 'has_food_items',
         }
         // DEFAULT: If NLU couldn't extract any food entities, query is vague → show recommendations
@@ -556,7 +521,7 @@ export const foodOrderFlow: FlowDefinition = {
         multi_store: 'multi_store_search',               // 🏪🏪 Multiple stores detected → parallel search
         restaurant_only: 'search_food_with_restaurant',  // Has restaurant, search for it
         has_food_items: 'merge_nlu_with_llm',            // Has specific food, search for it
-        default: 'show_recommendations',                  // No entities = vague query → show recommendations
+        default: 'ask_what_to_eat',                         // No entities = vague query → ask user what they want
       },
     },
     
@@ -640,12 +605,42 @@ export const foodOrderFlow: FlowDefinition = {
       ],
       actions: [],
       transitions: {
-        user_message: 'process_specific_food',
+        user_message: 'route_food_choice',  // 🔧 FIX: Route through decision node to handle button clicks
+        default: 'route_food_choice',
+      },
+    },
+
+    // 🔧 FIX: Route button clicks from ask_what_to_eat
+    // The wait state always fires 'user_message' event for all inputs,
+    // so button-specific transitions (browse_menu, popular) never trigger.
+    // This decision node checks _user_message to detect button values.
+    route_food_choice: {
+      type: 'decision',
+      description: 'Route food choice based on button value or user text',
+      conditions: [
+        {
+          expression: '/^(browse_menu|browse\\s+menu|browse\\s+categories|categories)$/i.test(context._user_message?.trim()) || context._user_message?.trim() === "browse_menu"',
+          event: 'browse_menu',
+        },
+        {
+          expression: '/^(popular|popular\\s+items|trending)$/i.test(context._user_message?.trim()) || context._user_message?.trim() === "popular"',
+          event: 'popular',
+        },
+        {
+          expression: '/^(surprise|surprise\\s+me)$/i.test(context._user_message?.trim()) || context._user_message?.trim() === "surprise"',
+          event: 'surprise',
+        },
+        {
+          expression: '/^(cancel|exit|quit|bye)$/i.test(context._user_message?.trim())',
+          event: 'cancel',
+        },
+      ],
+      transitions: {
         browse_menu: 'show_categories',
         popular: 'show_recommendations',
         surprise: 'show_recommendations',
         cancel: 'cancelled',
-        default: 'process_specific_food',
+        default: 'process_specific_food',  // User typed specific food → NLU extraction
       },
     },
 
@@ -775,11 +770,12 @@ export const foodOrderFlow: FlowDefinition = {
           id: 'show_multi_store_items',
           executor: 'response',
           config: {
-            message: '🏪 I found items from **{{search_results.storesFound}}** stores:\n\n{{#each search_results.storeSummaries}}{{this}}\n{{/each}}\n\nTap **Add +** to add items from any store to your cart:',
+            message: '🏪 I found items from **{{search_results.storesFound}}** stores:\n\n{{#each search_results.storeSummaries}}{{this}}\n{{/each}}{{#if search_results.ecomSuggestions.length}}\n\n🛍️ Some items are available in our **Shop** section — say "search [item] in shop" to find them{{/if}}\n\nTap **Add +** to add items from any store to your cart:',
             cardsPath: 'search_results.cards',
             buttons: [
-              { id: 'btn_checkout', label: '🛒 Checkout', value: 'checkout' },
-              { id: 'btn_view_cart', label: '📋 View Cart', value: 'view_cart' },
+              { id: 'btn_view_cart', label: '📋 View Cart', value: 'show cart' },
+              { id: 'btn_browse', label: '📋 Browse Categories', value: 'browse_menu' },
+              { id: 'btn_alternatives', label: '🔄 Find Open Alternatives', value: 'find alternatives for closed stores' },
             ],
           },
           output: '_last_response',
@@ -787,9 +783,9 @@ export const foodOrderFlow: FlowDefinition = {
       ],
       actions: [],
       transitions: {
+        // Note: button clicks arrive as user_message event (button value stored in _user_message)
+        // checkout/view_cart routing is handled by resolve_user_intent → check_resolution_result
         user_message: 'resolve_user_intent',
-        checkout: 'check_order_type_final',
-        view_cart: 'show_current_cart',
         default: 'resolve_user_intent',
       },
     },
@@ -1650,6 +1646,7 @@ export const foodOrderFlow: FlowDefinition = {
             index: 'food_items',
             query: '{{extracted_food.search_query}}',
             size: 15,
+            module_id: 4,
             fields: ['name', 'category_name', 'description', 'store_name'],
             formatForUi: true,
             lat: '{{location.lat}}',
@@ -1962,12 +1959,8 @@ export const foodOrderFlow: FlowDefinition = {
           config: {
             message: '📋 Choose a category to explore:',
             responseType: 'buttons',
-            buttonsFromContext: {
-              path: 'category_results',
-              labelField: 'name',
-              valueField: 'name',
-              prefix: '🍽️ ',
-            },
+            buttonsPath: 'category_results',
+            buttonConfig: { labelPath: 'name', valuePath: 'id' },
           },
         }
       ],
@@ -1977,7 +1970,7 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
-    // Search items by selected category
+    // Search items by selected category (uses dedicated category endpoint)
     search_by_category: {
       type: 'action',
       description: 'Search items in selected category',
@@ -1986,12 +1979,13 @@ export const foodOrderFlow: FlowDefinition = {
           id: 'search_category_items',
           executor: 'search',
           config: {
+            type: 'category_items',
             index: 'food_items',
-            query: '{{_user_message}}',
+            categoryId: '{{_user_message}}',
             size: 10,
             lat: '{{location.lat}}',
             lng: '{{location.lng}}',
-            radius: '10km',
+            zone_id: '{{zone_id}}',
           },
           output: 'search_results',
         },
@@ -2045,10 +2039,12 @@ export const foodOrderFlow: FlowDefinition = {
           executor: 'response',
           config: {
             message: '{{#if _location_just_received}}📍 Got your location!\n\n{{/if}}{{#if recommendation_results._greeting}}{{recommendation_results._greeting}}{{else}}🎉 Yeh dekho popular items:{{/if}}\n\nKisi bhi item pe tap karo order karne ke liye! 👇',
-            responseType: 'cards',
-            dynamicMetadata: {
-              cards: 'recommendation_results.cards'
-            },
+            cardsPath: 'recommendation_results.cards',
+            buttons: [
+              { id: 'btn_view_cart', label: '📋 View Cart', value: 'show cart' },
+              { id: 'btn_browse', label: '📋 Browse Categories', value: 'browse_menu' },
+              { id: 'btn_search', label: '🔍 Search', value: 'search_different' },
+            ],
             saveToContext: {
               _location_just_received: false,
             },
@@ -2057,10 +2053,34 @@ export const foodOrderFlow: FlowDefinition = {
         }
       ],
       transitions: {
-        user_message: 'understand_request',
+        user_message: 'copy_recs_to_search_results',
         item_selected: 'process_selection',
-        default: 'understand_request',
+        default: 'copy_recs_to_search_results',
       }
+    },
+
+    // 🔧 FIX: Copy recommendation cards to search_results so selection executor can find them
+    // Without this, clicking ADD on recommendation cards fails because selection executor
+    // reads from search_results but recommendations are stored as recommendation_results
+    copy_recs_to_search_results: {
+      type: 'action',
+      description: 'Copy recommendation_results to search_results for selection processing',
+      actions: [
+        {
+          id: 'copy_recs',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              search_results: '{{recommendation_results}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        success: 'resolve_user_intent',
+        default: 'resolve_user_intent',
+      },
     },
 
     // 🚀 Search for fastest delivery options - now uses recommendation mode
@@ -2111,10 +2131,32 @@ export const foodOrderFlow: FlowDefinition = {
         }
       ],
       transitions: {
-        user_message: 'understand_request',
+        user_message: 'copy_fast_delivery_to_search_results',
         item_selected: 'process_selection',
-        default: 'understand_request',
+        default: 'copy_fast_delivery_to_search_results',
       }
+    },
+
+    // 🔧 FIX: Copy fast delivery cards to search_results for selection executor
+    copy_fast_delivery_to_search_results: {
+      type: 'action',
+      description: 'Copy fast_delivery_results to search_results for selection processing',
+      actions: [
+        {
+          id: 'copy_fast',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              search_results: '{{fast_delivery_results}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        success: 'resolve_user_intent',
+        default: 'resolve_user_intent',
+      },
     },
 
     // No recommendations fallback
@@ -2453,8 +2495,9 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
             message: 'Here are some delicious options I found for you:',
             cardsPath: 'search_results.cards',
             buttons: [
-              { id: 'btn_checkout', label: '🛒 Checkout', value: 'checkout' },
               { id: 'btn_view_cart', label: '📋 View Cart', value: 'show cart' },
+              { id: 'btn_browse', label: '📋 Browse Categories', value: 'browse_menu' },
+              { id: 'btn_search', label: '🔍 Search', value: 'search_different' },
             ],
           },
           output: '_last_response',
@@ -2497,13 +2540,38 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
     // 🆕 Decision: New search vs Selection based on resolved entities from OpenSearch
     check_resolution_result: {
       type: 'decision',
-      description: 'Route based on entity resolution results from OpenSearch. PRIORITY: Selection patterns first!',
+      description: 'Route based on entity resolution results from OpenSearch. PRIORITY: Button actions > Selection patterns > Entity search!',
       conditions: [
         {
-          // Case 0: PRIORITY - Detect selection patterns BEFORE entity check
-          // Matches: "1", "2", "add 1 to cart", "first one", "add paneer to cart", etc.
-          expression: `/^(add\\s+)?\\d+(\\s*,\\s*\\d+)*\\s*(to\\s+cart)?$/i.test(context._user_message?.trim()) || /^(first|second|third|fourth|fifth|1st|2nd|3rd|4th|5th)(\\s+one)?$/i.test(context._user_message?.trim()) || /^add\\s+.+\\s+to\\s+(my\\s+)?cart$/i.test(context._user_message?.trim()) || /^select\\s+(\\d+|all)/i.test(context._user_message?.trim()) || context.food_nlu?.intent === 'add_to_cart'`,
+          // Case -3: HIGHEST PRIORITY - Detect "browse menu" / "browse categories" button click
+          expression: `/^(browse_menu|browse\\s+menu|browse\\s+categories|categories)$/i.test(context._user_message?.trim()) || context.food_nlu?.intent === 'browse_menu' || context.food_nlu?.intent === 'browse_category'`,
+          event: 'browse_detected',
+        },
+        {
+          // Case -2.5: Detect "search different" button click
+          expression: `/^(search_different|search\\s+different|search\\s+more|new\\s+search)$/i.test(context._user_message?.trim())`,
+          event: 'search_different',
+        },
+        {
+          // Case 0: HIGHEST PRIORITY - Detect selection patterns (item_ID, numbers, add to cart)
+          // MUST be checked before checkout/view_cart because NLU can misclassify "item_10201" as view_cart
+          // Matches: "item_12345" (card button click), "1", "2", "add 1 to cart", "first one", "add paneer to cart", etc.
+          expression: `/^item_\\d+/i.test(context._user_message?.trim()) || /^(add\\s+)?\\d+(\\s*,\\s*\\d+)*\\s*(to\\s+cart)?$/i.test(context._user_message?.trim()) || /^(first|second|third|fourth|fifth|1st|2nd|3rd|4th|5th)(\\s+one)?$/i.test(context._user_message?.trim()) || /^add\\s+.+\\s+to\\s+(my\\s+)?cart$/i.test(context._user_message?.trim()) || /^select\\s+(\\d+|all)/i.test(context._user_message?.trim())`,
           event: 'selection_detected',
+        },
+        {
+          // Case 1: Detect "checkout" button click or intent
+          // Matches: "checkout", "place order", "order now", etc.
+          // GUARD: Exclude item_ID patterns
+          expression: `!(/^item_\\d+/i.test(context._user_message?.trim())) && (/^(checkout|place\\s+order|order\\s+now|proceed\\s+to\\s+(checkout|payment))$/i.test(context._user_message?.trim()) || context.food_nlu?.intent === 'checkout')`,
+          event: 'checkout_detected',
+        },
+        {
+          // Case 2: Detect "view cart" / "show cart" button click or intent
+          // Matches: "show cart", "view cart", "my cart", "cart", "view_cart" etc.
+          // GUARD: Exclude item_ID patterns to prevent NLU misclassification from hijacking selections
+          expression: `!(/^item_\\d+/i.test(context._user_message?.trim())) && (/^(show\\s+cart|view\\s+cart|view_cart|my\\s+cart|cart|see\\s+cart|open\\s+cart)$/i.test(context._user_message?.trim()) || context.food_nlu?.intent === 'view_cart')`,
+          event: 'view_cart_detected',
         },
         {
           // Case 1: Store resolved by OpenSearch → New search with store filter
@@ -2522,6 +2590,10 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         },
       ],
       transitions: {
+        browse_detected: 'show_categories',                   // 🔧 Browse categories from results
+        search_different: 'ask_what_to_eat',                   // 🔧 New search from results
+        checkout_detected: 'check_auth_for_checkout',       // 🔧 FIX: Direct route to checkout
+        view_cart_detected: 'show_current_cart',             // 🔧 FIX: Direct route to cart view
         selection_detected: 'clear_entities_for_selection',  // 🆕 Clear resolved_entities first
         store_resolved: 'search_food',
         store_not_found: 'prepare_restaurant_search_from_results',  // 🔧 FIX: Search by store name instead of dead-ending
@@ -4493,6 +4565,43 @@ Reply "confirm" to book the rider.`,
       },
     },
 
+    // Refresh auth from session and check if user is logged in (after token expiry)
+    check_auth_before_flow: {
+      type: 'action',
+      description: 'Refresh auth from session and check if user is logged in',
+      actions: [
+        {
+          id: 'refresh_auth_status',
+          executor: 'session',
+          config: { action: 'refresh_auth' },
+          output: '_auth_status',
+        },
+      ],
+      transitions: {
+        authenticated: 'show_order_summary',
+        not_authenticated: 'prompt_login_for_order',
+        default: 'prompt_login_for_order',
+      },
+    },
+
+    // Prompt user to log in before placing order (after auth expiry)
+    prompt_login_for_order: {
+      type: 'action',
+      description: 'Prompt user to log in before placing order',
+      actions: [
+        {
+          id: 'login_prompt',
+          executor: 'response',
+          config: {
+            message: 'Please log in to place your order. Your cart has been saved and will be available after login.',
+          },
+        },
+      ],
+      transitions: {
+        default: 'completed',
+      },
+    },
+
     // Place order (digital payment path) - order is created, then we show payment gateway
     place_order_digital: {
       type: 'action',
@@ -4518,6 +4627,7 @@ Reply "confirm" to book the rider.`,
         success: 'show_food_payment_gateway',
         auth_expired: 'auth_expired_relogin',
         error: 'order_failed',
+        default: 'order_failed',
       },
     },
 

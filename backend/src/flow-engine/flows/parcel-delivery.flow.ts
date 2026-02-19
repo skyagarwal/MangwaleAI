@@ -401,8 +401,30 @@ export const parcelDeliveryFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        zone_valid: 'collect_delivery',
+        zone_valid: 'prepare_delivery',
         zone_invalid: 'pickup_out_of_zone',
+      },
+    },
+
+    // Clear stale _user_message before collecting delivery
+    // Without this, "yes" from pickup confirmation leaks into delivery collection
+    // and causes the address executor to re-show all addresses
+    prepare_delivery: {
+      type: 'action',
+      description: 'Clear stale user message before delivery collection',
+      actions: [
+        {
+          id: 'clear_stale_message',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              _user_message: '',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'collect_delivery',
       },
     },
 
@@ -416,7 +438,7 @@ export const parcelDeliveryFlow: FlowDefinition = {
           executor: 'address',
           config: {
             field: 'delivery_address',
-            prompt: '✅ Pickup confirmed!\n\n📍 **Question 2/5:** Where to deliver?\n\n• Share location 📍\n• Type address\n• Or select saved address (if logged in)',
+            prompt: '✅ **Pickup:** {{pickup_address.address}}\n\n📍 **Question 2/5:** Where to deliver?\n\n• Share location 📍\n• Type address\n• Or select saved address (if logged in)',
             offerSaved: true,
             requireAuth: false,
           },
@@ -531,7 +553,7 @@ export const parcelDeliveryFlow: FlowDefinition = {
           id: 'ask_recipient_auth',
           executor: 'response',
           config: {
-            message: '✅ Addresses confirmed!\n\n👤 **Question 3/5:** Who is the recipient?\n\nProvide name and phone:\nExample: "Rahul Kumar 9876543210"\n\nOr tap "Use my details" to deliver to yourself:',
+            message: '✅ **Delivery:** {{delivery_address.address}}\n\n👤 **Question 3/5:** Who is the recipient?\n\nProvide name and phone:\nExample: "Rahul Kumar 9876543210"\n\nOr tap "Use my details" to deliver to yourself:',
             buttons: [
               { label: '👤 Use my details', value: 'use_my_details', action: 'use_my_details' },
               { label: '❌ Cancel', value: 'cancel', action: 'cancel' },
@@ -559,7 +581,7 @@ export const parcelDeliveryFlow: FlowDefinition = {
           id: 'ask_recipient_guest',
           executor: 'response',
           config: {
-            message: '✅ Addresses confirmed!\n\n👤 **Question 3/5:** Who is the recipient?\n\nProvide name and phone number:\nExample: "Rahul Kumar 9876543210"',
+            message: '✅ **Delivery:** {{delivery_address.address}}\n\n👤 **Question 3/5:** Who is the recipient?\n\nProvide name and phone number:\nExample: "Rahul Kumar 9876543210"',
             buttons: [
               { label: '❌ Cancel', value: 'cancel', action: 'cancel' },
             ],
@@ -2256,18 +2278,34 @@ Return ONLY the numeric ID, nothing else.`,
     },
 
     order_failed: {
-      type: 'end',
-      description: 'Order placement failed',
+      type: 'action',
+      description: 'Order placement failed - offer retry or cancel',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not place order. Please try again or contact support.',
+            message: "❌ I couldn't place your order. Please check your details and try again.",
+            buttons: [
+              { label: '🔄 Try Again', value: 'retry_order' },
+              { label: '❌ Cancel', value: 'cancel' },
+            ],
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'wait_order_retry',
+      },
+    },
+
+    wait_order_retry: {
+      type: 'wait',
+      description: 'Wait for user to retry or cancel after order failure',
+      transitions: {
+        retry_order: 'check_auth_before_order',
+        cancel: 'cancelled',
+        default: 'cancelled',
+      },
     },
 
     cancelled: {
@@ -2292,5 +2330,5 @@ Return ONLY the numeric ID, nothing else.`,
   },
 
   initialState: 'check_trigger',
-  finalStates: ['finish', 'cancelled', 'pickup_error', 'delivery_error', 'pickup_out_of_zone', 'delivery_out_of_zone', 'distance_error', 'order_failed', 'category_error', 'pricing_error'],
+  finalStates: ['finish', 'cancelled', 'pickup_error', 'delivery_error', 'pickup_out_of_zone', 'delivery_out_of_zone', 'distance_error', 'category_error', 'pricing_error'],
 };

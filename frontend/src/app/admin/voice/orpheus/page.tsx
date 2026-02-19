@@ -8,10 +8,8 @@ import {
   Waves, Radio, Speaker, User, Music, Sparkles, Heart
 } from 'lucide-react';
 
-// Mercury voice server URL
-const TTS_URL = process.env.NEXT_PUBLIC_VOICE_SERVER_URL 
-  ? `${process.env.NEXT_PUBLIC_VOICE_SERVER_URL}:8010`
-  : 'http://localhost:8010';
+// Orpheus TTS is not currently deployed/running.
+// When available, health and synthesis calls go through the /api proxy to the NestJS backend.
 
 interface OrpheusHealth {
   status: 'healthy' | 'unhealthy' | 'offline';
@@ -234,11 +232,66 @@ export default function OrpheusStudioPage() {
     );
   }
 
+  // Show "not configured" state when Orpheus TTS is offline
+  if (!health || health.status === 'offline') {
+    return (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-xl p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Sparkles className="w-8 h-8" />
+              </div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold">Orpheus TTS Studio</h1>
+                  <span className="px-2 py-0.5 bg-white/20 rounded text-xs">3B</span>
+                </div>
+                <p className="text-purple-100">Neural Text-to-Speech with Emotion Control</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <StatusBadge status="offline" />
+              <button
+                onClick={checkHealth}
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
+          <AlertCircle className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Orpheus TTS Not Configured</h2>
+          <p className="text-gray-500 max-w-md mx-auto mb-6">
+            The Orpheus TTS service is not currently running. This service requires a dedicated GPU server
+            with the Orpheus 3B model loaded. Contact the infrastructure team to set it up.
+          </p>
+          <div className="bg-gray-50 rounded-lg p-4 max-w-lg mx-auto text-left">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">To enable Orpheus TTS:</h3>
+            <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+              <li>Deploy the Orpheus TTS server on a GPU machine</li>
+              <li>Configure the NestJS backend to proxy to it via <code className="text-xs bg-gray-200 px-1 rounded">/api/tts/*</code></li>
+              <li>Click "Retry" above to check connectivity</li>
+            </ol>
+          </div>
+          <p className="text-sm text-gray-400 mt-6">
+            For voice synthesis, use the <a href="/admin/voice/characters" className="text-purple-600 hover:underline">Voice Characters</a> page
+            which uses the active TTS engines (ChatterBox, Kokoro).
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Hidden audio element */}
-      <audio 
-        ref={audioRef} 
+      <audio
+        ref={audioRef}
         onEnded={() => setIsPlaying(false)}
         onPause={() => setIsPlaying(false)}
       />

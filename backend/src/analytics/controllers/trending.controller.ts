@@ -174,15 +174,15 @@ export class TrendingController {
   @ApiOperation({ summary: 'Get real-time trending data' })
   @ApiResponse({ status: 200, description: 'Real-time data retrieved' })
   async getRealTimeTrends() {
-    // Simulated real-time data
+    // No real-time metrics pipeline exists yet — return zeros instead of fake data
     const now = new Date();
-    
+
     return {
-      current_searches_per_minute: Math.floor(150 + Math.random() * 50),
-      active_sessions: Math.floor(500 + Math.random() * 100),
-      orders_in_progress: Math.floor(80 + Math.random() * 30),
-      top_query_now: 'pizza delivery',
-      busiest_location: 'Mumbai',
+      current_searches_per_minute: 0,
+      active_sessions: 0,
+      orders_in_progress: 0,
+      top_query_now: null,
+      busiest_location: null,
       timestamp: now.toISOString(),
     };
   }

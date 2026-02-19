@@ -91,14 +91,14 @@ export class TrainingSamplesController {
         ];
       }
 
-      const samples = await this.trainingSampleService['prisma'].trainingSample.findMany({
+      const samples = await this.trainingSampleService['prisma'].nluTrainingData.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         take: Number(limit),
         skip: Number(offset),
       });
 
-      const total = await this.trainingSampleService['prisma'].trainingSample.count({
+      const total = await this.trainingSampleService['prisma'].nluTrainingData.count({
         where,
       });
 
@@ -141,7 +141,7 @@ export class TrainingSamplesController {
       this.logger.log(`Approving training sample ${id} by ${dto.approved_by}`);
       
       const sample = await this.trainingSampleService.approveSample(
-        parseInt(id),
+        id,
         dto.approved_by,
       );
 
@@ -178,7 +178,7 @@ export class TrainingSamplesController {
       this.logger.log(`Rejecting training sample ${id} by ${dto.approved_by}`);
       
       const sample = await this.trainingSampleService.rejectSample(
-        parseInt(id),
+        id,
         dto.approved_by,
       );
 

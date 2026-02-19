@@ -99,9 +99,9 @@ export class FlowsController {
 
       let dbFlowCount: number | null = null;
       try {
-        const rows = (await this.prisma.$queryRawUnsafe(
-          'SELECT COUNT(*)::int AS count FROM flow_definitions',
-        )) as Array<{ count: number }>; // tolerate schema/type mismatches
+        const rows = (await this.prisma.$queryRaw`
+          SELECT COUNT(*)::int AS count FROM flow_definitions
+        `) as Array<{ count: number }>; // tolerate schema/type mismatches
         dbFlowCount = typeof rows?.[0]?.count === 'number' ? rows[0].count : null;
       } catch {
         dbFlowCount = null;

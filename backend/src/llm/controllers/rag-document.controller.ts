@@ -10,17 +10,15 @@ import {
   UploadedFile,
   Logger,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RagDocumentService, DocumentMetadata } from '../services/rag-document.service';
 import { UnifiedEmbeddingService } from '../../search/services/unified-embedding.service';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 
-/**
- * RAG Document Controller
- * 
- * Endpoints for uploading and managing documents for RAG.
- */
 @Controller('rag/documents')
+@UseGuards(AdminAuthGuard)
 export class RagDocumentController {
   private readonly logger = new Logger(RagDocumentController.name);
 
@@ -70,10 +68,15 @@ export class RagDocumentController {
       createdAt: new Date(),
     };
 
+    // Wrap embedding service to always produce 768-dim vectors (RAG index uses knn_vector 768)
+    const normalizedEmbedder = {
+      embed: async (text: string) => this.embeddingService.embedNormalized(text),
+    };
+
     const result = await this.ragDocService.ingestText(
       body.content,
       metadata,
-      this.embeddingService
+      normalizedEmbedder,
     );
 
     this.logger.log(`📄 Text ingested: ${body.title} → ${result.chunksCreated} chunks`);
@@ -88,7 +91,22 @@ export class RagDocumentController {
    * Upload a file for RAG ingestion
    */
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+    fileFilter: (_req, file, cb) => {
+      const allowedMimes = [
+        'text/plain', 'application/pdf', 'text/csv',
+        'application/json', 'text/markdown', 'text/html',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      ];
+      const allowedExts = ['.txt', '.pdf', '.csv', '.json', '.md', '.html', '.docx'];
+      const ext = file.originalname?.toLowerCase().slice(file.originalname.lastIndexOf('.'));
+      if (!allowedMimes.includes(file.mimetype) && !allowedExts.includes(ext)) {
+        return cb(new BadRequestException(`File type not allowed: ${file.mimetype}`), false);
+      }
+      cb(null, true);
+    },
+  }))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: {
@@ -107,6 +125,11 @@ export class RagDocumentController {
     // Parse tags from comma-separated string
     const tags = body.tags ? body.tags.split(',').map(t => t.trim()) : undefined;
 
+    // Wrap embedding service to always produce 768-dim vectors (RAG index uses knn_vector 768)
+    const normalizedEmbedder = {
+      embed: async (text: string) => this.embeddingService.embedNormalized(text),
+    };
+
     const result = await this.ragDocService.ingestFile(
       file.buffer,
       file.originalname,
@@ -118,7 +141,7 @@ export class RagDocumentController {
         tenantId: body.tenantId,
         language: body.language,
       },
-      this.embeddingService
+      normalizedEmbedder,
     );
 
     this.logger.log(`📁 File uploaded: ${file.originalname} → ${result.chunksCreated} chunks`);
@@ -154,7 +177,7 @@ export class RagDocumentController {
     // Generate embedding for semantic search if requested
     if (body.useEmbedding !== false) {
       try {
-        const embResult = await this.embeddingService.embed(body.query);
+        const embResult = await this.embeddingService.embedNormalized(body.query);
         embedding = embResult.embedding;
       } catch (error) {
         this.logger.warn(`Embedding failed, falling back to keyword search: ${error.message}`);

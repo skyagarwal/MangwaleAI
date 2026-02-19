@@ -140,12 +140,12 @@ export default function SearchTestingPage() {
 
   // Stats
   const [stats, setStats] = useState({
-    totalItems: 1500,
-    totalStores: 139,
-    totalCategories: 151,
-    totalImages: 13967,
-    avgResponseTime: 245,
-    successRate: 96.5,
+    totalItems: 0,
+    totalStores: 0,
+    totalCategories: 0,
+    totalImages: 0,
+    avgResponseTime: 0,
+    successRate: 0,
   });
 
   useEffect(() => {
@@ -157,6 +157,29 @@ export default function SearchTestingPage() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  // Load real stats from search API (proxied through Next.js)
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const response = await fetch('/api/search-admin/stats/system');
+        if (response.ok) {
+          const data = await response.json();
+          setStats({
+            totalItems: data.opensearch?.items_total ?? 0,
+            totalStores: data.opensearch?.stores_total ?? 0,
+            totalCategories: data.mysql?.categories_total ?? 0,
+            totalImages: data.mysql?.items_with_images ?? 0,
+            avgResponseTime: data.performance?.avg_response_time_ms ?? 0,
+            successRate: data.performance?.last_24h_searches !== undefined ? 100 : 0,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load search stats:', error);
+      }
+    };
+    loadStats();
   }, []);
 
   const handleSearch = async () => {

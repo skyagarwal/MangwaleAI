@@ -124,6 +124,49 @@ export class AddressExecutor implements ActionExecutor {
         }
       }
 
+      // =====================================================
+      // 🧠 SMART DELIVERY ADDRESS PRE-MATCHING
+      // If user confirms a suggested delivery address, use it directly
+      // =====================================================
+      if (context.data._suggested_delivery_address && field === 'delivery_address') {
+        const confirmMsg = (userMessage || '').toLowerCase().trim();
+        const isConfirm = /^(confirm_suggested_delivery|yes|haan|ha|ji|ok|sure|confirm|theek|ठीक|हां|हाँ)$/i.test(confirmMsg)
+          || confirmMsg === '✅ yes, deliver here';
+        const isShowAll = /^(show_all_addresses|show all|sab dikhao|all|other|nahi|no|change)$/i.test(confirmMsg)
+          || confirmMsg === '📋 show all addresses';
+
+        if (isConfirm) {
+          const suggested = context.data._suggested_delivery_address as any;
+          const addressData = {
+            address: suggested.address,
+            latitude: parseFloat(suggested.latitude),
+            longitude: parseFloat(suggested.longitude),
+            contact_person_name: suggested.contactPersonName,
+            contact_person_number: suggested.contactPersonNumber,
+            address_id: suggested.id,
+            source: 'saved_address',
+            raw_input: userMessage,
+          };
+          context.data[field] = addressData;
+          delete context.data._suggested_delivery_address;
+          delete context.data._delivery_address_hint;
+          delete context.data[`${field}_options`];
+          delete context.data[`${field}_offered`];
+
+          const emoji = this.phpAddressService.getAddressTypeEmoji(suggested.addressType);
+          context.data._last_response = `✅ Delivery set to your **${suggested.addressType || 'saved'}** address:\n${emoji} ${suggested.address}`;
+
+          this.logger.log(`🧠 Smart match confirmed! Using ${suggested.addressType} address for delivery`);
+          return { success: true, output: addressData, event: 'address_valid' };
+        }
+
+        if (isShowAll) {
+          this.logger.log(`🔄 User wants to see all addresses instead of delivery suggestion`);
+          delete context.data._suggested_delivery_address;
+          // Fall through to show all saved addresses below
+        }
+      }
+
       const isFlowTriggerMessage = this.isParcelBookingTriggerMessage(userMessage);
       if (isFlowTriggerMessage && field === 'pickup_address' && !context.data._pickup_prompt_shown) {
         this.logger.log(`🚫 Detected flow trigger message - showing pickup prompt instead of auto-extracting: "${userMessage}"`);
@@ -140,6 +183,13 @@ export class AddressExecutor implements ActionExecutor {
             // 🧠 SMART ADDRESS HINT DETECTION
             // Extract "home"/"office"/etc. from trigger, match saved addresses
             // =====================================================
+            // Also extract delivery hint for later use when collecting delivery address
+            const deliveryHint = this.extractDeliveryHintFromTrigger(userMessage);
+            if (deliveryHint) {
+              context.data._delivery_address_hint = deliveryHint;
+              this.logger.log(`🧠 Delivery hint saved from trigger: "${deliveryHint}"`);
+            }
+
             const addressHint = this.extractAddressHintFromTrigger(userMessage);
             if (addressHint) {
               const matched = this.matchSavedAddressByHint(savedAddresses, addressHint);
@@ -164,7 +214,7 @@ export class AddressExecutor implements ActionExecutor {
             
             const addressButtons = savedAddresses.map((addr, idx) => {
               const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-              const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+              const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
               return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
             }).join('\n');
             
@@ -231,6 +281,44 @@ export class AddressExecutor implements ActionExecutor {
         }
       }
       
+      // =====================================================
+      // 🧠 DELIVERY ADDRESS HINT AUTO-SUGGESTION
+      // If a delivery hint was extracted from the trigger, auto-suggest matching address
+      // =====================================================
+      if (field === 'delivery_address' && context.data._delivery_address_hint && !context.data._delivery_hint_used) {
+        context.data._delivery_hint_used = true; // Prevent re-triggering
+        const hint = context.data._delivery_address_hint as string;
+
+        if (userId && authToken) {
+          const savedAddresses = await this.phpAddressService.getAddresses(authToken);
+          if (savedAddresses && savedAddresses.length > 0) {
+            const matched = this.matchSavedAddressByHint(savedAddresses, hint);
+            if (matched) {
+              context.data._suggested_delivery_address = matched;
+              context.data[`${field}_options`] = savedAddresses;
+              context.data[`${field}_offered`] = true;
+
+              const emoji = this.phpAddressService.getAddressTypeEmoji(matched.addressType);
+              const shortAddr = matched.address?.length > 60
+                ? matched.address.substring(0, 60) + '...'
+                : matched.address;
+
+              this.logger.log(`🧠 Smart delivery match! "${hint}" → ${matched.addressType}: ${shortAddr}`);
+
+              context.data._last_response = `📍 **Parcel Delivery**\n\n${emoji} I found your saved **${matched.addressType}** address:\n📍 ${shortAddr}\n\nShould I deliver here?\n\n[BTN|✅ Yes, deliver here|confirm_suggested_delivery]\n[BTN|📋 Show all addresses|show_all_addresses]\n[BTN|📍 Share New Location|__LOCATION__]\n[BTN|❌ Cancel|cancel]`;
+
+              return {
+                success: true,
+                output: null,
+                event: 'waiting_for_input',
+              };
+            }
+          }
+        }
+        // If no match found, fall through to normal delivery collection
+        delete context.data._delivery_address_hint;
+      }
+
       // Check if we have a pending delivery address from combined extraction
       if (field === 'delivery_address' && context.data._pending_delivery_address) {
         const pendingDrop = context.data._pending_delivery_address;
@@ -286,7 +374,7 @@ export class AddressExecutor implements ActionExecutor {
             
             const addressButtons = savedAddresses.map((addr, idx) => {
               const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-              const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+              const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
               return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
             }).join('\n');
 
@@ -365,7 +453,7 @@ export class AddressExecutor implements ActionExecutor {
           
           const addressButtons = savedOptions.map((addr, idx) => {
             const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-            const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+            const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
             return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
           }).join('\n');
 
@@ -437,7 +525,7 @@ export class AddressExecutor implements ActionExecutor {
                 
                 const addressButtons = savedAddresses.map((addr, idx) => {
                   const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-                  const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+                  const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
                   return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
                 }).join('\n');
 
@@ -469,7 +557,7 @@ export class AddressExecutor implements ActionExecutor {
               
               const addressButtons = savedAddresses.map((addr, idx) => {
                 const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-                const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+                const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
                 return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
               }).join('\n');
 
@@ -608,7 +696,7 @@ export class AddressExecutor implements ActionExecutor {
           // Build address buttons for quick selection using | separator to avoid colon conflicts
           const addressButtons = savedAddresses.map((addr, idx) => {
             const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-            const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+            const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
             return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
           }).join('\n');
 
@@ -706,7 +794,7 @@ export class AddressExecutor implements ActionExecutor {
           
           const addressButtons = options.map((addr, idx) => {
             const emoji = this.phpAddressService.getAddressTypeEmoji(addr.addressType);
-            const shortAddr = addr.address?.length > 35 ? addr.address.substring(0, 35) + '...' : addr.address;
+            const shortAddr = addr.address?.length > 28 ? addr.address.substring(0, 28) + '...' : addr.address;
             return `[BTN|${emoji} ${addr.addressType || 'Saved'} - ${shortAddr}|${idx + 1}]`;
           }).join('\n');
 
@@ -1231,6 +1319,48 @@ Respond in JSON format:
     for (const { patterns, type } of hintPatterns) {
       if (patterns.some(p => p.test(msg))) {
         this.logger.debug(`🧠 Address hint extracted: "${type}" from "${message}"`);
+        return type;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 🧠 Extract DELIVERY address type hint from a parcel booking trigger message
+   * Extracts the "to" side of the message
+   * e.g., "ghar se office bhejo" → "office"
+   *        "home se daftar tak parcel" → "office"
+   *        "send from home to my office" → "office"
+   */
+  private extractDeliveryHintFromTrigger(message: string): string | null {
+    if (!message) return null;
+    const msg = message.toLowerCase();
+
+    const hintPatterns: Array<{ patterns: RegExp[]; type: string }> = [
+      {
+        type: 'home',
+        patterns: [
+          /\b(to|ko|tak|pe)\s+(my\s+)?(home|ghar|house|घर|residence)\b/i,
+          /\b(deliver|bhej|pahuncha)\w*\s+(my\s+)?(home|ghar|house|घर)\b/i,
+        ],
+      },
+      {
+        type: 'office',
+        patterns: [
+          /\b(to|ko|tak|pe)\s+(my\s+)?(office|daftar|दफ्तर|workplace|work)\b/i,
+          /\b(deliver|bhej|pahuncha)\w*\s+(my\s+)?(office|daftar|दफ्तर|work)\b/i,
+          // "ghar se office" pattern — office is the destination when preceded by "se/from"
+          /\b(se|from)\s+\w+\s+(office|daftar|दफ्तर)\b/i,
+          // Explicit "X se office bhejo" — office after source
+          /\b(home|ghar|घर)\s+(se|from)\b.*\b(office|daftar|दफ्तर)\b/i,
+        ],
+      },
+    ];
+
+    for (const { patterns, type } of hintPatterns) {
+      if (patterns.some(p => p.test(msg))) {
+        this.logger.debug(`🧠 Delivery hint extracted: "${type}" from "${message}"`);
         return type;
       }
     }

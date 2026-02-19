@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+// Strict validation: only allow alphanumeric, hyphens, underscores, dots
+const SAFE_CONTAINER_ID = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,13 +28,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Execute Docker command
-    const command = `docker ${action} ${containerId}`;
-    console.log(`Executing: ${command}`);
+    // Validate containerId to prevent command injection
+    if (!SAFE_CONTAINER_ID.test(containerId) || containerId.length > 128) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid container ID format' },
+        { status: 400 }
+      );
+    }
 
+    // Use execFile (not exec) to prevent shell injection
     try {
-      const { stdout, stderr } = await execAsync(command);
-      
+      const { stdout, stderr } = await execFileAsync('docker', [action, containerId]);
+
       return NextResponse.json({
         success: true,
         action,

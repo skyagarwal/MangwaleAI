@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Brain, Mic, Volume2, MessageSquare, Search, Eye, Zap, 
+  Brain, Mic, Volume2, MessageSquare, Zap,
   CheckCircle, XCircle, AlertCircle, RefreshCw, Activity,
-  Cpu, Settings, TrendingUp, BarChart3, Clock, Globe,
-  Layers, GitBranch, Database, Bot, Sparkles, Gauge,
+  Cpu, Settings, TrendingUp, BarChart3, Clock,
+  GitBranch, Database, Bot, Sparkles, Gauge,
   ArrowRight, ExternalLink, Play, Server, Wifi
 } from 'lucide-react';
 
@@ -253,62 +253,17 @@ export default function AIHubPage() {
         });
       }
 
-      // Check embeddings service via API
-      try {
-        const embRes = await fetch('/api/settings/embeddings/test', { 
-          signal: AbortSignal.timeout(5000) 
-        });
-        const embData = await embRes.json();
-        results.push({
-          name: 'Embeddings',
-          status: embData.success ? 'healthy' : 'degraded',
-          latency: embData.latency || 25,
-          provider: embData.provider || 'BGE',
-          model: embData.model || 'bge-m3',
-          lastChecked: new Date(),
-        });
-      } catch {
-        results.push({
-          name: 'Embeddings',
-          status: 'offline',
-          provider: 'BGE',
-          model: 'bge-m3',
-          lastChecked: new Date(),
-        });
-      }
-
-      // Check Vision service via API
-      try {
-        const visionRes = await fetch('/api/settings/vision/test', { 
-          signal: AbortSignal.timeout(5000) 
-        });
-        const visionData = await visionRes.json();
-        results.push({
-          name: 'Vision AI',
-          status: visionData.success ? 'healthy' : 'degraded',
-          latency: visionData.latency || 180,
-          provider: visionData.provider || 'Ultralytics',
-          model: visionData.model || 'yolov8',
-          lastChecked: new Date(),
-        });
-      } catch {
-        results.push({
-          name: 'Vision AI',
-          status: 'offline',
-          provider: 'Ultralytics',
-          model: 'yolov8',
-          lastChecked: new Date(),
-        });
-      }
-
       setServices(results);
       
-      // Calculate stats
+      // Calculate stats from live service checks
       const healthyCount = results.filter(s => s.status === 'healthy').length;
+      const servicesWithLatency = results.filter(s => s.latency);
       setStats({
-        totalRequests: 125847,
-        avgLatency: Math.round(results.filter(s => s.latency).reduce((sum, s) => sum + (s.latency || 0), 0) / results.filter(s => s.latency).length),
-        successRate: (healthyCount / results.length) * 100,
+        totalRequests: 0,
+        avgLatency: servicesWithLatency.length > 0
+          ? Math.round(servicesWithLatency.reduce((sum, s) => sum + (s.latency || 0), 0) / servicesWithLatency.length)
+          : 0,
+        successRate: results.length > 0 ? (healthyCount / results.length) * 100 : 0,
         activeModels: healthyCount,
       });
     } catch (error) {
@@ -343,8 +298,6 @@ export default function AIHubPage() {
     { name: 'ASR (Speech-to-Text)', icon: Mic, color: 'bg-orange-500', configLink: '/admin/voice', testLink: '/admin/voice', description: 'Voice transcription with Whisper' },
     { name: 'TTS (Text-to-Speech)', icon: Volume2, color: 'bg-pink-500', configLink: '/admin/voice', testLink: '/admin/voice', description: 'Voice synthesis with XTTS v2' },
     { name: 'LLM (vLLM)', icon: MessageSquare, color: 'bg-blue-500', configLink: '/admin/vllm-settings', testLink: '/admin/llm-chat', description: 'Large language model responses' },
-    { name: 'Embeddings', icon: Layers, color: 'bg-green-500', configLink: '/admin/search-config', description: 'Vector embeddings for semantic search' },
-    { name: 'Vision AI', icon: Eye, color: 'bg-cyan-500', configLink: '/admin/vision', testLink: '/admin/vision/monitoring', description: 'Object detection and recognition' },
   ];
 
   return (
@@ -545,26 +498,24 @@ export default function AIHubPage() {
         </div>
       </div>
 
-      {/* Recent Activity */}
+      {/* Service Summary */}
       <div className="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
           <Activity className="w-5 h-5 text-[#059211]" />
-          System Health Timeline
+          Service Status Summary
         </h2>
         <div className="space-y-4">
-          {[
-            { time: '2 min ago', event: 'NLU model processed 45 requests', status: 'success' },
-            { time: '5 min ago', event: 'TTS synthesized 12 audio responses', status: 'success' },
-            { time: '8 min ago', event: 'ASR transcribed 8 voice messages', status: 'success' },
-            { time: '15 min ago', event: 'LLM generated 28 responses', status: 'success' },
-            { time: '1 hour ago', event: 'Vision AI detected 156 objects', status: 'success' },
-          ].map((item, index) => (
+          {services.map((service, index) => (
             <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className={`w-2 h-2 rounded-full ${item.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
+              <div className={`w-2 h-2 rounded-full ${service.status === 'healthy' ? 'bg-green-500' : service.status === 'degraded' ? 'bg-yellow-500' : 'bg-red-500'}`} />
               <div className="flex-1">
-                <span className="text-gray-900">{item.event}</span>
+                <span className="text-gray-900">{service.name}</span>
+                {service.provider && <span className="text-gray-500 text-sm ml-2">({service.provider})</span>}
               </div>
-              <span className="text-sm text-gray-500">{item.time}</span>
+              <span className={`text-sm font-medium ${service.status === 'healthy' ? 'text-green-600' : service.status === 'degraded' ? 'text-yellow-600' : 'text-red-600'}`}>
+                {service.status === 'healthy' ? 'Online' : service.status === 'degraded' ? 'Degraded' : 'Offline'}
+                {service.latency ? ` (${service.latency}ms)` : ''}
+              </span>
             </div>
           ))}
         </div>

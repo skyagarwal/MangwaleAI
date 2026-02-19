@@ -26,7 +26,6 @@ import { AsrModule } from './asr/asr.module'; // ✨ ASR Speech-to-Text
 import { TtsModule } from './tts/tts.module'; // ✨ TTS Text-to-Speech
 import { LlmModule } from './llm/llm.module'; // ✨ LLM Orchestration
 import { SearchModule } from './search/search.module'; // ✨ Semantic & Keyword Search
-// import { VisionModule } from './vision/vision.module'; // ✨ Image AI & Vision (DISABLED - onnxruntime issues)
 import { FlowManagementModule } from './flow-management/flow-management.module'; // ✨ Visual Flow Builder
 import { TrainingModule } from './training/training.module'; // ✨ ML Training & Label Studio
 import { GamificationModule } from './gamification/gamification.module'; // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
@@ -60,6 +59,8 @@ import { VisitorModule } from './visitor/visitor.module'; // ✨ Universal Visit
 import { AuthModule } from './auth/auth.module'; // ✨ Authentication (OTP, Login)
 import { BroadcastModule } from './broadcast/broadcast.module'; // ✨ WhatsApp Broadcast & Campaigns
 import { RedisModule } from './redis/redis.module'; // 🔗 Centralized Redis Connection Pool
+import { AdminModule } from './admin/admin.module'; // ✨ Admin Auth (Login, OTP Password Reset)
+import { ExotelModule } from './exotel/exotel.module'; // ✨ Exotel + Nerve IVR
 // import { ClientLogsController } from './logging/controllers/client-logs.controller'; // ✨ Frontend Logging (FILE MISSING)
 
 @Module({
@@ -121,8 +122,7 @@ import { RedisModule } from './redis/redis.module'; // 🔗 Centralized Redis Co
     TtsModule, // ✨ TTS Text-to-Speech
     LlmModule, // ✨ LLM Orchestration (vLLM + Cloud)
     SearchModule, // ✨ Semantic & Keyword Search
-    // VisionModule, // ✨ Image AI & Vision (PPE, Faces, Objects) - DISABLED
-    FlowManagementModule, // ✨ Visual Flow Builder & Execution
+FlowManagementModule, // ✨ Visual Flow Builder & Execution
     TrainingModule, // ✨ ML Training Pipeline & Label Studio
     GamificationModule, // ✨ 🤖 SELF-LEARNING GAMIFICATION (Database-driven)
     PersonalizationModule, // ✨ AI-Powered User Profiling & Search Personalization
@@ -152,6 +152,8 @@ import { RedisModule } from './redis/redis.module'; // 🔗 Centralized Redis Co
     VisitorModule, // ✨ Universal Visitor Identification (UUID for all users)
     AuthModule, // ✨ Authentication (OTP Login, User Management)
     BroadcastModule, // ✨ WhatsApp Broadcast & Campaign Management
+    AdminModule, // ✨ Admin Auth (Login, Email OTP Password Reset)
+    ExotelModule, // ✨ Exotel + Nerve IVR Controllers
 
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel

@@ -81,6 +81,18 @@ export class TrainingService {
     return job;
   }
 
+  async pauseJob(id: string): Promise<TrainingJob | null> {
+    const job = this.jobs.get(id);
+    if (!job) {
+      return null;
+    }
+
+    job.status = 'pending';
+    this.logger.log(`Paused training job: ${id}`);
+
+    return job;
+  }
+
   private simulateTraining(id: string): void {
     const interval = setInterval(() => {
       const job = this.jobs.get(id);

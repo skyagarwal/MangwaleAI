@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, UseGuards } from '@nestjs/common';
+import { AdminApiKeyGuard } from '../../common/guards/admin-api-key.guard';
 import { DatabaseOptimizationService } from '../services/database-optimization.service';
 
 /**
@@ -10,6 +11,7 @@ import { DatabaseOptimizationService } from '../services/database-optimization.s
  * - Query optimization
  */
 @Controller('admin/db-optimization')
+@UseGuards(AdminApiKeyGuard)
 export class DatabaseOptimizationController {
   constructor(
     private readonly optimizationService: DatabaseOptimizationService,

@@ -16,12 +16,16 @@ export class SettingsService {
    * Get a setting value, falling back to ConfigService (Env) if not in DB
    */
   async getSetting(key: string, defaultValue?: string): Promise<string> {
-    const dbSetting = await this.prisma.systemSettings.findUnique({
-      where: { key },
-    });
-
-    if (dbSetting) {
-      return dbSetting.value;
+    // Try DB lookup if systemSettings table exists
+    try {
+      const dbSetting = await (this.prisma as any).systemSettings?.findUnique({
+        where: { key },
+      });
+      if (dbSetting) {
+        return dbSetting.value;
+      }
+    } catch {
+      // systemSettings table may not exist — fall through to env
     }
 
     // Fallback to env var (convert key to UPPER_SNAKE_CASE)
@@ -33,7 +37,12 @@ export class SettingsService {
    * Get all settings for the dashboard
    */
   async getAllSettings() {
-    const settings = await this.prisma.systemSettings.findMany();
+    let settings: any[] = [];
+    try {
+      settings = await (this.prisma as any).systemSettings?.findMany() || [];
+    } catch {
+      // systemSettings table may not exist
+    }
     
     // Map to a friendly object or array
     // We also want to include values from Env if they aren't in DB yet
@@ -69,12 +78,12 @@ export class SettingsService {
     const results = [];
     for (const setting of settings) {
       try {
-        await this.prisma.systemSettings.upsert({
+        await (this.prisma as any).systemSettings?.upsert({
           where: { key: setting.key },
-          update: { 
+          update: {
             value: setting.value,
             updatedAt: new Date(),
-            updatedBy: 'admin' // TODO: Get actual user
+            updatedBy: 'admin'
           },
           create: {
             key: setting.key,
@@ -147,6 +156,49 @@ export class SettingsService {
       };
     } catch (error) {
       this.logger.error(`TTS test failed: ${error.message}`);
+      return { ok: false, success: false, error: error.message };
+    }
+  }
+
+  async testNlu() {
+    const url = await this.getSetting(
+      'nlu-service-url',
+      this.config.get('NLU_SERVICE_URL', 'http://192.168.0.151:7012'),
+    );
+    try {
+      const response = await axios.get(`${url}/health`, { timeout: 5000 });
+      return {
+        ok: true,
+        success: true,
+        message: 'NLU Service is healthy',
+        provider: 'IndicBERTv2',
+        model: response.data?.model || 'indicbert_active',
+        latency: response.data?.latency || 0,
+      };
+    } catch (error) {
+      this.logger.error(`NLU test failed: ${error.message}`);
+      return { ok: false, success: false, error: error.message };
+    }
+  }
+
+  async testLlm() {
+    const url = await this.getSetting(
+      'vllm-url',
+      this.config.get('VLLM_URL', 'http://localhost:8002'),
+    );
+    try {
+      const response = await axios.get(`${url}/v1/models`, { timeout: 5000 });
+      const models = response.data?.data || [];
+      return {
+        ok: true,
+        success: true,
+        message: 'LLM Service is healthy',
+        provider: 'vLLM',
+        model: models[0]?.id || 'unknown',
+        latency: 0,
+      };
+    } catch (error) {
+      this.logger.error(`LLM test failed: ${error.message}`);
       return { ok: false, success: false, error: error.message };
     }
   }

@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+// Strict validation: only allow alphanumeric, hyphens, underscores, dots
+const SAFE_NAME = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
 
 interface Container {
   id: string;
@@ -23,20 +26,21 @@ interface Container {
 async function getDockerContainers(): Promise<Container[]> {
   try {
     // Get all containers with full details
-    const { stdout } = await execAsync(
-      `docker ps -a --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}|{{.Ports}}|{{.Networks}}|{{.CreatedAt}}'`
+    const { stdout } = await execFileAsync(
+      'docker',
+      ['ps', '-a', '--format', '{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}|{{.Ports}}|{{.Networks}}|{{.CreatedAt}}']
     );
-    
+
     const lines = stdout.trim().split('\n').filter(Boolean);
     const containers: Container[] = [];
-    
+
     for (const line of lines) {
       const [id, name, image, statusRaw, ports, network, createdAt] = line.split('|');
-      
+
       // Parse status
       let status: Container['status'] = 'stopped';
       let health: Container['health'] | undefined;
-      
+
       if (statusRaw.toLowerCase().includes('up')) {
         status = 'running';
         if (statusRaw.toLowerCase().includes('healthy')) {
@@ -49,17 +53,17 @@ async function getDockerContainers(): Promise<Container[]> {
       } else if (statusRaw.toLowerCase().includes('restarting')) {
         status = 'restarting';
       }
-      
+
       // Parse uptime from status
       let uptime = 'N/A';
       const uptimeMatch = statusRaw.match(/Up\s+(.+?)(?:\s+\(|$)/);
       if (uptimeMatch) {
         uptime = uptimeMatch[1].trim();
       }
-      
-      // Check if it's a GPU container
-      const isGpu = await checkGpuContainer(name);
-      
+
+      // Check if it's a GPU container (validate name first)
+      const isGpu = SAFE_NAME.test(name) ? await checkGpuContainer(name) : false;
+
       containers.push({
         id: id.substring(0, 12),
         name,
@@ -75,13 +79,14 @@ async function getDockerContainers(): Promise<Container[]> {
         isGpu,
       });
     }
-    
+
     // Get CPU and memory stats for running containers
     try {
-      const { stdout: statsOut } = await execAsync(
-        `docker stats --no-stream --format '{{.Name}}|{{.CPUPerc}}|{{.MemUsage}}' 2>/dev/null || true`
+      const { stdout: statsOut } = await execFileAsync(
+        'docker',
+        ['stats', '--no-stream', '--format', '{{.Name}}|{{.CPUPerc}}|{{.MemUsage}}']
       );
-      
+
       const statsLines = statsOut.trim().split('\n').filter(Boolean);
       for (const line of statsLines) {
         const [name, cpu, memUsage] = line.split('|');
@@ -94,7 +99,7 @@ async function getDockerContainers(): Promise<Container[]> {
     } catch {
       // Stats might fail for some containers
     }
-    
+
     return containers;
   } catch (error) {
     console.error('Failed to get Docker containers:', error);
@@ -104,8 +109,10 @@ async function getDockerContainers(): Promise<Container[]> {
 
 async function checkGpuContainer(name: string): Promise<boolean> {
   try {
-    const { stdout } = await execAsync(
-      `docker inspect ${name} --format '{{.HostConfig.Runtime}}' 2>/dev/null || echo 'runc'`
+    // Use execFile to prevent shell injection
+    const { stdout } = await execFileAsync(
+      'docker',
+      ['inspect', name, '--format', '{{.HostConfig.Runtime}}']
     );
     return stdout.trim() === 'nvidia';
   } catch {
@@ -115,16 +122,17 @@ async function checkGpuContainer(name: string): Promise<boolean> {
 
 async function getGpuStats() {
   try {
-    const { stdout } = await execAsync(
-      `nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits 2>/dev/null || echo ''`
+    const { stdout } = await execFileAsync(
+      'nvidia-smi',
+      ['--query-gpu=name,memory.used,memory.total,utilization.gpu', '--format=csv,noheader,nounits']
     );
-    
+
     if (!stdout.trim()) {
       return null;
     }
-    
+
     const [name, memUsed, memTotal, utilization] = stdout.trim().split(',').map(s => s.trim());
-    
+
     return {
       name,
       memoryUsed: `${memUsed} MiB`,
@@ -140,21 +148,24 @@ async function getGpuStats() {
 async function getSystemStats() {
   try {
     // Get memory info
-    const { stdout: memInfo } = await execAsync(
-      `free -b | grep Mem | awk '{print $2,$3}'`
+    const { stdout: memInfo } = await execFileAsync(
+      'free', ['-b']
     );
-    const [totalMem, usedMem] = memInfo.trim().split(' ').map(Number);
-    
-    // Get CPU usage
-    const { stdout: cpuInfo } = await execAsync(
-      `top -bn1 | grep 'Cpu(s)' | awk '{print $2}'`
+    const memLine = memInfo.split('\n').find(l => l.startsWith('Mem:'));
+    const memParts = memLine?.split(/\s+/) || [];
+    const totalMem = parseInt(memParts[1]) || 0;
+    const usedMem = parseInt(memParts[2]) || 0;
+
+    // Get CPU usage via /proc/loadavg (no shell needed)
+    const { stdout: loadAvg } = await execFileAsync(
+      'cat', ['/proc/loadavg']
     );
-    const cpuUsage = parseFloat(cpuInfo.trim()) || 0;
-    
+    const cpuUsage = parseFloat(loadAvg.split(' ')[0]) || 0;
+
     return {
       memoryTotal: Math.round(totalMem / (1024 * 1024)), // MB
       memoryUsed: Math.round(usedMem / (1024 * 1024)), // MB
-      cpuUsage: Math.round(cpuUsage),
+      cpuUsage: Math.round(cpuUsage * 100 / 8), // Rough estimate
     };
   } catch {
     return {
@@ -172,16 +183,18 @@ export async function GET() {
       getGpuStats(),
       getSystemStats(),
     ]);
-    
+
     // Count image count
     let imageCount = 0;
     try {
-      const { stdout } = await execAsync(`docker images --format '{{.ID}}' | wc -l`);
-      imageCount = parseInt(stdout.trim()) || 0;
+      const { stdout } = await execFileAsync(
+        'docker', ['images', '--format', '{{.ID}}']
+      );
+      imageCount = stdout.trim().split('\n').filter(Boolean).length;
     } catch {
       imageCount = containers.length;
     }
-    
+
     const stats = {
       totalContainers: containers.length,
       runningContainers: containers.filter(c => c.status === 'running').length,

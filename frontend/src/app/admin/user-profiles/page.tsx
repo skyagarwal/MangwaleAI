@@ -68,7 +68,7 @@ interface ConversationInsight {
   created_at: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3200';
+const API_BASE = '';
 
 export default function UserProfilesPage() {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -106,8 +106,6 @@ export default function UserProfilesPage() {
     } catch (err) {
       console.error('Failed to fetch profiles:', err);
       setError('Failed to load user profiles');
-      // Load sample data on error
-      loadSampleData();
     } finally {
       setLoading(false);
     }
@@ -122,15 +120,6 @@ export default function UserProfilesPage() {
       }
     } catch (err) {
       console.error('Failed to fetch stats:', err);
-      // Set sample stats
-      setStats({
-        total_profiles: 1,
-        guest_profiles: 0,
-        registered_profiles: 1,
-        avg_completeness: 80,
-        profiles_today: 0,
-        profiles_this_week: 0,
-      });
     }
   };
 
@@ -145,42 +134,6 @@ export default function UserProfilesPage() {
       console.error('Failed to fetch insights:', err);
       setInsights([]);
     }
-  };
-
-  const loadSampleData = () => {
-    setProfiles([
-      {
-        id: 1,
-        user_id: 1,
-        phone: '+919876543210',
-        dietary_type: 'veg',
-        dietary_restrictions: ['no onion'],
-        allergies: null,
-        favorite_cuisines: { 'North Indian': 5, 'South Indian': 3 },
-        disliked_ingredients: ['capsicum'],
-        avg_order_value: 350,
-        order_frequency: 'weekly',
-        price_sensitivity: 'medium',
-        preferred_meal_times: { lunch: '12:30', dinner: '20:00' },
-        communication_tone: 'friendly',
-        personality_traits: { patience: 0.7, detail_oriented: 0.8 },
-        profile_completeness: 80,
-        last_conversation_analyzed: '2025-12-18T10:30:00Z',
-        created_at: '2025-11-19T18:54:54Z',
-        updated_at: '2025-12-18T10:30:00Z',
-        is_guest: false,
-        total_conversations: 45,
-        total_orders: 12,
-      },
-    ]);
-    setStats({
-      total_profiles: 1,
-      guest_profiles: 0,
-      registered_profiles: 1,
-      avg_completeness: 80,
-      profiles_today: 0,
-      profiles_this_week: 0,
-    });
   };
 
   useEffect(() => {

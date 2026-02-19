@@ -186,7 +186,7 @@ export class RagDocumentService {
           indexed++;
         } catch (err) {
           errors.push(`Chunk ${chunk.chunkIndex}: indexing failed`);
-          this.logger.warn(`Failed to index chunk ${chunk.chunkIndex}: ${err.message}`);
+          this.logger.warn(`Failed to index chunk ${chunk.chunkIndex}: ${err.message} ${err.response?.data ? JSON.stringify(err.response.data) : ''}`);
         }
       }
 

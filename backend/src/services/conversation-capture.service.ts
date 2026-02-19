@@ -209,28 +209,24 @@ export class ConversationCaptureService {
     nluConfidence?: number;
   }) {
     try {
-      await this.prisma.$executeRawUnsafe(`
+      const entitiesJson = data.nluEntities ? JSON.stringify(data.nluEntities) : null;
+      const language = data.messageLanguage || 'en';
+      const confidence = data.nluConfidence || 0.9;
+
+      await this.prisma.$executeRaw`
         INSERT INTO nlu_training_data (
           text, intent,
           entities, language,
           review_status, source,
           confidence
         ) VALUES (
-          $1, $2,
-          $3::jsonb, $4,
-          $5, $6,
-          $7
+          ${data.userMessage}, ${data.nluIntent},
+          ${entitiesJson}::jsonb, ${language},
+          ${'approved'}, ${'production'},
+          ${confidence}
         )
         ON CONFLICT (text) DO NOTHING
-      `,
-        data.userMessage,
-        data.nluIntent,
-        data.nluEntities ? JSON.stringify(data.nluEntities) : null,
-        data.messageLanguage || 'en',
-        'approved', // Auto-approved
-        'production', // Real user data
-        data.nluConfidence || 0.9
-      );
+      `;
 
       this.logger.log(`Created training sample: ${data.nluIntent}`);
     } catch (error) {
@@ -256,31 +252,30 @@ export class ConversationCaptureService {
     }
   ) {
     try {
-      await this.prisma.$executeRawUnsafe(`
+      const userFeedback = feedback.userFeedback || null;
+      const userCorrection = feedback.userCorrection || null;
+      const userClickedResult = feedback.userClickedResult || null;
+      const userCompletedAction = feedback.userCompletedAction !== undefined ? feedback.userCompletedAction : null;
+
+      await this.prisma.$executeRaw`
         UPDATE conversation_logs
         SET
-          user_feedback = $1,
-          user_correction = $2,
-          user_clicked_result = $3,
-          user_completed_action = $4,
+          user_feedback = ${userFeedback},
+          user_correction = ${userCorrection},
+          user_clicked_result = ${userClickedResult},
+          user_completed_action = ${userCompletedAction},
           -- If user corrected, mark for review
           review_status = CASE
-            WHEN $1 = 'correction' THEN 'needs-review'
-            WHEN $1 = 'negative' THEN 'needs-review'
+            WHEN ${userFeedback} = 'correction' THEN 'needs-review'
+            WHEN ${userFeedback} = 'negative' THEN 'needs-review'
             ELSE review_status
           END,
           review_priority = CASE
-            WHEN $1 IN ('correction', 'negative') THEN 1
+            WHEN ${userFeedback} IN ('correction', 'negative') THEN 1
             ELSE review_priority
           END
-        WHERE id = $5
-      `,
-        feedback.userFeedback || null,
-        feedback.userCorrection || null,
-        feedback.userClickedResult || null,
-        feedback.userCompletedAction !== undefined ? feedback.userCompletedAction : null,
-        conversationId
-      );
+        WHERE id = ${conversationId}
+      `;
 
       this.logger.log(`Updated feedback for conversation ${conversationId}: ${feedback.userFeedback}`);
       return { success: true };
@@ -297,8 +292,7 @@ export class ConversationCaptureService {
    */
   async getTrainingQueueStats() {
     try {
-      // @ts-ignore - Prisma queryRawUnsafe type inference issue
-      const stats = await this.prisma.$queryRawUnsafe(`
+      const stats = await this.prisma.$queryRaw`
         SELECT
           COUNT(*) FILTER (WHERE review_status = 'needs-review') as needs_review_count,
           COUNT(*) FILTER (WHERE review_status = 'auto-approved') as auto_approved_count,
@@ -309,7 +303,7 @@ export class ConversationCaptureService {
           COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '24 hours') as last_24h_count
         FROM conversation_logs
         WHERE is_training_candidate = TRUE
-      `);
+      `;
 
       return stats[0];
     } catch (error) {
@@ -331,45 +325,38 @@ export class ConversationCaptureService {
     limit?: number;
   }) {
     try {
-      let query = `
+      const reviewStatuses = filters.reviewStatus || ['approved'];
+      const conditions: Prisma.Sql[] = [
+        Prisma.sql`review_status = ANY(${reviewStatuses}::text[])`,
+      ];
+
+      if (filters.languages && filters.languages.length > 0) {
+        conditions.push(Prisma.sql`language = ANY(${filters.languages}::text[])`);
+      }
+
+      if (filters.dateFrom) {
+        conditions.push(Prisma.sql`created_at >= ${filters.dateFrom}`);
+      }
+
+      if (filters.dateTo) {
+        conditions.push(Prisma.sql`created_at <= ${filters.dateTo}`);
+      }
+
+      const whereClause = Prisma.join(conditions, ' AND ');
+      const limitClause = filters.limit
+        ? Prisma.sql`LIMIT ${filters.limit}`
+        : Prisma.empty;
+
+      const samples = await this.prisma.$queryRaw`
         SELECT
           text, intent,
           entities, language,
           confidence, source
         FROM nlu_training_data
-        WHERE review_status = ANY($1::text[])
-      `;
-
-      const params: any[] = [filters.reviewStatus || ['approved']];
-      let paramIndex = 2;
-
-      if (filters.languages && filters.languages.length > 0) {
-        query += ` AND language = ANY($${paramIndex}::text[])`;
-        params.push(filters.languages);
-        paramIndex++;
-      }
-
-      if (filters.dateFrom) {
-        query += ` AND created_at >= $${paramIndex}`;
-        params.push(filters.dateFrom);
-        paramIndex++;
-      }
-
-      if (filters.dateTo) {
-        query += ` AND created_at <= $${paramIndex}`;
-        params.push(filters.dateTo);
-        paramIndex++;
-      }
-
-      query += ` ORDER BY created_at DESC`;
-
-      if (filters.limit) {
-        query += ` LIMIT $${paramIndex}`;
-        params.push(filters.limit);
-      }
-
-      // @ts-ignore - Prisma queryRawUnsafe type inference issue
-      const samples = await this.prisma.$queryRawUnsafe(query, ...params) as any;
+        WHERE ${whereClause}
+        ORDER BY created_at DESC
+        ${limitClause}
+      ` as any;
 
       this.logger.log(`Exported ${samples.length} training samples`);
       return samples;

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 
 export interface UsageTrackingData {
@@ -266,38 +267,39 @@ export class LlmUsageTrackingService {
       totalTokens: number;
     }>
   > {
-    const whereClause: any = {};
+    // Whitelist PostgreSQL date truncation based on groupBy
+    const ALLOWED_TRUNC: Record<string, string> = {
+      'day': 'DATE(created_at)',
+      'week': "DATE_TRUNC('week', created_at)",
+      'month': "DATE_TRUNC('month', created_at)",
+    };
+    const truncFunction = Prisma.raw(ALLOWED_TRUNC[groupBy] || ALLOWED_TRUNC['month']);
 
-    if (startDate || endDate) {
-      whereClause.createdAt = {};
-      if (startDate) whereClause.createdAt.gte = startDate;
-      if (endDate) whereClause.createdAt.lte = endDate;
+    // Build WHERE conditions safely
+    const conditions: Prisma.Sql[] = [];
+    if (startDate) {
+      conditions.push(Prisma.sql`created_at >= ${startDate}`);
+    }
+    if (endDate) {
+      conditions.push(Prisma.sql`created_at <= ${endDate}`);
     }
 
-    // PostgreSQL date truncation based on groupBy
-    const truncFunction =
-      groupBy === 'day'
-        ? 'DATE(created_at)'
-        : groupBy === 'week'
-          ? "DATE_TRUNC('week', created_at)"
-          : "DATE_TRUNC('month', created_at)";
+    const whereClause = conditions.length > 0
+      ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
+      : Prisma.empty;
 
-    // @ts-ignore - Prisma queryRawUnsafe type inference issue
-    const results = await this.prisma.$queryRawUnsafe(`
-      SELECT 
+    const results = await this.prisma.$queryRaw`
+      SELECT
         ${truncFunction} as date,
         SUM(cost)::DECIMAL as total_cost,
         COUNT(*)::INT as total_requests,
         SUM(total_tokens)::INT as totalTokens
       FROM llm_model_usage
-      ${startDate || endDate ? 'WHERE' : ''}
-      ${startDate ? `created_at >= '${startDate.toISOString()}'` : ''}
-      ${startDate && endDate ? 'AND' : ''}
-      ${endDate ? `created_at <= '${endDate.toISOString()}'` : ''}
+      ${whereClause}
       GROUP BY ${truncFunction}
       ORDER BY date DESC
       LIMIT 100
-    `) as any;
+    ` as any;
 
     return results.map((r) => ({
       date: r.date.toISOString().split('T')[0],

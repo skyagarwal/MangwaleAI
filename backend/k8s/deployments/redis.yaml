@@ -85,7 +85,7 @@ data:
     
     # Memory settings
     maxmemory 512mb
-    maxmemory-policy allkeys-lru
+    maxmemory-policy noeviction
     
     # Persistence
     save 900 1

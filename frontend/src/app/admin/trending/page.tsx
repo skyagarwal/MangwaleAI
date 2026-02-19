@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
+import {
   TrendingUp, Clock, MapPin, RefreshCw, BarChart3, Search, Filter,
   ArrowUp, ArrowDown, Flame, Package, ShoppingCart, Car, Utensils,
-  Activity, Target, Calendar, Download, Users
+  Activity, Target, Calendar, Download, Users, AlertTriangle
 } from 'lucide-react';
 
 interface TrendingItem {
@@ -38,34 +38,10 @@ export default function TrendingPage() {
   const [searchFilter, setSearchFilter] = useState('');
   const [moduleFilter, setModuleFilter] = useState<string>('all');
 
-  const [trendingQueries, setTrendingQueries] = useState<TrendingItem[]>([
-    { query: 'pizza delivery', count: 2450, trend: 245, module: 'Food', velocity: 'rising' },
-    { query: 'grocery home delivery', count: 1890, trend: 189, module: 'Ecom', velocity: 'rising' },
-    { query: 'urgent parcel', count: 1560, trend: 156, module: 'Parcel', velocity: 'rising' },
-    { query: 'airport taxi', count: 1340, trend: 134, module: 'Ride', velocity: 'stable' },
-    { query: 'medicine delivery', count: 980, trend: 98, module: 'Health', velocity: 'rising' },
-    { query: 'biryani near me', count: 876, trend: 87, module: 'Food', velocity: 'rising' },
-    { query: 'cab booking', count: 765, trend: 45, module: 'Ride', velocity: 'stable' },
-    { query: 'track my order', count: 654, trend: -12, module: 'General', velocity: 'falling' },
-    { query: 'vegetable delivery', count: 543, trend: 67, module: 'Ecom', velocity: 'rising' },
-    { query: 'covid test home', count: 432, trend: -25, module: 'Health', velocity: 'falling' },
-  ]);
-
-  const [locationTrends, setLocationTrends] = useState<LocationTrend[]>([
-    { location: 'Indore', top_queries: ['pizza', 'grocery', 'medicine'], total_searches: 5670, change: 23 },
-    { location: 'Bhopal', top_queries: ['cab', 'food', 'parcel'], total_searches: 4320, change: 15 },
-    { location: 'Mumbai', top_queries: ['late night food', 'cab'], total_searches: 8900, change: 34 },
-    { location: 'Delhi', top_queries: ['grocery', 'medicine'], total_searches: 7650, change: 28 },
-    { location: 'Bangalore', top_queries: ['food delivery', 'grocery'], total_searches: 6540, change: 19 },
-  ]);
-
-  const [productTrends, setProductTrends] = useState<ProductTrend[]>([
-    { product_id: '1', name: 'Margherita Pizza', category: 'Food', orders: 345, trend: 156, revenue: 69000 },
-    { product_id: '2', name: 'Chicken Biryani', category: 'Food', orders: 298, trend: 89, revenue: 59600 },
-    { product_id: '3', name: 'Onions (1kg)', category: 'Grocery', orders: 567, trend: 45, revenue: 17010 },
-    { product_id: '4', name: 'Milk Packet', category: 'Grocery', orders: 890, trend: 23, revenue: 44500 },
-    { product_id: '5', name: 'Cough Syrup', category: 'Medicine', orders: 234, trend: 78, revenue: 28080 },
-  ]);
+  const [trendingQueries, setTrendingQueries] = useState<TrendingItem[]>([]);
+  const [locationTrends, setLocationTrends] = useState<LocationTrend[]>([]);
+  const [productTrends, setProductTrends] = useState<ProductTrend[]>([]);
+  const [dataSource, setDataSource] = useState<'loading' | 'api' | 'empty'>('loading');
 
   const loadData = async () => {
     setLoading(true);
@@ -76,9 +52,13 @@ export default function TrendingPage() {
         if (data.queries) setTrendingQueries(data.queries);
         if (data.locations) setLocationTrends(data.locations);
         if (data.products) setProductTrends(data.products);
+        setDataSource('api');
+      } else {
+        setDataSource('empty');
       }
     } catch (error) {
       console.error('Error loading trending data:', error);
+      setDataSource('empty');
     } finally {
       setLoading(false);
     }
@@ -160,7 +140,26 @@ export default function TrendingPage() {
         </div>
       </div>
 
+      {/* Mock data warning */}
+      {dataSource === 'api' && (
+        <div className="bg-yellow-900/30 border border-yellow-700 rounded-xl p-3 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+          <p className="text-yellow-300 text-sm">
+            Backend trending endpoints currently return sample data. Connect to real search_log analytics for live metrics.
+          </p>
+        </div>
+      )}
+
+      {dataSource === 'empty' && !loading && (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
+          <Search className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-300 font-medium">No trending data available</p>
+          <p className="text-gray-500 text-sm mt-1">Trending analytics will appear once search activity is tracked.</p>
+        </div>
+      )}
+
       {/* Stats Row */}
+      {trendingQueries.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <div className="flex items-center justify-between">
@@ -169,9 +168,6 @@ export default function TrendingPage() {
           </div>
           <p className="text-2xl font-bold mt-2 text-white">
             {trendingQueries.reduce((acc, q) => acc + q.count, 0).toLocaleString()}
-          </p>
-          <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
-            <ArrowUp className="w-3 h-3" /> +12.5% from last period
           </p>
         </div>
 
@@ -197,15 +193,14 @@ export default function TrendingPage() {
 
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Unique Users</span>
+            <span className="text-gray-400">Query Count</span>
             <Users className="w-5 h-5 text-purple-400" />
           </div>
-          <p className="text-2xl font-bold mt-2 text-white">2,456</p>
-          <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
-            <ArrowUp className="w-3 h-3" /> +8.3% from last period
-          </p>
+          <p className="text-2xl font-bold mt-2 text-white">{trendingQueries.length}</p>
+          <p className="text-xs text-gray-500 mt-1">Tracked queries</p>
         </div>
       </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-gray-700 pb-2">
@@ -382,51 +377,44 @@ export default function TrendingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <h3 className="text-lg font-semibold text-white mb-4">Search Volume by Module</h3>
-            <div className="space-y-4">
-              {[
-                { module: 'Food', percent: 35, color: 'bg-orange-500' },
-                { module: 'Ecom', percent: 28, color: 'bg-blue-500' },
-                { module: 'Ride', percent: 18, color: 'bg-green-500' },
-                { module: 'Parcel', percent: 12, color: 'bg-purple-500' },
-                { module: 'Health', percent: 7, color: 'bg-red-500' },
-              ].map((item) => (
-                <div key={item.module}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-300">{item.module}</span>
-                    <span className="text-gray-400">{item.percent}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div className={`h-full ${item.color}`} style={{ width: `${item.percent}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
+            {trendingQueries.length > 0 ? (
+              <div className="space-y-4">
+                {Object.entries(
+                  trendingQueries.reduce((acc, q) => {
+                    acc[q.module] = (acc[q.module] || 0) + q.count;
+                    return acc;
+                  }, {} as Record<string, number>)
+                )
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([module, count]) => {
+                    const total = trendingQueries.reduce((s, q) => s + q.count, 0);
+                    const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+                    return (
+                      <div key={module}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-300">{module}</span>
+                          <span className="text-gray-400">{percent}%</span>
+                        </div>
+                        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-pink-500" style={{ width: `${percent}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">No data available</p>
+            )}
           </div>
 
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <h3 className="text-lg font-semibold text-white mb-4">Peak Hours</h3>
-            <div className="space-y-3">
-              {[
-                { hour: '12:00 - 14:00', label: 'Lunch Rush', percent: 85 },
-                { hour: '19:00 - 21:00', label: 'Dinner Peak', percent: 92 },
-                { hour: '09:00 - 11:00', label: 'Morning Orders', percent: 65 },
-                { hour: '15:00 - 17:00', label: 'Afternoon', percent: 45 },
-                { hour: '22:00 - 00:00', label: 'Late Night', percent: 55 },
-              ].map((item) => (
-                <div key={item.hour} className="flex items-center gap-4">
-                  <div className="w-28">
-                    <p className="text-white text-sm">{item.hour}</p>
-                    <p className="text-gray-500 text-xs">{item.label}</p>
-                  </div>
-                  <div className="flex-1 h-4 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-pink-500 to-pink-600"
-                      style={{ width: `${item.percent}%` }}
-                    />
-                  </div>
-                  <span className="text-gray-400 text-sm w-10">{item.percent}%</span>
-                </div>
-              ))}
+            <div className="text-center py-8">
+              <Clock className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-400">Peak hours analytics not yet available</p>
+              <p className="text-gray-600 text-sm mt-1">
+                Requires hourly search volume aggregation from search_logs table.
+              </p>
             </div>
           </div>
         </div>

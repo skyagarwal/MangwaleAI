@@ -42,36 +42,28 @@ interface TestResult {
   }>;
 }
 
-// Entity types defined in backend (mirrored for display)
+// REAL NER entity types from MuRIL BERT model (v7) - 11 BIO labels
+// Model: Mercury NER service at 192.168.0.151:7011
 const ENTITY_TYPES: EntityType[] = [
-  { type: 'food_reference', description: 'Any food/dish mention', examples: ['pizza', 'biryani', 'paneer tikka', 'butter chicken', 'momos'], priority: 100, requiresResolution: true, patternCount: 0 },
-  { type: 'store_reference', description: 'Restaurant/store name or description', examples: ['dominos', 'that chinese place', 'nearby dhaba', 'hotel taj'], priority: 100, requiresResolution: true, patternCount: 0 },
-  { type: 'location_reference', description: 'Location mention - address, landmark', examples: ['nashik', 'home', 'office', 'cbs circle', 'near college road'], priority: 100, requiresResolution: true, patternCount: 0 },
-  { type: 'quantity', description: 'Numeric quantity or amount', examples: ['2', '5', 'one', 'do', 'teen'], priority: 95, requiresResolution: false, patternCount: 1 },
-  { type: 'cooking_instructions', description: 'Cooking preferences and instructions', examples: ['well done', 'medium spicy', 'extra cheese', 'less oil', 'no onion'], priority: 90, requiresResolution: false, patternCount: 3 },
-  { type: 'delivery_time_slot', description: 'Specific delivery time window or urgency', examples: ['between 7-8pm', 'by 6pm', 'in 30 minutes', 'asap', 'abhi jaldi'], priority: 90, requiresResolution: false, patternCount: 5 },
-  { type: 'dietary_restrictions', description: 'Dietary preferences and restrictions', examples: ['veg', 'non-veg', 'jain', 'gluten-free', 'no egg', 'halal'], priority: 90, requiresResolution: false, patternCount: 4 },
-  { type: 'quantity_unit', description: 'Quantity with unit specification', examples: ['dozen', 'half plate', 'full plate', 'large', 'medium', 'small'], priority: 90, requiresResolution: false, patternCount: 4 },
-  { type: 'multi_store_coordination', description: 'References to multiple stores in single order', examples: ['from dominos and kfc', 'pizza from X and burger from Y'], priority: 85, requiresResolution: true, patternCount: 2 },
-  { type: 'address_components', description: 'Structured address components', examples: ['flat 201', 'building B', 'near CBS circle', '2nd floor'], priority: 85, requiresResolution: false, patternCount: 5 },
-  { type: 'time_reference', description: 'General time expressions', examples: ['now', 'later', 'evening', 'night', 'abhi', 'baad mein'], priority: 80, requiresResolution: false, patternCount: 2 },
-  { type: 'preference', description: 'User preferences (spice level, cooking style)', examples: ['spicy', 'mild', 'fried', 'grilled', 'teekha'], priority: 80, requiresResolution: false, patternCount: 0 },
-  { type: 'price_reference', description: 'Budget or price mentions', examples: ['under 500', 'cheap', 'sasta', '200 rupees'], priority: 75, requiresResolution: false, patternCount: 3 },
-  { type: 'person_reference', description: 'Person names or references', examples: ['Rahul', 'my friend', 'for mom', 'mere liye'], priority: 70, requiresResolution: false, patternCount: 2 },
-  { type: 'order_reference', description: 'Reference to previous orders', examples: ['last order', 'previous order', 'order #123', 'pichla order'], priority: 70, requiresResolution: true, patternCount: 3 },
-  { type: 'phone', description: 'Phone numbers', examples: ['9876543210', '+91 9876543210'], priority: 60, requiresResolution: false, patternCount: 2 },
-  { type: 'email', description: 'Email addresses', examples: ['user@example.com'], priority: 60, requiresResolution: false, patternCount: 1 },
+  { type: 'O', description: 'Outside - not an entity', examples: ['want', 'please', 'from', 'the', 'give me'], priority: 0, requiresResolution: false, patternCount: 0 },
+  { type: 'B-FOOD', description: 'Beginning of a food/dish entity', examples: ['pizza', 'biryani', 'paneer tikka', 'butter chicken', 'momos'], priority: 100, requiresResolution: true, patternCount: 0 },
+  { type: 'I-FOOD', description: 'Inside (continuation) of a food entity', examples: ['tikka (in paneer tikka)', 'chicken (in butter chicken)'], priority: 100, requiresResolution: false, patternCount: 0 },
+  { type: 'B-STORE', description: 'Beginning of a store/restaurant entity', examples: ['dominos', 'hotel taj', 'paradise', 'kfc'], priority: 100, requiresResolution: true, patternCount: 0 },
+  { type: 'I-STORE', description: 'Inside (continuation) of a store entity', examples: ['taj (in hotel taj)', 'hut (in pizza hut)'], priority: 100, requiresResolution: false, patternCount: 0 },
+  { type: 'B-LOC', description: 'Beginning of a location entity', examples: ['nashik', 'cbs circle', 'college road', 'home'], priority: 95, requiresResolution: true, patternCount: 0 },
+  { type: 'I-LOC', description: 'Inside (continuation) of a location entity', examples: ['circle (in cbs circle)', 'road (in college road)'], priority: 95, requiresResolution: false, patternCount: 0 },
+  { type: 'B-QTY', description: 'Beginning of a quantity entity', examples: ['2', 'five', 'do', 'teen', 'half plate'], priority: 90, requiresResolution: false, patternCount: 0 },
+  { type: 'I-QTY', description: 'Inside (continuation) of a quantity entity', examples: ['plate (in half plate)', 'dozen (in ek dozen)'], priority: 90, requiresResolution: false, patternCount: 0 },
+  { type: 'B-PREF', description: 'Beginning of a preference entity', examples: ['spicy', 'extra cheese', 'less oil', 'veg'], priority: 80, requiresResolution: false, patternCount: 0 },
+  { type: 'I-PREF', description: 'Inside (continuation) of a preference entity', examples: ['cheese (in extra cheese)', 'oil (in less oil)'], priority: 80, requiresResolution: false, patternCount: 0 },
 ];
 
 const PRIORITY_COLORS: Record<string, string> = {
   '100': 'bg-red-900/30 text-red-300 border-red-700',
   '95': 'bg-orange-900/30 text-orange-300 border-orange-700',
   '90': 'bg-yellow-900/30 text-yellow-300 border-yellow-700',
-  '85': 'bg-blue-900/30 text-blue-300 border-blue-700',
   '80': 'bg-purple-900/30 text-purple-300 border-purple-700',
-  '75': 'bg-cyan-900/30 text-cyan-300 border-cyan-700',
-  '70': 'bg-green-900/30 text-green-300 border-green-700',
-  '60': 'bg-gray-800/50 text-gray-300 border-gray-600',
+  '0': 'bg-gray-800/50 text-gray-300 border-gray-600',
 };
 
 export default function NerEntitiesPage() {
@@ -90,11 +82,23 @@ export default function NerEntitiesPage() {
   const checkNerHealth = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/learning/ner/health');
+      // Use the NLU health endpoint which checks Mercury services
+      const response = await fetch('/api/admin/learning/nlu-health');
       const data = await response.json();
-      setNerHealth(data);
+      if (data.success && data.data) {
+        // NER runs on Mercury alongside NLU
+        const mercuryStatus = data.data.mercury_nlu;
+        setNerHealth({
+          ok: mercuryStatus?.status === 'ok' || mercuryStatus?.status === 'healthy',
+          modelLoaded: true,
+          entityTypes: 11,
+          error: mercuryStatus?.error,
+        });
+      } else {
+        setNerHealth({ ok: false, error: 'NER service health check unavailable. NER runs on Mercury (192.168.0.151:7011).' });
+      }
     } catch {
-      setNerHealth({ ok: false, error: 'Failed to reach NER service' });
+      setNerHealth({ ok: false, error: 'Failed to reach NER service. NER runs on Mercury (192.168.0.151:7011).' });
     } finally {
       setLoading(false);
     }
@@ -110,8 +114,15 @@ export default function NerEntitiesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: testText }),
       });
-      const data = await response.json();
-      setTestResult(data);
+      if (response.ok) {
+        const data = await response.json();
+        setTestResult({
+          text: testText,
+          entities: Array.isArray(data.entities) ? data.entities : [],
+        });
+      } else {
+        setTestResult({ text: testText, entities: [] });
+      }
     } catch {
       setTestResult({ text: testText, entities: [] });
     } finally {
@@ -138,7 +149,7 @@ export default function NerEntitiesPage() {
         <div>
           <h1 className="text-2xl font-bold text-white">NER Entity Management</h1>
           <p className="text-gray-400 mt-1">
-            {ENTITY_TYPES.length} entity types configured for Named Entity Recognition
+            {ENTITY_TYPES.length} BIO labels configured for NER (MuRIL BERT v7, F1=0.95)
           </p>
         </div>
         <button
@@ -213,9 +224,11 @@ export default function NerEntitiesPage() {
               Input: <span className="text-white">{testResult.text}</span>
             </div>
             {testResult.entities.length === 0 ? (
-              <div className="flex items-center gap-2 text-yellow-400 text-sm">
-                <AlertTriangle className="w-4 h-4" />
-                No entities extracted
+              <div className="flex flex-col gap-2 text-yellow-400 text-sm">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  {(testResult as any)._note || 'No entities extracted'}
+                </div>
               </div>
             ) : (
               <div className="flex flex-wrap gap-2 mt-2">

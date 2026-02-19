@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, Bot, User, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Send, Bot, User, Loader2, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -96,16 +96,31 @@ export default function AgentTestingPage() {
     const startTime = Date.now();
 
     try {
-      // Simulate NLU classification (in real scenario, call backend)
-      // For now, just show the query was received
+      // Call NLU classify endpoint on the NestJS backend via proxy
+      const response = await fetch('/api/nlu/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: query.trim(),
+          context: { module: selectedAgent.replace('agent.', '') },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`NLU classification failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const elapsed = Date.now() - startTime;
+
       const result: TestResult = {
         agent: selectedAgent,
         query: query.trim(),
-        intent: 'search_' + moduleAgents.find(a => a.id === selectedAgent)?.name.toLowerCase().split(' ')[0],
-        entities: { location: 'nearby', category: 'general' },
-        confidence: 0.85 + Math.random() * 0.10,
-        response: `Agent ${moduleAgents.find(a => a.id === selectedAgent)?.name} received your query: "${query}"`,
-        timestamp: Date.now() - startTime,
+        intent: data.intent || data.classification?.intent || 'unknown',
+        entities: data.entities || data.classification?.entities || {},
+        confidence: data.confidence || data.classification?.confidence || 0,
+        response: data.response || `Intent: ${data.intent || 'unknown'} (${((data.confidence || 0) * 100).toFixed(1)}% confidence)`,
+        timestamp: elapsed,
       };
 
       setResults(prev => [result, ...prev]);
@@ -132,8 +147,8 @@ export default function AgentTestingPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">🧪 Agent Testing Lab</h1>
-        <p className="text-gray-600 mt-2">Test module-specific AI agents with custom queries</p>
+        <h1 className="text-3xl font-bold text-gray-900">Agent Testing Lab</h1>
+        <p className="text-gray-600 mt-2">Test NLU classification against the live backend (IndicBERTv2 + LLM fallback)</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

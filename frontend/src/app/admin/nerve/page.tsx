@@ -72,18 +72,10 @@ export default function NervePage() {
 
   const loadHealth = async () => {
     try {
-      // Try Mercury Nerve directly first
       const response = await fetch('/api/exotel/nerve/health');
       if (response.ok) {
         const data = await response.json();
         setHealth(data);
-      } else {
-        // Fallback to direct Mercury
-        const directRes = await fetch('http://localhost:7100/health');
-        if (directRes.ok) {
-          const data = await directRes.json();
-          setHealth(data);
-        }
       }
     } catch (error) {
       console.error('Failed to load Nerve health:', error);

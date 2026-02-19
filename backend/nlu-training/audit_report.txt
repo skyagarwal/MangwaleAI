@@ -1,0 +1,153 @@
+============================================================
+NLU TRAINING DATA AUDIT REPORT
+============================================================
+
+Original samples: 4587
+Cleaned samples: 4572
+Removed: 15
+Relabeled: 91
+
+--- REMOVED (15) ---
+  [ambiguous/garbage] "Tomorrow" (greeting)
+  [garbled] "कर दो कि अ क्यों कि यह काट कहां से आ गया है इसमें अ कि यह काट कहां से आ गया है इ" (chitchat)
+  [ambiguous/garbage] "asdfghjkl" (chitchat)
+  [ambiguous/garbage] "i am" (greeting)
+  [ambiguous/garbage] "options" (greeting)
+  [ambiguous/garbage] "ge" (greeting)
+  [not_a_greeting] "I apologize for missing your call earlier. Could you please let me know what it " (greeting)
+  [ambiguous/garbage] "123456" (chitchat)
+  [garbled] "कर दो हुआ है कि आप लोग हैं हुआ था" (greeting)
+  [ambiguous/garbage] "bike" (greeting)
+  [ambiguous/garbage] "documents" (greeting)
+  [ambiguous/garbage] "enna vishayam" (greeting)
+  [ambiguous/garbage] "@#$%^&*()" (chitchat)
+  [ambiguous/garbage] "start" (greeting)
+  [ambiguous/garbage] "1,2" (greeting)
+
+--- RELABELED (91) ---
+  "manager se baat karni hai" : complaint → human_takeover
+  "कोई हेल्प करो" : complaint → help
+  "step by step batao" : complaint → help
+  "location" : greeting → manage_address
+  "sandwich" : greeting → order_food
+  "add 1 to cart" : search_product → add_to_cart
+  "thank you so much" : chitchat → feedback
+  "दाम कम करो थोड़ा" : complaint → check_offers
+  "koi help kar do" : complaint → help
+  "explore restaurants" : search_product → browse_stores
+  "Bahut mehenga hai kam kar do" : complaint → check_offers
+  "great help" : chitchat → feedback
+  "what restaurants are available" : search_product → browse_stores
+  "breakfast" : greeting → order_food
+  "contact number" : help → human_takeover
+  "customer support" : help → human_takeover
+  "you're the best" : chitchat → feedback
+  "great service" : chitchat → feedback
+  "support team contact karo" : complaint → human_takeover
+  "how to add money" : complaint → help
+  "hindi aati hai kya" : greeting → help
+  "support shi baat karaychi ahe" : complaint → human_takeover
+  "very satisfied" : chitchat → feedback
+  "help me out please" : complaint → help
+  "office" : greeting → manage_address
+  "hungry" : greeting → order_food
+  "great assistant" : chitchat → feedback
+  "best bot ever" : chitchat → feedback
+  "real person se baat karo" : complaint → human_takeover
+  "guide me through this" : complaint → help
+  "Best offer de sakte ho" : complaint → check_offers
+  "amazing service" : chitchat → feedback
+  "koi guide kar do" : complaint → help
+  "smart assistant" : chitchat → feedback
+  "aur bata kya chal raha hai" : greeting → chitchat
+  "Can you match competitor's price" : complaint → check_offers
+  "great job" : chitchat → feedback
+  "urgent help chahiye" : complaint → help
+  "kaise theek karu" : complaint → help
+  "कीमत ज्यादा है" : complaint → check_offers
+  "Thoda discount mil sakta hai" : complaint → check_offers
+  "this is bad" : chitchat → complaint
+  "i need help with my account" : complaint → help
+  "kya karu ab" : complaint → help
+  "you are the best" : chitchat → feedback
+  "hindi aati hai" : greeting → help
+  "will recommend" : chitchat → feedback
+  "कुछ और बताओ" : greeting → chitchat
+  "satisfied hoon" : chitchat → feedback
+  "customer support please" : complaint → human_takeover
+  "manager shi bola" : complaint → human_takeover
+  "tell me about yourself" : greeting → chitchat
+  "worst bot ever" : chitchat → feedback
+  "coffee" : greeting → order_food
+  "Best price mil sakta hai" : complaint → check_offers
+  "how to fix this" : complaint → help
+  "talk to support" : help → human_takeover
+  "this is not working" : chitchat → complaint
+  "voice se baat karte hai i am too tired to type" : greeting → help
+  "From which restaurant" : search_product → browse_stores
+  "issue report" : help → complaint
+  "what problem" : complaint → help
+  "supervisor se connect karo" : complaint → human_takeover
+  "talk to real person" : complaint → human_takeover
+  "aur bhai" : greeting → chitchat
+  "contact support" : complaint → human_takeover
+  "best service" : chitchat → feedback
+  "services" : greeting → help
+  "add item 3 and item 5 to cart" : search_product → add_to_cart
+  "reach out" : help → human_takeover
+  "kaisa weather hai?" : greeting → chitchat
+  "Discount de sakte ho kya" : complaint → check_offers
+  "support chahiye mujhe" : complaint → help
+  "you're helpful" : chitchat → feedback
+  "features" : greeting → help
+  "you know me" : greeting → chitchat
+  "sahayata chahiye" : complaint → help
+  "world class service" : chitchat → feedback
+  "available stores dikhao" : search_product → browse_stores
+  "सपोर्ट चाहिए" : complaint → help
+  "not working" : help → complaint
+  "manager se baat karna hai" : complaint → human_takeover
+  "really helpful" : chitchat → feedback
+  "home" : greeting → manage_address
+  "i need support" : complaint → help
+  "very helpful" : chitchat → feedback
+  "Kam rate mein ho jayega" : complaint → check_offers
+  "contact_support" : help → human_takeover
+  "customer care" : complaint → human_takeover
+  "मोल-भाव हो सकता है" : complaint → check_offers
+  "bug found" : help → complaint
+
+--- CLEANED COUNTS ---
+  human_takeover: 81
+  deny: 105
+  refund_request: 109
+  feedback: 117
+  complaint: 117
+  goodbye: 118
+  greeting: 121
+  repeat_order: 123
+  chitchat: 131
+  login: 136
+  customize_order: 136
+  bulk_order: 137
+  confirm: 140
+  help: 140
+  search_product: 144
+  remove_from_cart: 144
+  clear_cart: 150
+  payment_issue: 150
+  browse_menu: 150
+  ask_price: 150
+  view_cart: 150
+  parcel_booking: 150
+  track_order: 150
+  update_quantity: 150
+  use_saved: 150
+  cancel_order: 150
+  checkout: 150
+  ask_recommendation: 150
+  add_to_cart: 152
+  manage_address: 153
+  browse_stores: 154
+  order_food: 154
+  check_offers: 160

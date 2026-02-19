@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Database, RefreshCw, Trash2, AlertCircle, CheckCircle2, 
-  TrendingUp, Clock, HardDrive, Activity, AlertTriangle,
-  Search, Download, Upload, Settings, BarChart3, Zap
+import {
+  Database, RefreshCw, Trash2, AlertCircle, CheckCircle2,
+  HardDrive, Activity, AlertTriangle,
+  Download, Upload, Settings, BarChart3
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface IndexInfo {
   name: string;
@@ -34,52 +35,34 @@ export default function SearchIndicesPage() {
   const [indices, setIndices] = useState<IndexInfo[]>([]);
   const [stats, setStats] = useState<IndexStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const [operation, setOperation] = useState<'reindex' | 'delete' | 'backup' | null>(null);
+  const toast = useToast();
 
   const fetchIndices = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_SEARCH_API_URL || 'http://localhost:3100';
-      const response = await fetch(`${apiUrl}/admin/indices`);
-      
+      const response = await fetch('/api/search-admin/indices');
+
       if (response.ok) {
         const data = await response.json();
         setIndices(data.indices || []);
         setStats(data.stats || null);
       } else {
-        // Fallback to mock data
-        loadMockData();
+        const msg = `Failed to fetch indices (HTTP ${response.status})`;
+        setError(msg);
+        console.error(msg);
       }
-    } catch (error) {
-      console.error('Error fetching indices:', error);
-      loadMockData();
+    } catch (err) {
+      const msg = 'Could not connect to Search API. Is the search service running?';
+      setError(msg);
+      console.error('Error fetching indices:', err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadMockData = () => {
-    const mockIndices: IndexInfo[] = [
-      { name: 'food_items_v4', health: 'green', status: 'open', docs_count: 1500, docs_deleted: 0, store_size: '85.8mb', pri_store_size: '85.8mb', pri: 2, rep: 0, module: 'food', last_updated: '2026-01-02 10:30:00' },
-      { name: 'food_stores_v6', health: 'yellow', status: 'open', docs_count: 140, docs_deleted: 0, store_size: '198.1kb', pri_store_size: '198.1kb', pri: 1, rep: 1, module: 'food', last_updated: '2026-01-02 09:15:00' },
-      { name: 'food_categories', health: 'green', status: 'open', docs_count: 119, docs_deleted: 0, store_size: '40.9kb', pri_store_size: '40.9kb', pri: 1, rep: 0, module: 'food', last_updated: '2026-01-01 14:00:00' },
-      { name: 'ecom_items', health: 'green', status: 'open', docs_count: 28945, docs_deleted: 245, store_size: '1.2gb', pri_store_size: '1.2gb', pri: 2, rep: 0, module: 'ecom', last_updated: '2026-01-02 11:00:00' },
-      { name: 'ecom_stores', health: 'green', status: 'open', docs_count: 543, docs_deleted: 12, store_size: '45.3mb', pri_store_size: '45.3mb', pri: 1, rep: 1, module: 'ecom', last_updated: '2026-01-02 08:45:00' },
-    ];
-
-    const mockStats: IndexStats = {
-      total_indices: 5,
-      total_documents: 31247,
-      total_size_mb: 1331,
-      healthy_indices: 4,
-      warning_indices: 1,
-      critical_indices: 0,
-    };
-
-    setIndices(mockIndices);
-    setStats(mockStats);
   };
 
   useEffect(() => {
@@ -95,13 +78,19 @@ export default function SearchIndicesPage() {
   const handleReindex = async (indexName: string) => {
     setSelectedIndex(indexName);
     setOperation('reindex');
-    
-    // Simulate reindexing
-    setTimeout(() => {
-      alert(`Reindexing ${indexName} started. This may take several minutes.`);
+    try {
+      const response = await fetch(`/api/search-admin/reindex/${indexName}`, { method: 'POST' });
+      if (response.ok) {
+        toast.success(`Reindexing ${indexName} started`);
+      } else {
+        toast.error(`Failed to reindex ${indexName}`);
+      }
+    } catch {
+      toast.error('Reindex failed');
+    } finally {
       setOperation(null);
       setSelectedIndex(null);
-    }, 1000);
+    }
   };
 
   const handleDeleteIndex = async (indexName: string) => {
@@ -111,14 +100,20 @@ export default function SearchIndicesPage() {
 
     setSelectedIndex(indexName);
     setOperation('delete');
-    
-    // Simulate deletion
-    setTimeout(() => {
-      alert(`Index ${indexName} deleted successfully.`);
-      setIndices(prev => prev.filter(idx => idx.name !== indexName));
+    try {
+      const response = await fetch(`/api/search-admin/index/${indexName}`, { method: 'DELETE' });
+      if (response.ok) {
+        toast.success(`Index ${indexName} deleted`);
+        setIndices(prev => prev.filter(idx => idx.name !== indexName));
+      } else {
+        toast.error(`Failed to delete ${indexName}`);
+      }
+    } catch {
+      toast.error('Delete failed');
+    } finally {
       setOperation(null);
       setSelectedIndex(null);
-    }, 1000);
+    }
   };
 
   const getHealthColor = (health: string) => {
@@ -171,6 +166,22 @@ export default function SearchIndicesPage() {
           </button>
         </div>
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-800">{error}</p>
+            <button
+              onClick={handleRefresh}
+              className="text-sm text-red-600 hover:text-red-800 underline mt-1"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       {stats && (
@@ -256,6 +267,13 @@ export default function SearchIndicesPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
+              {indices.length === 0 && !error && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    No indices found.
+                  </td>
+                </tr>
+              )}
               {indices.map((index) => (
                 <tr key={index.name} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">

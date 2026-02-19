@@ -35,6 +35,7 @@ export default function GamificationDashboard() {
     avgGameScore: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadStats();
@@ -43,20 +44,22 @@ export default function GamificationDashboard() {
   const loadStats = async () => {
     try {
       setLoading(true);
+      setError('');
       const response = await mangwaleAIClient.getGamificationStats();
-      
-      if (response.success) {
+
+      if (response.success && response.data) {
         setStats({
-          totalGamesPlayed: response.data.summary.totalGames,
-          totalRewardsCredited: response.data.summary.totalRewards,
-          activeUsers: response.data.summary.activeUsers,
-          trainingSamplesCollected: response.data.trainingSamples.total,
-          approvalRate: response.data.systemStatus.autoApprovalRate,
-          avgGameScore: response.data.systemStatus.avgConfidenceScore,
+          totalGamesPlayed: response.data.summary?.totalGames ?? 0,
+          totalRewardsCredited: response.data.summary?.totalRewards ?? 0,
+          activeUsers: response.data.summary?.activeUsers ?? 0,
+          trainingSamplesCollected: response.data.trainingSamples?.total ?? 0,
+          approvalRate: response.data.systemStatus?.autoApprovalRate ?? 0,
+          avgGameScore: response.data.systemStatus?.avgConfidenceScore ?? 0,
         });
       }
     } catch (error) {
       console.error('Failed to load stats:', error);
+      setError('Failed to load gamification statistics. The service may be unavailable.');
     } finally {
       setLoading(false);
     }
@@ -68,28 +71,24 @@ export default function GamificationDashboard() {
       value: stats.totalGamesPlayed.toLocaleString(),
       icon: Gamepad2,
       color: 'blue',
-      change: '+12%',
     },
     {
       title: 'Rewards Credited',
-      value: `₹${stats.totalRewardsCredited.toLocaleString()}`,
+      value: `${stats.totalRewardsCredited.toLocaleString()}`,
       icon: Award,
       color: 'green',
-      change: '+8%',
     },
     {
       title: 'Active Users',
       value: stats.activeUsers.toLocaleString(),
       icon: Users,
       color: 'purple',
-      change: '+15%',
     },
     {
       title: 'Training Samples',
       value: stats.trainingSamplesCollected.toLocaleString(),
       icon: Database,
       color: 'orange',
-      change: '+23%',
     },
   ];
 
@@ -152,6 +151,15 @@ export default function GamificationDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-8 py-8">
+        {/* Error Message */}
+        {error && (
+          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 text-yellow-800">
+              <span className="font-medium">{error}</span>
+            </div>
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statCards.map((stat) => {
@@ -165,9 +173,6 @@ export default function GamificationDashboard() {
                   <div className={`p-3 bg-${stat.color}-100 rounded-lg`}>
                     <Icon className={`text-${stat.color}-600`} size={24} />
                   </div>
-                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
-                    {stat.change}
-                  </span>
                 </div>
                 <p className="text-gray-600 text-sm mb-1">{stat.title}</p>
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>

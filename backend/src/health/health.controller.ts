@@ -20,6 +20,10 @@ export class HealthController {
 
   private readonly asrServiceUrl: string;
   private readonly ttsServiceUrl: string;
+  private readonly nluServiceUrl: string;
+  private readonly nerServiceUrl: string;
+  private readonly vllmUrl: string;
+  private readonly searchApiUrl: string;
 
   constructor(
     private readonly phpApiService: PhpApiService,
@@ -29,6 +33,10 @@ export class HealthController {
   ) {
     this.asrServiceUrl = this.configService.get<string>('ASR_SERVICE_URL', 'http://localhost:7001');
     this.ttsServiceUrl = this.configService.get<string>('TTS_SERVICE_URL', 'http://localhost:7002');
+    this.nluServiceUrl = this.configService.get<string>('NLU_PRIMARY_ENDPOINT', 'http://192.168.0.151:7012');
+    this.nerServiceUrl = this.configService.get<string>('NER_SERVICE_URL', 'http://192.168.0.151:7011');
+    this.vllmUrl = this.configService.get<string>('VLLM_URL', 'http://localhost:8002');
+    this.searchApiUrl = this.configService.get<string>('SEARCH_API_URL', 'http://localhost:3100');
 
     // Start background PHP health check
     this.checkPhpHealthBackground();
@@ -63,12 +71,16 @@ export class HealthController {
 
   @Get()
   async checkHealth() {
-    // Run DB, Redis, and voice checks in parallel (voice checks have 3s timeout)
-    const [dbHealth, redisHealth, asrHealth, ttsHealth] = await Promise.all([
+    // Run DB, Redis, voice, and ML service checks in parallel (all have 3s timeout)
+    const [dbHealth, redisHealth, asrHealth, ttsHealth, nluHealth, nerHealth, vllmHealth, searchHealth] = await Promise.all([
       this.checkDatabase(),
       this.sessionService.ping(),
       this.pingService(this.asrServiceUrl, 'ASR'),
       this.pingService(this.ttsServiceUrl, 'TTS'),
+      this.pingService(this.nluServiceUrl, 'NLU'),
+      this.pingService(this.nerServiceUrl, 'NER'),
+      this.pingService(this.vllmUrl, 'vLLM'),
+      this.pingService(this.searchApiUrl, 'Search'),
     ]);
 
     // Use cached PHP health (non-blocking)
@@ -80,7 +92,8 @@ export class HealthController {
 
     const phpStatus = this.phpHealthCache.connected;
 
-    // Voice services are non-critical -- don't affect overall status
+    // Core services affect overall status: PHP, DB, Redis
+    // ML and voice services are non-critical -- reported but don't affect overall status
     return {
       status: phpStatus && dbHealth && redisHealth ? 'ok' : 'degraded',
       timestamp: new Date().toISOString(),
@@ -98,17 +111,35 @@ export class HealthController {
         redis: {
           status: redisHealth ? 'up' : 'down'
         },
+        nlu: {
+          status: nluHealth.up ? 'up' : 'down',
+          latency: nluHealth.latency,
+          ...(nluHealth.error && { error: 'Service unavailable' }),
+        },
+        ner: {
+          status: nerHealth.up ? 'up' : 'down',
+          latency: nerHealth.latency,
+          ...(nerHealth.error && { error: 'Service unavailable' }),
+        },
+        vllm: {
+          status: vllmHealth.up ? 'up' : 'down',
+          latency: vllmHealth.latency,
+          ...(vllmHealth.error && { error: 'Service unavailable' }),
+        },
+        search_api: {
+          status: searchHealth.up ? 'up' : 'down',
+          latency: searchHealth.latency,
+          ...(searchHealth.error && { error: 'Service unavailable' }),
+        },
         asr: {
           status: asrHealth.up ? 'up' : 'down',
-          url: this.asrServiceUrl,
           latency: asrHealth.latency,
-          ...(asrHealth.error && { error: asrHealth.error }),
+          ...(asrHealth.error && { error: 'Service unavailable' }),
         },
         tts: {
           status: ttsHealth.up ? 'up' : 'down',
-          url: this.ttsServiceUrl,
           latency: ttsHealth.latency,
-          ...(ttsHealth.error && { error: ttsHealth.error }),
+          ...(ttsHealth.error && { error: 'Service unavailable' }),
         },
       }
     };

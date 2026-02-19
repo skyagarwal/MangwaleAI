@@ -1,4 +1,5 @@
-import { Controller, Get, Put, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../admin/guards/admin-auth.guard';
 import { WhiteLabelService, TenantBranding } from '../services/white-label.service';
 
 /**
@@ -11,6 +12,7 @@ import { WhiteLabelService, TenantBranding } from '../services/white-label.servi
  * - Widget embed code generation
  */
 @Controller('admin/white-label')
+@UseGuards(AdminAuthGuard)
 export class WhiteLabelAdminController {
   constructor(private readonly whiteLabelService: WhiteLabelService) {}
 

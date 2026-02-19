@@ -8,6 +8,7 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { PhpAuthService } from '../php-integration/services/php-auth.service';
 import { CentralizedAuthService } from './centralized-auth.service';
 import { normalizePhoneNumber } from '../common/utils/helpers';
@@ -55,6 +56,7 @@ export class AuthController {
    * Normalizes phone to +91 format and calls PHP backend
    */
   @Post('send-otp')
+  @Throttle({ short: { limit: 3, ttl: 60000 }, medium: { limit: 5, ttl: 60000 }, long: { limit: 10, ttl: 300000 } })
   async sendOtp(@Body() body: { phone: string }) {
     const { phone } = body;
     
@@ -96,6 +98,7 @@ export class AuthController {
    * Returns: { success, token, is_personal_info, user: { ... } }
    */
   @Post('verify-otp')
+  @Throttle({ short: { limit: 5, ttl: 60000 }, medium: { limit: 10, ttl: 60000 }, long: { limit: 20, ttl: 300000 } })
   async verifyOtp(@Body() body: { phone: string; otp: string }) {
     const { phone, otp } = body;
 
@@ -292,6 +295,7 @@ export class AuthController {
    * { email_or_phone, password, login_type: 'manual', field_type: 'email' | 'phone' }
    */
   @Post('login')
+  @Throttle({ short: { limit: 5, ttl: 60000 }, medium: { limit: 10, ttl: 60000 }, long: { limit: 20, ttl: 300000 } })
   async login(@Body() body: { phone: string; password: string }) {
     const { phone, password } = body;
 

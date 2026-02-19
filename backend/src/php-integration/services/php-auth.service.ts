@@ -33,7 +33,7 @@ export class PhpAuthService extends PhpApiService {
     try {
       const mysqlHost = configService.get('MYSQL_HOST');
       const mysqlPort = parseInt(configService.get('MYSQL_PORT', '3306'));
-      const mysqlUser = configService.get('MYSQL_USER', 'root');
+      const mysqlUser = configService.get('MYSQL_USERNAME') || configService.get('MYSQL_USER', 'root');
       const mysqlPassword = configService.get('MYSQL_PASSWORD');
       const mysqlDatabase = configService.get('MYSQL_DATABASE', 'mangwale_db');
       
@@ -310,6 +310,7 @@ export class PhpAuthService extends PhpApiService {
         email: response.email,
         firstName: response.f_name,
         lastName: response.l_name,
+        zoneId: response.zone_id,
         isPhoneVerified: response.is_phone_verified === 1,
         isEmailVerified: response.is_email_verified === 1,
       };
@@ -318,18 +319,19 @@ export class PhpAuthService extends PhpApiService {
       try {
         this.logger.warn(`Profile fetch failed, retrying with query param...`);
         const response = await this.authenticatedRequest(
-          'get', 
-          '/api/v1/customer/info?current_language_key=en', 
+          'get',
+          '/api/v1/customer/info?current_language_key=en',
           token
         );
         this.logger.log(`👤 User Profile Response (Retry): ${JSON.stringify(response)}`);
-        
+
         return {
           id: response.id,
           phone: response.phone,
           email: response.email,
           firstName: response.f_name,
           lastName: response.l_name,
+          zoneId: response.zone_id,
           isPhoneVerified: response.is_phone_verified === 1,
           isEmailVerified: response.is_email_verified === 1,
         };

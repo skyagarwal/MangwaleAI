@@ -1,4 +1,5 @@
-import { Controller, Get, Put, Body, Param, Logger, Post, Delete } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, Logger, Post, Delete, UseGuards } from '@nestjs/common';
+import { AdminApiKeyGuard } from '../common/guards/admin-api-key.guard';
 
 /**
  * 📡 Channel Configuration Controller
@@ -31,6 +32,7 @@ interface ChannelConfig {
 }
 
 @Controller('admin/channels')
+@UseGuards(AdminApiKeyGuard)
 export class ChannelConfigController {
   private readonly logger = new Logger(ChannelConfigController.name);
   
@@ -448,18 +450,18 @@ export class ChannelConfigController {
       };
     }
 
-    // Would query from database in production
+    // No database tracking for per-channel message stats yet — return zeros
     return {
       success: true,
       data: {
         channel: id,
         name: channel.name,
         stats: {
-          messagesReceived24h: Math.floor(Math.random() * 1000),
-          messagesSent24h: Math.floor(Math.random() * 800),
-          activeUsers24h: Math.floor(Math.random() * 200),
-          avgResponseTimeMs: Math.floor(Math.random() * 500) + 100,
-          errorRate: (Math.random() * 2).toFixed(2) + '%',
+          messagesReceived24h: 0,
+          messagesSent24h: 0,
+          activeUsers24h: 0,
+          avgResponseTimeMs: 0,
+          errorRate: '0.00%',
         },
         period: '24h',
       },

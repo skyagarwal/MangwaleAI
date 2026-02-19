@@ -1,0 +1,1066 @@
+{"text": "bhujbal ke baare mein batao", "entities": []}
+{"text": "gobi paratha chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "gobi paratha"}]}
+{"text": "payment pending hai", "entities": []}
+{"text": "bill galat hai", "entities": []}
+{"text": "delivery boy kahan hai", "entities": []}
+{"text": "inayat se 2 pizza mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "pizza"}]}
+{"text": "inayat se 3 sandwich mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "3"}, {"start": 12, "end": 20, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "offer hai koi", "entities": []}
+{"text": "nope galat hai", "entities": []}
+{"text": "teen rabdi chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 10, "label": "FOOD", "entity": "rabdi"}]}
+{"text": "yaahoo icecream se shake lao", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "yaahoo icecream"}, {"start": 19, "end": 24, "label": "FOOD", "entity": "shake"}]}
+{"text": "koi accha food stall batao", "entities": [{"start": 10, "end": 20, "label": "STORE", "entity": "food stall"}]}
+{"text": "yaar chicken curry mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "chicken curry"}]}
+{"text": "subway se sandwich order karo", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "subway"}, {"start": 10, "end": 18, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "cancel my order", "entities": []}
+{"text": "delivery evening me chahiye", "entities": [{"start": 9, "end": 19, "label": "PREF", "entity": "evening me"}]}
+{"text": "koi accha restaurant batao", "entities": [{"start": 10, "end": 20, "label": "STORE", "entity": "restaurant"}]}
+{"text": "cafe paradise se 1 sandwich mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 18, "label": "QTY", "entity": "1"}, {"start": 19, "end": 27, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "chat center se order karo", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "chat center"}]}
+{"text": "Nagar Road pe", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "Nagar Road"}]}
+{"text": "pani puri no oil chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pani puri"}, {"start": 10, "end": 16, "label": "PREF", "entity": "no oil"}]}
+{"text": "hotel samarth se biryani mangao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "hotel samarth"}, {"start": 17, "end": 24, "label": "FOOD", "entity": "biryani"}]}
+{"text": "Pimple Saudagar restaurant", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "Pimple Saudagar"}]}
+{"text": "CIDCO nashik", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "CIDCO nashik"}]}
+{"text": "saat burger order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "saat"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "burger"}]}
+{"text": "gangapur road pe kuch milega", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "juice center se order karo", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "juice center"}]}
+{"text": "cafe coffee day se cold coffee", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "cafe coffee day"}, {"start": 19, "end": 30, "label": "FOOD", "entity": "cold coffee"}]}
+{"text": "panchavati ka address save karo", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "paneer butter masala chahiye", "entities": [{"start": 0, "end": 20, "label": "FOOD", "entity": "paneer butter masala"}]}
+{"text": "bilkul haan", "entities": []}
+{"text": "what can you do", "entities": []}
+{"text": "yaar fresh juice mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "fresh juice"}]}
+{"text": "gangapur road pe momos ki delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}, {"start": 17, "end": 22, "label": "FOOD", "entity": "momos"}]}
+{"text": "dwarka pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "dwarka"}]}
+{"text": "cidco pe momos ki delivery chahiye", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "momos"}]}
+{"text": "ashok nagar pe delivery hoti hai kya", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "ashok nagar"}]}
+{"text": "yaar grilled chicken mangwa do", "entities": [{"start": 5, "end": 20, "label": "FOOD", "entity": "grilled chicken"}]}
+{"text": "nikalo ye item", "entities": []}
+{"text": "inayat se 2 sandwich mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 20, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "half hakka noodles chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 5, "end": 18, "label": "FOOD", "entity": "hakka noodles"}]}
+{"text": "delivery 11 baje chahiye", "entities": [{"start": 9, "end": 16, "label": "PREF", "entity": "11 baje"}]}
+{"text": "shree restaurant ka number do", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "shree restaurant"}]}
+{"text": "delivery near college chahiye", "entities": [{"start": 9, "end": 21, "label": "LOC", "entity": "near college"}]}
+{"text": "yaar upma mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "upma"}]}
+{"text": "adgaon pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "adgaon"}]}
+{"text": "empty karo cart", "entities": []}
+{"text": "1 chicken momos chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 15, "label": "FOOD", "entity": "chicken momos"}]}
+{"text": "prawns fry chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "prawns fry"}]}
+{"text": "yaar paneer tikka pizza mangwa do", "entities": [{"start": 5, "end": 23, "label": "FOOD", "entity": "paneer tikka pizza"}]}
+{"text": "inayat se do momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 12, "label": "QTY", "entity": "do"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "momos"}]}
+{"text": "delete karo biryani", "entities": [{"start": 12, "end": 19, "label": "FOOD", "entity": "biryani"}]}
+{"text": "2 pizza inayat cafe se bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "pizza"}, {"start": 8, "end": 19, "label": "STORE", "entity": "inayat cafe"}]}
+{"text": "vishrantwadi mein restaurant", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "vishrantwadi"}]}
+{"text": "Kharadi mein delivery", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "Kharadi"}]}
+{"text": "home pe 2 burger chahiye", "entities": [{"start": 8, "end": 9, "label": "QTY", "entity": "2"}, {"start": 10, "end": 16, "label": "FOOD", "entity": "burger"}]}
+{"text": "yaar jalebi mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "jalebi"}]}
+{"text": "kab tak aayega", "entities": []}
+{"text": "tushar se 2 biryani mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 19, "label": "FOOD", "entity": "biryani"}]}
+{"text": "hanuman restaurant ka number do", "entities": [{"start": 0, "end": 18, "label": "STORE", "entity": "hanuman restaurant"}]}
+{"text": "order status check karo", "entities": []}
+{"text": "char schezwan rice chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 18, "label": "FOOD", "entity": "schezwan rice"}]}
+{"text": "complaint register karo", "entities": []}
+{"text": "cafe paradise se do pizza mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 19, "label": "QTY", "entity": "do"}, {"start": 20, "end": 25, "label": "FOOD", "entity": "pizza"}]}
+{"text": "gluten free options", "entities": [{"start": 0, "end": 11, "label": "PREF", "entity": "gluten free"}]}
+{"text": "help me please", "entities": []}
+{"text": "yaar pulao mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "pulao"}]}
+{"text": "tibetan kitchen se thukpa", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "tibetan kitchen"}, {"start": 19, "end": 25, "label": "FOOD", "entity": "thukpa"}]}
+{"text": "dhokla bake karo chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dhokla"}, {"start": 7, "end": 16, "label": "PREF", "entity": "bake karo"}]}
+{"text": "ghar pe pizza bhejo", "entities": [{"start": 8, "end": 13, "label": "FOOD", "entity": "pizza"}]}
+{"text": "sev puri chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "sev puri"}]}
+{"text": "ambad link road ka address", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "ambad link road"}]}
+{"text": "refund kab milega", "entities": []}
+{"text": "discount milega kya", "entities": []}
+{"text": "update cart", "entities": []}
+{"text": "panchavati pe sandwich ki delivery chahiye", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}, {"start": 14, "end": 22, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "empire cafe ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "empire cafe"}]}
+{"text": "3 burger star boys restaurant se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "burger"}, {"start": 9, "end": 29, "label": "STORE", "entity": "star boys restaurant"}]}
+{"text": "rating dena hai", "entities": []}
+{"text": "dal fry chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "dal fry"}]}
+{"text": "yaar palak paneer mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "palak paneer"}]}
+{"text": "makhmalabad ka address save karo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "makhmalabad"}]}
+{"text": "egg biryani chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "egg biryani"}]}
+{"text": "dal makhani chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "dal makhani"}]}
+{"text": "inayat se ek momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "momos"}]}
+{"text": "red cafe ka number do", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "red cafe"}]}
+{"text": "kya chal raha hai", "entities": []}
+{"text": "yaar chocolate shake mangwa do", "entities": [{"start": 5, "end": 20, "label": "FOOD", "entity": "chocolate shake"}]}
+{"text": "Mundhwa area", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "Mundhwa"}]}
+{"text": "taco bell se tacos lao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "taco bell"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "tacos"}]}
+{"text": "Nashik road", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "Nashik road"}]}
+{"text": "cart dikhao", "entities": []}
+{"text": "yaar kachori mangwa do", "entities": [{"start": 5, "end": 12, "label": "FOOD", "entity": "kachori"}]}
+{"text": "tushar bhai ka number do", "entities": []}
+{"text": "chuno ye wala", "entities": []}
+{"text": "main theek hun", "entities": []}
+{"text": "current location use karo", "entities": [{"start": 0, "end": 16, "label": "LOC", "entity": "current location"}]}
+{"text": "pathardi phata ka address save karo", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "pathardi phata"}]}
+{"text": "Chinchwad ke paas", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "Chinchwad"}]}
+{"text": "yaar cheesy garlic bread mangwa do", "entities": [{"start": 5, "end": 24, "label": "FOOD", "entity": "cheesy garlic bread"}]}
+{"text": "4 naan chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "naan"}]}
+{"text": "ragda pattice chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "ragda pattice"}]}
+{"text": "butter chicken chahiye", "entities": [{"start": 0, "end": 14, "label": "FOOD", "entity": "butter chicken"}]}
+{"text": "yaar rasgulla mangwa do", "entities": [{"start": 5, "end": 13, "label": "FOOD", "entity": "rasgulla"}]}
+{"text": "new hotel ka number do", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "new hotel"}]}
+{"text": "gangapur road pe biryani ki delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}, {"start": 17, "end": 24, "label": "FOOD", "entity": "biryani"}]}
+{"text": "complaint hai", "entities": []}
+{"text": "nau paratha lao", "entities": [{"start": 0, "end": 3, "label": "QTY", "entity": "nau"}, {"start": 4, "end": 11, "label": "FOOD", "entity": "paratha"}]}
+{"text": "college road pe pizza ki delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}, {"start": 16, "end": 21, "label": "FOOD", "entity": "pizza"}]}
+{"text": "Hadapsar area", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "Hadapsar"}]}
+{"text": "cart modify karo", "entities": []}
+{"text": "what is mangwale", "entities": []}
+{"text": "yaar rajma mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "rajma"}]}
+{"text": "inayat se 1 momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "1"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "momos"}]}
+{"text": "cidco pe burger ki delivery chahiye", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}, {"start": 9, "end": 15, "label": "FOOD", "entity": "burger"}]}
+{"text": "chowmein chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "chowmein"}]}
+{"text": "samosa no ginger chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "samosa"}, {"start": 7, "end": 16, "label": "PREF", "entity": "no ginger"}]}
+{"text": "maharashtrian bhojanalaya se order karo", "entities": [{"start": 0, "end": 25, "label": "STORE", "entity": "maharashtrian bhojanalaya"}]}
+{"text": "samosa more cooked chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "samosa"}, {"start": 7, "end": 18, "label": "PREF", "entity": "more cooked"}]}
+{"text": "delivery 5 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "5 baje"}]}
+{"text": "yaar ragda pattice mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "ragda pattice"}]}
+{"text": "do plate momos wow momos se", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "momos"}, {"start": 15, "end": 24, "label": "STORE", "entity": "wow momos"}]}
+{"text": "misal pav chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "misal pav"}]}
+{"text": "nashik road pe biryani ki delivery chahiye", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}, {"start": 15, "end": 22, "label": "FOOD", "entity": "biryani"}]}
+{"text": "haan karo", "entities": []}
+{"text": "kachori extra cheese chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "kachori"}, {"start": 8, "end": 20, "label": "PREF", "entity": "extra cheese"}]}
+{"text": "refund chahiye", "entities": []}
+{"text": "change karo order", "entities": []}
+{"text": "Model Colony", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "Model Colony"}]}
+{"text": "paanch paneer tikka masala chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 26, "label": "FOOD", "entity": "paneer tikka masala"}]}
+{"text": "cart khaali karo", "entities": []}
+{"text": "tushar se 1 momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "1"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "momos"}]}
+{"text": "koi accha south indian batao", "entities": [{"start": 10, "end": 22, "label": "STORE", "entity": "south indian"}]}
+{"text": "address update karo", "entities": []}
+{"text": "paanch pasta chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 12, "label": "FOOD", "entity": "pasta"}]}
+{"text": "natural ice cream se butterscotch", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "natural ice cream"}, {"start": 21, "end": 33, "label": "FOOD", "entity": "butterscotch"}]}
+{"text": "samarth nagar ka address save karo", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "samarth nagar"}]}
+{"text": "wallet balance kitna hai", "entities": []}
+{"text": "do paneer butter masala chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 23, "label": "FOOD", "entity": "paneer butter masala"}]}
+{"text": "blue dhaba ka number do", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "blue dhaba"}]}
+{"text": "kitne time me hoga", "entities": []}
+{"text": "nashik road pe delivery", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}]}
+{"text": "yaar shrikhand mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "shrikhand"}]}
+{"text": "cold food aaya", "entities": []}
+{"text": "nearby restaurants", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "nearby"}]}
+{"text": "teekha nahi medium spice", "entities": [{"start": 0, "end": 24, "label": "PREF", "entity": "teekha nahi medium spice"}]}
+{"text": "rava dosa fry karo chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "rava dosa"}, {"start": 10, "end": 18, "label": "PREF", "entity": "fry karo"}]}
+{"text": "yaar dal fry mangwa do", "entities": [{"start": 5, "end": 12, "label": "FOOD", "entity": "dal fry"}]}
+{"text": "yaar mutton curry mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "mutton curry"}]}
+{"text": "yaar paneer burger mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "paneer burger"}]}
+{"text": "biryani blues se hyderabadi biryani", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "biryani blues"}, {"start": 17, "end": 35, "label": "FOOD", "entity": "hyderabadi biryani"}]}
+{"text": "address change karna hai", "entities": []}
+{"text": "JM Road pe", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "JM Road"}]}
+{"text": "boiled eggs chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "boiled eggs"}]}
+{"text": "yaar french fries mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "french fries"}]}
+{"text": "Pimpri area mein", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "Pimpri"}]}
+{"text": "panchavati pe biryani ki delivery chahiye", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}, {"start": 14, "end": 21, "label": "FOOD", "entity": "biryani"}]}
+{"text": "kaise ho tum", "entities": []}
+{"text": "bas ho gaya", "entities": []}
+{"text": "do chowmein chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 11, "label": "FOOD", "entity": "chowmein"}]}
+{"text": "trimurti chowk pe bhejo", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "trimurti chowk"}]}
+{"text": "namaste chef se paneer tikka", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "namaste chef"}, {"start": 16, "end": 28, "label": "FOOD", "entity": "paneer tikka"}]}
+{"text": "deolali camp pe delivery hoti hai kya", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "deolali camp"}]}
+{"text": "yaar cold coffee mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "cold coffee"}]}
+{"text": "delivery aaj shaam chahiye", "entities": [{"start": 9, "end": 18, "label": "PREF", "entity": "aaj shaam"}]}
+{"text": "corner canteen ka number do", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "corner canteen"}]}
+{"text": "rajesh se baat karo", "entities": []}
+{"text": "deshmukh ka phone number", "entities": []}
+{"text": "payment proceed karo", "entities": []}
+{"text": "half rasgulla chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 5, "end": 13, "label": "FOOD", "entity": "rasgulla"}]}
+{"text": "vada pav tandoor me banao chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "vada pav"}, {"start": 9, "end": 25, "label": "PREF", "entity": "tandoor me banao"}]}
+{"text": "gangapur road pe burger ki delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}, {"start": 17, "end": 23, "label": "FOOD", "entity": "burger"}]}
+{"text": "work pe deliver kar do", "entities": []}
+{"text": "gangapur road pe delivery karo", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "lakshmi restaurant ka number do", "entities": [{"start": 0, "end": 18, "label": "STORE", "entity": "lakshmi restaurant"}]}
+{"text": "yaar fish curry mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "fish curry"}]}
+{"text": "kalwan pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "kalwan"}]}
+{"text": "igatpuri ka address save karo", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "igatpuri"}]}
+{"text": "tushar se ek biryani mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 20, "label": "FOOD", "entity": "biryani"}]}
+{"text": "bhujbal kaha hai", "entities": []}
+{"text": "green bakes se do biryani mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 17, "label": "QTY", "entity": "do"}, {"start": 18, "end": 25, "label": "FOOD", "entity": "biryani"}]}
+{"text": "fish curry chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "fish curry"}]}
+{"text": "nahi cancel karo", "entities": []}
+{"text": "nashik road pe burger ki delivery chahiye", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}, {"start": 15, "end": 21, "label": "FOOD", "entity": "burger"}]}
+{"text": "track my order", "entities": []}
+{"text": "papa johns ka pizza", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "papa johns"}, {"start": 14, "end": 19, "label": "FOOD", "entity": "pizza"}]}
+{"text": "milk shake chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "milk shake"}]}
+{"text": "medu vada medium done chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "medu vada"}, {"start": 10, "end": 21, "label": "PREF", "entity": "medium done"}]}
+{"text": "cart se hatao ye", "entities": []}
+{"text": "login karo", "entities": []}
+{"text": "yaar chicken fried rice mangwa do", "entities": [{"start": 5, "end": 23, "label": "FOOD", "entity": "chicken fried rice"}]}
+{"text": "yaar dhokla mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "dhokla"}]}
+{"text": "green restaurant ka number do", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "green restaurant"}]}
+{"text": "i want refund", "entities": []}
+{"text": "chocolate shake chahiye", "entities": [{"start": 0, "end": 15, "label": "FOOD", "entity": "chocolate shake"}]}
+{"text": "nashik road ka address save karo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}]}
+{"text": "modern hotel ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "modern hotel"}]}
+{"text": "rajma chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "rajma"}]}
+{"text": "2 upma chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "upma"}]}
+{"text": "yaar roti mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "roti"}]}
+{"text": "hello kaise ho", "entities": []}
+{"text": "correct hai", "entities": []}
+{"text": "nahi chahiye", "entities": []}
+{"text": "checkout karo", "entities": []}
+{"text": "koi accha snacks corner batao", "entities": [{"start": 10, "end": 23, "label": "STORE", "entity": "snacks corner"}]}
+{"text": "Hinjewadi phase 1", "entities": [{"start": 0, "end": 17, "label": "LOC", "entity": "Hinjewadi phase 1"}]}
+{"text": "feedback dena hai", "entities": []}
+{"text": "fresh juice chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "fresh juice"}]}
+{"text": "egg curry chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "egg curry"}]}
+{"text": "yaar grilled sandwich mangwa do", "entities": [{"start": 5, "end": 21, "label": "FOOD", "entity": "grilled sandwich"}]}
+{"text": "shivam hotel ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "shivam hotel"}]}
+{"text": "2 baingan bharta chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 16, "label": "FOOD", "entity": "baingan bharta"}]}
+{"text": "delivery bus stand ke samne chahiye", "entities": [{"start": 9, "end": 27, "label": "LOC", "entity": "bus stand ke samne"}]}
+{"text": "Kondhwa mein delivery", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "Kondhwa"}]}
+{"text": "naan chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "naan"}]}
+{"text": "uttapam chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "uttapam"}]}
+{"text": "Undri restaurant", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "Undri"}]}
+{"text": "lucky restaurant se chicken roll", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "lucky restaurant"}, {"start": 20, "end": 32, "label": "FOOD", "entity": "chicken roll"}]}
+{"text": "yaar sev puri mangwa do", "entities": [{"start": 5, "end": 13, "label": "FOOD", "entity": "sev puri"}]}
+{"text": "yaar chole mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "chole"}]}
+{"text": "garden hotel ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "garden hotel"}]}
+{"text": "taj cafe ka number do", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "taj cafe"}]}
+{"text": "Lohegaon area", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "Lohegaon"}]}
+{"text": "Kalyani Nagar ke restaurants", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Kalyani Nagar"}]}
+{"text": "slow delivery", "entities": []}
+{"text": "app nahi chal raha", "entities": []}
+{"text": "royal dhaba ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "royal dhaba"}]}
+{"text": "yaar chai mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "chai"}]}
+{"text": "ice cream chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "ice cream"}]}
+{"text": "delivery boy ka number do", "entities": []}
+{"text": "yaar lassi mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "lassi"}]}
+{"text": "yaar pizza mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "pizza"}]}
+{"text": "bhel puri extra onion chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "bhel puri"}, {"start": 10, "end": 21, "label": "PREF", "entity": "extra onion"}]}
+{"text": "green bakes se ek sandwich mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 17, "label": "QTY", "entity": "ek"}, {"start": 18, "end": 26, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "delivery colony me chahiye", "entities": [{"start": 9, "end": 18, "label": "LOC", "entity": "colony me"}]}
+{"text": "green bakes se 1 sandwich mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "1"}, {"start": 17, "end": 25, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "koi accha dhaba batao", "entities": [{"start": 10, "end": 15, "label": "STORE", "entity": "dhaba"}]}
+{"text": "hello", "entities": []}
+{"text": "delivery 6 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "6 baje"}]}
+{"text": "koi accha fast food center batao", "entities": [{"start": 10, "end": 26, "label": "STORE", "entity": "fast food center"}]}
+{"text": "yaar malai kofta mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "malai kofta"}]}
+{"text": "hotel taj se do pizza mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 15, "label": "QTY", "entity": "do"}, {"start": 16, "end": 21, "label": "FOOD", "entity": "pizza"}]}
+{"text": "veg spring rolls chahiye", "entities": [{"start": 0, "end": 16, "label": "FOOD", "entity": "veg spring rolls"}]}
+{"text": "2 missal from tushar aur 3 vada pav green bakes se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "missal"}, {"start": 14, "end": 20, "label": "STORE", "entity": "tushar"}, {"start": 25, "end": 26, "label": "QTY", "entity": "3"}, {"start": 27, "end": 35, "label": "FOOD", "entity": "vada pav"}, {"start": 36, "end": 47, "label": "STORE", "entity": "green bakes"}]}
+{"text": "goodbye", "entities": []}
+{"text": "fried momos chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "fried momos"}]}
+{"text": "college road pe burger ki delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}, {"start": 16, "end": 22, "label": "FOOD", "entity": "burger"}]}
+{"text": "chole bhature less cooked chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "chole bhature"}, {"start": 14, "end": 25, "label": "PREF", "entity": "less cooked"}]}
+{"text": "1 chole bhature chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 15, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "ganesh cafe ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "ganesh cafe"}]}
+{"text": "new cidco ka address save karo", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "new cidco"}]}
+{"text": "yaar dabeli mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "dabeli"}]}
+{"text": "yahan pe deliver karo", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "yahan"}]}
+{"text": "aggarwal sweets ka gulab jamun", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "aggarwal sweets"}, {"start": 19, "end": 30, "label": "FOOD", "entity": "gulab jamun"}]}
+{"text": "koi accha punjabi dhaba batao", "entities": [{"start": 10, "end": 23, "label": "STORE", "entity": "punjabi dhaba"}]}
+{"text": "band karo order", "entities": []}
+{"text": "yaar misal pav mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "misal pav"}]}
+{"text": "punjabi dhaba se order karo", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "punjabi dhaba"}]}
+{"text": "delivery morning me chahiye", "entities": [{"start": 9, "end": 19, "label": "PREF", "entity": "morning me"}]}
+{"text": "behrouz biryani ka dum biryani", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "behrouz biryani"}, {"start": 19, "end": 30, "label": "FOOD", "entity": "dum biryani"}]}
+{"text": "repeat last order", "entities": []}
+{"text": "kfc se chicken bucket", "entities": [{"start": 0, "end": 3, "label": "STORE", "entity": "kfc"}, {"start": 7, "end": 21, "label": "FOOD", "entity": "chicken bucket"}]}
+{"text": "delivery 12 baje chahiye", "entities": [{"start": 9, "end": 16, "label": "PREF", "entity": "12 baje"}]}
+{"text": "otp nahi aaya", "entities": []}
+{"text": "panchavati pe pizza ki delivery chahiye", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}, {"start": 14, "end": 19, "label": "FOOD", "entity": "pizza"}]}
+{"text": "tushar se 3 sandwich mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "3"}, {"start": 12, "end": 20, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "koi accha chat center batao", "entities": [{"start": 10, "end": 21, "label": "STORE", "entity": "chat center"}]}
+{"text": "cidco ka address save karo", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}]}
+{"text": "kadhi chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "kadhi"}]}
+{"text": "office wala address use karo", "entities": []}
+{"text": "chicken curry chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "chicken curry"}]}
+{"text": "veg pizza dominos nashik road", "entities": [{"start": 0, "end": 3, "label": "PREF", "entity": "veg"}, {"start": 4, "end": 9, "label": "FOOD", "entity": "pizza"}, {"start": 10, "end": 17, "label": "STORE", "entity": "dominos"}, {"start": 18, "end": 29, "label": "LOC", "entity": "nashik road"}]}
+{"text": "full ragda pattice chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "full"}, {"start": 5, "end": 18, "label": "FOOD", "entity": "ragda pattice"}]}
+{"text": "delivery night me chahiye", "entities": [{"start": 9, "end": 17, "label": "PREF", "entity": "night me"}]}
+{"text": "password change karo", "entities": []}
+{"text": "history dikhao", "entities": []}
+{"text": "college road pe delivery hoti hai kya", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "show karo menu", "entities": []}
+{"text": "dabeli extra spicy chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dabeli"}, {"start": 7, "end": 18, "label": "PREF", "entity": "extra spicy"}]}
+{"text": "bore ho raha hun", "entities": []}
+{"text": "2 pav bhaji chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 11, "label": "FOOD", "entity": "pav bhaji"}]}
+{"text": "das roti bhejo", "entities": [{"start": 0, "end": 3, "label": "QTY", "entity": "das"}, {"start": 4, "end": 8, "label": "FOOD", "entity": "roti"}]}
+{"text": "pathardi phata pe delivery hoti hai kya", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "pathardi phata"}]}
+{"text": "starbucks se latte dedo", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "starbucks"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "latte"}]}
+{"text": "fried rice chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "fried rice"}]}
+{"text": "perfect", "entities": []}
+{"text": "saptashrungi pe delivery hoti hai kya", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "saptashrungi"}]}
+{"text": "yaar cheese pizza mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "cheese pizza"}]}
+{"text": "mahalaxmi canteen ka number do", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "mahalaxmi canteen"}]}
+{"text": "delivery lunch time chahiye", "entities": [{"start": 9, "end": 19, "label": "PREF", "entity": "lunch time"}]}
+{"text": "near me", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "near me"}]}
+{"text": "5 km ke andar", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "5 km ke andar"}]}
+{"text": "panchavati pe delivery hoti hai kya", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "nahi chahiye kuch bhi", "entities": []}
+{"text": "red canteen ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "red canteen"}]}
+{"text": "delivery express delivery chahiye", "entities": [{"start": 9, "end": 25, "label": "PREF", "entity": "express delivery"}]}
+{"text": "nashik road pe sandwich ki delivery chahiye", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}, {"start": 15, "end": 23, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "wallet balance check karo", "entities": []}
+{"text": "prawns curry chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "prawns curry"}]}
+{"text": "potato wedges chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "potato wedges"}]}
+{"text": "delivery 4 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "4 baje"}]}
+{"text": "delivery road pe chahiye", "entities": [{"start": 9, "end": 16, "label": "LOC", "entity": "road pe"}]}
+{"text": "Swargate ke paas", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "Swargate"}]}
+{"text": "gangapur road pe sandwich ki delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}, {"start": 17, "end": 25, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "bhel puri room temperature chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "bhel puri"}, {"start": 10, "end": 26, "label": "PREF", "entity": "room temperature"}]}
+{"text": "delivery circle pe chahiye", "entities": [{"start": 9, "end": 18, "label": "LOC", "entity": "circle pe"}]}
+{"text": "tushar se 1 burger mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "1"}, {"start": 12, "end": 18, "label": "FOOD", "entity": "burger"}]}
+{"text": "yaar margherita pizza mangwa do", "entities": [{"start": 5, "end": 21, "label": "FOOD", "entity": "margherita pizza"}]}
+{"text": "help chahiye", "entities": []}
+{"text": "yaar idli mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "idli"}]}
+{"text": "cidco colony me delivery hoti hai kya", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "cidco colony"}]}
+{"text": "koi accha hotel batao", "entities": [{"start": 10, "end": 15, "label": "STORE", "entity": "hotel"}]}
+{"text": "cancel everything", "entities": []}
+{"text": "green bakes se 1 burger mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "1"}, {"start": 17, "end": 23, "label": "FOOD", "entity": "burger"}]}
+{"text": "theek hai", "entities": []}
+{"text": "gulab jamun chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "gulab jamun"}]}
+{"text": "aur batao kya naya hai", "entities": []}
+{"text": "paneer momos chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "paneer momos"}]}
+{"text": "college road ka address save karo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "chai chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "chai"}]}
+{"text": "tushar se 3 momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "3"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "momos"}]}
+{"text": "check wallet balance", "entities": []}
+{"text": "madras cafe se dosa mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "madras cafe"}, {"start": 15, "end": 19, "label": "FOOD", "entity": "dosa"}]}
+{"text": "yaar rabdi mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "rabdi"}]}
+{"text": "koi accha mess batao", "entities": [{"start": 10, "end": 14, "label": "STORE", "entity": "mess"}]}
+{"text": "idli chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "idli"}]}
+{"text": "3 pulao chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "pulao"}]}
+{"text": "pav bhaji well done chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pav bhaji"}, {"start": 10, "end": 19, "label": "PREF", "entity": "well done"}]}
+{"text": "Pune Station ke paas", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "Pune Station"}]}
+{"text": "history check karo", "entities": []}
+{"text": "remove karo cart se", "entities": []}
+{"text": "satpur ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "update karo address", "entities": []}
+{"text": "canada corner ke paas", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "canada corner"}]}
+{"text": "item remove karo", "entities": []}
+{"text": "patil sahab ka address", "entities": []}
+{"text": "ok", "entities": []}
+{"text": "shree hotel ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "shree hotel"}]}
+{"text": "yaar red sauce pasta mangwa do", "entities": [{"start": 5, "end": 20, "label": "FOOD", "entity": "red sauce pasta"}]}
+{"text": "delivery corner pe chahiye", "entities": [{"start": 9, "end": 18, "label": "LOC", "entity": "corner pe"}]}
+{"text": "satpur pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "hotel taj se 1 biryani mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 14, "label": "QTY", "entity": "1"}, {"start": 15, "end": 22, "label": "FOOD", "entity": "biryani"}]}
+{"text": "delivery 1 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "1 baje"}]}
+{"text": "meri live location pe bhejo", "entities": [{"start": 5, "end": 18, "label": "LOC", "entity": "live location"}]}
+{"text": "kya kar sakte ho", "entities": []}
+{"text": "cold coffee chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "cold coffee"}]}
+{"text": "tushar se 2 pizza mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "pizza"}]}
+{"text": "yaar prawns curry mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "prawns curry"}]}
+{"text": "sai dhaba ka number do", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "sai dhaba"}]}
+{"text": "chinese wok ka fried rice", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "chinese wok"}, {"start": 15, "end": 25, "label": "FOOD", "entity": "fried rice"}]}
+{"text": "mere location pe delivery", "entities": [{"start": 5, "end": 13, "label": "LOC", "entity": "location"}]}
+{"text": "yaar mutton rogan josh mangwa do", "entities": [{"start": 5, "end": 22, "label": "FOOD", "entity": "mutton rogan josh"}]}
+{"text": "dosa roast karo chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "dosa"}, {"start": 5, "end": 15, "label": "PREF", "entity": "roast karo"}]}
+{"text": "absolutely proceed", "entities": []}
+{"text": "delivery breakfast time chahiye", "entities": [{"start": 9, "end": 23, "label": "PREF", "entity": "breakfast time"}]}
+{"text": "garlic naan chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "garlic naan"}]}
+{"text": "yaar chicken biryani mangwa do", "entities": [{"start": 5, "end": 20, "label": "FOOD", "entity": "chicken biryani"}]}
+{"text": "punjab grill ka butter chicken", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "punjab grill"}, {"start": 16, "end": 30, "label": "FOOD", "entity": "butter chicken"}]}
+{"text": "college road area", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "makaan pe aane do", "entities": []}
+{"text": "bakery se order karo", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "bakery"}]}
+{"text": "ruko order mat karo", "entities": []}
+{"text": "office address pe deliver karo", "entities": []}
+{"text": "empire restaurant ka number do", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "empire restaurant"}]}
+{"text": "green canteen ka number do", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "green canteen"}]}
+{"text": "Sunderban Colony", "entities": [{"start": 0, "end": 16, "label": "LOC", "entity": "Sunderban Colony"}]}
+{"text": "plaza canteen ka number do", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "plaza canteen"}]}
+{"text": "bilkul sahi hai", "entities": []}
+{"text": "2 plate biryani inayat cafe satpur", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 15, "label": "FOOD", "entity": "biryani"}, {"start": 16, "end": 27, "label": "STORE", "entity": "inayat cafe"}, {"start": 28, "end": 34, "label": "LOC", "entity": "satpur"}]}
+{"text": "pizza hut se large pizza", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "pizza hut"}, {"start": 13, "end": 24, "label": "FOOD", "entity": "large pizza"}]}
+{"text": "college road pe momos ki delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}, {"start": 16, "end": 21, "label": "FOOD", "entity": "momos"}]}
+{"text": "Senapati Bapat Road", "entities": [{"start": 0, "end": 19, "label": "LOC", "entity": "Senapati Bapat Road"}]}
+{"text": "college road pe sandwich ki delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}, {"start": 16, "end": 24, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "dahi puri chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "dahi puri"}]}
+{"text": "samosa chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "samosa"}]}
+{"text": "yaar mexican pizza mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "mexican pizza"}]}
+{"text": "yaar fried rice mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "fried rice"}]}
+{"text": "dhokla steam karo chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dhokla"}, {"start": 7, "end": 17, "label": "PREF", "entity": "steam karo"}]}
+{"text": "modern dhaba ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "modern dhaba"}]}
+{"text": "account delete karna hai", "entities": []}
+{"text": "Magarpatta City delivery", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "Magarpatta City"}]}
+{"text": "Satara Road pe", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "Satara Road"}]}
+{"text": "theek hai karo", "entities": []}
+{"text": "sharma dhaba se dal fry", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "sharma dhaba"}, {"start": 16, "end": 23, "label": "FOOD", "entity": "dal fry"}]}
+{"text": "buttermilk chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "buttermilk"}]}
+{"text": "sai chinese corner se manchurian", "entities": [{"start": 0, "end": 18, "label": "STORE", "entity": "sai chinese corner"}, {"start": 22, "end": 32, "label": "FOOD", "entity": "manchurian"}]}
+{"text": "account delete karo", "entities": []}
+{"text": "paneer burger chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "paneer burger"}]}
+{"text": "3 red sauce pasta chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 17, "label": "FOOD", "entity": "red sauce pasta"}]}
+{"text": "continue karo", "entities": []}
+{"text": "garden restaurant ka number do", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "garden restaurant"}]}
+{"text": "hotel taj se do momos mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 15, "label": "QTY", "entity": "do"}, {"start": 16, "end": 21, "label": "FOOD", "entity": "momos"}]}
+{"text": "kaise ho", "entities": []}
+{"text": "yeola ka address save karo", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "yeola"}]}
+{"text": "food stall se order karo", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "food stall"}]}
+{"text": "dhokla chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dhokla"}]}
+{"text": "satpur midc area ka address do", "entities": [{"start": 0, "end": 16, "label": "LOC", "entity": "satpur midc area"}]}
+{"text": "Dwarka circle", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Dwarka circle"}]}
+{"text": "pizza chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "pizza"}]}
+{"text": "chalega ye", "entities": []}
+{"text": "koi accha maharashtrian bhojanalaya batao", "entities": [{"start": 10, "end": 35, "label": "STORE", "entity": "maharashtrian bhojanalaya"}]}
+{"text": "veggie pizza chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "veggie pizza"}]}
+{"text": "halal chicken", "entities": [{"start": 0, "end": 5, "label": "PREF", "entity": "halal"}, {"start": 6, "end": 13, "label": "FOOD", "entity": "chicken"}]}
+{"text": "zaroor karo", "entities": []}
+{"text": "ek sabudana khichdi chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 19, "label": "FOOD", "entity": "sabudana khichdi"}]}
+{"text": "delivery afternoon me chahiye", "entities": [{"start": 9, "end": 21, "label": "PREF", "entity": "afternoon me"}]}
+{"text": "koi accha ice cream parlor batao", "entities": [{"start": 10, "end": 26, "label": "STORE", "entity": "ice cream parlor"}]}
+{"text": "masala dosa chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "masala dosa"}]}
+{"text": "vada pav soft chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "vada pav"}, {"start": 9, "end": 13, "label": "PREF", "entity": "soft"}]}
+{"text": "select karo first wala", "entities": []}
+{"text": "yaar paneer butter masala mangwa do", "entities": [{"start": 5, "end": 25, "label": "FOOD", "entity": "paneer butter masala"}]}
+{"text": "green bakes se do sandwich mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 17, "label": "QTY", "entity": "do"}, {"start": 18, "end": 26, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "yaar egg curry mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "egg curry"}]}
+{"text": "sure yes", "entities": []}
+{"text": "baingan bharta chahiye", "entities": [{"start": 0, "end": 14, "label": "FOOD", "entity": "baingan bharta"}]}
+{"text": "cancel karo ye order", "entities": []}
+{"text": "khandvi no spicy chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "khandvi"}, {"start": 8, "end": 16, "label": "PREF", "entity": "no spicy"}]}
+{"text": "adgaon ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "adgaon"}]}
+{"text": "mere ghar pe pizza lao", "entities": [{"start": 13, "end": 18, "label": "FOOD", "entity": "pizza"}]}
+{"text": "pav bhaji ghee me banao chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pav bhaji"}, {"start": 10, "end": 23, "label": "PREF", "entity": "ghee me banao"}]}
+{"text": "no nahi chahiye", "entities": []}
+{"text": "i am good", "entities": []}
+{"text": "do plate misal aur teen vada pav", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "misal"}, {"start": 19, "end": 23, "label": "QTY", "entity": "teen"}, {"start": 24, "end": 32, "label": "FOOD", "entity": "vada pav"}]}
+{"text": "yaar veg biryani mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "veg biryani"}]}
+{"text": "no", "entities": []}
+{"text": "jalebi chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "jalebi"}]}
+{"text": "yaar mutton biryani mangwa do", "entities": [{"start": 5, "end": 19, "label": "FOOD", "entity": "mutton biryani"}]}
+{"text": "veg pizza chahiye", "entities": [{"start": 0, "end": 3, "label": "PREF", "entity": "veg"}, {"start": 4, "end": 9, "label": "FOOD", "entity": "pizza"}]}
+{"text": "char poha chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "poha"}]}
+{"text": "nashik road pe delivery hoti hai kya", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}]}
+{"text": "mainland china se noodles", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "mainland china"}, {"start": 18, "end": 25, "label": "FOOD", "entity": "noodles"}]}
+{"text": "snacks corner se order karo", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "snacks corner"}]}
+{"text": "pav bhaji chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pav bhaji"}]}
+{"text": "jain food chahiye", "entities": [{"start": 0, "end": 4, "label": "PREF", "entity": "jain"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "food"}]}
+{"text": "modern cafe ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "modern cafe"}]}
+{"text": "yaar garlic naan mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "garlic naan"}]}
+{"text": "karyalay pe bhejo", "entities": []}
+{"text": "1 kachori chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "kachori"}]}
+{"text": "delivery society me chahiye", "entities": [{"start": 9, "end": 19, "label": "LOC", "entity": "society me"}]}
+{"text": "delivery 8 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "8 baje"}]}
+{"text": "delivery fast delivery chahiye", "entities": [{"start": 9, "end": 22, "label": "PREF", "entity": "fast delivery"}]}
+{"text": "shrikhand chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "shrikhand"}]}
+{"text": "sab hatao cart se", "entities": []}
+{"text": "niphad ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "niphad"}]}
+{"text": "yaar veg spring rolls mangwa do", "entities": [{"start": 5, "end": 21, "label": "FOOD", "entity": "veg spring rolls"}]}
+{"text": "chicken biryani chahiye", "entities": [{"start": 0, "end": 15, "label": "FOOD", "entity": "chicken biryani"}]}
+{"text": "delivery 2 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "2 baje"}]}
+{"text": "delivery parso chahiye", "entities": [{"start": 9, "end": 14, "label": "PREF", "entity": "parso"}]}
+{"text": "aloo paratha chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "aloo paratha"}]}
+{"text": "pune ko parcel bhejna hai", "entities": [{"start": 0, "end": 4, "label": "LOC", "entity": "pune"}]}
+{"text": "ambad ka address save karo", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "ambad"}]}
+{"text": "bhindi masala chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "bhindi masala"}]}
+{"text": "mera order cancel karo", "entities": []}
+{"text": "delivery phase me chahiye", "entities": [{"start": 9, "end": 17, "label": "LOC", "entity": "phase me"}]}
+{"text": "Panchavati area", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "Panchavati area"}]}
+{"text": "daftar pe bhejo please", "entities": []}
+{"text": "family restaurant se order karo", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "family restaurant"}]}
+{"text": "mahatma nagar pe delivery hoti hai kya", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "mahatma nagar"}]}
+{"text": "paneer tikka pizza chahiye", "entities": [{"start": 0, "end": 18, "label": "FOOD", "entity": "paneer tikka pizza"}]}
+{"text": "chicken noodles chahiye", "entities": [{"start": 0, "end": 15, "label": "FOOD", "entity": "chicken noodles"}]}
+{"text": "karim hotel ka nihari", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "karim hotel"}, {"start": 15, "end": 21, "label": "FOOD", "entity": "nihari"}]}
+{"text": "show my cart", "entities": []}
+{"text": "yaar dal makhani mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "dal makhani"}]}
+{"text": "2 chocolate shake chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 17, "label": "FOOD", "entity": "chocolate shake"}]}
+{"text": "garlic bread chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "garlic bread"}]}
+{"text": "inayat cafe se pizza bhejo", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "inayat cafe"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "pizza"}]}
+{"text": "delivery 9 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "9 baje"}]}
+{"text": "ruko band karo", "entities": []}
+{"text": "restart karo", "entities": []}
+{"text": "Koregaon Park restaurant dikhao", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Koregaon Park"}]}
+{"text": "rasgulla chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "rasgulla"}]}
+{"text": "mat karo", "entities": []}
+{"text": "green bakes se 3 biryani mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "3"}, {"start": 17, "end": 24, "label": "FOOD", "entity": "biryani"}]}
+{"text": "parcel bhejni hai mumbai", "entities": [{"start": 18, "end": 24, "label": "LOC", "entity": "mumbai"}]}
+{"text": "misal pav butter nahi chahiye chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "misal pav"}, {"start": 10, "end": 29, "label": "PREF", "entity": "butter nahi chahiye"}]}
+{"text": "how are you", "entities": []}
+{"text": "yaar boiled eggs mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "boiled eggs"}]}
+{"text": "green hotel ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green hotel"}]}
+{"text": "college road pe biryani ki delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}, {"start": 16, "end": 23, "label": "FOOD", "entity": "biryani"}]}
+{"text": "yaar veggie pizza mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "veggie pizza"}]}
+{"text": "Aundh mein kya available hai", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "Aundh"}]}
+{"text": "koi accha cafe batao", "entities": [{"start": 10, "end": 14, "label": "STORE", "entity": "cafe"}]}
+{"text": "idli no garlic chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "idli"}, {"start": 5, "end": 14, "label": "PREF", "entity": "no garlic"}]}
+{"text": "canada corner pe delivery hoti hai kya", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "canada corner"}]}
+{"text": "low spice dal", "entities": [{"start": 0, "end": 9, "label": "PREF", "entity": "low spice"}, {"start": 10, "end": 13, "label": "FOOD", "entity": "dal"}]}
+{"text": "yaar basundi mangwa do", "entities": [{"start": 5, "end": 12, "label": "FOOD", "entity": "basundi"}]}
+{"text": "chole chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "chole"}]}
+{"text": "Viman Nagar ke paas", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "Viman Nagar"}]}
+{"text": "rabdi chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "rabdi"}]}
+{"text": "shiv sagar restaurant se thali", "entities": [{"start": 0, "end": 21, "label": "STORE", "entity": "shiv sagar restaurant"}, {"start": 25, "end": 30, "label": "FOOD", "entity": "thali"}]}
+{"text": "yaar sabudana khichdi mangwa do", "entities": [{"start": 5, "end": 21, "label": "FOOD", "entity": "sabudana khichdi"}]}
+{"text": "yaar gobi paratha mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "gobi paratha"}]}
+{"text": "yaar butter chicken mangwa do", "entities": [{"start": 5, "end": 19, "label": "FOOD", "entity": "butter chicken"}]}
+{"text": "confirm karo order", "entities": []}
+{"text": "royal cafe ka number do", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "royal cafe"}]}
+{"text": "mumbai naka ka address save karo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "mumbai naka"}]}
+{"text": "hi there", "entities": []}
+{"text": "delivery abhi chahiye", "entities": [{"start": 9, "end": 13, "label": "PREF", "entity": "abhi"}]}
+{"text": "green bakes se 2 burger mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "2"}, {"start": 17, "end": 23, "label": "FOOD", "entity": "burger"}]}
+{"text": "yaar kulfi mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "kulfi"}]}
+{"text": "thepla chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "thepla"}]}
+{"text": "chicken fried rice chahiye", "entities": [{"start": 0, "end": 18, "label": "FOOD", "entity": "chicken fried rice"}]}
+{"text": "paneer tikka chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "paneer tikka"}]}
+{"text": "old cafe ka number do", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "old cafe"}]}
+{"text": "yaar samosa mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "samosa"}]}
+{"text": "gangapur road ka address save karo", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "mexican pizza chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "mexican pizza"}]}
+{"text": "yaar fried momos mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "fried momos"}]}
+{"text": "2 club sandwich chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 15, "label": "FOOD", "entity": "club sandwich"}]}
+{"text": "sinnar ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "sinnar"}]}
+{"text": "nice to meet you", "entities": []}
+{"text": "haldiram se namkeen bhejo", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "haldiram"}, {"start": 12, "end": 19, "label": "FOOD", "entity": "namkeen"}]}
+{"text": "tea chahiye", "entities": [{"start": 0, "end": 3, "label": "FOOD", "entity": "tea"}]}
+{"text": "shri canteen ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "shri canteen"}]}
+{"text": "delivery dinner time chahiye", "entities": [{"start": 9, "end": 20, "label": "PREF", "entity": "dinner time"}]}
+{"text": "yes proceed", "entities": []}
+{"text": "mutton rogan josh chahiye", "entities": [{"start": 0, "end": 17, "label": "FOOD", "entity": "mutton rogan josh"}]}
+{"text": "yaar dosa mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "dosa"}]}
+{"text": "Farm Road area", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "Farm Road area"}]}
+{"text": "indira nagar ka address save karo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "indira nagar"}]}
+{"text": "ambad pe delivery hoti hai kya", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "ambad"}]}
+{"text": "dabeli butter extra chahiye chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dabeli"}, {"start": 7, "end": 27, "label": "PREF", "entity": "butter extra chahiye"}]}
+{"text": "ice cream parlor se order karo", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "ice cream parlor"}]}
+{"text": "mutton curry chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "mutton curry"}]}
+{"text": "Bhujbal chowk", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Bhujbal chowk"}]}
+{"text": "gyarah plate biryani", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "gyarah"}, {"start": 13, "end": 20, "label": "FOOD", "entity": "biryani"}]}
+{"text": "deolali camp ka address save karo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "deolali camp"}]}
+{"text": "mutton biryani chahiye", "entities": [{"start": 0, "end": 14, "label": "FOOD", "entity": "mutton biryani"}]}
+{"text": "gangapur road pe delivery hoti hai kya", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "start over", "entities": []}
+{"text": "old canteen ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "old canteen"}]}
+{"text": "sabudana khichdi chahiye", "entities": [{"start": 0, "end": 16, "label": "FOOD", "entity": "sabudana khichdi"}]}
+{"text": "sahi hai proceed karo", "entities": []}
+{"text": "malai kofta chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "malai kofta"}]}
+{"text": "chinese corner se order karo", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "chinese corner"}]}
+{"text": "Shivajinagar mein", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "Shivajinagar"}]}
+{"text": "achha theek hai", "entities": []}
+{"text": "delivery near school chahiye", "entities": [{"start": 9, "end": 20, "label": "LOC", "entity": "near school"}]}
+{"text": "yaar schezwan rice mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "schezwan rice"}]}
+{"text": "farm road pe jana hai", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "farm road"}]}
+{"text": "logout karo", "entities": []}
+{"text": "pav bhaji boil karo chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pav bhaji"}, {"start": 10, "end": 19, "label": "PREF", "entity": "boil karo"}]}
+{"text": "yaar bhindi masala mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "bhindi masala"}]}
+{"text": "notification off karo", "entities": []}
+{"text": "mess se order karo", "entities": [{"start": 0, "end": 4, "label": "STORE", "entity": "mess"}]}
+{"text": "delivery jaldi chahiye", "entities": [{"start": 9, "end": 14, "label": "PREF", "entity": "jaldi"}]}
+{"text": "is jagah pe", "entities": [{"start": 3, "end": 8, "label": "LOC", "entity": "jagah"}]}
+{"text": "shivam canteen ka number do", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "shivam canteen"}]}
+{"text": "pav bhaji double cheese chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pav bhaji"}, {"start": 10, "end": 23, "label": "PREF", "entity": "double cheese"}]}
+{"text": "green bakes se 1 momos mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "1"}, {"start": 17, "end": 22, "label": "FOOD", "entity": "momos"}]}
+{"text": "half mutton biryani chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 5, "end": 19, "label": "FOOD", "entity": "mutton biryani"}]}
+{"text": "krishna restaurant ka number do", "entities": [{"start": 0, "end": 18, "label": "STORE", "entity": "krishna restaurant"}]}
+{"text": "yaar gulab jamun mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "gulab jamun"}]}
+{"text": "barbeque nation se dinner", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "barbeque nation"}, {"start": 19, "end": 25, "label": "FOOD", "entity": "dinner"}]}
+{"text": "Deccan area", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "Deccan"}]}
+{"text": "mcdonalds ka burger dedo", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "mcdonalds"}, {"start": 13, "end": 19, "label": "FOOD", "entity": "burger"}]}
+{"text": "inayat se do sandwich mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 12, "label": "QTY", "entity": "do"}, {"start": 13, "end": 21, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "mango lassi chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "mango lassi"}]}
+{"text": "aage badho", "entities": []}
+{"text": "2 shrikhand chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 11, "label": "FOOD", "entity": "shrikhand"}]}
+{"text": "teen samosa tushar se", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "samosa"}, {"start": 12, "end": 18, "label": "STORE", "entity": "tushar"}]}
+{"text": "spicy momos", "entities": [{"start": 0, "end": 5, "label": "PREF", "entity": "spicy"}, {"start": 6, "end": 11, "label": "FOOD", "entity": "momos"}]}
+{"text": "yaar garlic bread mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "garlic bread"}]}
+{"text": "barah momos de do", "entities": [{"start": 0, "end": 5, "label": "QTY", "entity": "barah"}, {"start": 6, "end": 11, "label": "FOOD", "entity": "momos"}]}
+{"text": "malegaon ka address save karo", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "malegaon"}]}
+{"text": "inayat se 2 momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "momos"}]}
+{"text": "sinnar pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "sinnar"}]}
+{"text": "hotel taj se 3 pizza mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 14, "label": "QTY", "entity": "3"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "pizza"}]}
+{"text": "delivery station ke paas chahiye", "entities": [{"start": 9, "end": 24, "label": "LOC", "entity": "station ke paas"}]}
+{"text": "tushar se ek burger mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 19, "label": "FOOD", "entity": "burger"}]}
+{"text": "koi accha bakery batao", "entities": [{"start": 10, "end": 16, "label": "STORE", "entity": "bakery"}]}
+{"text": "yaar chowmein mangwa do", "entities": [{"start": 5, "end": 13, "label": "FOOD", "entity": "chowmein"}]}
+{"text": "hotel se order karo", "entities": [{"start": 0, "end": 5, "label": "STORE", "entity": "hotel"}]}
+{"text": "yaar veg momos mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "veg momos"}]}
+{"text": "yaar buttermilk mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "buttermilk"}]}
+{"text": "yaar pav bhaji mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "pav bhaji"}]}
+{"text": "yaar khandvi mangwa do", "entities": [{"start": 5, "end": 12, "label": "FOOD", "entity": "khandvi"}]}
+{"text": "margherita pizza chahiye", "entities": [{"start": 0, "end": 16, "label": "FOOD", "entity": "margherita pizza"}]}
+{"text": "hotel taj se ek sandwich mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 15, "label": "QTY", "entity": "ek"}, {"start": 16, "end": 24, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "Nigdi mein pizza", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "Nigdi"}, {"start": 11, "end": 16, "label": "FOOD", "entity": "pizza"}]}
+{"text": "Gangapur road", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Gangapur road"}]}
+{"text": "dhokla less oil chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dhokla"}, {"start": 7, "end": 15, "label": "PREF", "entity": "less oil"}]}
+{"text": "koi accha chinese corner batao", "entities": [{"start": 10, "end": 24, "label": "STORE", "entity": "chinese corner"}]}
+{"text": "yaar tea mangwa do", "entities": [{"start": 5, "end": 8, "label": "FOOD", "entity": "tea"}]}
+{"text": "igatpuri pe delivery hoti hai kya", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "igatpuri"}]}
+{"text": "delivery main road pe chahiye", "entities": [{"start": 9, "end": 21, "label": "LOC", "entity": "main road pe"}]}
+{"text": "coupon code lagao", "entities": []}
+{"text": "order place karo", "entities": []}
+{"text": "wok express ka schezwan rice", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "wok express"}, {"start": 15, "end": 28, "label": "FOOD", "entity": "schezwan rice"}]}
+{"text": "samosa crispy chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "samosa"}, {"start": 7, "end": 13, "label": "PREF", "entity": "crispy"}]}
+{"text": "jai cafe ka number do", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "jai cafe"}]}
+{"text": "red sauce pasta chahiye", "entities": [{"start": 0, "end": 15, "label": "FOOD", "entity": "red sauce pasta"}]}
+{"text": "yaar potato wedges mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "potato wedges"}]}
+{"text": "koi accha canteen batao", "entities": [{"start": 10, "end": 17, "label": "STORE", "entity": "canteen"}]}
+{"text": "ok done", "entities": []}
+{"text": "chai point se masala chai", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "chai point"}, {"start": 14, "end": 25, "label": "FOOD", "entity": "masala chai"}]}
+{"text": "yaar chole bhature mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "schezwan rice chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "schezwan rice"}]}
+{"text": "cidco ke pass restaurants", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}]}
+{"text": "yaar naan mangwa do", "entities": [{"start": 5, "end": 9, "label": "FOOD", "entity": "naan"}]}
+{"text": "asian wok and grill ka chinese food", "entities": [{"start": 0, "end": 19, "label": "STORE", "entity": "asian wok and grill"}, {"start": 23, "end": 35, "label": "FOOD", "entity": "chinese food"}]}
+{"text": "Law College Road", "entities": [{"start": 0, "end": 16, "label": "LOC", "entity": "Law College Road"}]}
+{"text": "paanch pizza chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 12, "label": "FOOD", "entity": "pizza"}]}
+{"text": "ek samosa chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 9, "label": "FOOD", "entity": "samosa"}]}
+{"text": "nashik road station pe utro", "entities": [{"start": 0, "end": 19, "label": "LOC", "entity": "nashik road station"}]}
+{"text": "4 jalebi chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "jalebi"}]}
+{"text": "delivery link road pe chahiye", "entities": [{"start": 9, "end": 21, "label": "LOC", "entity": "link road pe"}]}
+{"text": "delivery near temple chahiye", "entities": [{"start": 9, "end": 20, "label": "LOC", "entity": "near temple"}]}
+{"text": "inayat se ek sandwich mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 21, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "ambad ke restaurants dikhao", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "ambad"}]}
+{"text": "payment karo", "entities": []}
+{"text": "search karo biryani", "entities": [{"start": 12, "end": 19, "label": "FOOD", "entity": "biryani"}]}
+{"text": "thank you so much", "entities": []}
+{"text": "clear karo sab", "entities": []}
+{"text": "yaar baingan bharta mangwa do", "entities": [{"start": 5, "end": 19, "label": "FOOD", "entity": "baingan bharta"}]}
+{"text": "extra cheese pizza", "entities": [{"start": 0, "end": 12, "label": "PREF", "entity": "extra cheese"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "pizza"}]}
+{"text": "cafe paradise se ek pizza mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 19, "label": "QTY", "entity": "ek"}, {"start": 20, "end": 25, "label": "FOOD", "entity": "pizza"}]}
+{"text": "idli no onion chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "idli"}, {"start": 5, "end": 13, "label": "PREF", "entity": "no onion"}]}
+{"text": "yaar coffee mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "coffee"}]}
+{"text": "yaar burger mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "burger"}]}
+{"text": "new cidco pe delivery hoti hai kya", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "new cidco"}]}
+{"text": "Wanowrie ke restaurants", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "Wanowrie"}]}
+{"text": "samarth nagar pe delivery hoti hai kya", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "samarth nagar"}]}
+{"text": "MG Road pe khana", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "MG Road"}, {"start": 11, "end": 16, "label": "FOOD", "entity": "khana"}]}
+{"text": "refund de do", "entities": []}
+{"text": "thank you very much", "entities": []}
+{"text": "add more items", "entities": []}
+{"text": "yaar aloo paratha mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "aloo paratha"}]}
+{"text": "sagar ratna se chole bhature", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "sagar ratna"}, {"start": 15, "end": 28, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "tushar se ek momos mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "momos"}]}
+{"text": "veg momos chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "veg momos"}]}
+{"text": "camp area mein pizza chahiye", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "camp area"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "pizza"}]}
+{"text": "hotel taj se 1 burger mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 14, "label": "QTY", "entity": "1"}, {"start": 15, "end": 21, "label": "FOOD", "entity": "burger"}]}
+{"text": "cancel karo", "entities": []}
+{"text": "sab kuch theek hai", "entities": []}
+{"text": "yaar momos mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "momos"}]}
+{"text": "add karo cart mein", "entities": []}
+{"text": "makhmalabad pe delivery hoti hai kya", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "makhmalabad"}]}
+{"text": "yaar thepla mangwa do", "entities": [{"start": 5, "end": 11, "label": "FOOD", "entity": "thepla"}]}
+{"text": "rava dosa mild chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "rava dosa"}, {"start": 10, "end": 14, "label": "PREF", "entity": "mild"}]}
+{"text": "ashok nagar ka address save karo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "ashok nagar"}]}
+{"text": "grilled sandwich chahiye", "entities": [{"start": 0, "end": 16, "label": "FOOD", "entity": "grilled sandwich"}]}
+{"text": "grilled chicken chahiye", "entities": [{"start": 0, "end": 15, "label": "FOOD", "entity": "grilled chicken"}]}
+{"text": "yaar tandoori roti mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "tandoori roti"}]}
+{"text": "misal pav hot chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "misal pav"}, {"start": 10, "end": 13, "label": "PREF", "entity": "hot"}]}
+{"text": "bhagat tarachand se thali order karo", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "bhagat tarachand"}, {"start": 20, "end": 25, "label": "FOOD", "entity": "thali"}]}
+{"text": "yaar fish fry mangwa do", "entities": [{"start": 5, "end": 13, "label": "FOOD", "entity": "fish fry"}]}
+{"text": "kulkarni uncle se milna hai", "entities": []}
+{"text": "yaar paneer tikka mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "paneer tikka"}]}
+{"text": "PCMC area", "entities": [{"start": 0, "end": 4, "label": "LOC", "entity": "PCMC"}]}
+{"text": "wow momos se steamed momos", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "wow momos"}, {"start": 13, "end": 26, "label": "FOOD", "entity": "steamed momos"}]}
+{"text": "shree dhaba ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "shree dhaba"}]}
+{"text": "delivery kal subah chahiye", "entities": [{"start": 9, "end": 18, "label": "PREF", "entity": "kal subah"}]}
+{"text": "tea post se cutting chai", "entities": [{"start": 0, "end": 8, "label": "STORE", "entity": "tea post"}, {"start": 12, "end": 24, "label": "FOOD", "entity": "cutting chai"}]}
+{"text": "dabeli less spicy chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dabeli"}, {"start": 7, "end": 17, "label": "PREF", "entity": "less spicy"}]}
+{"text": "3 burger star boys cidco", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "burger"}, {"start": 9, "end": 18, "label": "STORE", "entity": "star boys"}, {"start": 19, "end": 24, "label": "LOC", "entity": "cidco"}]}
+{"text": "payment failed", "entities": []}
+{"text": "ha theek hai", "entities": []}
+{"text": "ek paneer tikka aur do biryani", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 15, "label": "FOOD", "entity": "paneer tikka"}, {"start": 20, "end": 22, "label": "QTY", "entity": "do"}, {"start": 23, "end": 30, "label": "FOOD", "entity": "biryani"}]}
+{"text": "indira nagar mein food", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "indira nagar"}, {"start": 18, "end": 22, "label": "FOOD", "entity": "food"}]}
+{"text": "Baner mein koi restaurant", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "Baner"}]}
+{"text": "yaar egg biryani mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "egg biryani"}]}
+{"text": "trimbak pe delivery hoti hai kya", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "trimbak"}]}
+{"text": "app crash ho raha hai", "entities": []}
+{"text": "chole bhature chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "basundi chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "basundi"}]}
+{"text": "chicken burger chahiye", "entities": [{"start": 0, "end": 14, "label": "FOOD", "entity": "chicken burger"}]}
+{"text": "spicy momos wow momos panchavati", "entities": [{"start": 0, "end": 5, "label": "PREF", "entity": "spicy"}, {"start": 6, "end": 11, "label": "FOOD", "entity": "momos"}, {"start": 12, "end": 21, "label": "STORE", "entity": "wow momos"}, {"start": 22, "end": 32, "label": "LOC", "entity": "panchavati"}]}
+{"text": "haan confirm", "entities": []}
+{"text": "dabeli chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "dabeli"}]}
+{"text": "yaar paneer momos mangwa do", "entities": [{"start": 5, "end": 17, "label": "FOOD", "entity": "paneer momos"}]}
+{"text": "nashik road pe pizza ki delivery chahiye", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "pizza"}]}
+{"text": "aath naan chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "aath"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "naan"}]}
+{"text": "tell me a joke", "entities": []}
+{"text": "do thepla chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 9, "label": "FOOD", "entity": "thepla"}]}
+{"text": "order cancel karo", "entities": []}
+{"text": "ganesh sweet mart se laddu chahiye", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "ganesh sweet mart"}, {"start": 21, "end": 26, "label": "FOOD", "entity": "laddu"}]}
+{"text": "chhah idli dosa", "entities": [{"start": 0, "end": 5, "label": "QTY", "entity": "chhah"}, {"start": 6, "end": 10, "label": "FOOD", "entity": "idli"}]}
+{"text": "nashik road pe momos ki delivery chahiye", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "momos"}]}
+{"text": "cidco pe biryani ki delivery chahiye", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}, {"start": 9, "end": 16, "label": "FOOD", "entity": "biryani"}]}
+{"text": "Chintamani Colony", "entities": [{"start": 0, "end": 17, "label": "LOC", "entity": "Chintamani Colony"}]}
+{"text": "no onion burger", "entities": [{"start": 0, "end": 8, "label": "PREF", "entity": "no onion"}, {"start": 9, "end": 15, "label": "FOOD", "entity": "burger"}]}
+{"text": "inayat se 1 biryani mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "1"}, {"start": 12, "end": 19, "label": "FOOD", "entity": "biryani"}]}
+{"text": "yaar mango lassi mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "mango lassi"}]}
+{"text": "baskin robbins se ice cream", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "baskin robbins"}, {"start": 18, "end": 27, "label": "FOOD", "entity": "ice cream"}]}
+{"text": "dhaba se order karo", "entities": [{"start": 0, "end": 5, "label": "STORE", "entity": "dhaba"}]}
+{"text": "french fries chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "french fries"}]}
+{"text": "yeola pe delivery hoti hai kya", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "yeola"}]}
+{"text": "yaar kadhi mangwa do", "entities": [{"start": 5, "end": 10, "label": "FOOD", "entity": "kadhi"}]}
+{"text": "fast food center se order karo", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "fast food center"}]}
+{"text": "noodle bar se hakka noodles", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "noodle bar"}, {"start": 14, "end": 27, "label": "FOOD", "entity": "hakka noodles"}]}
+{"text": "south indian se order karo", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "south indian"}]}
+{"text": "yaar veg burger mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "veg burger"}]}
+{"text": "dalo basket mein", "entities": []}
+{"text": "yaar ice cream mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "ice cream"}]}
+{"text": "delivery 7 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "7 baje"}]}
+{"text": "Fergusson College Road pe restaurant", "entities": [{"start": 0, "end": 22, "label": "LOC", "entity": "Fergusson College Road"}]}
+{"text": "palace cafe ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "palace cafe"}]}
+{"text": "udupi restaurant se idli sambar", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "udupi restaurant"}, {"start": 20, "end": 31, "label": "FOOD", "entity": "idli sambar"}]}
+{"text": "hanuman canteen ka number do", "entities": [{"start": 0, "end": 15, "label": "STORE", "entity": "hanuman canteen"}]}
+{"text": "delivery urgent chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "urgent"}]}
+{"text": "star boys se burger lao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "star boys"}, {"start": 13, "end": 19, "label": "FOOD", "entity": "burger"}]}
+{"text": "delivery kitne time mein hogi", "entities": []}
+{"text": "lassi chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "lassi"}]}
+{"text": "dindori pe delivery hoti hai kya", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "dindori"}]}
+{"text": "yaar chicken noodles mangwa do", "entities": [{"start": 5, "end": 20, "label": "FOOD", "entity": "chicken noodles"}]}
+{"text": "delivery 10 baje chahiye", "entities": [{"start": 9, "end": 16, "label": "PREF", "entity": "10 baje"}]}
+{"text": "how are you today", "entities": []}
+{"text": "panchavati mandir ke paas", "entities": [{"start": 0, "end": 17, "label": "LOC", "entity": "panchavati mandir"}]}
+{"text": "yaar prawns fry mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "prawns fry"}]}
+{"text": "shivam dhaba ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "shivam dhaba"}]}
+{"text": "restaurant se order karo", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "restaurant"}]}
+{"text": "delete kar do", "entities": []}
+{"text": "satpur mein kya hai", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "chaayos ka kulhad chai", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "chaayos"}, {"start": 11, "end": 22, "label": "FOOD", "entity": "kulhad chai"}]}
+{"text": "clear sab karo", "entities": []}
+{"text": "panchavati area mein", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "Shivaji Nagar mein biryani", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "Shivaji Nagar"}, {"start": 19, "end": 26, "label": "FOOD", "entity": "biryani"}]}
+{"text": "mahatma nagar ka address save karo", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "mahatma nagar"}]}
+{"text": "shivam cafe ka number do", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "shivam cafe"}]}
+{"text": "otp nahi aa raha", "entities": []}
+{"text": "jodh do cart mein", "entities": []}
+{"text": "yaar club sandwich mangwa do", "entities": [{"start": 5, "end": 18, "label": "FOOD", "entity": "club sandwich"}]}
+{"text": "garden canteen ka number do", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "garden canteen"}]}
+{"text": "canada corner ka address save karo", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "canada corner"}]}
+{"text": "hotel prakash ka biryani Shivaji Nagar branch", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "hotel prakash"}, {"start": 17, "end": 24, "label": "FOOD", "entity": "biryani"}, {"start": 25, "end": 45, "label": "LOC", "entity": "Shivaji Nagar branch"}]}
+{"text": "saptashrungi ka address save karo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "saptashrungi"}]}
+{"text": "yaar pani puri mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "pani puri"}]}
+{"text": "tandoori roti chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "tandoori roti"}]}
+{"text": "Yerawada mein", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "Yerawada"}]}
+{"text": "five star chicken se chicken wings", "entities": [{"start": 0, "end": 17, "label": "STORE", "entity": "five star chicken"}, {"start": 21, "end": 34, "label": "FOOD", "entity": "chicken wings"}]}
+{"text": "khandvi chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "khandvi"}]}
+{"text": "yaar dahi puri mangwa do", "entities": [{"start": 5, "end": 14, "label": "FOOD", "entity": "dahi puri"}]}
+{"text": "burger chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "burger"}]}
+{"text": "niphad pe delivery hoti hai kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "niphad"}]}
+{"text": "dwarka ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "dwarka"}]}
+{"text": "sweet shop se order karo", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "sweet shop"}]}
+{"text": "ghar par bhej do", "entities": []}
+{"text": "Dhanori ke paas pizza", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "Dhanori"}, {"start": 16, "end": 21, "label": "FOOD", "entity": "pizza"}]}
+{"text": "koi accha sweet shop batao", "entities": [{"start": 10, "end": 20, "label": "STORE", "entity": "sweet shop"}]}
+{"text": "cafe se order karo", "entities": [{"start": 0, "end": 4, "label": "STORE", "entity": "cafe"}]}
+{"text": "Wakad area mein", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "Wakad"}]}
+{"text": "yaar chicken burger mangwa do", "entities": [{"start": 5, "end": 19, "label": "FOOD", "entity": "chicken burger"}]}
+{"text": "College road nashik", "entities": [{"start": 0, "end": 19, "label": "LOC", "entity": "College road nashik"}]}
+{"text": "kachori chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "kachori"}]}
+{"text": "pulao chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "pulao"}]}
+{"text": "payment nahi ho raha", "entities": []}
+{"text": "kachori less cheese chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "kachori"}, {"start": 8, "end": 19, "label": "PREF", "entity": "less cheese"}]}
+{"text": "royal restaurant ka number do", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "royal restaurant"}]}
+{"text": "kya haal hai", "entities": []}
+{"text": "veg burger chahiye", "entities": [{"start": 0, "end": 10, "label": "FOOD", "entity": "veg burger"}]}
+{"text": "Katraj area", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "Katraj"}]}
+{"text": "support chahiye", "entities": []}
+{"text": "ek biryani bhagat tarachand wala", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 10, "label": "FOOD", "entity": "biryani"}, {"start": 11, "end": 27, "label": "STORE", "entity": "bhagat tarachand"}]}
+{"text": "dosa chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "dosa"}]}
+{"text": "koi accha juice center batao", "entities": [{"start": 10, "end": 22, "label": "STORE", "entity": "juice center"}]}
+{"text": "dosa no cheese chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "dosa"}, {"start": 5, "end": 14, "label": "PREF", "entity": "no cheese"}]}
+{"text": "bikaner sweets se rasmalai", "entities": [{"start": 0, "end": 14, "label": "STORE", "entity": "bikaner sweets"}, {"start": 18, "end": 26, "label": "FOOD", "entity": "rasmalai"}]}
+{"text": "bahut badiya", "entities": []}
+{"text": "hotel taj se 2 pizza mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 14, "label": "QTY", "entity": "2"}, {"start": 15, "end": 20, "label": "FOOD", "entity": "pizza"}]}
+{"text": "malegaon pe delivery hoti hai kya", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "malegaon"}]}
+{"text": "dahi puri tawa pe banao chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "dahi puri"}, {"start": 10, "end": 23, "label": "PREF", "entity": "tawa pe banao"}]}
+{"text": "inayat se 3 burger mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "3"}, {"start": 12, "end": 18, "label": "FOOD", "entity": "burger"}]}
+{"text": "char momos lao", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 10, "label": "FOOD", "entity": "momos"}]}
+{"text": "veg biryani chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "veg biryani"}]}
+{"text": "haan ji", "entities": []}
+{"text": "ek pizza aur ek burger dominos se", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 8, "label": "FOOD", "entity": "pizza"}, {"start": 13, "end": 15, "label": "QTY", "entity": "ek"}, {"start": 16, "end": 22, "label": "FOOD", "entity": "burger"}, {"start": 23, "end": 30, "label": "STORE", "entity": "dominos"}]}
+{"text": "delivery 3 baje chahiye", "entities": [{"start": 9, "end": 15, "label": "PREF", "entity": "3 baje"}]}
+{"text": "last order repeat karo", "entities": []}
+{"text": "uttapam warm chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "uttapam"}, {"start": 8, "end": 12, "label": "PREF", "entity": "warm"}]}
+{"text": "koi accha family restaurant batao", "entities": [{"start": 10, "end": 27, "label": "STORE", "entity": "family restaurant"}]}
+{"text": "non veg biryani", "entities": [{"start": 0, "end": 7, "label": "PREF", "entity": "non veg"}, {"start": 8, "end": 15, "label": "FOOD", "entity": "biryani"}]}
+{"text": "teen biryani chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 12, "label": "FOOD", "entity": "biryani"}]}
+{"text": "cheese pizza chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "cheese pizza"}]}
+{"text": "yaar milk shake mangwa do", "entities": [{"start": 5, "end": 15, "label": "FOOD", "entity": "milk shake"}]}
+{"text": "momos chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "momos"}]}
+{"text": "delivery layout me chahiye", "entities": [{"start": 9, "end": 18, "label": "LOC", "entity": "layout me"}]}
+{"text": "punjabi dhaba ka paratha", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "punjabi dhaba"}, {"start": 17, "end": 24, "label": "FOOD", "entity": "paratha"}]}
+{"text": "kya chalu hai bhai", "entities": []}
+{"text": "delivery market me chahiye", "entities": [{"start": 9, "end": 18, "label": "LOC", "entity": "market me"}]}
+{"text": "vada pav make it fresh chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "vada pav"}, {"start": 9, "end": 22, "label": "PREF", "entity": "make it fresh"}]}
+{"text": "cafe paradise se 1 burger mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 18, "label": "QTY", "entity": "1"}, {"start": 19, "end": 25, "label": "FOOD", "entity": "burger"}]}
+{"text": "coffee chahiye", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "coffee"}]}
+{"text": "delivery kal raat chahiye", "entities": [{"start": 9, "end": 17, "label": "PREF", "entity": "kal raat"}]}
+{"text": "modify karo quantity", "entities": []}
+{"text": "palak paneer chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "palak paneer"}]}
+{"text": "canteen se order karo", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "canteen"}]}
+{"text": "yes", "entities": []}
+{"text": "burger king ka whopper", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "burger king"}, {"start": 15, "end": 22, "label": "FOOD", "entity": "whopper"}]}
+{"text": "dahi puri extra oil chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "dahi puri"}, {"start": 10, "end": 19, "label": "PREF", "entity": "extra oil"}]}
+{"text": "kalwan ka address save karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "kalwan"}]}
+{"text": "sharanpur road ka address save karo", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "sharanpur road"}]}
+{"text": "mahalaxmi restaurant ka number do", "entities": [{"start": 0, "end": 20, "label": "STORE", "entity": "mahalaxmi restaurant"}]}
+{"text": "roti chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "roti"}]}
+{"text": "cheesy garlic bread chahiye", "entities": [{"start": 0, "end": 19, "label": "FOOD", "entity": "cheesy garlic bread"}]}
+{"text": "kulfi chahiye", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "kulfi"}]}
+{"text": "indira nagar pe delivery hoti hai kya", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "indira nagar"}]}
+{"text": "cafe paradise se ek biryani mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 19, "label": "QTY", "entity": "ek"}, {"start": 20, "end": 27, "label": "FOOD", "entity": "biryani"}]}
+{"text": "dominos se 2 pizza order karo", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "dominos"}, {"start": 11, "end": 12, "label": "QTY", "entity": "2"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "pizza"}]}
+{"text": "club sandwich chahiye", "entities": [{"start": 0, "end": 13, "label": "FOOD", "entity": "club sandwich"}]}
+{"text": "durga restaurant ka number do", "entities": [{"start": 0, "end": 16, "label": "STORE", "entity": "durga restaurant"}]}
+{"text": "app update karo", "entities": []}
+{"text": "proceed karo aage", "entities": []}
+{"text": "hotel taj se ek biryani mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 15, "label": "QTY", "entity": "ek"}, {"start": 16, "end": 23, "label": "FOOD", "entity": "biryani"}]}
+{"text": "cafe paradise se 3 sandwich mangwao", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 18, "label": "QTY", "entity": "3"}, {"start": 19, "end": 27, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "haan confirm karo", "entities": []}
+{"text": "full dhokla chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "full"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "dhokla"}]}
+{"text": "gangapur road pe pizza ki delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}, {"start": 17, "end": 22, "label": "FOOD", "entity": "pizza"}]}
+{"text": "yaar masala dosa mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "masala dosa"}]}
+{"text": "hanuman cafe ka number do", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "hanuman cafe"}]}
+{"text": "college road pe shop hai", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "yaar uttapam mangwa do", "entities": [{"start": 5, "end": 12, "label": "FOOD", "entity": "uttapam"}]}
+{"text": "uttapam medium spicy chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "uttapam"}, {"start": 8, "end": 20, "label": "PREF", "entity": "medium spicy"}]}
+{"text": "yaar butter naan mangwa do", "entities": [{"start": 5, "end": 16, "label": "FOOD", "entity": "butter naan"}]}
+{"text": "dindori ka address save karo", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "dindori"}]}
+{"text": "cidco pe delivery hoti hai kya", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}]}
+{"text": "ok karo", "entities": []}
+{"text": "pani puri chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "pani puri"}]}
+{"text": "hotel taj se ek burger mangwao", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "hotel taj"}, {"start": 13, "end": 15, "label": "QTY", "entity": "ek"}, {"start": 16, "end": 22, "label": "FOOD", "entity": "burger"}]}
+{"text": "fish fry chahiye", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "fish fry"}]}
+{"text": "phadke ka ghar kahan hai", "entities": []}
+{"text": "moti mahal se tandoori chicken", "entities": [{"start": 0, "end": 10, "label": "STORE", "entity": "moti mahal"}, {"start": 14, "end": 30, "label": "FOOD", "entity": "tandoori chicken"}]}
+{"text": "mumbai naka pe delivery hoti hai kya", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "mumbai naka"}]}
+{"text": "green bakes se 3 momos mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "3"}, {"start": 17, "end": 22, "label": "FOOD", "entity": "momos"}]}
+{"text": "delivery near hospital chahiye", "entities": [{"start": 9, "end": 22, "label": "LOC", "entity": "near hospital"}]}
+{"text": "cidco pe pizza ki delivery chahiye", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "pizza"}]}
+{"text": "dikhao pizza options", "entities": [{"start": 7, "end": 12, "label": "FOOD", "entity": "pizza"}]}
+{"text": "checkout karo please", "entities": []}
+{"text": "FC Road pe restaurant batao", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "FC Road"}]}
+{"text": "rava dosa grill karo chahiye", "entities": [{"start": 0, "end": 9, "label": "FOOD", "entity": "rava dosa"}, {"start": 10, "end": 20, "label": "PREF", "entity": "grill karo"}]}
+{"text": "support se baat karo", "entities": []}
+{"text": "upma chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "upma"}]}
+{"text": "green bakes se 1 pizza mangwao", "entities": [{"start": 0, "end": 11, "label": "STORE", "entity": "green bakes"}, {"start": 15, "end": 16, "label": "QTY", "entity": "1"}, {"start": 17, "end": 22, "label": "FOOD", "entity": "pizza"}]}
+{"text": "half rava dosa chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 5, "end": 14, "label": "FOOD", "entity": "rava dosa"}]}
+{"text": "sharanpur road pe delivery hoti hai kya", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "sharanpur road"}]}
+{"text": "sharad pawar ko call karo", "entities": []}
+{"text": "butter naan chahiye", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "butter naan"}]}
+{"text": "trimbak ka address save karo", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "trimbak"}]}
+{"text": "ek plate biryani do", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 9, "end": 16, "label": "FOOD", "entity": "biryani"}]}
+{"text": "2 plate poha chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 12, "label": "FOOD", "entity": "poha"}]}
+{"text": "3 plate misal pav lao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 8, "end": 17, "label": "FOOD", "entity": "misal pav"}]}
+{"text": "teen plate paneer tikka", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 11, "end": 23, "label": "FOOD", "entity": "paneer tikka"}]}
+{"text": "1 plate chicken fried rice", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 8, "end": 26, "label": "FOOD", "entity": "chicken fried rice"}]}
+{"text": "char plate momos order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 11, "end": 16, "label": "FOOD", "entity": "momos"}]}
+{"text": "do plate daal rice mangwao", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 9, "end": 18, "label": "FOOD", "entity": "daal rice"}]}
+{"text": "5 plate samosa bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "5"}, {"start": 8, "end": 14, "label": "FOOD", "entity": "samosa"}]}
+{"text": "2 glass lassi chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 13, "label": "FOOD", "entity": "lassi"}]}
+{"text": "ek glass mango shake", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 9, "end": 20, "label": "FOOD", "entity": "mango shake"}]}
+{"text": "3 piece chicken lollipop", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 8, "end": 24, "label": "FOOD", "entity": "chicken lollipop"}]}
+{"text": "do bowl soup mangwao", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 8, "end": 12, "label": "FOOD", "entity": "soup"}]}
+{"text": "1 bowl dal makhni chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 7, "end": 17, "label": "FOOD", "entity": "dal makhni"}]}
+{"text": "4 piece tandoori chicken", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 8, "end": 24, "label": "FOOD", "entity": "tandoori chicken"}]}
+{"text": "teen glass chai lao", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 11, "end": 15, "label": "FOOD", "entity": "chai"}]}
+{"text": "paanch roti chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 11, "label": "FOOD", "entity": "roti"}]}
+{"text": "chhe naan butter wali", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "chhe"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "naan"}, {"start": 10, "end": 21, "label": "PREF", "entity": "butter wali"}]}
+{"text": "das samosa order karo", "entities": [{"start": 0, "end": 3, "label": "QTY", "entity": "das"}, {"start": 4, "end": 10, "label": "FOOD", "entity": "samosa"}]}
+{"text": "aath paratha bhejo ghar pe", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "aath"}, {"start": 5, "end": 12, "label": "FOOD", "entity": "paratha"}]}
+{"text": "bees gulab jamun chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "bees"}, {"start": 5, "end": 16, "label": "FOOD", "entity": "gulab jamun"}]}
+{"text": "pandrah vada pav pack karo", "entities": [{"start": 0, "end": 7, "label": "QTY", "entity": "pandrah"}, {"start": 8, "end": 16, "label": "FOOD", "entity": "vada pav"}]}
+{"text": "barah plate biryani party ke liye", "entities": [{"start": 0, "end": 5, "label": "QTY", "entity": "barah"}, {"start": 12, "end": 19, "label": "FOOD", "entity": "biryani"}]}
+{"text": "do pizza aur teen burger star boys se", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 8, "label": "FOOD", "entity": "pizza"}, {"start": 13, "end": 17, "label": "QTY", "entity": "teen"}, {"start": 18, "end": 24, "label": "FOOD", "entity": "burger"}, {"start": 25, "end": 34, "label": "STORE", "entity": "star boys"}]}
+{"text": "1 biryani 2 naan aur 1 raita inayat cafe se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "biryani"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 16, "label": "FOOD", "entity": "naan"}, {"start": 23, "end": 28, "label": "FOOD", "entity": "raita"}, {"start": 29, "end": 40, "label": "STORE", "entity": "inayat cafe"}]}
+{"text": "ek plate misal do vada pav tushar se", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "misal"}, {"start": 15, "end": 17, "label": "QTY", "entity": "do"}, {"start": 18, "end": 26, "label": "FOOD", "entity": "vada pav"}, {"start": 27, "end": 33, "label": "STORE", "entity": "tushar"}]}
+{"text": "4 plate poha aur 2 chai mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 8, "end": 12, "label": "FOOD", "entity": "poha"}, {"start": 17, "end": 18, "label": "QTY", "entity": "2"}, {"start": 19, "end": 23, "label": "FOOD", "entity": "chai"}]}
+{"text": "biryani chahiye paradise hotel gangapur road se", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "biryani"}, {"start": 16, "end": 30, "label": "STORE", "entity": "paradise hotel"}, {"start": 31, "end": 44, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "pizza order karo dominos panchavati se", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "pizza"}, {"start": 17, "end": 24, "label": "STORE", "entity": "dominos"}, {"start": 25, "end": 35, "label": "LOC", "entity": "panchavati"}]}
+{"text": "vada pav tushar misal nashik road wala", "entities": [{"start": 0, "end": 8, "label": "FOOD", "entity": "vada pav"}, {"start": 9, "end": 21, "label": "STORE", "entity": "tushar misal"}, {"start": 22, "end": 33, "label": "LOC", "entity": "nashik road"}]}
+{"text": "momos order karo wow momos college road", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "momos"}, {"start": 17, "end": 26, "label": "STORE", "entity": "wow momos"}, {"start": 27, "end": 39, "label": "LOC", "entity": "college road"}]}
+{"text": "paneer tikka extra spicy chahiye", "entities": [{"start": 0, "end": 12, "label": "FOOD", "entity": "paneer tikka"}, {"start": 13, "end": 24, "label": "PREF", "entity": "extra spicy"}]}
+{"text": "butter naan less oil wala", "entities": [{"start": 0, "end": 11, "label": "FOOD", "entity": "butter naan"}, {"start": 12, "end": 25, "label": "PREF", "entity": "less oil wala"}]}
+{"text": "biryani mild spice double raita", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "biryani"}, {"start": 8, "end": 18, "label": "PREF", "entity": "mild spice"}, {"start": 19, "end": 31, "label": "PREF", "entity": "double raita"}]}
+{"text": "pizza no onion extra cheese", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "pizza"}, {"start": 6, "end": 14, "label": "PREF", "entity": "no onion"}, {"start": 15, "end": 27, "label": "PREF", "entity": "extra cheese"}]}
+{"text": "chai kam sugar wali 2 cup", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "chai"}, {"start": 5, "end": 19, "label": "PREF", "entity": "kam sugar wali"}, {"start": 20, "end": 21, "label": "QTY", "entity": "2"}]}
+{"text": "order status batao", "entities": []}
+{"text": "delivery kitni der mein aayega", "entities": []}
+{"text": "payment kaise karu", "entities": []}
+{"text": "cancel karna hai order", "entities": []}
+{"text": "refund chahiye mujhe", "entities": []}
+{"text": "complaint karna hai", "entities": []}
+{"text": "rider ka number do", "entities": []}
+{"text": "kuch nahi chahiye thanks", "entities": []}
+{"text": "hello ji kaise ho", "entities": []}
+{"text": "satpur se kuch mangwao", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "cidco colony delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "cidco colony"}]}
+{"text": "panchavati pe kuch bhejo", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "gangapur road wala restaurant dikha do", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "indira nagar mein koi accha hotel batao", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "indira nagar"}]}
+{"text": "half biryani chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 5, "end": 12, "label": "FOOD", "entity": "biryani"}]}
+{"text": "double cheese pizza", "entities": [{"start": 7, "end": 19, "label": "FOOD", "entity": "cheese pizza"}]}
+{"text": "quarter kg chicken", "entities": [{"start": 0, "end": 10, "label": "QTY", "entity": "quarter kg"}, {"start": 11, "end": 18, "label": "FOOD", "entity": "chicken"}]}
+{"text": "aadha kg mutton chahiye", "entities": [{"start": 0, "end": 8, "label": "QTY", "entity": "aadha kg"}, {"start": 9, "end": 15, "label": "FOOD", "entity": "mutton"}]}
+{"text": "1 kg chicken biryani order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "1 kg"}, {"start": 5, "end": 20, "label": "FOOD", "entity": "chicken biryani"}]}
+{"text": "2 plate sabudana khichdi", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 24, "label": "FOOD", "entity": "sabudana khichdi"}]}
+{"text": "1 plate pav bhaji special", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 8, "end": 17, "label": "FOOD", "entity": "pav bhaji"}, {"start": 18, "end": 25, "label": "PREF", "entity": "special"}]}
+{"text": "3 cup coffee lao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 6, "end": 12, "label": "FOOD", "entity": "coffee"}]}
+{"text": "ek plate chole bhature", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 9, "end": 22, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "do plate idli sambar", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 9, "end": 20, "label": "FOOD", "entity": "idli sambar"}]}
+{"text": "4 glass nimbu paani", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 8, "end": 19, "label": "FOOD", "entity": "nimbu paani"}]}
+{"text": "1 plate pani puri mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 8, "end": 17, "label": "FOOD", "entity": "pani puri"}]}
+{"text": "teen plate chole kulche", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 11, "end": 23, "label": "FOOD", "entity": "chole kulche"}]}
+{"text": "2 plate misal lao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 13, "label": "FOOD", "entity": "misal"}]}
+{"text": "3 vada pav chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 10, "label": "FOOD", "entity": "vada pav"}]}
+{"text": "4 samosa pack karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "samosa"}]}
+{"text": "5 chai mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "5"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "chai"}]}
+{"text": "1 biryani order karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "biryani"}]}
+{"text": "6 poha lao bhai", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "6"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "poha"}]}
+{"text": "10 samosa party ke liye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "10"}, {"start": 3, "end": 9, "label": "FOOD", "entity": "samosa"}]}
+{"text": "2 plate chole bhature", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 21, "label": "FOOD", "entity": "chole bhature"}]}
+{"text": "3 plate pav bhaji mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 8, "end": 17, "label": "FOOD", "entity": "pav bhaji"}]}
+{"text": "7 plate momos chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "7"}, {"start": 8, "end": 13, "label": "FOOD", "entity": "momos"}]}
+{"text": "ek chai lao", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 7, "label": "FOOD", "entity": "chai"}]}
+{"text": "do samosa chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 9, "label": "FOOD", "entity": "samosa"}]}
+{"text": "teen burger order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "burger"}]}
+{"text": "char paratha bhejo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 12, "label": "FOOD", "entity": "paratha"}]}
+{"text": "paanch roti mangwao", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 11, "label": "FOOD", "entity": "roti"}]}
+{"text": "chhe momos chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "chhe"}, {"start": 5, "end": 10, "label": "FOOD", "entity": "momos"}]}
+{"text": "saat naan lao", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "saat"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "naan"}]}
+{"text": "aath gulab jamun pack karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "aath"}, {"start": 5, "end": 16, "label": "FOOD", "entity": "gulab jamun"}]}
+{"text": "nau vada pav bhejo", "entities": [{"start": 0, "end": 3, "label": "QTY", "entity": "nau"}, {"start": 4, "end": 12, "label": "FOOD", "entity": "vada pav"}]}
+{"text": "das puri chahiye", "entities": [{"start": 0, "end": 3, "label": "QTY", "entity": "das"}, {"start": 4, "end": 8, "label": "FOOD", "entity": "puri"}]}
+{"text": "half plate biryani chahiye", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "half"}, {"start": 11, "end": 18, "label": "FOOD", "entity": "biryani"}]}
+{"text": "full plate misal lao", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "full"}, {"start": 11, "end": 16, "label": "FOOD", "entity": "misal"}]}
+{"text": "double cheese pizza mangwao", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "double"}, {"start": 7, "end": 19, "label": "FOOD", "entity": "cheese pizza"}]}
+{"text": "single plate poha", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "single"}, {"start": 13, "end": 17, "label": "FOOD", "entity": "poha"}]}
+{"text": "half kg chicken chahiye", "entities": [{"start": 0, "end": 7, "label": "QTY", "entity": "half kg"}, {"start": 8, "end": 15, "label": "FOOD", "entity": "chicken"}]}
+{"text": "aadha plate daal rice", "entities": [{"start": 0, "end": 5, "label": "QTY", "entity": "aadha"}, {"start": 12, "end": 21, "label": "FOOD", "entity": "daal rice"}]}
+{"text": "quarter plate biryani", "entities": [{"start": 0, "end": 7, "label": "QTY", "entity": "quarter"}, {"start": 14, "end": 21, "label": "FOOD", "entity": "biryani"}]}
+{"text": "2 kg mutton order karo", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "2 kg"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "mutton"}]}
+{"text": "1 plate thali chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 8, "end": 13, "label": "FOOD", "entity": "thali"}]}
+{"text": "ek pizza dominos se", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 8, "label": "FOOD", "entity": "pizza"}, {"start": 9, "end": 16, "label": "STORE", "entity": "dominos"}]}
+{"text": "do biryani paradise se mangwao", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 10, "label": "FOOD", "entity": "biryani"}, {"start": 11, "end": 19, "label": "STORE", "entity": "paradise"}]}
+{"text": "3 momos wow momos se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "momos"}, {"start": 8, "end": 17, "label": "STORE", "entity": "wow momos"}]}
+{"text": "teen misal tushar se lao", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 10, "label": "FOOD", "entity": "misal"}, {"start": 11, "end": 17, "label": "STORE", "entity": "tushar"}]}
+{"text": "4 naan hotel samarth se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "naan"}, {"start": 7, "end": 20, "label": "STORE", "entity": "hotel samarth"}]}
+{"text": "char sandwich cafe paradise se", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 13, "label": "FOOD", "entity": "sandwich"}, {"start": 14, "end": 27, "label": "STORE", "entity": "cafe paradise"}]}
+{"text": "2 order karo bhej do", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}]}
+{"text": "3 aur chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}]}
+{"text": "ek aur add karo", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}]}
+{"text": "do aur lao same", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}]}
+{"text": "5 pack karo sab", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "5"}]}
+{"text": "2 plate mangwao", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}]}
+{"text": "ek plate aur chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}]}
+{"text": "3 piece chahiye bas", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}]}
+{"text": "do glass lao jaldi", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}]}
+{"text": "2 biryani extra spicy", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "biryani"}, {"start": 10, "end": 21, "label": "PREF", "entity": "extra spicy"}]}
+{"text": "ek chai kam sugar", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 7, "label": "FOOD", "entity": "chai"}, {"start": 8, "end": 17, "label": "PREF", "entity": "kam sugar"}]}
+{"text": "3 pizza without onion", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "pizza"}, {"start": 8, "end": 21, "label": "PREF", "entity": "without onion"}]}
+{"text": "do dosa less oil wali", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 7, "label": "FOOD", "entity": "dosa"}, {"start": 8, "end": 21, "label": "PREF", "entity": "less oil wali"}]}
+{"text": "teen naan butter wala", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "naan"}, {"start": 10, "end": 21, "label": "PREF", "entity": "butter wala"}]}
+{"text": "paanch samosa spicy chahiye", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 13, "label": "FOOD", "entity": "samosa"}, {"start": 14, "end": 19, "label": "PREF", "entity": "spicy"}]}
+{"text": "gangapur road pe delivery chahiye", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "satpur me restaurant batao", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "cidco me delivery hoti hai", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}]}
+{"text": "panchavati ke paas chahiye", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "college road pe bhejo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "canada corner pe milega kya", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "canada corner"}]}
+{"text": "nashik road pe delivery karo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}]}
+{"text": "MG road nashik pe chahiye", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "MG road nashik"}]}
+{"text": "sharanpur area me bhejo", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "sharanpur area"}]}
+{"text": "ambad link road pe order bhejo", "entities": [{"start": 0, "end": 15, "label": "LOC", "entity": "ambad link road"}]}
+{"text": "trimbak road pe delivery karo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "trimbak road"}]}
+{"text": "makhmalabad me koi restaurant hai", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "makhmalabad"}]}
+{"text": "indira nagar pe delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "indira nagar"}]}
+{"text": "deolali camp me bhejo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "deolali camp"}]}
+{"text": "pathardi phata pe delivery hoti hai", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "pathardi phata"}]}
+{"text": "upnagar nashik pe bhejo", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "upnagar nashik"}]}
+{"text": "new cidco pe delivery chahiye", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "new cidco"}]}
+{"text": "old gangapur naka pe", "entities": [{"start": 0, "end": 17, "label": "LOC", "entity": "old gangapur naka"}]}
+{"text": "shalimar mein delivery", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "shalimar"}]}
+{"text": "dwarka circle ke paas", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "dwarka circle"}]}
+{"text": "tidke colony me bhejo", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "tidke colony"}]}
+{"text": "rane nagar pe delivery karo", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "rane nagar"}]}
+{"text": "bhadrakali pe chahiye", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "bhadrakali"}]}
+{"text": "untwadi me delivery bhejo", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "untwadi"}]}
+{"text": "bytco point pe milega kya", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "bytco point"}]}
+{"text": "nashik me sab milega", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "nashik"}]}
+{"text": "pune se order chahiye", "entities": [{"start": 0, "end": 4, "label": "LOC", "entity": "pune"}]}
+{"text": "mumbai wala address use karo", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "mumbai"}]}
+{"text": "thane pe delivery hoti hai kya", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "thane"}]}
+{"text": "aurangabad ka order", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "aurangabad"}]}
+{"text": "gangapur road pe restaurant batao", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "panchavati me koi hotel hai kya", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "panchavati"}]}
+{"text": "cidco me food delivery chahiye", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "cidco"}]}
+{"text": "satpur ke restaurant dikhao", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "satpur"}]}
+{"text": "nashik road wala menu dikhao", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "nashik road"}]}
+{"text": "college road pe kya milega", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "college road"}]}
+{"text": "ambad me food order karna hai", "entities": [{"start": 0, "end": 5, "label": "LOC", "entity": "ambad"}]}
+{"text": "deolali pe delivery bhejo", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "deolali"}]}
+{"text": "sinnar pe food milega kya", "entities": [{"start": 0, "end": 6, "label": "LOC", "entity": "sinnar"}]}
+{"text": "igatpuri se order chahiye", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "igatpuri"}]}
+{"text": "new panchavati pe chahiye", "entities": [{"start": 0, "end": 14, "label": "LOC", "entity": "new panchavati"}]}
+{"text": "ganesh colony me delivery", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "ganesh colony"}]}
+{"text": "jail road pe bhejo", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "jail road"}]}
+{"text": "ring road pe delivery karo", "entities": [{"start": 0, "end": 9, "label": "LOC", "entity": "ring road"}]}
+{"text": "takli road pe bhejo", "entities": [{"start": 0, "end": 10, "label": "LOC", "entity": "takli road"}]}
+{"text": "govind nagar pe delivery chahiye", "entities": [{"start": 0, "end": 12, "label": "LOC", "entity": "govind nagar"}]}
+{"text": "pawan nagar pe bhejo", "entities": [{"start": 0, "end": 11, "label": "LOC", "entity": "pawan nagar"}]}
+{"text": "mahatma nagar me delivery", "entities": [{"start": 0, "end": 13, "label": "LOC", "entity": "mahatma nagar"}]}
+{"text": "hirawadi pe chahiye", "entities": [{"start": 0, "end": 8, "label": "LOC", "entity": "hirawadi"}]}
+{"text": "dindori pe delivery hoti hai", "entities": [{"start": 0, "end": 7, "label": "LOC", "entity": "dindori"}]}
+{"text": "2 pizza gangapur road pe deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "pizza"}, {"start": 8, "end": 21, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "ek misal panchavati me bhejo", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 8, "label": "FOOD", "entity": "misal"}, {"start": 9, "end": 19, "label": "LOC", "entity": "panchavati"}]}
+{"text": "3 parcel cidco bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 9, "end": 14, "label": "LOC", "entity": "cidco"}]}
+{"text": "do biryani satpur pe chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 3, "end": 10, "label": "FOOD", "entity": "biryani"}, {"start": 11, "end": 17, "label": "LOC", "entity": "satpur"}]}
+{"text": "4 burger college road pe bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "4"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "burger"}, {"start": 9, "end": 21, "label": "LOC", "entity": "college road"}]}
+{"text": "teen chai canada corner pe", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "teen"}, {"start": 5, "end": 9, "label": "FOOD", "entity": "chai"}, {"start": 10, "end": 23, "label": "LOC", "entity": "canada corner"}]}
+{"text": "5 momos nashik road pe deliver karo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "5"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "momos"}, {"start": 8, "end": 19, "label": "LOC", "entity": "nashik road"}]}
+{"text": "ek vada pav ambad me chahiye", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 11, "label": "FOOD", "entity": "vada pav"}, {"start": 12, "end": 17, "label": "LOC", "entity": "ambad"}]}
+{"text": "2 plate poha deolali pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 8, "end": 12, "label": "FOOD", "entity": "poha"}, {"start": 13, "end": 20, "label": "LOC", "entity": "deolali"}]}
+{"text": "3 sandwich indira nagar bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 10, "label": "FOOD", "entity": "sandwich"}, {"start": 11, "end": 23, "label": "LOC", "entity": "indira nagar"}]}
+{"text": "char samosa sharanpur pe", "entities": [{"start": 0, "end": 4, "label": "QTY", "entity": "char"}, {"start": 5, "end": 11, "label": "FOOD", "entity": "samosa"}, {"start": 12, "end": 21, "label": "LOC", "entity": "sharanpur"}]}
+{"text": "1 dosa cidco colony pe bhejo", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "1"}, {"start": 2, "end": 6, "label": "FOOD", "entity": "dosa"}, {"start": 7, "end": 19, "label": "LOC", "entity": "cidco colony"}]}
+{"text": "paanch naan makhmalabad pe", "entities": [{"start": 0, "end": 6, "label": "QTY", "entity": "paanch"}, {"start": 7, "end": 11, "label": "FOOD", "entity": "naan"}, {"start": 12, "end": 23, "label": "LOC", "entity": "makhmalabad"}]}
+{"text": "2 coffee ring road pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "coffee"}, {"start": 9, "end": 18, "label": "LOC", "entity": "ring road"}]}
+{"text": "do plate misal gangapur road pe lao", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 9, "end": 14, "label": "FOOD", "entity": "misal"}, {"start": 15, "end": 28, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "ek biryani panchavati pe deliver karo", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 10, "label": "FOOD", "entity": "biryani"}, {"start": 11, "end": 21, "label": "LOC", "entity": "panchavati"}]}
+{"text": "6 paratha satpur me chahiye", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "6"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "paratha"}, {"start": 10, "end": 16, "label": "LOC", "entity": "satpur"}]}
+{"text": "tushar se 2 misal mangwao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "misal"}]}
+{"text": "3 burger dominos se", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "burger"}, {"start": 9, "end": 16, "label": "STORE", "entity": "dominos"}]}
+{"text": "inayat se ek biryani lao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 12, "label": "QTY", "entity": "ek"}, {"start": 13, "end": 20, "label": "FOOD", "entity": "biryani"}]}
+{"text": "hotel samarth se do thali chahiye", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "hotel samarth"}, {"start": 17, "end": 19, "label": "QTY", "entity": "do"}, {"start": 20, "end": 25, "label": "FOOD", "entity": "thali"}]}
+{"text": "cafe paradise se 3 sandwich bhejo", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 18, "label": "QTY", "entity": "3"}, {"start": 19, "end": 27, "label": "FOOD", "entity": "sandwich"}]}
+{"text": "tushar se teen vada pav lao", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 14, "label": "QTY", "entity": "teen"}, {"start": 15, "end": 23, "label": "FOOD", "entity": "vada pav"}]}
+{"text": "star boys se 2 burger order karo", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "star boys"}, {"start": 13, "end": 14, "label": "QTY", "entity": "2"}, {"start": 15, "end": 21, "label": "FOOD", "entity": "burger"}]}
+{"text": "tushar se 2 misal satpur pe bhejo", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "tushar"}, {"start": 10, "end": 11, "label": "QTY", "entity": "2"}, {"start": 12, "end": 17, "label": "FOOD", "entity": "misal"}, {"start": 18, "end": 24, "label": "LOC", "entity": "satpur"}]}
+{"text": "dominos se 1 pizza gangapur road pe", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "dominos"}, {"start": 11, "end": 12, "label": "QTY", "entity": "1"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "pizza"}, {"start": 19, "end": 32, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "inayat se 3 sandwich panchavati pe", "entities": [{"start": 0, "end": 6, "label": "STORE", "entity": "inayat"}, {"start": 10, "end": 11, "label": "QTY", "entity": "3"}, {"start": 12, "end": 20, "label": "FOOD", "entity": "sandwich"}, {"start": 21, "end": 31, "label": "LOC", "entity": "panchavati"}]}
+{"text": "cafe paradise se ek biryani cidco me", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 17, "end": 19, "label": "QTY", "entity": "ek"}, {"start": 20, "end": 27, "label": "FOOD", "entity": "biryani"}, {"start": 28, "end": 33, "label": "LOC", "entity": "cidco"}]}
+{"text": "hotel samarth se 2 thali nashik road pe", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "hotel samarth"}, {"start": 17, "end": 18, "label": "QTY", "entity": "2"}, {"start": 19, "end": 24, "label": "FOOD", "entity": "thali"}, {"start": 25, "end": 36, "label": "LOC", "entity": "nashik road"}]}
+{"text": "star boys se do burger college road pe", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "star boys"}, {"start": 13, "end": 15, "label": "QTY", "entity": "do"}, {"start": 16, "end": 22, "label": "FOOD", "entity": "burger"}, {"start": 23, "end": 35, "label": "LOC", "entity": "college road"}]}
+{"text": "biryani gangapur road pe chahiye", "entities": [{"start": 0, "end": 7, "label": "FOOD", "entity": "biryani"}, {"start": 8, "end": 21, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "pizza panchavati me mangwao", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "pizza"}, {"start": 6, "end": 16, "label": "LOC", "entity": "panchavati"}]}
+{"text": "momos cidco pe bhejo", "entities": [{"start": 0, "end": 5, "label": "FOOD", "entity": "momos"}, {"start": 6, "end": 11, "label": "LOC", "entity": "cidco"}]}
+{"text": "chai satpur pe chahiye", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "chai"}, {"start": 5, "end": 11, "label": "LOC", "entity": "satpur"}]}
+{"text": "samosa college road pe mangwao", "entities": [{"start": 0, "end": 6, "label": "FOOD", "entity": "samosa"}, {"start": 7, "end": 19, "label": "LOC", "entity": "college road"}]}
+{"text": "dosa nashik road pe bhejo", "entities": [{"start": 0, "end": 4, "label": "FOOD", "entity": "dosa"}, {"start": 5, "end": 16, "label": "LOC", "entity": "nashik road"}]}
+{"text": "tushar misal ka nashik road wala", "entities": [{"start": 0, "end": 12, "label": "STORE", "entity": "tushar misal"}, {"start": 16, "end": 27, "label": "LOC", "entity": "nashik road"}]}
+{"text": "dominos panchavati wala", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "dominos"}, {"start": 8, "end": 18, "label": "LOC", "entity": "panchavati"}]}
+{"text": "wow momos cidco wala", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "wow momos"}, {"start": 10, "end": 15, "label": "LOC", "entity": "cidco"}]}
+{"text": "cafe paradise gangapur road", "entities": [{"start": 0, "end": 13, "label": "STORE", "entity": "cafe paradise"}, {"start": 14, "end": 27, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "2 biryani extra spicy gangapur road pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 9, "label": "FOOD", "entity": "biryani"}, {"start": 10, "end": 21, "label": "PREF", "entity": "extra spicy"}, {"start": 22, "end": 35, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "ek chai kam sugar cidco me", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 7, "label": "FOOD", "entity": "chai"}, {"start": 8, "end": 17, "label": "PREF", "entity": "kam sugar"}, {"start": 18, "end": 23, "label": "LOC", "entity": "cidco"}]}
+{"text": "2 pizza aur 3 burger gangapur road pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 2, "end": 7, "label": "FOOD", "entity": "pizza"}, {"start": 12, "end": 13, "label": "QTY", "entity": "3"}, {"start": 14, "end": 20, "label": "FOOD", "entity": "burger"}, {"start": 21, "end": 34, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "ek biryani do naan satpur pe", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "ek"}, {"start": 3, "end": 10, "label": "FOOD", "entity": "biryani"}, {"start": 11, "end": 13, "label": "QTY", "entity": "do"}, {"start": 14, "end": 18, "label": "FOOD", "entity": "naan"}, {"start": 19, "end": 25, "label": "LOC", "entity": "satpur"}]}
+{"text": "3 samosa aur 2 chai panchavati me", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 2, "end": 8, "label": "FOOD", "entity": "samosa"}, {"start": 13, "end": 14, "label": "QTY", "entity": "2"}, {"start": 15, "end": 19, "label": "FOOD", "entity": "chai"}, {"start": 20, "end": 30, "label": "LOC", "entity": "panchavati"}]}
+{"text": "2 aur chahiye cidco pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "2"}, {"start": 14, "end": 19, "label": "LOC", "entity": "cidco"}]}
+{"text": "3 plate lao gangapur road pe", "entities": [{"start": 0, "end": 1, "label": "QTY", "entity": "3"}, {"start": 12, "end": 25, "label": "LOC", "entity": "gangapur road"}]}
+{"text": "do aur bhejo satpur pe", "entities": [{"start": 0, "end": 2, "label": "QTY", "entity": "do"}, {"start": 13, "end": 19, "label": "LOC", "entity": "satpur"}]}
+{"text": "thank you", "entities": []}
+{"text": "haan", "entities": []}
+{"text": "haan sahi hai", "entities": []}
+{"text": "order confirm karo", "entities": []}
+{"text": "theek hai done", "entities": []}
+{"text": "kuch nahi bas", "entities": []}
+{"text": "yeh wala hatao", "entities": []}
+{"text": "aur kuch nahi", "entities": []}
+{"text": "payment ho gaya", "entities": []}
+{"text": "sab sahi hai", "entities": []}
+{"text": "ok thank you bye", "entities": []}
+{"text": "mujhe help chahiye", "entities": []}
+{"text": "menu dikhao pls", "entities": []}
+{"text": "kya available hai", "entities": []}
+{"text": "abhi nahi baad me", "entities": []}
+{"text": "sab cancel karo", "entities": []}
+{"text": "wow momos se 4 plate chahiye", "entities": [{"start": 0, "end": 9, "label": "STORE", "entity": "wow momos"}, {"start": 13, "end": 14, "label": "QTY", "entity": "4"}]}
+{"text": "dominos se 2 pizza mangwao", "entities": [{"start": 0, "end": 7, "label": "STORE", "entity": "dominos"}, {"start": 11, "end": 12, "label": "QTY", "entity": "2"}, {"start": 13, "end": 18, "label": "FOOD", "entity": "pizza"}]}

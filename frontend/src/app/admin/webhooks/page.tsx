@@ -25,44 +25,8 @@ export default function WebhooksPage() {
   const loadWebhooks = useCallback(async () => {
     setLoading(true);
     try {
-      // Mock data for now
-      setWebhooks([
-        {
-          id: 'wh_1',
-          name: 'Order Notification',
-          url: 'https://api.example.com/webhooks/orders',
-          events: ['order.created', 'order.completed'],
-          enabled: true,
-          secret: 'sk_test_***************',
-          lastTriggered: new Date(),
-          successCount: 1247,
-          failureCount: 3,
-          createdAt: new Date('2025-01-15')
-        },
-        {
-          id: 'wh_2',
-          name: 'Training Events',
-          url: 'https://api.example.com/webhooks/training',
-          events: ['training.started', 'training.completed', 'training.failed'],
-          enabled: true,
-          secret: 'sk_test_***************',
-          lastTriggered: new Date(),
-          successCount: 45,
-          failureCount: 0,
-          createdAt: new Date('2025-02-01')
-        },
-        {
-          id: 'wh_3',
-          name: 'Search Analytics',
-          url: 'https://analytics.example.com/webhooks',
-          events: ['search.query', 'search.click'],
-          enabled: false,
-          secret: 'sk_test_***************',
-          successCount: 0,
-          failureCount: 0,
-          createdAt: new Date('2025-02-20')
-        }
-      ]);
+      // No backend webhook management endpoint exists yet
+      setWebhooks([]);
     } catch (error) {
       console.error('Failed to load webhooks', error);
       toast.error('Failed to load webhooks');
@@ -83,11 +47,8 @@ export default function WebhooksPage() {
   };
 
   const testWebhook = async (id: string) => {
-    toast.info(`Sending test payload for ${id}...`);
-    // Simulate test
-    setTimeout(() => {
-      toast.success(`Test webhook ${id} sent successfully`);
-    }, 1000);
+    toast.info('Webhook testing not yet implemented');
+    void id;
   };
 
   const deleteWebhook = async (id: string) => {
