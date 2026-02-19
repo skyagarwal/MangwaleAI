@@ -806,11 +806,13 @@ export class ContextRouterService implements OnModuleInit {
       'wait_quantity', 'wait_size', 'wait_addon_selection',
       // Parcel vehicle category selection states
       'show_categories', 'show_categories_retry',
-      // Address collection states  
+      // Address collection states
       'collect_pickup', 'collect_delivery', 'extract_pickup_address', 'extract_delivery_address',
       // Payment gateway wait states (parcel + food)
       'wait_payment_result', 'wait_food_payment_result',
       'await_payment_retry', 'await_food_payment_retry',
+      // Location wait states — user is sharing GPS/location, don't switch to address flow
+      'request_location', 'handle_location_response', 'ask_location',
     ];
     
     const isInCriticalState = CRITICAL_WAIT_STATES.includes(currentState);
@@ -1261,16 +1263,18 @@ export class ContextRouterService implements OnModuleInit {
             const store = card.storeName || card.store_name || card.restaurant || '';
             const rating = card.rating ? `⭐${card.rating}` : '';
             const vegIcon = card.veg == 1 || card.veg === true ? '🟢' : card.veg == 0 || card.veg === false ? '🔴' : '';
-            
+
             // Add to message
-            itemsMessage += `${idx + 1}. ${vegIcon} *${name}* ${price}\n`;
+            itemsMessage += `${idx + 1}. ${vegIcon} ${name} ${price}\n`;
             if (store) itemsMessage += `   📍 ${store} ${rating}\n`;
             itemsMessage += '\n';
-            
-            // Add to rows for list - ENSURE id is STRING
-            const rowId = card.id ? String(card.id) : `item_${idx}`;
+
+            // Add to rows for list - use item_ID format for consistent handling with web
+            // card.action?.value is the preferred source (e.g., "item_10201")
+            // Fallback: prefix card.id with "item_" to match the web format
+            const rowId = card.action?.value || (card.id ? `item_${card.id}` : `item_${idx}`);
             rows.push({
-              id: rowId,
+              id: String(rowId).substring(0, 200), // WhatsApp list row ID limit
               title: String(name).substring(0, 24),
               description: `${vegIcon} ${price} • ${store}`.substring(0, 72),
             });

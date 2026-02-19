@@ -2,7 +2,7 @@
 
 import { Star, Clock, MapPin, Leaf, Zap, TrendingUp, Gift } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { ProductCard as ProductCardType, VariantOption } from '@/types/chat'
 
 // Multiple fallback URLs for product images
@@ -81,10 +81,10 @@ export function CompactProductCard({
   })
 
   // Trigger animation on mount
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), index * 80)
     return () => clearTimeout(timer)
-  })
+  }, [index])
 
   const currentPrice = (() => {
     let price = card.price

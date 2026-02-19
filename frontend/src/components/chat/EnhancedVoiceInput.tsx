@@ -441,6 +441,11 @@ export const EnhancedVoiceInput = React.forwardRef<EnhancedVoiceInputHandle, Enh
     } catch (error) {
       console.error('Error accessing microphone:', error);
       setError('Microphone access denied');
+      // Release stream on error to avoid mic leak
+      if (streamRef.current && !keepStreamAlive) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     }
   }, [enableStreaming, keepStreamAlive, startAudioVisualization, startStreamingASR, uploadForTranscription]);
 

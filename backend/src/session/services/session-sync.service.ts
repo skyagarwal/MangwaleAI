@@ -49,10 +49,12 @@ export class SessionSyncService {
     const redisFlowContext = session?.data?.flowContext;
 
     // 2. Check DB for active FlowRun
+    // NOTE: Flow engine creates with status='active', then updates to 'running' after first execution.
+    // We need to check BOTH statuses to find in-progress flows.
     const dbFlowRun = await this.prisma.flowRun.findFirst({
       where: {
         sessionId,
-        status: 'active',
+        status: { in: ['active', 'running'] },
       },
       orderBy: {
         startedAt: 'desc',
@@ -301,9 +303,9 @@ export class SessionSyncService {
   async cleanupOrphanedFlows(sessionId: string, excludeFlowRunId?: string): Promise<number> {
     const whereClause: any = {
       sessionId,
-      status: 'active',
+      status: { in: ['active', 'running'] },
     };
-    
+
     if (excludeFlowRunId) {
       whereClause.id = { not: excludeFlowRunId };
     }
@@ -332,7 +334,7 @@ export class SessionSyncService {
 
     const result = await this.prisma.flowRun.updateMany({
       where: {
-        status: 'active',
+        status: { in: ['active', 'running'] },
         startedAt: { lt: cutoff },
       },
       data: {

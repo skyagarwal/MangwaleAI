@@ -153,7 +153,7 @@ export class IntentRouterService implements OnModuleInit {
   // Intents that should be overridden to order_food when food keywords present
   private readonly FOOD_OVERRIDE_INTENTS = [
     'parcel_booking',
-    // 'search_product' REMOVED - search_product should route to ecommerce_order_v1, not food
+    'search_product',  // Re-enabled: AI food detector distinguishes food vs e-commerce searches
     'manage_address',
     'send',
     'search',
@@ -438,47 +438,81 @@ export class IntentRouterService implements OnModuleInit {
     if (!this.FOOD_OVERRIDE_INTENTS.includes(translatedIntent)) {
       return null;
     }
-    
-    // Check for P2P (parcel) context using AI-powered semantic detection
-    const parcelDetection = await this.parcelDetector.detectParcel(text, {
-      skipCache: false, // Use cache for performance
-    });
-    
-    if (parcelDetection.isParcel && parcelDetection.confidence > 0.7) {
-      this.logger.log(
-        `📦 AI Parcel Context Detected: "${text.substring(0, 40)}..." ` +
-        `(confidence: ${parcelDetection.confidence.toFixed(2)}, method: ${parcelDetection.method}) ` +
-        `→ keeping intent: ${translatedIntent}`
-      );
-      return null;
+
+    // Check for P2P (parcel) context — keyword check first (fast, no network)
+    const lowerText = text.toLowerCase();
+    const parcelHints = ['parcel', 'courier', 'pickup', 'package'];
+    const hasParcelContext = parcelHints.some(k => lowerText.includes(k)) ||
+      /\bse\b.*\btak\b|\bfrom\b.*\bto\b.*\bdeliver/i.test(text);
+
+    if (!hasParcelContext) {
+      // No parcel keywords — skip expensive AI parcel detection
+    } else {
+      try {
+        const parcelDetection = await this.parcelDetector.detectParcel(text, { skipCache: false });
+        if (parcelDetection.isParcel && parcelDetection.confidence > 0.7) {
+          this.logger.log(
+            `📦 Parcel Context Detected: "${text.substring(0, 40)}..." ` +
+            `(confidence: ${parcelDetection.confidence.toFixed(2)}, method: ${parcelDetection.method}) ` +
+            `→ keeping intent: ${translatedIntent}`
+          );
+          return null;
+        }
+      } catch (err) {
+        this.logger.warn(`Parcel detection failed in food override: ${err.message}`);
+      }
     }
-    
-    // AI-powered food detection (replaces keyword matching)
-    const foodDetection = await this.foodDetector.detectFood(text, {
-      skipCache: false, // Use cache for performance
-    });
-    
-    if (foodDetection.isFood && foodDetection.confidence > 0.7) {
+
+    // Try AI-powered food detection first
+    try {
+      const foodDetection = await this.foodDetector.detectFood(text, { skipCache: false });
+
+      if (foodDetection.isFood && foodDetection.confidence > 0.7) {
+        const foodFlowId = await this.findFlowForIntent('order_food', context.isAuthenticated);
+        const items = foodDetection.detectedItems?.join(', ') || 'food items';
+
+        this.logger.log(
+          `🍕 AI Food Override: "${text.substring(0, 40)}..." detected as food ` +
+          `(${items}, confidence: ${foodDetection.confidence.toFixed(2)}, method: ${foodDetection.method}) ` +
+          `→ order_food (was: ${translatedIntent})`
+        );
+
+        return {
+          originalIntent,
+          translatedIntent: 'order_food',
+          flowId: foodFlowId,
+          overrideApplied: true,
+          reason: `AI detected food: ${items} (${foodDetection.confidence.toFixed(2)} confidence, ${foodDetection.method})`,
+          priority: 'food_override',
+          confidence: 0.85,
+        };
+      }
+    } catch (err) {
+      this.logger.warn(`AI food detection failed in override: ${err.message}`);
+    }
+
+    // Fallback: check against comprehensive FOOD_KEYWORDS list
+    // This catches cases where AI detection is unavailable or returns low confidence
+    const matchedFoodKeywords = this.FOOD_KEYWORDS.filter(k => lowerText.includes(k));
+    if (matchedFoodKeywords.length > 0) {
       const foodFlowId = await this.findFlowForIntent('order_food', context.isAuthenticated);
-      const items = foodDetection.detectedItems?.join(', ') || 'food items';
-      
+
       this.logger.log(
-        `🍕 AI Food Override: "${text.substring(0, 40)}..." detected as food ` +
-        `(${items}, confidence: ${foodDetection.confidence.toFixed(2)}, method: ${foodDetection.method}) ` +
+        `🍕 Keyword Food Override: "${text.substring(0, 40)}..." matched food keywords: [${matchedFoodKeywords.join(', ')}] ` +
         `→ order_food (was: ${translatedIntent})`
       );
-      
+
       return {
         originalIntent,
         translatedIntent: 'order_food',
         flowId: foodFlowId,
         overrideApplied: true,
-        reason: `AI detected food: ${items} (${foodDetection.confidence.toFixed(2)} confidence, ${foodDetection.method})`,
+        reason: `Food keywords detected: ${matchedFoodKeywords.join(', ')}`,
         priority: 'food_override',
-        confidence: 0.85,
+        confidence: 0.80,
       };
     }
-    
+
     return null;
   }
   

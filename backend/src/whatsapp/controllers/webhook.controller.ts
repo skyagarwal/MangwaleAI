@@ -226,12 +226,18 @@ export class WebhookController {
           // Store list ID for proper routing
           (message as any)._buttonAction = listId;
           (message as any)._buttonValue = listId;
-          // For food items, ID contains item_id or actual item ID
-          // Check if ID starts with 'item_' (our format) or is numeric
-          if (listId.startsWith('item_') || /^\d+$/.test(listId)) {
-            // Pass as "Add [title] to cart" for selection executor
-            messageText = `Add ${listTitle} to cart`;
+          // For food items, ID uses item_ID format (e.g., "item_10201")
+          // Pass the item_ID directly as the message so the flow engine handles it
+          // consistently with web (where card buttons also send "item_10201")
+          if (listId.startsWith('item_')) {
+            messageText = listId; // e.g., "item_10201" — matches web behavior
             this.logger.log(`📋 List selection (item): id="${listId}", title="${listTitle}"`);
+          } else if (/^\d+$/.test(listId)) {
+            // Legacy numeric ID — prefix with item_ for consistency
+            messageText = `item_${listId}`;
+            (message as any)._buttonAction = `item_${listId}`;
+            (message as any)._buttonValue = `item_${listId}`;
+            this.logger.log(`📋 List selection (numeric item): id="${listId}" → "item_${listId}", title="${listTitle}"`);
           } else {
             // For regular list options (like menu choices), use title
             messageText = listTitle || listId;

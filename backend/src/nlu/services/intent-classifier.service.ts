@@ -226,6 +226,12 @@ export class IntentClassifierService {
       return { intent: 'greeting', confidence: 0.95, language: 'auto', provider: 'heuristic-priority' };
     }
 
+    // LOCATION: prefix — sent when user shares GPS location (WhatsApp or web)
+    // Must not be classified as manage_address
+    if (/^location:\s*-?\d+\.\d+,\s*-?\d+\.\d+$/i.test(t)) {
+      return { intent: 'provide_location', confidence: 0.99, language: 'auto', provider: 'heuristic-priority' };
+    }
+
     // Button action values — skip NLU entirely for known button patterns
     // These are sent by the frontend when users click cards/buttons
     if (/^item_\d+$/i.test(t)) {
