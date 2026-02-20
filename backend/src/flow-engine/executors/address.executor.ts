@@ -755,10 +755,27 @@ export class AddressExecutor implements ActionExecutor {
         }
 
         if (selected) {
+          const lat = parseFloat(selected.latitude);
+          const lng = parseFloat(selected.longitude);
+
+          // Saved addresses without coordinates (e.g. "Other" type, manually typed) cannot be zone-validated
+          if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+            this.logger.warn(`Saved address "${selected.address}" has no coordinates (lat=${selected.latitude}, lng=${selected.longitude}) — asking user to share location`);
+            const shortAddr = selected.address?.substring(0, 50) || 'this address';
+            context.data._last_response = `📍 "${shortAddr}" doesn't have location coordinates saved.\n\nPlease share your live location or type a full address so we can verify delivery is available.`;
+            delete context.data[`${field}_options`];
+            delete context.data[`${field}_offered`];
+            return {
+              success: false,
+              event: 'address_invalid',
+              error: 'Address has no coordinates',
+            };
+          }
+
           const addressData = {
             address: selected.address,
-            latitude: parseFloat(selected.latitude),
-            longitude: parseFloat(selected.longitude),
+            latitude: lat,
+            longitude: lng,
             contact_person_name: selected.contactPersonName,
             contact_person_number: selected.contactPersonNumber,
             address_id: selected.id,

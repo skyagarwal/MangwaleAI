@@ -574,12 +574,18 @@ export class OrderExecutor implements ActionExecutor {
 
     // 💳 For digital payments or partial payments, create Razorpay order
     if (orderResult.success && (paymentMethod === 'digital_payment' || paymentMethod === 'partial_payment')) {
-      // Calculate total from items
-      let totalAmount = items.reduce((sum: number, item: any) => {
-        const price = item.price || item.rawPrice || 0;
-        const qty = item.quantity || 1;
-        return sum + (price * qty);
-      }, 0);
+      // Prefer PHP-returned order total (includes delivery, GST, platform charges)
+      // Fall back to items recalculation if PHP didn't return a total
+      let totalAmount = orderResult.orderTotal;
+
+      if (!totalAmount || totalAmount <= 0) {
+        totalAmount = items.reduce((sum: number, item: any) => {
+          const price = item.price || item.rawPrice || 0;
+          const qty = item.quantity || 1;
+          return sum + (price * qty);
+        }, 0);
+        this.logger.warn(`PHP orderTotal not available, falling back to items sum: ₹${totalAmount}`);
+      }
 
       if (!totalAmount || totalAmount <= 0) {
         this.logger.error(`Cannot calculate order total — items total is ₹${totalAmount}`);

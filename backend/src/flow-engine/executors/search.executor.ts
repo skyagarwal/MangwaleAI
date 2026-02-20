@@ -179,9 +179,8 @@ export class SearchExecutor implements ActionExecutor {
         // Filter test data first
         const filtered = this.filterTestData(items);
 
-        // S3 base URL for images
-        const s3BaseUrl = this.configService?.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
-        const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, s3BaseUrl);
+        // Use MinIO CDN URL for images (S3 bucket is inaccessible)
+        const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, this.storageCdnUrl);
 
         // Build cards in same format as standard search (lines ~995-1046)
         const cards = filtered.slice(0, size).map((item: any) => {
@@ -1009,9 +1008,8 @@ export class SearchExecutor implements ActionExecutor {
         hasResults: flattenedItems.length > 0,
       };
 
-      // S3 base URL for images
-      const s3BaseUrl = this.configService?.get<string>('storage.s3BaseUrl') || 'https://mangwale.s3.ap-south-1.amazonaws.com/product';
-      const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, s3BaseUrl);
+      // Use MinIO CDN URL for images (S3 bucket is inaccessible)
+      const getImageUrl = (item: any): string | undefined => resolveImageUrl(item, this.storageCdnUrl);
 
       // Always generate UI cards for product results
       if (output.hasResults) {

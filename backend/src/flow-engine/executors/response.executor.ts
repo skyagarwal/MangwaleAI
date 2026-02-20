@@ -20,7 +20,26 @@ export class ResponseExecutor implements ActionExecutor {
   private interpolate(text: string, data: any): string {
     if (!text) return text;
     try {
-      const template = Handlebars.compile(text);
+      // Pre-process {{a || b || "default"}} fallback syntax (not valid Handlebars)
+      // Resolve each alternative against context data, return first truthy value
+      const processed = text.replace(/\{\{([^}]*\|\|[^}]*)\}\}/g, (match, expr) => {
+        const alts = expr.split(/\s*\|\|\s*/);
+        for (const alt of alts) {
+          const trimmed = alt.trim();
+          // String literal: "value" or 'value'
+          if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+              (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+            return trimmed.slice(1, -1);
+          }
+          // Context lookup
+          const val = this.getValueByPath(data, trimmed);
+          if (val !== undefined && val !== null && val !== '') {
+            return String(val);
+          }
+        }
+        return '';
+      });
+      const template = Handlebars.compile(processed);
       return template(data);
     } catch (e) {
       this.logger.warn(`Template interpolation failed: ${e.message}`);

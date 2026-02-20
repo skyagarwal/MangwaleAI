@@ -27,8 +27,17 @@ export function resolveImageUrl(
 
   if (!imageUrl) return undefined;
 
-  // Already a full URL — return as-is
+  // If it's a full URL, check if it's pointing to the broken S3 bucket
+  // (mangwale.s3.ap-south-1.amazonaws.com returns 403/404) — redirect to CDN
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    const s3Match = imageUrl.match(
+      /https?:\/\/(?:mangwale\.s3[^/]*|s3[^/]*\/mangwale)\/product\/(.+)/
+    );
+    if (s3Match) {
+      // Replace broken S3 URL with the configured CDN (MinIO or otherwise)
+      return `${s3BaseUrl}/${s3Match[1]}`;
+    }
+    // Non-S3 full URL — return as-is
     return imageUrl;
   }
 
