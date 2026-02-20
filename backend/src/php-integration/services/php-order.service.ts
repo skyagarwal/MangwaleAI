@@ -42,6 +42,7 @@ export class PhpOrderService extends PhpApiService {
       const receiverDetails = {
         contact_person_name: orderData.receiverName,
         contact_person_number: orderData.receiverPhone,
+        contact_person_email: orderData.receiverEmail || '',
         address: orderData.deliveryAddress.address,
         latitude: orderData.deliveryAddress.latitude.toString(),  // Must be string
         longitude: orderData.deliveryAddress.longitude.toString(),  // Must be string

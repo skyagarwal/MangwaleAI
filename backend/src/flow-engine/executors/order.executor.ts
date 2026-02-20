@@ -273,8 +273,9 @@ export class OrderExecutor implements ActionExecutor {
     const receiverPhone = recipientDetails?.phone || deliveryAddress?.contact_person_number;
 
     // Get sender (logged in user) info from session
-    const senderName = session?.data?.user_name || pickupAddress?.contact_person_name || 'Customer';
+    const senderName = session?.data?.user_name || session?.data?.userName || pickupAddress?.contact_person_name || 'Customer';
     const senderPhone = session?.data?.phone || pickupAddress?.contact_person_number;
+    const senderEmail = session?.data?.email || session?.data?.user_email || '';
     const sessionUserId = session?.data?.user_id || userId;
 
     this.logger.log(`📦 Creating parcel order - Sender: ${senderName} (${senderPhone}), Receiver: ${receiverName} (${receiverPhone}), PaymentMethod: ${paymentMethod}`);
@@ -367,9 +368,12 @@ export class OrderExecutor implements ActionExecutor {
       },
       receiverName,
       receiverPhone,
+      receiverEmail: recipientDetails?.email || '',
       senderName,
       senderPhone,
+      senderEmail,
       userId,
+      moduleId: 3, // Parcel/Local Delivery
       paymentMethod,
       totalAmount,
       // Build order note from parcel details with defaults
