@@ -38,16 +38,17 @@ export class ChatWebController {
    */
   @Post('send')
   @Throttle({ default: { limit: 30, ttl: 60000 } }) // 30 messages per minute per IP
-  async sendMessage(@Body() body: { 
-    recipientId?: string; 
-    sessionId?: string; 
+  async sendMessage(@Body() body: {
+    recipientId?: string;
+    sessionId?: string;
     userId?: string;
-    message?: string; 
-    text?: string; 
-    location?: { lat: number; lng: number }; 
+    message?: string;
+    text?: string;
+    location?: { lat: number; lng: number };
     userLocation?: { lat: number; lng: number; address?: string; zone_id?: number };
     zone_id?: number;
-    type?: 'text' | 'location' 
+    type?: 'text' | 'location';
+    metadata?: Record<string, any>;
   }) {
     // 🔍 DEBUG: Log incoming request
     this.logger.log(`🔍 [CONTROLLER HIT] Body received: ${JSON.stringify(body)}`);
@@ -56,7 +57,7 @@ export class ChatWebController {
     const recipientId = body.recipientId || body.sessionId || body.userId;
     // Support both text and message fields
     const text = body.text || body.message;
-    const { location, userLocation, zone_id, type = 'text' } = body;
+    const { location, userLocation, zone_id, type = 'text', metadata: requestMetadata } = body;
     
     // Prefer userLocation over location
     const finalLocation = userLocation || location;
@@ -145,6 +146,7 @@ export class ChatWebController {
         {
           location: finalLocation,
           type: type,
+          ...(requestMetadata || {}),
         }
       );
 

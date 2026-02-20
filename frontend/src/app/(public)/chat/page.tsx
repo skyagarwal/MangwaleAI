@@ -1026,6 +1026,9 @@ function ChatContent() {
     // Pattern matches for button actions
     // Actions like "Add Chicken Good Chilli to cart", "select_pizza", etc.
     if (lowerText.startsWith('add ') && lowerText.includes(' to cart')) return true
+    if (lowerText.startsWith('item_')) return true
+    if (lowerText.startsWith('category_')) return true
+    if (lowerText.startsWith('store_')) return true
     if (lowerText.startsWith('select_')) return true
     if (lowerText.startsWith('btn_')) return true
     if (lowerText.startsWith('btn ')) return true  // "btn skip" etc
@@ -2104,7 +2107,9 @@ function ChatContent() {
                                         if (variationData?.variationLabel) {
                                           msg = `${msg} [${variationData.variationLabel}]`
                                         }
-                                        handleSend(msg)
+                                        // Send as button_click so context-router routes to flow instead of NLU/agent
+                                        // Display the card name to the user instead of the internal item_ID
+                                        handleSend(msg, 'add_to_cart', `🛒 ${card.name}`)
                                       }}
                                       index={cardIndex}
                                       compact={true}
