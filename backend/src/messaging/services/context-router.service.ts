@@ -18,6 +18,7 @@ import { IntentRouterService, RouteDecision } from './intent-router.service';
 import { SearchAnalyticsService } from '../../search/services/search-analytics.service';
 import { PhpOrderService } from '../../php-integration/services/php-order.service';
 import { PhpWishlistService } from '../../php-integration/services/php-wishlist.service';
+import { PhpLoyaltyService } from '../../php-integration/services/php-loyalty.service';
 
 /**
  * Router Response - returned for SYNC channels (Web, Voice, Mobile)
@@ -74,6 +75,7 @@ export class ContextRouterService implements OnModuleInit {
     @Optional() private readonly searchAnalytics?: SearchAnalyticsService,
     @Optional() private readonly phpOrderService?: PhpOrderService,
     @Optional() private readonly phpWishlistService?: PhpWishlistService,
+    @Optional() private readonly phpLoyaltyService?: PhpLoyaltyService,
   ) {
     // Initialize Redis subscriber
     const redisConfig = {
@@ -538,6 +540,257 @@ export class ContextRouterService implements OnModuleInit {
         routedTo: 'direct',
         intent,
         metadata: { handler: 'submit_review' },
+      };
+    }
+
+    // STEP 4a-6: Cancel order
+    if (intent.intent === 'cancel_order') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login first to cancel an order.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      try {
+        const runningOrders = await this.phpOrderService?.getRunningOrders(authToken);
+        if (!runningOrders || runningOrders.length === 0) {
+          return {
+            message: '📋 You have no active orders to cancel.\n\nOnly orders in **pending** or **confirmed** status can be cancelled.',
+            buttons: [
+              { label: '📋 View My Orders', value: 'my orders', action: 'track_order' },
+              ...this.getMainMenuButtons().slice(0, 2),
+            ],
+            routedTo: 'direct',
+            intent,
+          };
+        }
+
+        const orderList = runningOrders.slice(0, 3)
+          .map((o: any, i: number) => `${i + 1}. **Order #${o.id}** — ₹${o.order_amount} (${o.order_status})`)
+          .join('\n');
+        const orderButtons = runningOrders.slice(0, 3).map((o: any) => ({
+          label: `❌ Cancel #${o.id}`,
+          value: `cancel_order_${o.id}`,
+          action: 'cancel_order',
+        }));
+
+        return {
+          message: `📋 **Your Active Orders**\n\n${orderList}\n\nWhich order do you want to cancel?`,
+          buttons: [...orderButtons, { label: '⬅️ Back', value: 'menu', action: 'menu' }],
+          routedTo: 'direct',
+          intent,
+          metadata: { handler: 'cancel_order' },
+        };
+      } catch (e) {
+        this.logger.warn(`cancel_order fetch failed: ${e.message}`);
+        return {
+          message: '❌ Could not fetch your orders right now. Please try again.',
+          buttons: this.getMainMenuButtons(),
+          routedTo: 'direct',
+          intent,
+        };
+      }
+    }
+
+    // STEP 4a-7: Request refund
+    if (intent.intent === 'request_refund' || intent.intent === 'refund') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login first to request a refund.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      try {
+        const orders = await this.phpOrderService?.getOrders(authToken, 5, 1, '4');
+        const delivered = (orders || []).find((o: any) =>
+          (o.orderStatus === 'delivered' || o.order_status === 'delivered') &&
+          (o.paymentStatus === 'paid' || o.payment_status === 'paid'),
+        );
+
+        if (!delivered) {
+          return {
+            message: '📋 No eligible orders found for a refund.\n\nRefunds are available for **delivered & paid** orders.',
+            buttons: [
+              { label: '📋 My Orders', value: 'my orders', action: 'track_order' },
+              ...this.getMainMenuButtons().slice(0, 2),
+            ],
+            routedTo: 'direct',
+            intent,
+          };
+        }
+
+        return {
+          message: `💸 **Request a Refund**\n\nOrder **#${delivered.id}** — ₹${delivered.orderAmount}\n\nPlease type your reason for the refund (e.g., "food was cold", "wrong item delivered"):`,
+          buttons: [{ label: '❌ Cancel', value: 'menu', action: 'menu' }],
+          routedTo: 'direct',
+          intent,
+          metadata: {
+            handler: 'request_refund',
+            pendingRefundOrderId: delivered.id,
+          },
+        };
+      } catch (e) {
+        this.logger.warn(`request_refund fetch failed: ${e.message}`);
+        return {
+          message: '❌ Could not fetch your orders right now. Please try again.',
+          buttons: this.getMainMenuButtons(),
+          routedTo: 'direct',
+          intent,
+        };
+      }
+    }
+
+    // STEP 4a-8: Transfer loyalty points to wallet
+    if (intent.intent === 'transfer_points' || intent.intent === 'loyalty_to_wallet' || intent.intent === 'convert_points') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login first to convert loyalty points.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      try {
+        const loyaltyResult = await this.phpLoyaltyService?.getLoyaltyPoints(authToken);
+        if (!loyaltyResult?.success || !loyaltyResult.points) {
+          return {
+            message: '🎯 Could not fetch your loyalty points. Please try again.',
+            buttons: this.getMainMenuButtons(),
+            routedTo: 'direct',
+            intent,
+          };
+        }
+
+        const { points, currency_value, min_points_to_redeem } = loyaltyResult.points;
+        if (points <= 0) {
+          return {
+            message: '🎯 You have no loyalty points to convert.\n\nEarn points by placing orders!',
+            buttons: this.getMainMenuButtons(),
+            routedTo: 'direct',
+            intent,
+          };
+        }
+
+        if (min_points_to_redeem > 0 && points < min_points_to_redeem) {
+          return {
+            message: `🎯 You have **${points} points** (≈ ₹${currency_value.toFixed(2)}).\n\nMinimum **${min_points_to_redeem} points** required to convert. Keep earning!`,
+            buttons: this.getMainMenuButtons(),
+            routedTo: 'direct',
+            intent,
+          };
+        }
+
+        return {
+          message: `🎯 **Convert Loyalty Points**\n\nYou have **${points} points** (≈ ₹${currency_value.toFixed(2)})\n\nHow many points would you like to convert to wallet balance?\n_(Maximum: ${points} points)_`,
+          buttons: [
+            { label: `Convert All (${points})`, value: `convert_points_${points}`, action: 'convert_points' },
+            { label: '❌ Cancel', value: 'menu', action: 'menu' },
+          ],
+          routedTo: 'direct',
+          intent,
+          metadata: {
+            handler: 'transfer_points',
+            availablePoints: points,
+          },
+        };
+      } catch (e) {
+        this.logger.warn(`transfer_points fetch failed: ${e.message}`);
+        return {
+          message: '❌ Could not fetch loyalty points right now. Please try again.',
+          buttons: this.getMainMenuButtons(),
+          routedTo: 'direct',
+          intent,
+        };
+      }
+    }
+
+    // STEP 4a-9: Add to wishlist
+    if (intent.intent === 'add_to_wishlist') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login first to save items to your wishlist.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      // Try to get item ID from context (e.g., last viewed item)
+      const itemId = session.data?.last_viewed_item_id || session.data?.selected_item?.id;
+      if (!itemId) {
+        return {
+          message: '❤️ **Add to Wishlist**\n\nBrowse our menu and tap ❤️ next to any item to save it to your wishlist.\n\nSay "order food" to browse our menu!',
+          buttons: [
+            { label: '🍔 Browse Menu', value: 'order food', action: 'order_food' },
+            { label: '❤️ View Wishlist', value: 'view wishlist', action: 'view_wishlist' },
+          ],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      try {
+        const result = await this.phpWishlistService?.addToWishlist(authToken, Number(itemId));
+        if (result?.success) {
+          const itemName = session.data?.selected_item?.name || `item #${itemId}`;
+          return {
+            message: `❤️ **${itemName}** added to your wishlist!`,
+            buttons: [
+              { label: '❤️ View Wishlist', value: 'view wishlist', action: 'view_wishlist' },
+              ...this.getMainMenuButtons().slice(0, 2),
+            ],
+            routedTo: 'direct',
+            intent,
+          };
+        }
+      } catch (e) {
+        this.logger.warn(`add_to_wishlist failed: ${e.message}`);
+      }
+
+      return {
+        message: '❤️ Could not add to wishlist right now. Please try again.',
+        buttons: this.getMainMenuButtons(),
+        routedTo: 'direct',
+        intent,
       };
     }
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { PhpVendorAuthService, VendorUser } from '../../php-integration/services/php-vendor-auth.service';
 import { PhpDeliveryAuthService } from '../../php-integration/services/php-delivery-auth.service';
@@ -7,6 +7,7 @@ import { PhpAuthService } from '../../php-integration/services/php-auth.service'
 import { PhpAddressService } from '../../php-integration/services/php-address.service';
 import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
 import { PhpWalletService } from '../../php-integration/services/php-wallet.service';
+import { PhpCouponService } from '../../php-integration/services/php-coupon.service';
 import { UserTypeDetectorService } from '../../php-integration/services/user-type-detector.service';
 import { VendorProfileService } from '../../profiles/services/vendor-profile.service';
 import { RiderProfileService } from '../../profiles/services/rider-profile.service';
@@ -39,6 +40,7 @@ export class PhpApiExecutor implements ActionExecutor {
     private readonly userTypeDetectorService: UserTypeDetectorService,
     private readonly vendorProfileService: VendorProfileService,
     private readonly riderProfileService: RiderProfileService,
+    @Optional() private readonly couponService?: PhpCouponService,
   ) {
     this.logger.log('🔌 PHP API Executor initialized');
   }
@@ -374,6 +376,41 @@ export class PhpApiExecutor implements ActionExecutor {
 
       case 'cancel_order':
         return this.orderService.cancelOrder(config.token, config.orderId || config.order_id, config.reason);
+
+      case 'get_cancellation_reasons':
+        return this.orderService.getCancellationReasons();
+
+      case 'request_refund':
+        return this.orderService.requestRefund(
+          config.token,
+          config.orderId || config.order_id,
+          config.reason,
+          config.note,
+          config.method || 'wallet',
+        );
+
+      // ============================================
+      // COUPON
+      // ============================================
+      case 'apply_coupon': {
+        const token = config.token || context.data.auth_token;
+        if (!token) {
+          return { success: false, message: 'Login required to apply coupon' };
+        }
+        if (!this.couponService) {
+          return { success: false, message: 'Coupon service unavailable' };
+        }
+        const orderAmount = parseFloat(config.order_amount ?? config.orderAmount ?? 0);
+        return this.couponService.applyCoupon(token, config.code, orderAmount, config.store_id);
+      }
+
+      case 'get_coupons': {
+        const token = config.token || context.data.auth_token;
+        if (!this.couponService) {
+          return { success: false, message: 'Coupon service unavailable' };
+        }
+        return this.couponService.getCoupons(token);
+      }
 
       // ============================================
       // ADDRESS MANAGEMENT
