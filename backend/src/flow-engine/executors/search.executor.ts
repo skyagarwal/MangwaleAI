@@ -10,6 +10,7 @@ import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flo
 import { SentimentAnalysisService } from '../../agents/services/sentiment-analysis.service';
 import { AdvancedLearningService } from '../../agents/services/advanced-learning.service';
 import { resolveImageUrl } from '../../common/utils/image-url.util';
+import { StoreScheduleService } from '../../stores/services/store-schedule.service';
 
 /**
  * Search Executor
@@ -38,8 +39,41 @@ export class SearchExecutor implements ActionExecutor {
     @Optional() private readonly searchAnalytics?: SearchAnalyticsService,
     @Optional() private readonly queryExpansion?: QueryExpansionService,
     @Optional() private readonly configService?: ConfigService,
+    @Optional() private readonly storeScheduleService?: StoreScheduleService,
   ) {
     this.storageCdnUrl = this.configService?.get<string>('storage.cdnUrl') || 'https://storage.mangwale.ai/mangwale/product';
+  }
+
+  /**
+   * Enrich result cards with store open/closed status from StoreScheduleService.
+   * Queries MySQL once per unique store (not once per card) to minimise latency.
+   * Works for both food and ecom stores — all have 7-day schedule data.
+   */
+  private async enrichWithSchedule(cards: any[]): Promise<any[]> {
+    if (!this.storeScheduleService || !cards?.length) return cards;
+
+    // Collect unique store IDs
+    const storeIds = [...new Set(
+      cards.map(c => c.storeId || c.store_id).filter((id): id is number => !!id)
+    )];
+
+    // Query each store exactly once, in parallel
+    const statusMap = new Map<number, { is_open: boolean; message: string }>();
+    await Promise.all(storeIds.map(async (sid) => {
+      try {
+        const s = await this.storeScheduleService.isStoreOpen(sid);
+        statusMap.set(sid, { is_open: s.is_open, message: s.message });
+      } catch {
+        // On error: omit status for this store (treated as unknown/open)
+      }
+    }));
+
+    return cards.map(card => {
+      const sid = card.storeId || card.store_id;
+      const status = sid ? statusMap.get(sid) : undefined;
+      if (!status) return card;
+      return { ...card, isOpen: status.is_open, storeStatusMessage: status.message };
+    });
   }
 
   /**
@@ -219,6 +253,9 @@ export class SearchExecutor implements ActionExecutor {
         };
 
         this.logger.log(`📋 Category browse: ${cards.length} items (cards) for category ${categoryId}`);
+        if (output.cards) {
+          output.cards = await this.enrichWithSchedule(output.cards);
+        }
         return {
           success: true,
           output,
@@ -448,14 +485,19 @@ export class SearchExecutor implements ActionExecutor {
         
         // Format results for UI
         const result = this.formatHybridSearchResults(diversified, limit);
-        
+
+        // Enrich cards with store open/closed status
+        if (result.output?.cards) {
+          result.output.cards = await this.enrichWithSchedule(result.output.cards);
+        }
+
         // For recommendation mode, add time-aware greeting to output
         if (queryMode === 'recommendation' && result.output) {
           const { emoji, greeting, mealType } = SearchExecutor.getTimeAwareGreeting();
           result.output._greeting = `${emoji} ${greeting}! ${mealType} ke liye kuch tasty items:`;
           result.output._mealType = mealType;
         }
-        
+
         return result;
       }
 
@@ -744,7 +786,11 @@ export class SearchExecutor implements ActionExecutor {
           platform,
         });
 
-        return this.formatSearchResults(results, limit);
+        const formatted = this.formatSearchResults(results, limit);
+        if (formatted.output?.cards) {
+          formatted.output.cards = await this.enrichWithSchedule(formatted.output.cards);
+        }
+        return formatted;
       }
 
       // 🆕 STORE-FIRST RESOLUTION: When searching food_items with no store filter,
@@ -1087,6 +1133,11 @@ export class SearchExecutor implements ActionExecutor {
       // Set friendly error for no results so response executor can show a helpful message
       if (!output.hasResults) {
         context.data._friendly_error = `Hmm, I couldn't find anything for "${query}". Try searching for something else, like a dish name or restaurant?`;
+      }
+
+      // Enrich cards with store open/closed status
+      if (output.cards) {
+        output.cards = await this.enrichWithSchedule(output.cards);
       }
 
       return {

@@ -49,24 +49,39 @@ export class StoreScheduleService {
   }
 
   /**
-   * Get store schedule for a specific day
+   * Get store schedule for a specific day (returns first row only)
+   * @deprecated Use getStoreSchedules() to correctly handle split-shift stores
    */
   async getStoreSchedule(
     storeId: number,
     date: Date = new Date(),
   ): Promise<StoreSchedule | null> {
+    const schedules = await this.getStoreSchedules(storeId, date);
+    return schedules.length > 0 ? schedules[0] : null;
+  }
+
+  /**
+   * Get ALL schedule windows for a store on a specific day.
+   * Some stores have split shifts (e.g. 11:00–15:30 and 18:59–22:30) and
+   * will have multiple rows per day in store_schedule.
+   */
+  async getStoreSchedules(
+    storeId: number,
+    date: Date = new Date(),
+  ): Promise<StoreSchedule[]> {
     if (!this.pool) {
       this.logger.warn('MySQL pool not initialized');
-      return null;
+      return [];
     }
 
     const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
 
     try {
       const [rows] = await this.pool.query(
-        `SELECT store_id, day, opening_time, closing_time 
-         FROM store_schedule 
-         WHERE store_id = ? AND day = ?`,
+        `SELECT store_id, day, opening_time, closing_time
+         FROM store_schedule
+         WHERE store_id = ? AND day = ?
+         ORDER BY opening_time`,
         [storeId, dayOfWeek],
       );
 
@@ -74,15 +89,15 @@ export class StoreScheduleService {
         this.logger.warn(
           `No schedule found for store ${storeId} on day ${dayOfWeek}`,
         );
-        return null;
+        return [];
       }
 
-      return (rows as any[])[0];
+      return rows as StoreSchedule[];
     } catch (error) {
       this.logger.error(
         `Error fetching schedule for store ${storeId}: ${error.message}`,
       );
-      return null;
+      return [];
     }
   }
 
@@ -113,27 +128,49 @@ export class StoreScheduleService {
   }
 
   /**
-   * Check if store is currently open
+   * Check if store is currently open.
+   * Correctly handles split-shift stores (multiple time windows per day).
+   * Returns open if the current time falls within ANY of the day's windows.
    */
   async isStoreOpen(
     storeId: number,
     currentTime: Date = new Date(),
   ): Promise<StoreOpenStatus> {
-    const schedule = await this.getStoreSchedule(storeId, currentTime);
+    const schedules = await this.getStoreSchedules(storeId, currentTime);
 
-    if (!schedule) {
-      // No schedule found - assume open (graceful degradation)
+    if (!schedules || schedules.length === 0) {
+      // No schedule found — assume open (graceful degradation)
       return {
         is_open: true,
         message: 'Open (schedule unavailable)',
       };
     }
 
-    return this.checkIfOpen(
-      schedule.opening_time,
-      schedule.closing_time,
-      currentTime,
-    );
+    // Check each shift window; return open immediately if any window matches
+    let earliestOpen: string | undefined;
+    for (const schedule of schedules) {
+      const status = this.checkIfOpen(
+        schedule.opening_time,
+        schedule.closing_time,
+        currentTime,
+      );
+      if (status.is_open) {
+        return status;
+      }
+      // Track earliest opens_at across all windows for the closed message
+      if (!earliestOpen && status.opens_at) {
+        earliestOpen = status.opens_at;
+      }
+    }
+
+    // All windows exhausted — store is closed
+    return {
+      is_open: false,
+      message: earliestOpen
+        ? `Closed • Opens at ${this.formatTime(earliestOpen)}`
+        : 'Closed today',
+      opens_at: earliestOpen,
+    };
   }
 
   /**
@@ -293,19 +330,25 @@ export class StoreScheduleService {
       date.setDate(today.getDate() + i);
       const dayOfWeek = date.getDay();
 
-      const daySchedule = weekSchedule.find((s) => s.day === dayOfWeek);
+      // Use filter() to get ALL windows for this day (handles split shifts)
+      const daySchedules = weekSchedule.filter((s) => s.day === dayOfWeek);
 
-      if (daySchedule) {
-        const status = this.checkIfOpen(
-          daySchedule.opening_time,
-          daySchedule.closing_time,
-          date,
-        );
+      if (daySchedules.length > 0) {
+        // Check if the store is open in any window for this day
+        let isOpen = false;
+        for (const sched of daySchedules) {
+          const s = this.checkIfOpen(sched.opening_time, sched.closing_time, date);
+          if (s.is_open) { isOpen = true; break; }
+        }
 
+        // Use first window as representative entry (shows first opening time)
+        const firstWindow = daySchedules[0];
         enrichedSchedule.push({
-          ...daySchedule,
-          is_currently_open: status.is_open,
-          status_message: status.message,
+          ...firstWindow,
+          is_currently_open: isOpen,
+          status_message: isOpen
+            ? `Open now • Closes at ${this.formatTime(firstWindow.closing_time)}`
+            : `Closed • Opens at ${this.formatTime(firstWindow.opening_time)}`,
         });
       }
     }

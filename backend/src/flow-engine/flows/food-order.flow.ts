@@ -4869,8 +4869,47 @@ Reply "confirm" to book the rider.`,
       transitions: {
         custom: 'place_custom_order',
         multi_store: 'check_payment_type_multi_store',
-        default: 'check_payment_type_for_order',
+        default: 'check_store_before_order', // single-store: verify open first
       }
+    },
+
+    // Verify restaurant is currently open before proceeding to payment
+    check_store_before_order: {
+      type: 'action',
+      description: 'Check if the restaurant is open and accepting orders before payment',
+      actions: [
+        {
+          id: 'store_open_check',
+          executor: 'inventory',
+          config: {
+            action: 'check_store',
+            storeIdPath: 'store_id', // InventoryExecutor also falls back to restaurant_id
+          },
+          output: 'pre_order_store_check',
+        },
+      ],
+      transitions: {
+        open: 'check_payment_type_for_order',
+        closed: 'store_currently_closed',
+        error: 'check_payment_type_for_order', // graceful on PHP error — PHP validates at order time
+      },
+    },
+
+    // Friendly closed-store message before the user reaches payment
+    store_currently_closed: {
+      type: 'end',
+      description: 'Inform user the restaurant is closed and cannot accept orders right now',
+      actions: [
+        {
+          id: 'closed_message',
+          executor: 'response',
+          config: {
+            message: '🔒 *Restaurant is currently closed*\n\n{{pre_order_store_check.message}}\n\nWould you like to search for another restaurant or try again later?',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {},
     },
 
     // Route multi-store orders based on payment method

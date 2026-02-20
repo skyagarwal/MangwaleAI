@@ -85,7 +85,7 @@ export const ecommerceOrderFlow: FlowDefinition = {
           id: 'search_items',
           executor: 'search',
           config: {
-            index: 'ecom_items_v3',
+            index: 'ecom_items_v2',
             queryPath: '_user_message',
             size: 15,
             fields: ['title', 'category', 'brand', 'description', 'tags'],
@@ -358,10 +358,49 @@ Reply "confirm" to place order or "cancel" to cancel.`,
         },
       ],
       transitions: {
-        user_confirms: 'place_order',
+        user_confirms: 'check_store_before_order',
         user_cancels: 'cancelled',
         default: 'show_order_summary',
       },
+    },
+
+    // Verify store is open before placing the ecom order
+    check_store_before_order: {
+      type: 'action',
+      description: 'Check if the store is accepting orders before payment',
+      actions: [
+        {
+          id: 'store_open_check',
+          executor: 'inventory',
+          config: {
+            action: 'check_store',
+            storeIdPath: 'cart_items.0.store_id',
+          },
+          output: 'pre_order_store_check',
+        },
+      ],
+      transitions: {
+        open: 'place_order',
+        closed: 'store_currently_closed',
+        error: 'place_order', // graceful — PHP validates at order time
+      },
+    },
+
+    // Friendly closed-store message
+    store_currently_closed: {
+      type: 'end',
+      description: 'Inform user the store is closed right now',
+      actions: [
+        {
+          id: 'closed_message',
+          executor: 'response',
+          config: {
+            message: '🔒 *Store is currently closed*\n\n{{pre_order_store_check.message}}\n\nWould you like to search for something else or try again later?',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {},
     },
 
     // Place order
