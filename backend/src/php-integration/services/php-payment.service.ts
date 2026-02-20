@@ -58,6 +58,49 @@ export class PhpPaymentService extends PhpApiService {
   }
 
   /**
+   * Get zone-specific delivery fee configuration from PHP.
+   * PHP's /api/v1/config returns delivery_management settings for the zone.
+   * These are the EXACT values PHP uses when computing the delivery charge
+   * at order placement time, so our preview will match.
+   */
+  async getDeliveryConfig(zoneId: number, moduleId: number = 4): Promise<{
+    success: boolean;
+    minCharge?: number;
+    perKmCharge?: number;
+    freeDeliveryOverAmount?: number;
+    freeDeliveryDistance?: number;
+    message?: string;
+  }> {
+    try {
+      this.logger.debug(`📦 Fetching delivery config for zone ${zoneId}, module ${moduleId}`);
+
+      const headers: any = {
+        moduleId: String(moduleId),
+        zoneId: JSON.stringify([zoneId]),
+      };
+
+      const response: any = await this.get('/api/v1/config', {}, headers);
+      const dm = response?.delivery_management;
+
+      if (!dm) {
+        this.logger.warn('delivery_management not found in PHP config response');
+        return { success: false, message: 'delivery_management not in config' };
+      }
+
+      return {
+        success: true,
+        minCharge: parseFloat(dm.min_shipping_charge ?? dm.minimum_shipping_charge ?? 30),
+        perKmCharge: parseFloat(dm.shipping_per_km_charge ?? dm.per_km_shipping_charge ?? 10),
+        freeDeliveryOverAmount: parseFloat(dm.free_delivery_over_amount ?? 0),
+        freeDeliveryDistance: parseFloat(dm.free_delivery_distance ?? 0),
+      };
+    } catch (error) {
+      this.logger.warn(`Failed to fetch delivery config: ${error.message}`);
+      return { success: false, message: error.message };
+    }
+  }
+
+  /**
    * Get available payment methods from config
    */
   async getPaymentMethods(moduleId?: number, zoneId?: number): Promise<{

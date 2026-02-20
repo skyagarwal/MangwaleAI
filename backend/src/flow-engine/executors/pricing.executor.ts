@@ -102,19 +102,46 @@ export class PricingExecutor implements ActionExecutor {
         return null;
       }
 
-      // Step 1: Compute delivery charge
-      // PHP's zone-based delivery config drives the real charge at placement time.
-      // Here we use the env-configured rate as the best available estimate.
+      const itemsTotal = items.reduce((s: number, i: any) => s + (i.price * (i.quantity || 1)), 0);
+
+      // Step 1: Get delivery charge from PHP zone config (same formula PHP uses at placement)
+      // Zone ID is set by the zone executor after user's address is confirmed
+      const zoneId = context.data.delivery_zone?.zoneId
+        || context.data.zone_id
+        || session?.data?.zone_id;
+
       let deliveryCharge: number;
-      if (isEcom) {
-        const itemsTotal = items.reduce((s: number, i: any) => s + (i.price * (i.quantity || 1)), 0);
-        const freeThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
-        const baseFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
-        deliveryCharge = itemsTotal > freeThreshold ? 0 : baseFee;
+
+      if (zoneId && this.phpPaymentService) {
+        const deliveryConfig = await this.phpPaymentService.getDeliveryConfig(zoneId, moduleId);
+
+        if (deliveryConfig.success) {
+          // Replicate PHP's DeliveryCharge calculation exactly:
+          // 1. Free delivery if order over threshold
+          // 2. Free delivery if distance under threshold
+          // 3. Otherwise: max(minCharge, distance × perKmCharge)
+          const freeOverAmount = deliveryConfig.freeDeliveryOverAmount ?? 0;
+          const freeUnderDistance = deliveryConfig.freeDeliveryDistance ?? 0;
+
+          if (freeOverAmount > 0 && itemsTotal >= freeOverAmount) {
+            deliveryCharge = 0;
+            this.logger.debug(`Free delivery: order ₹${itemsTotal} ≥ threshold ₹${freeOverAmount}`);
+          } else if (freeUnderDistance > 0 && distance <= freeUnderDistance) {
+            deliveryCharge = 0;
+            this.logger.debug(`Free delivery: distance ${distance}km ≤ threshold ${freeUnderDistance}km`);
+          } else {
+            const rawCharge = distance * (deliveryConfig.perKmCharge ?? 10);
+            deliveryCharge = Math.max(rawCharge, deliveryConfig.minCharge ?? 30);
+          }
+          this.logger.debug(`PHP zone ${zoneId} delivery config: ₹${deliveryCharge} (${distance}km)`);
+        } else {
+          // Config fetch failed — fall back to env vars
+          this.logger.warn(`Delivery config unavailable for zone ${zoneId}, using env fallback`);
+          deliveryCharge = this.localDeliveryFee(distance, isEcom, itemsTotal);
+        }
       } else {
-        const feePerKm = parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
-        const minFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
-        deliveryCharge = Math.max(distance * feePerKm, minFee);
+        // No zone yet (user hasn't confirmed address) — local estimate
+        deliveryCharge = this.localDeliveryFee(distance, isEcom, itemsTotal);
       }
 
       // Step 2: Populate PHP cart so get-Tax reads real items
@@ -138,7 +165,6 @@ export class PricingExecutor implements ActionExecutor {
         return null;
       }
 
-      const itemsTotal = items.reduce((s: number, i: any) => s + (i.price * (i.quantity || 1)), 0);
       const tax = taxResult.tax ?? 0;
       const total = itemsTotal + deliveryCharge + tax;
       const freeShipping = isEcom && deliveryCharge === 0;
@@ -166,18 +192,28 @@ export class PricingExecutor implements ActionExecutor {
     }
   }
 
+  /** Env-var-based delivery fee estimate, used when zone config is unavailable */
+  private localDeliveryFee(distance: number, isEcom: boolean, itemsTotal: number): number {
+    if (isEcom) {
+      const freeThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
+      const baseFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
+      return itemsTotal > freeThreshold ? 0 : baseFee;
+    }
+    const feePerKm = parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
+    const minFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
+    return Math.max(distance * feePerKm, minFee);
+  }
+
   private calculateFoodPricing(config: any, context: FlowContext): any {
     this.logger.debug('Using local food pricing estimate (no auth token or PHP unavailable)');
     const items = config.items || context.data.selected_items || [];
     const distance = config.distance || context.data.distance || 0;
-    const deliveryFeePerKm = config.delivery_fee_per_km || parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
 
     const itemsTotal = items.reduce((sum: number, item: any) => {
       return sum + (item.price * (item.quantity || 1));
     }, 0);
 
-    const minDeliveryFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
-    const deliveryFee = Math.max(distance * deliveryFeePerKm, minDeliveryFee);
+    const deliveryFee = this.localDeliveryFee(distance, false, itemsTotal);
     const subtotal = itemsTotal + deliveryFee;
     const foodGstRate = parseFloat(process.env.FOOD_GST_RATE) || 0; // 0% food GST
     const tax = Math.ceil(subtotal * foodGstRate);
@@ -225,9 +261,7 @@ export class PricingExecutor implements ActionExecutor {
       return sum + (item.price * (item.quantity || 1));
     }, 0);
 
-    const freeShippingThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
-    const baseShippingFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
-    const shippingFee = itemsTotal > freeShippingThreshold ? 0 : baseShippingFee;
+    const shippingFee = this.localDeliveryFee(0, true, itemsTotal);
     const freeShipping = shippingFee === 0;
     const subtotal = itemsTotal + shippingFee;
     const tax = Math.ceil(subtotal * 0.18); // 18% GST fallback
