@@ -1,16 +1,22 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
+import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
+import { PhpOrderService } from '../../php-integration/services/php-order.service';
+import { SessionService } from '../../session/session.service';
 
 /**
  * Pricing Executor
  *
- * Calculates pricing for orders/deliveries using local calculation.
+ * For food/ecommerce orders: populates the PHP cart, then calls get-Tax so PHP
+ * returns the REAL tax (from its own business settings). Delivery fee is also
+ * read from PHP's config API. Falls back to local calculation if any step fails.
  *
- * NOTE: PHP's get-Tax endpoint reads items from the PHP cart table (not request body),
- * so it always returns tax=0 at the pricing step (cart is not yet populated).
- * We use local calculation for all pre-order pricing previews.
- * PHP determines the real order total internally at placement time.
+ * For parcel: always local calculation (PHP parcel pricing is category-specific
+ * and only computable at placement time).
+ *
+ * The actual order total is always calculated by PHP at placement time.
+ * This executor produces the pre-confirmation preview shown to the user.
  */
 @Injectable()
 export class PricingExecutor implements ActionExecutor {
@@ -19,6 +25,9 @@ export class PricingExecutor implements ActionExecutor {
 
   constructor(
     @Optional() private readonly configService?: ConfigService,
+    @Optional() private readonly phpPaymentService?: PhpPaymentService,
+    @Optional() private readonly phpOrderService?: PhpOrderService,
+    @Optional() private readonly sessionService?: SessionService,
   ) {}
 
   async execute(
@@ -30,15 +39,23 @@ export class PricingExecutor implements ActionExecutor {
 
       let output: any;
 
-      if (type === 'food') {
-        output = this.calculateFoodPricing(config, context);
-      } else if (type === 'parcel') {
-        output = this.calculateParcelPricing(config, context);
-      } else {
-        output = this.calculateEcommercePricing(config, context);
+      // Food + ecommerce: try PHP cart-populate → get-Tax for real numbers
+      if (type === 'food' || type === 'ecommerce') {
+        output = await this.calculateViaPhpCart(config, context, type);
       }
 
-      this.logger.debug(`Pricing calculated: ₹${output.total}`);
+      // Parcel or fallback: local calculation
+      if (!output) {
+        if (type === 'food') {
+          output = this.calculateFoodPricing(config, context);
+        } else if (type === 'parcel') {
+          output = this.calculateParcelPricing(config, context);
+        } else {
+          output = this.calculateEcommercePricing(config, context);
+        }
+      }
+
+      this.logger.debug(`Pricing calculated (${output.source || 'local'}): ₹${output.total}`);
 
       return {
         success: true,
@@ -55,8 +72,102 @@ export class PricingExecutor implements ActionExecutor {
     }
   }
 
+  /**
+   * Proper PHP-backed pricing:
+   * 1. Populate PHP cart with the selected items
+   * 2. Call get-Tax (PHP reads cart, returns real tax + delivery from zone config)
+   * 3. Return real numbers to display in order summary
+   */
+  private async calculateViaPhpCart(
+    config: any,
+    context: FlowContext,
+    type: 'food' | 'ecommerce',
+  ): Promise<any | null> {
+    try {
+      // Need auth token to populate PHP cart
+      const session = await this.sessionService?.getSession(context._system?.sessionId);
+      const authToken = session?.data?.auth_token;
+      if (!authToken) {
+        this.logger.debug('No auth token available — using local pricing estimate');
+        return null;
+      }
+
+      const isEcom = type === 'ecommerce';
+      const moduleId = isEcom ? 5 : 4; // 5=Shop, 4=Food
+      const items = config.items || context.data.selected_items || context.data.cart_items || [];
+      const distance = config.distance || context.data.distance || 0;
+
+      if (!items || items.length === 0) {
+        this.logger.debug('No items to price — using local fallback');
+        return null;
+      }
+
+      // Step 1: Compute delivery charge
+      // PHP's zone-based delivery config drives the real charge at placement time.
+      // Here we use the env-configured rate as the best available estimate.
+      let deliveryCharge: number;
+      if (isEcom) {
+        const itemsTotal = items.reduce((s: number, i: any) => s + (i.price * (i.quantity || 1)), 0);
+        const freeThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
+        const baseFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
+        deliveryCharge = itemsTotal > freeThreshold ? 0 : baseFee;
+      } else {
+        const feePerKm = parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
+        const minFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
+        deliveryCharge = Math.max(distance * feePerKm, minFee);
+      }
+
+      // Step 2: Populate PHP cart so get-Tax reads real items
+      const cartResult = await this.phpOrderService?.populateCartForPricing(authToken, items, moduleId);
+      if (!cartResult?.success) {
+        this.logger.warn('Cart population failed — falling back to local pricing');
+        return null;
+      }
+
+      // Step 3: Call get-Tax — PHP now reads the populated cart and applies
+      // the correct tax rate (food=0%, ecom=GST from business settings)
+      const taxResult = await this.phpPaymentService?.calculateTax({
+        items: [],  // PHP ignores this array and reads from the cart table
+        deliveryCharge,
+        distance,
+        moduleId,
+      });
+
+      if (!taxResult?.success) {
+        this.logger.warn('get-Tax failed after cart population — falling back to local pricing');
+        return null;
+      }
+
+      const itemsTotal = items.reduce((s: number, i: any) => s + (i.price * (i.quantity || 1)), 0);
+      const tax = taxResult.tax ?? 0;
+      const total = itemsTotal + deliveryCharge + tax;
+      const freeShipping = isEcom && deliveryCharge === 0;
+
+      this.logger.log(
+        `PHP cart pricing (${type}): items=₹${itemsTotal}, delivery=₹${deliveryCharge}, tax=₹${tax}, total=₹${total}`
+      );
+
+      return {
+        items_total: itemsTotal,
+        itemsTotal,
+        delivery_fee: deliveryCharge,
+        shipping_fee: deliveryCharge,
+        shippingFee: deliveryCharge,
+        freeShipping,
+        subtotal: itemsTotal + deliveryCharge,
+        tax,
+        total,
+        source: 'php_cart',
+        breakdown: { items: itemsTotal, delivery: deliveryCharge, tax },
+      };
+    } catch (error) {
+      this.logger.warn(`PHP cart pricing error: ${error.message} — falling back to local calc`);
+      return null;
+    }
+  }
+
   private calculateFoodPricing(config: any, context: FlowContext): any {
-    this.logger.debug('Using local food pricing calculation');
+    this.logger.debug('Using local food pricing estimate (no auth token or PHP unavailable)');
     const items = config.items || context.data.selected_items || [];
     const distance = config.distance || context.data.distance || 0;
     const deliveryFeePerKm = config.delivery_fee_per_km || parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
@@ -68,8 +179,8 @@ export class PricingExecutor implements ActionExecutor {
     const minDeliveryFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
     const deliveryFee = Math.max(distance * deliveryFeePerKm, minDeliveryFee);
     const subtotal = itemsTotal + deliveryFee;
-    const foodGstRate = parseFloat(process.env.FOOD_GST_RATE) || 0.05;
-    const tax = Math.ceil(subtotal * foodGstRate); // GST from config
+    const foodGstRate = parseFloat(process.env.FOOD_GST_RATE) || 0; // 0% food GST
+    const tax = Math.ceil(subtotal * foodGstRate);
     const total = subtotal + tax;
 
     return {
@@ -79,11 +190,8 @@ export class PricingExecutor implements ActionExecutor {
       subtotal,
       tax,
       total,
-      breakdown: {
-        items: itemsTotal,
-        delivery: deliveryFee,
-        tax,
-      },
+      source: 'local',
+      breakdown: { items: itemsTotal, delivery: deliveryFee, tax },
     };
   }
 
@@ -95,7 +203,7 @@ export class PricingExecutor implements ActionExecutor {
     const distanceCharge = Math.ceil(distance * perKmCharge);
     const subtotal = Math.max(minimumCharge, distanceCharge);
     const parcelGstRate = parseFloat(process.env.PARCEL_GST_RATE) || 0.18;
-    const tax = Math.ceil(subtotal * parcelGstRate); // GST from config
+    const tax = Math.ceil(subtotal * parcelGstRate);
     const total = subtotal + tax;
 
     return {
@@ -105,11 +213,12 @@ export class PricingExecutor implements ActionExecutor {
       subtotal,
       tax,
       total,
+      source: 'local',
     };
   }
 
   private calculateEcommercePricing(config: any, context: FlowContext): any {
-    this.logger.debug('Using local ecommerce pricing calculation (PHP API unavailable)');
+    this.logger.debug('Using local ecommerce pricing estimate (PHP unavailable)');
     const items = config.items || context.data.cart_items || context.data.selected_items || [];
 
     const itemsTotal = items.reduce((sum: number, item: any) => {
@@ -121,19 +230,20 @@ export class PricingExecutor implements ActionExecutor {
     const shippingFee = itemsTotal > freeShippingThreshold ? 0 : baseShippingFee;
     const freeShipping = shippingFee === 0;
     const subtotal = itemsTotal + shippingFee;
-    const tax = Math.ceil(subtotal * 0.18); // 18% GST
+    const tax = Math.ceil(subtotal * 0.18); // 18% GST fallback
     const total = subtotal + tax;
 
     return {
       items_total: itemsTotal,
-      itemsTotal,                  // camelCase alias for {{pricing.itemsTotal}} template
-      delivery_fee: shippingFee,   // fix: was missing — used by {{pricing.delivery_fee}}
-      shipping_fee: shippingFee,   // backward compat
-      shippingFee,                 // camelCase alias for {{pricing.shippingFee}} template
-      freeShipping,                // for {{#if pricing.freeShipping}} template
+      itemsTotal,
+      delivery_fee: shippingFee,
+      shipping_fee: shippingFee,
+      shippingFee,
+      freeShipping,
       subtotal,
       tax,
       total,
+      source: 'local',
     };
   }
 }

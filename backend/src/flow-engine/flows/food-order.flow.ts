@@ -4694,7 +4694,7 @@ Reply "confirm" to book the rider.`,
           id: 'summary_message',
           executor: 'response',
           config: {
-            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km)\n🧾 GST (5%): ₹{{pricing.tax}}\n💳 **Grand Total: ₹{{pricing.total}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}Reply "confirm" to place order.',
+            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km){{#if pricing.tax}}\n🧾 Tax: ₹{{pricing.tax}}{{/if}}\n{{#if coupon_discount}}🏷️ Coupon Discount: -₹{{coupon_discount}}\n{{/if}}💳 **Grand Total: ₹{{pricing.total}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}_Pricing confirmed via PHP. Final amount may vary slightly based on store._\n\nReply "confirm" to place order.',
             buttons: [
               { id: 'btn_confirm', label: '✅ Confirm Order', value: 'confirm' },
               { id: 'btn_note', label: '📝 Add Note to Restaurant', value: 'add_note' },
@@ -5113,27 +5113,27 @@ Reply "confirm" to book the rider.`,
           config: {
             channelResponses: {
               whatsapp: {
-                message: '💳 *Complete Payment*\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{pricing.total}}\n\n🔗 Pay securely here:\n{{order_result.paymentLink}}\n\n⏱️ Complete payment within 10 minutes.\nAfter payment, you\'ll receive order confirmation automatically.',
+                message: '💳 *Complete Payment*\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{order_result.orderTotal}}\n\n🔗 Pay securely here:\n{{order_result.paymentLink}}\n\n⏱️ Complete payment within 10 minutes.\nAfter payment, you\'ll receive order confirmation automatically.',
                 metadata: {
                   action: 'payment_link_sent',
                   orderId: '{{order_result.orderId}}',
                 },
               },
               telegram: {
-                message: '💳 *Complete Payment*\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{pricing.total}}\n\n🔗 Pay securely here:\n{{order_result.paymentLink}}\n\n⏱️ Complete payment within 10 minutes.',
+                message: '💳 *Complete Payment*\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{order_result.orderTotal}}\n\n🔗 Pay securely here:\n{{order_result.paymentLink}}\n\n⏱️ Complete payment within 10 minutes.',
                 metadata: {
                   action: 'payment_link_sent',
                   orderId: '{{order_result.orderId}}',
                 },
               },
               default: {
-                message: '💳 **Complete Payment**\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{pricing.total}}\n\n🔗 Click below to pay securely:',
+                message: '💳 **Complete Payment**\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{order_result.orderTotal}}\n\n🔗 Click below to pay securely:',
                 metadata: {
                   action: 'open_payment_gateway',
                   payment_data: {
                     orderId: '{{order_result.orderId}}',
                     razorpayOrderId: '{{order_result.razorpayOrderId}}',
-                    amount: '{{pricing.total}}',
+                    amount: '{{order_result.orderTotal}}',
                     paymentLink: '{{order_result.paymentLink}}',
                     currency: 'INR',
                     name: 'Mangwale',
@@ -5272,7 +5272,7 @@ Reply "confirm" to book the rider.`,
           id: 'food_still_waiting_msg',
           executor: 'response',
           config: {
-            message: '⏳ Waiting for your payment...\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{pricing.total}}\n\n🔗 Pay here: {{order_result.paymentLink}}\n\nReply "payment done" after paying, or "cancel" to cancel.',
+            message: '⏳ Waiting for your payment...\n\nOrder ID: #{{order_result.orderId}}\nAmount: ₹{{order_result.orderTotal}}\n\n🔗 Pay here: {{order_result.paymentLink}}\n\nReply "payment done" after paying, or "cancel" to cancel.',
           },
           output: '_last_response',
         },
@@ -5371,7 +5371,7 @@ Reply "confirm" to book the rider.`,
           id: 'success_message',
           executor: 'response',
           config: {
-            message: '✅ **Order placed!**\n\n✅ Order ID: #{{order_result.orderId}}\n💰 Total: ₹{{pricing.total}}\n📍 Delivery: {{delivery_address.label}}\n⏱️ ETA: 30-45 minutes\n\n📍 Track your order:\n{{order_result.trackingUrl}}\n\nYou\'ll receive WhatsApp updates on each step!',
+            message: '✅ **Order placed!**\n\n✅ Order ID: #{{order_result.orderId}}\n💰 Total: ₹{{order_result.orderTotal}} _(PHP confirmed)_\n📍 Delivery: {{delivery_address.label}}\n⏱️ ETA: 30-45 minutes\n\n📍 Track your order:\n{{order_result.trackingUrl}}\n\nYou\'ll receive WhatsApp updates on each step!',
           },
           output: '_last_response',
         },

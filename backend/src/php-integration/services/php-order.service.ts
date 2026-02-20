@@ -134,6 +134,61 @@ export class PhpOrderService extends PhpApiService {
   }
 
   /**
+   * Populate PHP cart for pricing preview.
+   * Clears existing cart and adds items so get-Tax can read them.
+   * Called by PricingExecutor BEFORE showing order summary.
+   * createFoodOrder also clears+repopulates cart at placement time, so double-population is safe.
+   */
+  async populateCartForPricing(
+    token: string,
+    items: any[],
+    moduleId: number,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      // Clear existing cart
+      await this.authenticatedRequest(
+        'delete',
+        '/api/v1/customer/cart/remove?guest_id=0',
+        token,
+        null,
+        { moduleId: String(moduleId) },
+      );
+
+      // Add each item
+      for (const item of items) {
+        const itemId = item.item_id || item.itemId || item.id;
+        if (!itemId) continue;
+        try {
+          await this.authenticatedRequest(
+            'post',
+            '/api/v1/customer/cart/add',
+            token,
+            {
+              item_id: itemId,
+              quantity: item.quantity || 1,
+              variation: item.variation || [],
+              add_on_ids: item.add_on_ids || [],
+              add_on_qtys: item.add_on_qtys || [],
+              model: 'Item',
+              price: item.price || 0,
+              guest_id: '0',
+            },
+            { moduleId: String(moduleId) },
+          );
+        } catch (e) {
+          this.logger.debug(`Pricing cart add failed for item ${itemId} (non-blocking): ${e.message}`);
+        }
+      }
+
+      this.logger.debug(`✅ Cart populated for pricing: ${items.length} items (module ${moduleId})`);
+      return { success: true };
+    } catch (error) {
+      this.logger.warn(`Cart population for pricing failed: ${error.message}`);
+      return { success: false, message: error.message };
+    }
+  }
+
+  /**
    * Create food order (Cart -> Address -> Place)
    * Also used for e-commerce orders with moduleId parameter
    */
@@ -416,6 +471,7 @@ export class PhpOrderService extends PhpApiService {
       return {
         success: true,
         orderId: response.order_id || response.id,
+        orderTotal: parseFloat(response.order_amount || 0),  // PHP's actual total (includes delivery, GST, platform charges)
         message: response.message || 'Order placed successfully',
         rawResponse: response,
       };
