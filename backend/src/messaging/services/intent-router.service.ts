@@ -292,7 +292,7 @@ export class IntentRouterService implements OnModuleInit {
     // (Minimal translations - most intents used as-is)
     // Pass context so translations can be flow-aware
     // ========================================
-    const translatedIntent = this.translateIntent(nluIntent, context);
+    const translatedIntent = this.translateIntent(nluIntent, context, lowerText);
     
     // ========================================
     // STEP 3: Food Override Check
@@ -344,8 +344,13 @@ export class IntentRouterService implements OnModuleInit {
   /**
    * Translate common NLU intents to backend intents
    * Context-aware: some translations are skipped when a flow is active
+   * Text-aware: disambiguates ambiguous NLU intents using keyword patterns
    */
-  private translateIntent(nluIntent: string, context: RoutingContext = { hasActiveFlow: false, isAuthenticated: false, channel: 'web' }): string {
+  private translateIntent(
+    nluIntent: string,
+    context: RoutingContext = { hasActiveFlow: false, isAuthenticated: false, channel: 'web' },
+    lowerText = '',
+  ): string {
     // Static translations that always apply
     const alwaysTranslate: Record<string, string> = {
       'place_order': 'order_food',
@@ -353,12 +358,30 @@ export class IntentRouterService implements OnModuleInit {
       'send': 'parcel_booking',
       'track': 'track_order',
       'search': 'search_product',
+      'refund_request': 'request_refund', // NLU model uses refund_request, handler uses request_refund
     };
-    
+
     if (alwaysTranslate[nluIntent]) {
       return alwaysTranslate[nluIntent];
     }
-    
+
+    // Text-based disambiguation for payment_issue:
+    // NLU overloads this for wallet queries, loyalty queries, and actual payment failures.
+    if (nluIntent === 'payment_issue') {
+      const walletKeywords = /\b(wallet|balance|rupee|₹|money|cash|credit|fund|recharge)\b/;
+      const loyaltyKeywords = /\b(loyalty|points?|reward|redeem|earn|cashback)\b/;
+      if (loyaltyKeywords.test(lowerText)) return 'check_loyalty_points';
+      if (walletKeywords.test(lowerText)) return 'check_wallet';
+      // "payment" or "pay" without wallet/loyalty context — keep as payment_issue
+    }
+
+    // Text-based disambiguation for view_cart → view_wishlist
+    // NLU sometimes maps "view wishlist" to view_cart; disambiguate by text
+    if (nluIntent === 'view_cart') {
+      const wishlistKeywords = /\b(wishlist|wish.?list|saved.?items?|favourite|favorite|liked)\b/;
+      if (wishlistKeywords.test(lowerText)) return 'view_wishlist';
+    }
+
     // Context-sensitive translations: ONLY apply when NO active flow
     // When a flow is active, 'checkout' should remain 'checkout' so the flow
     // state machine can handle it properly (e.g., transition to payment)
@@ -370,7 +393,7 @@ export class IntentRouterService implements OnModuleInit {
         return noFlowTranslations[nluIntent];
       }
     }
-    
+
     return nluIntent;
   }
   
