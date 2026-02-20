@@ -191,6 +191,14 @@ export class IntentClassifierService {
   private priorityHeuristicCheck(text: string): IntentResult | null {
     const t = text.toLowerCase().trim();
 
+    // Cancel order — must come before order_history so "cancel my order" doesn't match there
+    if (/\bcancel\b.*\border/i.test(t) ||
+        /\border\b.*\bcancel/i.test(t) ||
+        /\braddo?\b.*\border/i.test(t) ||   // Hindi: "raddh karo order"
+        /\border\b.*\braddo?\b/i.test(t)) {
+      return { intent: 'cancel_order', confidence: 0.95, language: 'auto', provider: 'heuristic-priority' };
+    }
+
     // Order history (show/view past orders)
     if (/\border.*(history|list|past|previous)\b/i.test(t) ||
         /\bmy\s+orders?\b/i.test(t) ||

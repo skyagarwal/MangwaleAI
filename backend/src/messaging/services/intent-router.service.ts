@@ -368,8 +368,11 @@ export class IntentRouterService implements OnModuleInit {
     // Text-based disambiguation for payment_issue:
     // NLU overloads this for wallet queries, loyalty queries, and actual payment failures.
     if (nluIntent === 'payment_issue') {
+      const transferKeywords = /\b(transfer|convert|redeem|exchange)\b/;
+      const loyaltyKeywords = /\b(loyalty|points?|reward|earn|cashback)\b/;
       const walletKeywords = /\b(wallet|balance|rupee|₹|money|cash|credit|fund|recharge)\b/;
-      const loyaltyKeywords = /\b(loyalty|points?|reward|redeem|earn|cashback)\b/;
+      // Check transfer+loyalty combo first (most specific)
+      if (transferKeywords.test(lowerText) && loyaltyKeywords.test(lowerText)) return 'transfer_points';
       if (loyaltyKeywords.test(lowerText)) return 'check_loyalty_points';
       if (walletKeywords.test(lowerText)) return 'check_wallet';
       // "payment" or "pay" without wallet/loyalty context — keep as payment_issue
