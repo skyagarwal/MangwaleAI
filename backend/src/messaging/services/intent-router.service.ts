@@ -130,6 +130,16 @@ export class IntentRouterService implements OnModuleInit {
     'food', 'eat', 'order food', 'want to eat', 'looking for food',
     // Establishment types (indicates food order intent)
     'cafe', 'restaurant', 'hotel', 'dhaba', 'eatery',
+    // 🍽️ Maharashtra / Nashik local dishes (critical for local market)
+    'misal', 'missal', 'misal pav', 'missal pav', 'poha', 'sabudana', 'vada pav', 'pav bhaji',
+    'bhakri', 'zunka', 'thalipeeth', 'kanda poha', 'batata vada',
+    'puran poli', 'modak', 'ukadiche modak', 'dhokla', 'khandvi',
+    'pithla', 'shevaya', 'upma', 'sheera', 'puri', 'bhel', 'sev puri', 'ragda',
+    'plate', 'half plate', 'full plate',  // Quantity + food indicators (ordering context)
+    // 🛒 Weight-sold items (dry goods, sweets, spices) - often ordered by gram/kg
+    'gulkand', 'murabba', 'chyawanprash', 'namkeen', 'farsan', 'mixture', 'chivda',
+    'pedha', 'barfi', 'ladoo', 'halwa', 'chakli', 'shankarpale', 'karanji',
+    'aamchur', 'jeera', 'mirchi', 'masala', 'chutney', 'pickle', 'achar',
   ];
   
   // ========================================

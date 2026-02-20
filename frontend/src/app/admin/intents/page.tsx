@@ -28,6 +28,7 @@ export default function IntentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingIntent, setEditingIntent] = useState<Intent | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const toast = useToast();
 
   // Form state
@@ -99,8 +100,12 @@ export default function IntentsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this intent?')) return;
+  const handleDelete = (id: string) => setDeleteTarget(id);
+
+  const confirmDeleteIntent = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     try {
       await mangwaleAIClient.deleteIntent(id);
       toast.success('Intent deleted successfully');
@@ -240,6 +245,32 @@ export default function IntentsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Intent</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete this intent? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteIntent}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Intent
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

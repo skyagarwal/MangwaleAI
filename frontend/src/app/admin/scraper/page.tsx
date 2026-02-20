@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/components/shared';
 import { 
   Globe, 
   RefreshCw, 
@@ -79,6 +80,7 @@ export default function ScraperDashboardPage() {
 }
 
 function ScraperDashboard() {
+  const toast = useToast();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab') as 'overview' | 'jobs' | 'mappings' | 'pricing' | null;
   
@@ -163,7 +165,7 @@ function ScraperDashboard() {
 
   const handleNewScrapeSubmit = async () => {
     if (!newScrapeForm.storeName && !newScrapeForm.url) {
-      alert('Please provide store name or URL');
+      toast.error('Please provide store name or URL');
       return;
     }
     
@@ -219,7 +221,7 @@ function ScraperDashboard() {
   // Export functions for Excel/CSV
   const exportToCSV = (data: Array<Record<string, string | number | boolean | null | undefined>>, filename: string) => {
     if (data.length === 0) {
-      alert('No data to export');
+      toast.error('No data to export');
       return;
     }
     

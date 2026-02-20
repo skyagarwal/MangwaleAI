@@ -275,8 +275,8 @@ export class PhpOrderService extends PhpApiService {
           item_id: itemId,
           quantity: item.quantity || 1,
           variation: item.variation || item.variant || [],
-          addon_ids: item.addon_ids || [],
-          addon_quantities: item.addon_quantities || [],
+          add_on_ids: item.addon_ids || item.add_on_ids || [],
+          add_on_qtys: item.addon_quantities || item.add_on_qtys || [],
           model: 'Item',
           price: itemPrice,
           guest_id: '0',
@@ -382,7 +382,7 @@ export class PhpOrderService extends PhpApiService {
       // Use user-selected payment method, fall back to digital_payment
       const effectivePaymentMethod = orderData.paymentMethod || 'digital_payment';
       
-      const payload = {
+      const payload: any = {
         store_id: storeId,
         delivery_address_id: addressId,
         payment_method: effectivePaymentMethod,
@@ -394,6 +394,12 @@ export class PhpOrderService extends PhpApiService {
         latitude: userLat,
         longitude: userLng,
       };
+
+      // Attach coupon code if provided
+      if (orderData.couponCode) {
+        payload.coupon_code = orderData.couponCode;
+        this.logger.log(`🏷️ Applying coupon code: ${orderData.couponCode}`);
+      }
 
       this.logger.debug('Order payload:', JSON.stringify(payload));
 
@@ -609,6 +615,7 @@ export class PhpOrderService extends PhpApiService {
     token: string,
     orderId: number,
     reason?: string,
+    note?: string,
   ): Promise<{ success: boolean; message?: string }> {
     try {
       this.logger.log(`❌ Canceling order: ${orderId}`);
@@ -616,6 +623,7 @@ export class PhpOrderService extends PhpApiService {
       await this.authenticatedRequest('put', '/api/v1/customer/order/cancel', token, {
         order_id: orderId,
         reason: reason || 'Customer requested cancellation',
+        note: note,
       });
 
       this.logger.log('✅ Order canceled successfully');
@@ -669,6 +677,55 @@ export class PhpOrderService extends PhpApiService {
         can_cancel: false,
         cancel_reason: error.message,
       };
+    }
+  }
+
+  /**
+   * Get available cancellation reasons
+   */
+  async getCancellationReasons(): Promise<{
+    success: boolean;
+    reasons?: Array<{ id: number; reason: string }>;
+    message?: string;
+  }> {
+    try {
+      const response: any = await this.get('/api/v1/customer/order/cancellation-reasons');
+      if (response && Array.isArray(response)) {
+        return {
+          success: true,
+          reasons: response.map((r: any) => ({ id: r.id, reason: r.reason })),
+        };
+      }
+      return { success: false, message: 'No cancellation reasons found' };
+    } catch (error) {
+      this.logger.error(`Failed to get cancellation reasons: ${error.message}`);
+      return { success: false, message: error.message };
+    }
+  }
+
+  /**
+   * Request a refund for a delivered order
+   */
+  async requestRefund(
+    token: string,
+    orderId: number,
+    reason: string,
+    note?: string,
+    method: string = 'wallet',
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      this.logger.log(`💸 Requesting refund for order ${orderId}`);
+      await this.authenticatedRequest('post', '/api/v1/customer/order/refund-request', token, {
+        order_id: orderId,
+        customer_reason: reason,
+        customer_note: note,
+        refund_method: method,
+      });
+      this.logger.log('✅ Refund requested successfully');
+      return { success: true };
+    } catch (error) {
+      this.logger.error(`Failed to request refund: ${error.message}`);
+      return { success: false, message: error.response?.data?.message || error.message };
     }
   }
 
@@ -743,5 +800,43 @@ export class PhpOrderService extends PhpApiService {
       failed: 'Failed',
     };
     return statusMap[status] || status;
+  }
+
+  /**
+   * Get "visit again" / reorder suggestions based on past orders
+   */
+  async getVisitAgain(token: string): Promise<{
+    success: boolean;
+    items?: Array<{
+      id: number;
+      name: string;
+      price: number;
+      storeId: number;
+      storeName: string;
+      moduleId: number;
+    }>;
+    message?: string;
+  }> {
+    try {
+      this.logger.log('🔄 Fetching visit-again suggestions');
+      const response: any = await this.authenticatedRequest('get', '/api/v1/customer/visit-again', token);
+      if (response && Array.isArray(response)) {
+        return {
+          success: true,
+          items: response.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            price: parseFloat(item.price || 0),
+            storeId: item.store_id,
+            storeName: item.store?.name || '',
+            moduleId: item.module_id || 4,
+          })),
+        };
+      }
+      return { success: false, message: 'No past orders found' };
+    } catch (error) {
+      this.logger.error(`Failed to get visit-again: ${error.message}`);
+      return { success: false, message: error.message };
+    }
   }
 }

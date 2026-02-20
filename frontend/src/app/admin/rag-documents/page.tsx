@@ -8,19 +8,17 @@ import {
   RefreshCw,
   Trash2,
   Eye,
-  Download,
   Plus,
-  Filter,
   AlertCircle,
-  CheckCircle,
   File,
   FolderOpen,
   Database,
-  Tag,
   Clock,
   Layers,
   X,
 } from 'lucide-react';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
+import { useToast } from '@/components/shared';
 
 interface RagDocument {
   document_id: string;
@@ -50,9 +48,10 @@ interface SearchResult {
   metadata: any;
 }
 
-const API_BASE = '';
-
 export default function RagDocumentsPage() {
+  const { token } = useAdminAuthStore();
+  const toast = useToast();
+  const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   const [documents, setDocuments] = useState<RagDocument[]>([]);
   const [stats, setStats] = useState<RagStats | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -79,7 +78,7 @@ export default function RagDocumentsPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/rag/documents/stats`);
+      const response = await fetch('/api/rag/documents/stats', { headers: authHeader });
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats);
@@ -94,7 +93,7 @@ export default function RagDocumentsPage() {
       setLoading(true);
       await fetchStats();
 
-      const response = await fetch(`${API_BASE}/api/rag/documents`);
+      const response = await fetch('/api/rag/documents', { headers: authHeader });
       if (response.ok) {
         const data = await response.json();
         setDocuments(data.documents || []);
@@ -110,7 +109,8 @@ export default function RagDocumentsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   useEffect(() => {
     fetchDocuments();
@@ -120,14 +120,10 @@ export default function RagDocumentsPage() {
     if (!searchQuery.trim()) return;
 
     try {
-      const response = await fetch(`${API_BASE}/api/rag/documents/search`, {
+      const response = await fetch('/api/rag/documents/search', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: searchQuery,
-          limit: 10,
-          useEmbedding: true,
-        }),
+        headers: { 'Content-Type': 'application/json', ...authHeader },
+        body: JSON.stringify({ query: searchQuery, limit: 10, useEmbedding: true }),
       });
 
       if (response.ok) {
@@ -150,14 +146,15 @@ export default function RagDocumentsPage() {
       if (uploadCategory) formData.append('category', uploadCategory);
       if (uploadTags) formData.append('tags', uploadTags);
 
-      const response = await fetch(`${API_BASE}/api/rag/documents/upload`, {
+      const response = await fetch('/api/rag/documents/upload', {
         method: 'POST',
+        headers: authHeader,
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Document uploaded successfully! Created ${data.chunksCreated} chunks.`);
+        toast.success(`Uploaded! Created ${data.chunksCreated} chunks.`);
         setShowUploadModal(false);
         setUploadFile(null);
         setUploadTitle('');
@@ -166,11 +163,11 @@ export default function RagDocumentsPage() {
         fetchDocuments();
       } else {
         const err = await response.json();
-        alert(`Upload failed: ${err.message || 'Unknown error'}`);
+        toast.error(`Upload failed: ${err.message || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Upload failed:', err);
-      alert('Upload failed. Please try again.');
+      toast.error('Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -181,20 +178,20 @@ export default function RagDocumentsPage() {
 
     setUploading(true);
     try {
-      const response = await fetch(`${API_BASE}/api/rag/documents/ingest/text`, {
+      const response = await fetch('/api/rag/documents/ingest/text', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify({
           content: textContent,
           title: textTitle,
           category: textCategory || undefined,
-          tags: textTags ? textTags.split(',').map(t => t.trim()) : undefined,
+          tags: textTags ? textTags.split(',').map((t) => t.trim()) : undefined,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Text ingested successfully! Created ${data.chunksCreated} chunks.`);
+        toast.success(`Ingested! Created ${data.chunksCreated} chunks.`);
         setShowTextModal(false);
         setTextContent('');
         setTextTitle('');
@@ -203,33 +200,41 @@ export default function RagDocumentsPage() {
         fetchDocuments();
       } else {
         const err = await response.json();
-        alert(`Ingestion failed: ${err.message || 'Unknown error'}`);
+        toast.error(`Ingestion failed: ${err.message || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Ingestion failed:', err);
-      alert('Ingestion failed. Please try again.');
+      toast.error('Ingestion failed. Please try again.');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = async (documentId: string) => {
-    if (!confirm('Are you sure you want to delete this document and all its chunks?')) return;
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
+  const handleDelete = async (documentId: string) => {
+    setDeleteTarget(documentId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      const response = await fetch(`${API_BASE}/api/rag/documents/${documentId}`, {
+      const response = await fetch(`/api/rag/documents/${deleteTarget}`, {
         method: 'DELETE',
+        headers: authHeader,
       });
 
       if (response.ok) {
-        alert('Document deleted successfully');
+        toast.success('Document deleted successfully');
         fetchDocuments();
       } else {
-        alert('Failed to delete document');
+        toast.error('Failed to delete document');
       }
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to delete document');
+      toast.error('Failed to delete document');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -241,7 +246,7 @@ export default function RagDocumentsPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -679,6 +684,32 @@ export default function RagDocumentsPage() {
                     Add Content
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Document</h3>
+            <p className="text-gray-600 mb-4">
+              This will permanently delete this document and all its chunks. This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Delete
               </button>
             </div>
           </div>

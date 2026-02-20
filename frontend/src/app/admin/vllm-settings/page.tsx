@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { RoleGuard } from '@/components/shared';
 import {
   Server, Zap, Settings, RefreshCw,
   CheckCircle, XCircle, AlertCircle, Cpu, HardDrive,
@@ -141,6 +142,7 @@ export default function VllmSettingsPage() {
   }
 
   return (
+    <RoleGuard allowedRoles={['super_admin', 'admin']}>
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#059211] to-[#047a0e] rounded-2xl p-8 text-white shadow-lg">
@@ -461,5 +463,6 @@ export default function VllmSettingsPage() {
         }
       `}</style>
     </div>
+    </RoleGuard>
   );
 }

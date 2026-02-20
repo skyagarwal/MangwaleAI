@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Building2, Plus, Edit2, Settings, RefreshCw, Check, AlertCircle } from 'lucide-react';
+import { RoleGuard } from '@/components/shared';
 
 interface Tenant {
   id: string;
@@ -143,6 +144,7 @@ export default function TenantsPage() {
   };
 
   return (
+    <RoleGuard allowedRoles={['super_admin', 'admin']}>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#059211] to-[#047a0e] text-white py-12 px-8">
@@ -413,5 +415,6 @@ export default function TenantsPage() {
         </div>
       )}
     </div>
+    </RoleGuard>
   );
 }

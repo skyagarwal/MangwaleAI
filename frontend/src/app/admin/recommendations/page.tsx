@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useToast } from '@/components/shared';
 import {
   Sparkles, RefreshCw, Settings, Play, Pause, BarChart3, Users,
   ShoppingCart, TrendingUp, Zap, Brain, Target, Filter, Save,
@@ -36,6 +37,7 @@ interface RecentRecommendation {
 }
 
 export default function RecommendationsPage() {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'overview' | 'engines' | 'analytics' | 'settings'>('overview');
   const [engines, setEngines] = useState<RecommendationEngine[]>([]);
   const [stats, setStats] = useState<RecommendationStats | null>(null);
@@ -95,7 +97,7 @@ export default function RecommendationsPage() {
       // No backend endpoint for recommendation settings yet
       // Settings are stored locally in state only
       console.log('Recommendation settings (local only):', settings);
-      alert('Settings saved locally. A recommendation backend is not yet configured.');
+      toast.success('Settings saved locally. A recommendation backend is not yet configured.');
     } catch (error) {
       console.error('Error saving settings:', error);
     } finally {
@@ -104,7 +106,7 @@ export default function RecommendationsPage() {
   };
 
   const retrainModel = async () => {
-    alert('Recommendation engine retraining is not yet available. No recommendation backend is configured.');
+    toast.info('Recommendation engine retraining is not yet available. No recommendation backend is configured.');
   };
 
   if (loading) {

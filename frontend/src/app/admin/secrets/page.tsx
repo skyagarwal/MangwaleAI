@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Key, Plus, Trash2, RotateCw, Eye, EyeOff, Shield, Clock, Check, X, AlertTriangle, Calendar } from 'lucide-react';
+import { RoleGuard } from '@/components/shared';
+import { useToast } from '@/components/shared';
 
 interface Secret {
   name: string;
@@ -37,6 +39,7 @@ export default function SecretsManagementPage() {
   const [newKeyExpiresAt, setNewKeyExpiresAt] = useState('');
   const [showValue, setShowValue] = useState(false);
   const [rotateValue, setRotateValue] = useState('');
+  const [deleteConfirmName, setDeleteConfirmName] = useState<string | null>(null);
 
   const loadSecrets = useCallback(async () => {
     try {
@@ -148,14 +151,15 @@ export default function SecretsManagementPage() {
     }
   };
 
-  const handleDeleteSecret = async (name: string) => {
-    if (!confirm(`Are you sure you want to delete '${name}'? This action cannot be undone.`)) {
-      return;
-    }
+  const handleDeleteSecret = (name: string) => setDeleteConfirmName(name);
 
+  const confirmDeleteSecret = async () => {
+    if (!deleteConfirmName) return;
+    const name = deleteConfirmName;
+    setDeleteConfirmName(null);
     try {
       setError(null);
-      
+
       const response = await fetch(`/api/secrets/${name}`, {
         method: 'DELETE',
       });
@@ -225,6 +229,7 @@ export default function SecretsManagementPage() {
   }, [error]);
 
   return (
+    <RoleGuard allowedRoles={['super_admin']}>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#059211] to-[#047a0e] text-white py-12 px-8">
@@ -596,5 +601,32 @@ export default function SecretsManagementPage() {
         </div>
       )}
     </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmName && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Secret</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete <strong>'{deleteConfirmName}'</strong>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmName(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteSecret}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Secret
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </RoleGuard>
   );
 }

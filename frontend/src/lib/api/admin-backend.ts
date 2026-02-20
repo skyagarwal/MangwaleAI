@@ -156,6 +156,13 @@ class AdminBackendClient {
     return this.request('/admin/auth/profile')
   }
 
+  async changePassword(oldPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    return this.request('/admin/auth/change-password', {
+      method: 'PUT',
+      body: JSON.stringify({ oldPassword, newPassword }),
+    })
+  }
+
   // ==========================================
   // Admin User Management
   // ==========================================

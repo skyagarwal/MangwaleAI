@@ -6,19 +6,17 @@ import {
   Search,
   RefreshCw,
   Trash2,
-  Eye,
   MessageSquare,
   User,
   Clock,
   AlertCircle,
   Database,
-  Filter,
-  Download,
   X,
   ChevronDown,
   ChevronUp,
   Sparkles,
 } from 'lucide-react';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
 
 interface MemoryEntry {
   id: string;
@@ -50,9 +48,9 @@ interface SearchResult {
   score: number;
 }
 
-const API_BASE = '';
-
 export default function ConversationMemoryPage() {
+  const { token } = useAdminAuthStore();
+  const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   const [stats, setStats] = useState<MemoryStats | null>(null);
   const [sessionHistory, setSessionHistory] = useState<MemoryEntry[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -67,7 +65,7 @@ export default function ConversationMemoryPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/ai/memory/stats`);
+      const response = await fetch('/api/ai/memory/stats', { headers: authHeader });
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats);
@@ -85,7 +83,10 @@ export default function ConversationMemoryPage() {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/api/ai/memory/session/${encodeURIComponent(sessionId)}?limit=50`);
+      const response = await fetch(
+        `/api/ai/memory/session/${encodeURIComponent(sessionId)}?limit=50`,
+        { headers: authHeader }
+      );
       if (response.ok) {
         const data = await response.json();
         setSessionHistory(data.history || []);
@@ -105,9 +106,9 @@ export default function ConversationMemoryPage() {
 
     try {
       setIsSearching(true);
-      const response = await fetch(`${API_BASE}/api/ai/memory/search`, {
+      const response = await fetch('/api/ai/memory/search', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify({
           query: searchQuery,
           userId: userIdFilter ? parseInt(userIdFilter, 10) : undefined,
@@ -130,44 +131,46 @@ export default function ConversationMemoryPage() {
 
   const handleDeleteSession = async (sessionId: string) => {
     try {
-      const response = await fetch(`${API_BASE}/api/ai/memory/session/${encodeURIComponent(sessionId)}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/ai/memory/session/${encodeURIComponent(sessionId)}`,
+        { method: 'DELETE', headers: authHeader }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Deleted ${data.deleted} memory entries for session`);
+        setError(`Deleted ${data.deleted} memory entries for session`);
         setShowDeleteModal(null);
         fetchStats();
         if (sessionIdFilter === sessionId) {
           setSessionHistory([]);
         }
       } else {
-        alert('Failed to delete session memories');
+        setError('Failed to delete session memories');
       }
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to delete session memories');
+      setError('Failed to delete session memories');
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      const response = await fetch(`${API_BASE}/api/ai/memory/user/${userId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/ai/memory/user/${userId}`,
+        { method: 'DELETE', headers: authHeader }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Deleted ${data.deleted} memory entries for user (GDPR compliance)`);
+        setError(`Deleted ${data.deleted} memory entries for user (GDPR compliance)`);
         setShowDeleteModal(null);
         fetchStats();
       } else {
-        alert('Failed to delete user memories');
+        setError('Failed to delete user memories');
       }
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to delete user memories');
+      setError('Failed to delete user memories');
     }
   };
 
@@ -192,7 +195,7 @@ export default function ConversationMemoryPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

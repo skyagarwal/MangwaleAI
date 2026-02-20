@@ -39,7 +39,7 @@ export class SavedAddressSelectorExecutor implements ActionExecutor {
         return {
           success: true, // This is a valid outcome, not a failure
           output: null,
-          event: 'no_saved_address', // Will transition to request_location
+          event: 'no_auth', // Distinct from no_saved_address — user is a guest
           // No error - this is expected for guest users
         };
       }

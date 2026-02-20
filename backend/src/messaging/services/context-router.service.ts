@@ -16,6 +16,8 @@ import { MetricsService } from '../../metrics/metrics.service';
 import { WhatsAppCloudService } from '../../whatsapp/services/whatsapp-cloud.service';
 import { IntentRouterService, RouteDecision } from './intent-router.service';
 import { SearchAnalyticsService } from '../../search/services/search-analytics.service';
+import { PhpOrderService } from '../../php-integration/services/php-order.service';
+import { PhpWishlistService } from '../../php-integration/services/php-wishlist.service';
 
 /**
  * Router Response - returned for SYNC channels (Web, Voice, Mobile)
@@ -70,6 +72,8 @@ export class ContextRouterService implements OnModuleInit {
     @Optional() private readonly indicBertService?: IndicBERTService,
     @Optional() private readonly intentClassifierService?: IntentClassifierService,
     @Optional() private readonly searchAnalytics?: SearchAnalyticsService,
+    @Optional() private readonly phpOrderService?: PhpOrderService,
+    @Optional() private readonly phpWishlistService?: PhpWishlistService,
   ) {
     // Initialize Redis subscriber
     const redisConfig = {
@@ -401,6 +405,139 @@ export class ContextRouterService implements OnModuleInit {
         routedTo: 'direct',
         intent,
         metadata: { handler: 'check_wallet', walletBalance, loyaltyPoints },
+      };
+    }
+
+    // STEP 4a-2: Loyalty points direct response
+    if (intent.intent === 'check_loyalty_points' || intent.intent === 'loyalty_points') {
+      if (activeFlow) {
+        this.logger.log(`🎯 Breaking out of ${activeFlow} for loyalty points query`);
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const loyaltyPoints = session.data?.loyalty_points ?? 0;
+      const walletBalance = session.data?.wallet_balance ?? 0;
+
+      let message = `🎯 **Loyalty Points**\n\n`;
+      if (loyaltyPoints > 0) {
+        message += `You have **${loyaltyPoints} loyalty points**!\n\nYou earn points on every order. Points can be converted to wallet balance.\n\nWant to convert points to wallet? Say "convert points to wallet".`;
+      } else {
+        message += `You don't have any loyalty points yet.\n\nYou earn points on every order — start ordering to collect points! 🎉`;
+      }
+
+      return {
+        message,
+        buttons: this.getMainMenuButtons(),
+        routedTo: 'direct',
+        intent,
+        metadata: { handler: 'check_loyalty_points', loyaltyPoints },
+      };
+    }
+
+    // STEP 4a-3: Order again / reorder
+    if (intent.intent === 'order_again' || intent.intent === 'reorder') {
+      // Clear active flow if any
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login first to see your past orders.\n\nSay "login" to get started.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      // Try to get visit-again items
+      try {
+        const visitAgain = await this.phpOrderService?.getVisitAgain(authToken);
+        if (visitAgain?.success && visitAgain.items?.length > 0) {
+          const itemList = visitAgain.items.slice(0, 5)
+            .map((item, i) => `${i + 1}. **${item.name}** — ₹${item.price}`)
+            .join('\n');
+          return {
+            message: `🔄 **Order Again**\n\nHere are items from your recent orders:\n\n${itemList}\n\nWhat would you like to reorder?`,
+            buttons: this.getMainMenuButtons(),
+            routedTo: 'direct',
+            intent,
+          };
+        }
+      } catch (e) {
+        this.logger.warn(`Failed to fetch visit-again: ${e.message}`);
+      }
+
+      return {
+        message: '🔄 No recent orders found. Start a new order?',
+        buttons: [
+          { label: '🍔 Order Food', value: 'order food', action: 'order_food' },
+          ...this.getMainMenuButtons(),
+        ],
+        routedTo: 'direct',
+        intent,
+      };
+    }
+
+    // STEP 4a-4: View wishlist
+    if (intent.intent === 'view_wishlist' || intent.intent === 'wishlist') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+
+      const authToken = session.data?.auth_token;
+      if (!authToken) {
+        return {
+          message: '🔐 Please login to view your wishlist.',
+          buttons: [{ label: '🔐 Login', value: 'login', action: 'login' }],
+          routedTo: 'direct',
+          intent,
+        };
+      }
+
+      try {
+        const wishlist = await this.phpWishlistService?.getWishlist(authToken);
+        if (wishlist?.success && wishlist.items?.length > 0) {
+          const itemList = wishlist.items.slice(0, 5)
+            .map((item, i) => `${i + 1}. ❤️ **${item.name}** — ₹${item.price}`)
+            .join('\n');
+          return {
+            message: `❤️ **Your Wishlist**\n\n${itemList}\n\n${wishlist.items.length > 5 ? `+${wishlist.items.length - 5} more items` : ''}`,
+            buttons: this.getMainMenuButtons(),
+            routedTo: 'direct',
+            intent,
+          };
+        }
+      } catch (e) {
+        this.logger.warn(`Failed to fetch wishlist: ${e.message}`);
+      }
+
+      return {
+        message: '❤️ Your wishlist is empty.\n\nBrowse items and tap ❤️ to add them to your wishlist!',
+        buttons: this.getMainMenuButtons(),
+        routedTo: 'direct',
+        intent,
+      };
+    }
+
+    // STEP 4a-5: Review / rate order - simple direct response
+    if (intent.intent === 'submit_review' || intent.intent === 'rate_order' || intent.intent === 'leave_review') {
+      return {
+        message: `⭐ **Rate Your Order**\n\nTo rate your order, please share:\n1. Your order ID (e.g., #12345)\n2. Your rating (1–5 stars)\n\n_Example: "Order #12345 - 5 stars, great food!"_`,
+        buttons: this.getMainMenuButtons(),
+        routedTo: 'direct',
+        intent,
+        metadata: { handler: 'submit_review' },
       };
     }
 
@@ -1257,11 +1394,12 @@ export class ContextRouterService implements OnModuleInit {
           let itemsMessage = response.message + '\n\n';
           const rows: Array<{ id: string; title: string; description?: string }> = [];
           
-          response.cards.slice(0, 10).forEach((card, idx) => {
+          const maxItems = event.channel === 'whatsapp' ? 5 : 10;
+          response.cards.slice(0, maxItems).forEach((card, idx) => {
             const name = card.name || card.title || `Item ${idx + 1}`;
             const price = card.price ? (typeof card.price === 'number' ? `₹${card.price}` : `${card.price}`) : '';
             const store = card.storeName || card.store_name || card.restaurant || '';
-            const rating = card.rating ? `⭐${card.rating}` : '';
+            const rating = card.rating && parseFloat(card.rating) > 0 ? `⭐${parseFloat(card.rating).toFixed(1)}` : '';
             const vegIcon = card.veg == 1 || card.veg === true ? '🟢' : card.veg == 0 || card.veg === false ? '🔴' : '';
 
             // Add to message

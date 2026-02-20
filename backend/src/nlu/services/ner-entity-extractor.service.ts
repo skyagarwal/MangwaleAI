@@ -65,10 +65,22 @@ export class NerEntityExtractorService implements OnModuleInit {
 
   async onModuleInit() {
     await this.checkNerHealth();
-    
-    // Periodic health check every 30 seconds (fast recovery when NER comes back)
-    this.healthCheckInterval = setInterval(() => {
-      this.checkNerHealth();
+
+    // Warmup: send a real inference request so the GPU model is loaded into memory.
+    // This prevents 60-90s cold-start latency on the first real user request.
+    if (this.nerAvailable) {
+      this.extractWithNer('chai order karna hai').catch(() => {});
+    }
+
+    // Periodic health check every 30 seconds (fast recovery when NER comes back).
+    // Also re-warms the GPU if the service restarted.
+    this.healthCheckInterval = setInterval(async () => {
+      const wasAvailable = this.nerAvailable;
+      await this.checkNerHealth();
+      if (this.nerAvailable && !wasAvailable) {
+        // Service just came back — warmup immediately
+        this.extractWithNer('chai order karna hai').catch(() => {});
+      }
     }, 30000);
   }
 
@@ -167,10 +179,15 @@ export class NerEntityExtractorService implements OnModuleInit {
       }
     }
     
-    // Fallback to LLM
+    // Fallback to LLM — 10-second timeout to prevent cold-start hangs (vLLM can take 60-90s)
     if (this.llmExtractor) {
       try {
-        const llmResult = await this.llmExtractor.extract(text);
+        const llmResult = await Promise.race([
+          this.llmExtractor.extract(text),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('LLM NER fallback timeout (10s)')), 10000),
+          ),
+        ]) as Awaited<ReturnType<typeof this.llmExtractor.extract>>;
         
         return {
           food_reference: llmResult.food_reference,
@@ -199,18 +216,21 @@ export class NerEntityExtractorService implements OnModuleInit {
    * Extract using NER service
    */
   private async extractWithNer(text: string): Promise<NERExtractionResult> {
+    // Use Axios-level timeout (actually aborts socket) instead of RxJS timeout()
+    // which only unsubscribes from the observable but leaves the HTTP connection open.
     const response = await firstValueFrom(
       this.httpService.post(`${this.nerServiceUrl}/extract`, {
         text,
         return_tokens: false,
+      }, {
+        timeout: 8000,  // Axios socket timeout — kills the connection after 8s
       }).pipe(
-        timeout(10000),
         catchError((error) => {
           throw new Error(`NER request failed: ${error.message}`);
         }),
       ),
     );
-    
+
     return response.data;
   }
 

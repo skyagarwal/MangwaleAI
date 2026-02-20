@@ -6,6 +6,7 @@ import {
   AlertCircle, Save, X, Globe, Layers, Navigation, Target,
   Clock, DollarSign, Truck, Search, Filter, MoreVertical
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface DeliveryZone {
   id: number;
@@ -43,6 +44,8 @@ export default function ZonesPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingZone, setEditingZone] = useState<DeliveryZone | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const toast = useToast();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -147,35 +150,35 @@ export default function ZonesPage() {
       if (response.ok) {
         await loadZones();
         setEditModalOpen(false);
-        alert(editingZone ? 'Zone updated!' : 'Zone created!');
+        toast.success(editingZone ? 'Zone updated!' : 'Zone created!');
       } else {
-        alert('Failed to save zone');
+        toast.error('Failed to save zone');
       }
     } catch (error) {
       console.error('Error saving zone:', error);
-      alert('Error saving zone');
+      toast.error('Error saving zone');
     } finally {
       setSaving(false);
     }
   };
 
-  const deleteZone = async (zoneId: number) => {
-    if (!confirm('Are you sure you want to delete this zone?')) return;
+  const deleteZone = (zoneId: number) => setDeleteConfirmId(zoneId);
 
+  const confirmDeleteZone = async () => {
+    if (!deleteConfirmId) return;
+    const zoneId = deleteConfirmId;
+    setDeleteConfirmId(null);
     try {
-      const response = await fetch(`/api/zones/${zoneId}`, {
-        method: 'DELETE',
-      });
-
+      const response = await fetch(`/api/zones/${zoneId}`, { method: 'DELETE' });
       if (response.ok) {
         await loadZones();
-        alert('Zone deleted!');
+        toast.success('Zone deleted!');
       } else {
-        alert('Failed to delete zone');
+        toast.error('Failed to delete zone');
       }
     } catch (error) {
       console.error('Error deleting zone:', error);
-      alert('Error deleting zone');
+      toast.error('Error deleting zone');
     }
   };
 
@@ -538,6 +541,32 @@ export default function ZonesPage() {
                   {editingZone ? 'Update' : 'Create'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Zone</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete this delivery zone? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteZone}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Zone
+              </button>
             </div>
           </div>
         </div>

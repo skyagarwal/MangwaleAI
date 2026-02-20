@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useToast } from '@/components/shared';
 import { ArrowLeft, Plus, Edit, Trash2, Download, Upload, Database } from 'lucide-react';
 import TrainingConfigModal, {
   TrainingConfig,
@@ -25,6 +26,7 @@ interface DatasetInfo {
 }
 
 export default function DatasetDetailPage({ params }: { params: { id: string } }) {
+  const toast = useToast();
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
   const [dataset, setDataset] = useState<DatasetInfo | null>(null);
   const [examples, setExamples] = useState<TrainingExample[]>([]);
@@ -63,10 +65,10 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
       batchSize: config.batchSize,
       learningRate: config.learningRate,
     }).then(() => {
-      alert('Training job started successfully!');
+      toast.success('Training job started successfully!');
     }).catch((err) => {
       console.error('Failed to start training:', err);
-      alert('Failed to start training job. Please try again.');
+      toast.error('Failed to start training job. Please try again.');
     });
   };
 

@@ -311,7 +311,7 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
         style={{ transitionDelay: `${index * 40}ms` }}
       >
         {/* Full image card with overlay */}
-        <div className="relative w-full aspect-[4/5] bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden rounded-xl">
+        <div className="relative w-full aspect-[5/4] bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden rounded-xl">
           {imageError || !card.image ? (
             <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-orange-100 to-amber-100">
               {foodEmoji}

@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Phone, PhoneCall, PhoneIncoming, PhoneOutgoing, PhoneMissed,
+  Phone, PhoneCall, PhoneOutgoing,
   Users, Store, Bike, RefreshCw, CheckCircle, XCircle,
-  AlertCircle, Play, Square, Volume2, Activity, Zap,
-  Clock, Globe, List, Send, Radio, Headphones, MessageSquare,
-  TrendingUp, BarChart3, Settings, History, Mic
+  Activity, Zap,
+  Volume2, Radio, Settings, History,
+  BarChart3
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface NerveHealth {
   status: string;
@@ -50,7 +51,7 @@ export default function NervePage() {
   const [stats, setStats] = useState<CallStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'calls' | 'test' | 'settings'>('overview');
-  
+
   // Test call state
   const [testOrderId, setTestOrderId] = useState('12345');
   const [testVendorPhone, setTestVendorPhone] = useState('');
@@ -58,6 +59,7 @@ export default function NervePage() {
   const [testAmount, setTestAmount] = useState('450');
   const [initiatingCall, setInitiatingCall] = useState(false);
   const [callResult, setCallResult] = useState<any>(null);
+  const toast = useToast();
 
   useEffect(() => {
     loadAll();
@@ -102,7 +104,6 @@ export default function NervePage() {
         setStats(data);
       }
     } catch (error) {
-      // Use mock stats
       setStats({
         total_calls: 0,
         successful_calls: 0,
@@ -116,18 +117,18 @@ export default function NervePage() {
 
   const initiateTestCall = async (type: 'vendor' | 'rider') => {
     if (!testVendorPhone) {
-      alert('Please enter a phone number');
+      toast.error('Please enter a phone number');
       return;
     }
-    
+
     setInitiatingCall(true);
     setCallResult(null);
-    
+
     try {
-      const endpoint = type === 'vendor' 
+      const endpoint = type === 'vendor'
         ? '/api/exotel/nerve/vendor/confirm'
         : '/api/exotel/nerve/rider/assign';
-      
+
       const body = type === 'vendor' ? {
         orderId: parseInt(testOrderId),
         vendorId: 1,
@@ -146,24 +147,24 @@ export default function NervePage() {
         estimatedAmount: 35,
         language: 'hi'
       };
-      
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      
+
       const data = await response.json();
       setCallResult(data);
-      
+
       if (data.status === 'initiated') {
-        alert(`✅ Call initiated! Call ID: ${data.callId}`);
+        toast.success(`Call initiated! Call ID: ${data.callId}`);
       } else {
-        alert(`❌ Call failed: ${data.message}`);
+        toast.error(`Call failed: ${data.message}`);
       }
     } catch (error: any) {
       setCallResult({ error: error.message });
-      alert('Error initiating call: ' + error.message);
+      toast.error('Error initiating call: ' + error.message);
     } finally {
       setInitiatingCall(false);
     }
@@ -171,12 +172,12 @@ export default function NervePage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED': return 'text-green-400';
-      case 'ANSWERED': return 'text-blue-400';
-      case 'RINGING': return 'text-yellow-400';
-      case 'INITIATED': return 'text-gray-400';
-      case 'FAILED': case 'NO_ANSWER': case 'BUSY': return 'text-red-400';
-      default: return 'text-gray-400';
+      case 'COMPLETED': return 'text-green-600';
+      case 'ANSWERED': return 'text-blue-600';
+      case 'RINGING': return 'text-yellow-600';
+      case 'INITIATED': return 'text-gray-500';
+      case 'FAILED': case 'NO_ANSWER': case 'BUSY': return 'text-red-600';
+      default: return 'text-gray-500';
     }
   };
 
@@ -192,28 +193,28 @@ export default function NervePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center py-24">
         <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Zap className="w-6 h-6 text-yellow-400" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <Zap className="w-6 h-6 text-yellow-500" />
             Nerve AI Voice System
           </h1>
-          <p className="text-gray-400 mt-1">
+          <p className="text-gray-500 mt-1">
             Automated AI voice calls for vendors and riders
           </p>
         </div>
         <button
           onClick={loadAll}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition"
         >
           <RefreshCw className="w-4 h-4" />
           Refresh
@@ -222,53 +223,53 @@ export default function NervePage() {
 
       {/* Health Status */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">System Status</span>
+            <span className="text-gray-500 text-sm">System Status</span>
             {health?.status === 'healthy' ? (
-              <CheckCircle className="w-5 h-5 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-green-500" />
             ) : (
-              <XCircle className="w-5 h-5 text-red-400" />
+              <XCircle className="w-5 h-5 text-red-500" />
             )}
           </div>
-          <p className={`text-xl font-bold mt-2 ${health?.status === 'healthy' ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-xl font-bold mt-2 ${health?.status === 'healthy' ? 'text-green-600' : 'text-red-600'}`}>
             {health?.status || 'Unknown'}
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Active Calls</span>
-            <PhoneCall className="w-5 h-5 text-blue-400" />
+            <span className="text-gray-500 text-sm">Active Calls</span>
+            <PhoneCall className="w-5 h-5 text-blue-500" />
           </div>
-          <p className="text-xl font-bold mt-2 text-white">
+          <p className="text-xl font-bold mt-2 text-gray-900">
             {health?.active_calls || 0}
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">TTS Cache</span>
-            <Volume2 className="w-5 h-5 text-purple-400" />
+            <span className="text-gray-500 text-sm">TTS Cache</span>
+            <Volume2 className="w-5 h-5 text-purple-500" />
           </div>
-          <p className="text-xl font-bold mt-2 text-white">
+          <p className="text-xl font-bold mt-2 text-gray-900">
             {health?.tts_cache_size || 0} phrases
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Components</span>
-            <Activity className="w-5 h-5 text-green-400" />
+            <span className="text-gray-500 text-sm">Components</span>
+            <Activity className="w-5 h-5 text-green-500" />
           </div>
           <div className="flex gap-2 mt-2">
-            <span className={`px-2 py-1 rounded text-xs ${health?.components?.tts_cache ? 'bg-green-900 text-green-400' : 'bg-red-900 text-red-400'}`}>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${health?.components?.tts_cache ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
               TTS
             </span>
-            <span className={`px-2 py-1 rounded text-xs ${health?.components?.exotel_client ? 'bg-green-900 text-green-400' : 'bg-red-900 text-red-400'}`}>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${health?.components?.exotel_client ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
               Exotel
             </span>
-            <span className={`px-2 py-1 rounded text-xs ${health?.components?.jupiter_reporter ? 'bg-green-900 text-green-400' : 'bg-red-900 text-red-400'}`}>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${health?.components?.jupiter_reporter ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
               Jupiter
             </span>
           </div>
@@ -276,15 +277,15 @@ export default function NervePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-700 pb-2">
+      <div className="flex gap-1 border-b border-gray-200">
         {(['overview', 'calls', 'test', 'settings'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-t-lg transition ${
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition -mb-px border-b-2 ${
               activeTab === tab
-                ? 'bg-gray-700 text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -296,72 +297,72 @@ export default function NervePage() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Stats */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5" />
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-gray-400" />
               Call Statistics
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-400">Total Calls</span>
-                <span className="text-white font-bold">{stats?.total_calls || 0}</span>
+                <span className="text-gray-500 text-sm">Total Calls</span>
+                <span className="text-gray-900 font-semibold">{stats?.total_calls || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Successful</span>
-                <span className="text-green-400 font-bold">{stats?.successful_calls || 0}</span>
+                <span className="text-gray-500 text-sm">Successful</span>
+                <span className="text-green-600 font-semibold">{stats?.successful_calls || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Failed</span>
-                <span className="text-red-400 font-bold">{stats?.failed_calls || 0}</span>
+                <span className="text-gray-500 text-sm">Failed</span>
+                <span className="text-red-600 font-semibold">{stats?.failed_calls || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Avg Duration</span>
-                <span className="text-white font-bold">{stats?.avg_duration || 0}s</span>
+                <span className="text-gray-500 text-sm">Avg Duration</span>
+                <span className="text-gray-900 font-semibold">{stats?.avg_duration || 0}s</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Vendor Accept Rate</span>
-                <span className="text-blue-400 font-bold">{(stats?.vendor_acceptance_rate || 0) * 100}%</span>
+                <span className="text-gray-500 text-sm">Vendor Accept Rate</span>
+                <span className="text-blue-600 font-semibold">{(stats?.vendor_acceptance_rate || 0) * 100}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Rider Accept Rate</span>
-                <span className="text-purple-400 font-bold">{(stats?.rider_acceptance_rate || 0) * 100}%</span>
+                <span className="text-gray-500 text-sm">Rider Accept Rate</span>
+                <span className="text-purple-600 font-semibold">{(stats?.rider_acceptance_rate || 0) * 100}%</span>
               </div>
             </div>
           </div>
 
           {/* Call Flow */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Radio className="w-5 h-5" />
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Radio className="w-5 h-5 text-gray-400" />
               AI Call Flow
             </h3>
             <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg">
-                <Store className="w-5 h-5 text-orange-400" />
+              <div className="flex items-center gap-3 p-3 bg-orange-50 border border-orange-100 rounded-lg">
+                <Store className="w-5 h-5 text-orange-500 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Vendor Confirmation</p>
-                  <p className="text-gray-400 text-xs">AI calls vendor → Press 1 to accept → Set prep time</p>
+                  <p className="text-gray-900 font-medium">Vendor Confirmation</p>
+                  <p className="text-gray-500 text-xs">AI calls vendor → Press 1 to accept → Set prep time</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg">
-                <Bike className="w-5 h-5 text-blue-400" />
+              <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                <Bike className="w-5 h-5 text-blue-500 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Rider Assignment</p>
-                  <p className="text-gray-400 text-xs">AI calls rider → Press 1 to accept → Navigate to vendor</p>
+                  <p className="text-gray-900 font-medium">Rider Assignment</p>
+                  <p className="text-gray-500 text-xs">AI calls rider → Press 1 to accept → Navigate to vendor</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg">
-                <PhoneOutgoing className="w-5 h-5 text-green-400" />
+              <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-lg">
+                <PhoneOutgoing className="w-5 h-5 text-green-500 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Pickup Ready</p>
-                  <p className="text-gray-400 text-xs">Notify rider → Order is ready for pickup</p>
+                  <p className="text-gray-900 font-medium">Pickup Ready</p>
+                  <p className="text-gray-500 text-xs">Notify rider → Order is ready for pickup</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg">
-                <Users className="w-5 h-5 text-purple-400" />
+              <div className="flex items-center gap-3 p-3 bg-purple-50 border border-purple-100 rounded-lg">
+                <Users className="w-5 h-5 text-purple-500 flex-shrink-0" />
                 <div>
-                  <p className="text-white font-medium">Customer Update</p>
-                  <p className="text-gray-400 text-xs">Notify customer → Order status updates</p>
+                  <p className="text-gray-900 font-medium">Customer Update</p>
+                  <p className="text-gray-500 text-xs">Notify customer → Order status updates</p>
                 </div>
               </div>
             </div>
@@ -370,68 +371,68 @@ export default function NervePage() {
       )}
 
       {activeTab === 'calls' && (
-        <div className="bg-gray-800 rounded-xl border border-gray-700">
-          <div className="p-4 border-b border-gray-700">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <History className="w-5 h-5" />
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+              <History className="w-5 h-5 text-gray-400" />
               Recent Calls
             </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-700/50">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Type</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Recipient</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Order</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Duration</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">DTMF</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-400">Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Recipient</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Order</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Duration</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">DTMF</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700">
+              <tbody className="divide-y divide-gray-100">
                 {calls.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                       No calls recorded yet
                     </td>
                   </tr>
                 ) : (
                   calls.map((call) => (
-                    <tr key={call.id} className="hover:bg-gray-700/30">
+                    <tr key={call.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-gray-600">
                           {getCallTypeIcon(call.call_type)}
-                          <span className="text-xs text-gray-300">
+                          <span className="text-xs">
                             {call.call_type.replace(/_/g, ' ')}
                           </span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <div>
-                          <p className="text-white text-sm">{call.recipient_name}</p>
-                          <p className="text-gray-400 text-xs">{call.phone_number}</p>
+                          <p className="text-gray-900 text-sm font-medium">{call.recipient_name}</p>
+                          <p className="text-gray-500 text-xs">{call.phone_number}</p>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-white">#{call.order_id}</td>
+                      <td className="px-4 py-3 text-gray-900 text-sm">#{call.order_id}</td>
                       <td className="px-4 py-3">
-                        <span className={`${getStatusColor(call.status)} text-sm`}>
+                        <span className={`${getStatusColor(call.status)} text-sm font-medium`}>
                           {call.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-300">
+                      <td className="px-4 py-3 text-gray-600 text-sm">
                         {call.duration_seconds ? `${call.duration_seconds}s` : '-'}
                       </td>
-                      <td className="px-4 py-3 text-gray-300">
+                      <td className="px-4 py-3 text-gray-600 text-sm">
                         {call.dtmf_digits || '-'}
                         {call.prep_time_minutes && (
-                          <span className="text-xs text-blue-400 ml-1">
+                          <span className="text-xs text-blue-600 ml-1">
                             ({call.prep_time_minutes}min)
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">
+                      <td className="px-4 py-3 text-gray-500 text-xs">
                         {new Date(call.created_at).toLocaleString()}
                       </td>
                     </tr>
@@ -445,56 +446,56 @@ export default function NervePage() {
 
       {activeTab === 'test' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Store className="w-5 h-5 text-orange-400" />
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Store className="w-5 h-5 text-orange-500" />
               Test Vendor Confirmation Call
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Order ID</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
                 <input
                   type="text"
                   value={testOrderId}
                   onChange={(e) => setTestOrderId(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="12345"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Vendor Phone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Phone</label>
                 <input
                   type="text"
                   value={testVendorPhone}
                   onChange={(e) => setTestVendorPhone(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="919876543210"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Vendor Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Name</label>
                 <input
                   type="text"
                   value={testVendorName}
                   onChange={(e) => setTestVendorName(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Test Vendor"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Order Amount (₹)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Order Amount (₹)</label>
                 <input
                   type="text"
                   value={testAmount}
                   onChange={(e) => setTestAmount(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="450"
                 />
               </div>
               <button
                 onClick={() => initiateTestCall('vendor')}
                 disabled={initiatingCall}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-500 disabled:bg-gray-600 rounded-lg transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white rounded-lg transition font-medium"
               >
                 {initiatingCall ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -506,46 +507,46 @@ export default function NervePage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Bike className="w-5 h-5 text-blue-400" />
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Bike className="w-5 h-5 text-blue-500" />
               Test Rider Assignment Call
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Order ID</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Order ID</label>
                 <input
                   type="text"
                   value={testOrderId}
                   onChange={(e) => setTestOrderId(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="12345"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Rider Phone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rider Phone</label>
                 <input
                   type="text"
                   value={testVendorPhone}
                   onChange={(e) => setTestVendorPhone(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="919876543210"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Rider Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rider Name</label>
                 <input
                   type="text"
                   value={testVendorName}
                   onChange={(e) => setTestVendorName(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Test Rider"
                 />
               </div>
               <button
                 onClick={() => initiateTestCall('rider')}
                 disabled={initiatingCall}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 rounded-lg transition mt-[88px]"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-lg transition font-medium mt-[72px]"
               >
                 {initiatingCall ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -558,9 +559,9 @@ export default function NervePage() {
           </div>
 
           {callResult && (
-            <div className="md:col-span-2 bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Call Result</h3>
-              <pre className="bg-gray-900 p-4 rounded-lg text-sm text-gray-300 overflow-auto">
+            <div className="md:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h3 className="text-base font-semibold text-gray-900 mb-3">Call Result</h3>
+              <pre className="bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm text-gray-700 overflow-auto">
                 {JSON.stringify(callResult, null, 2)}
               </pre>
             </div>
@@ -569,44 +570,44 @@ export default function NervePage() {
       )}
 
       {activeTab === 'settings' && (
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Settings className="w-5 h-5" />
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-gray-400" />
             Nerve System Settings
           </h3>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">Nerve System URL</p>
-                <p className="text-white font-mono">http://localhost:7100</p>
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-gray-500 text-sm">Nerve System URL</p>
+                <p className="text-gray-900 font-mono text-sm mt-1">http://localhost:7100</p>
               </div>
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">TTS Provider</p>
-                <p className="text-white">Chatterbox (Hindi) + Kokoro (English)</p>
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-gray-500 text-sm">TTS Provider</p>
+                <p className="text-gray-900 text-sm mt-1">Chatterbox (Hindi) + Kokoro (English)</p>
               </div>
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">Telephony Provider</p>
-                <p className="text-white">Exotel</p>
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-gray-500 text-sm">Telephony Provider</p>
+                <p className="text-gray-900 text-sm mt-1">Exotel</p>
               </div>
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">Default Language</p>
-                <p className="text-white">Hindi (hi)</p>
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-gray-500 text-sm">Default Language</p>
+                <p className="text-gray-900 text-sm mt-1">Hindi (hi)</p>
               </div>
             </div>
-            <div className="p-4 bg-gray-700/50 rounded-lg">
-              <p className="text-gray-400 text-sm mb-2">Call Flow Configuration</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Vendor Accept Timeout</span>
-                  <span className="text-white">30 seconds</span>
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-gray-500 text-sm mb-3">Call Flow Configuration</p>
+              <div className="space-y-2 text-sm divide-y divide-gray-200">
+                <div className="flex justify-between py-2">
+                  <span className="text-gray-600">Vendor Accept Timeout</span>
+                  <span className="text-gray-900 font-medium">30 seconds</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Max Retry Attempts</span>
-                  <span className="text-white">3</span>
+                <div className="flex justify-between py-2">
+                  <span className="text-gray-600">Max Retry Attempts</span>
+                  <span className="text-gray-900 font-medium">3</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Escalation to Admin</span>
-                  <span className="text-white">After 2 failed attempts</span>
+                <div className="flex justify-between py-2">
+                  <span className="text-gray-600">Escalation to Admin</span>
+                  <span className="text-gray-900 font-medium">After 2 failed attempts</span>
                 </div>
               </div>
             </div>

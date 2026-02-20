@@ -67,7 +67,11 @@ export const foodOrderFlow: FlowDefinition = {
               express_order_detection: {
                 food_items: '{{nlu_result.entities.food_reference || []}}',
                 restaurant: '{{nlu_result.entities.store_reference || null}}',
-                delivery_address_type: '{{nlu_result.entities.location_reference || null}}',
+                // delivery_type (home/office) is extracted by regex from "home address", "ghar", "office"
+                // location_reference is extracted by NER for actual place names
+                delivery_address_type: '{{nlu_result.entities.delivery_type || nlu_result.entities.location_reference || null}}',
+                // 🆕 Capture quantity (e.g., "5" in "add 5 samosa") for auto_cart defaultQuantity
+                quantity: '{{nlu_result.entities.quantity || 1}}',
               },
             },
           },
@@ -227,9 +231,78 @@ export const foodOrderFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        address_selected: 'use_saved_address_location', // Address found and selected
-        no_saved_address: 'request_location', // User has no saved addresses
+        address_selected: 'use_saved_address_location',    // Address found and selected
+        no_auth: 'prompt_login_for_saved_address',         // Guest user → show login option
+        no_saved_address: 'request_location',              // Logged-in but no saved address → ask location
         default: 'request_location',
+      },
+    },
+
+    // 🔑 NEW: Prompt guest user to log in to use saved address or share location
+    prompt_login_for_saved_address: {
+      type: 'wait',
+      description: 'User mentioned home/office address but is not logged in. Offer login or live location.',
+      onEntry: [
+        {
+          id: 'ask_login_or_location',
+          executor: 'response',
+          config: {
+            message: '📍 To deliver to your saved home/office address, please log in first.\n\nOr tap *Share Location* to order as a guest.',
+            responseType: 'prompt_login_or_location',
+            buttons: [
+              { id: 'btn_login', label: '🔑 Log In / Register', value: 'login', action: 'trigger_auth_modal' },
+              { id: 'btn_location', label: '📍 Share Location', value: '__LOCATION__' },
+              { id: 'btn_skip', label: 'Skip for now', value: 'skip_location' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        location_shared: 'confirm_location_received',     // User shared GPS from this prompt
+        user_message: 'handle_post_login_or_location',   // Check if login or location
+        default: 'handle_post_login_or_location',
+      },
+    },
+
+    // 🔑 Decision: After login prompt, check what happened (logged in vs location shared vs skipped)
+    handle_post_login_or_location: {
+      type: 'decision',
+      description: 'Route based on whether user logged in, shared location, or skipped',
+      conditions: [
+        {
+          // GPS location prefix from WhatsApp
+          expression: 'context._user_message?.startsWith("LOCATION:")',
+          event: 'location_shared',
+        },
+        {
+          // GPS coordinates in context (from web location picker)
+          expression: 'context.location?.lat && context.location?.lng',
+          event: 'location_shared',
+        },
+        {
+          // User skipped login prompt
+          expression: '/^(skip|skip_location)$/i.test(context._user_message?.trim() || "")',
+          event: 'skipped',
+        },
+        {
+          // User cancelled login modal (X button sends 'cancel') → ask for live location
+          expression: '/^cancel$/i.test(context._user_message?.trim() || "")',
+          event: 'cancelled',
+        },
+        {
+          // User just logged in (frontend sends 'checkout' after syncAuthLogin)
+          // Re-try address selection now that we have auth
+          expression: 'context.user_authenticated === true',
+          event: 'authenticated',
+        },
+      ],
+      transitions: {
+        location_shared: 'confirm_location_received',  // GPS shared → proceed with location
+        skipped: 'restore_original_query',             // Skipped → restore and search (no location)
+        cancelled: 'request_location',                 // Dismissed login → ask for live location
+        authenticated: 'auto_select_saved_address',    // Just logged in → re-try address selection
+        default: 'extract_location_from_text',         // Text input → try to parse as area name
       },
     },
 
@@ -447,13 +520,17 @@ export const foodOrderFlow: FlowDefinition = {
                 // Use NLU extracted entities
                 items: '{{food_nlu.entities.food_reference || []}}',
                 restaurant: '{{food_nlu.entities.store_reference || null}}',
-                search_query: '{{_user_message}}',
-                special_instructions: null,
+                search_query: '{{#each food_nlu.entities.food_reference}}{{this}} {{/each}}',
+                // 🥗 Auto-populate special_instructions from NER preference
+                // e.g., "no tarri", "extra spicy", "no onions" → sent as restaurant note
+                special_instructions: '{{food_nlu.entities.preference || null}}',
                 // 🥗 Propagate food preference (veg/non-veg) from NLU to search
                 preference: '{{food_nlu.entities.preference || _user_food_preference || null}}',
               },
               // 🥗 Also save preference at top level for SearchExecutor to read
               _user_food_preference: '{{food_nlu.entities.preference || _user_food_preference || null}}',
+              // 🥗 Auto-set order_note from NER preference so it flows to PHP
+              order_note: '{{food_nlu.entities.preference || null}}',
             },
           },
         },
@@ -1677,19 +1754,26 @@ export const foodOrderFlow: FlowDefinition = {
           // 3. OR Restaurant context exists (e.g., "ganesh ka paneer")
           // This prevents auto-cart on hallucinated items!
           expression: `
-            context.extracted_food?.items && 
-            context.extracted_food.items.length > 0 && 
-            context.extracted_food.items[0]?.quantity >= 1 &&
+            context.extracted_food?.items &&
+            context.extracted_food.items.length > 0 &&
+            (
+              // Case A: Items are proper {name, quantity} objects (from LLM multi-item extraction)
+              context.extracted_food.items[0]?.quantity >= 1 ||
+              // Case B: Items are plain strings from food_reference (express order path like "add 5 samosa from satyam")
+              // String items always have a truthy string value — auto_cart uses defaultQuantity from NLU
+              context.extracted_food.items.some(function(i) { return typeof i === 'string' ? i.length > 0 : !!(i && i.name); })
+            ) &&
             (
               // Verify user message contains extracted item names (ALL items, not just first)
               (context._user_message && context.extracted_food.items.every(function(item) {
-                if (!item.name) return false;
+                var name = typeof item === 'string' ? item : item.name;
+                if (!name) return false;
                 var msg = context._user_message.toLowerCase();
-                var words = item.name.toLowerCase().split(' ');
+                var words = name.toLowerCase().split(' ');
                 // At least the first word of each extracted item must appear in user message
                 return words.some(function(w) { return w.length > 2 && msg.indexOf(w) >= 0; });
               })) ||
-              // OR user explicitly mentioned restaurant (e.g., "ganesh ka paneer")
+              // OR user explicitly mentioned restaurant (e.g., "ganesh ka paneer", "5 samosa from satyam")
               (context.extracted_food?.restaurant && context.extracted_food.restaurant !== null && context.extracted_food.restaurant !== "null")
             )
           `,
@@ -1713,6 +1797,8 @@ export const foodOrderFlow: FlowDefinition = {
           config: {
             extractedItemsPath: 'extracted_food.items',
             searchResultsPath: 'search_results.cards',
+            // 🆕 Pass quantity from NLU (e.g., "5" in "add 5 samosa") as default for string items
+            defaultQuantity: '{{express_order_detection.quantity || nlu_result.entities.quantity || 1}}',
           },
           output: 'auto_cart_result',
         },
@@ -1960,13 +2046,65 @@ export const foodOrderFlow: FlowDefinition = {
             message: '📋 Choose a category to explore:',
             responseType: 'buttons',
             buttonsPath: 'category_results',
-            buttonConfig: { labelPath: 'name', valuePath: 'id' },
+            buttonConfig: { labelPath: 'name', valuePath: 'id', valuePrefix: 'cat_' },
           },
         }
       ],
       transitions: {
-        user_message: 'search_by_category',
-        default: 'search_by_category',
+        user_message: 'route_category_input',
+        default: 'route_category_input',
+      },
+    },
+
+    // 🆕 Route category view input: cat_N button click → category search, free text → text search
+    // Fixes: user typing "missal" instead of clicking a category button caused a crash
+    route_category_input: {
+      type: 'decision',
+      description: 'Detect whether user clicked a category button or typed a free-text query',
+      conditions: [
+        {
+          // Category button click: cat_N format
+          expression: `/^cat_\\d+$/i.test(context._user_message?.trim())`,
+          event: 'category_button',
+        },
+        {
+          // Browse/category intent — show categories again
+          expression: `/^(browse_menu|browse\\s+menu|browse\\s+categories|categories|back)$/i.test(context._user_message?.trim())`,
+          event: 'browse_again',
+        },
+      ],
+      transitions: {
+        category_button: 'search_by_category',  // cat_N → category endpoint
+        browse_again: 'show_categories',         // browse → re-show categories
+        default: 'save_text_search_from_browse', // free text → treat as search query
+      },
+    },
+
+    // 🆕 Save free-text from category browsing as a search query, then search
+    save_text_search_from_browse: {
+      type: 'action',
+      description: 'User typed a food/restaurant name while browsing categories — treat as search',
+      actions: [
+        {
+          id: 'save_browse_query',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              extracted_food: {
+                items: [],
+                restaurant: null,
+                search_query: '{{_user_message}}',
+              },
+              original_food_query: '{{_user_message}}',
+            },
+            event: 'saved',
+          },
+        },
+      ],
+      transitions: {
+        saved: 'search_food',
+        default: 'search_food',
       },
     },
 
@@ -2505,6 +2643,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       actions: [],
       transitions: {
+        category_selected: 'search_by_category',  // 🔧 FIX: stale cat_N button click → re-search category
         user_message: 'resolve_user_intent',  // ✅ First resolve entities using Search API
         default: 'resolve_user_intent',
       },
@@ -2553,6 +2692,13 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           event: 'search_different',
         },
         {
+          // Case -2: Detect category button click (cat_N format) - stale button safety
+          // 🔧 FIX: Category buttons now use 'cat_5' prefix to avoid numeric item-selection conflict
+          // Even if user clicks a stale category button while in show_results, it routes correctly
+          expression: `/^cat_\\d+$/i.test(context._user_message?.trim())`,
+          event: 'category_selected',
+        },
+        {
           // Case 0: HIGHEST PRIORITY - Detect selection patterns (item_ID, numbers, add to cart)
           // MUST be checked before checkout/view_cart because NLU can misclassify "item_10201" as view_cart
           // Matches: "item_12345" (card button click), "1", "2", "add 1 to cart", "first one", "add paneer to cart", etc.
@@ -2594,6 +2740,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         search_different: 'ask_what_to_eat',                   // 🔧 New search from results
         checkout_detected: 'check_auth_for_checkout',       // 🔧 FIX: Direct route to checkout
         view_cart_detected: 'show_current_cart',             // 🔧 FIX: Direct route to cart view
+        category_selected: 'search_by_category',            // 🔧 FIX: cat_N button click → category search
         selection_detected: 'clear_entities_for_selection',  // 🆕 Clear resolved_entities first
         store_resolved: 'search_food',
         store_not_found: 'prepare_restaurant_search_from_results',  // 🔧 FIX: Search by store name instead of dead-ending
@@ -2730,7 +2877,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       },
     },
 
-    // 📦 NEW: Prompt user to select a size/weight variation for item
+    // 📦 Prompt user to select a size/weight variation for item
     prompt_variation_selection: {
       type: 'wait',
       description: 'Show item size/weight variations for user to choose',
@@ -2740,7 +2887,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           executor: 'response',
           config: {
             message: '{{selection_result.followUpResponse}}',
-            quickReplies: '{{#each selection_result.variationOptions}}{"label": "{{this.label}}", "value": "Add {{../selection_result.variationItem.itemName}} to cart [{{this.label}}]"}{{#unless @last}},{{/unless}}{{/each}}',
+            quickReplies: '{{#each selection_result.variationOptions}}{"label": "{{this.label}}", "value": "variation:{{this.label}}:{{this.optionPrice}}"}{{#unless @last}},{{/unless}}{{/each}}',
           },
           output: '_last_response',
         },
@@ -2758,7 +2905,80 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       actions: [],
       transitions: {
-        user_message: 'process_selection',
+        user_message: 'process_variation_selection',
+        default: 'process_selection',
+      },
+    },
+
+    // 📦 Process the variation choice and build PHP-compatible variation format
+    process_variation_selection: {
+      type: 'action',
+      description: 'Parse selected variation, build PHP format, update pending item price',
+      actions: [
+        {
+          id: 'apply_variation',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            // The variation quick-reply value is encoded as "variation:<label>:<optionPrice>"
+            // We parse it here by saving the raw message for the selection executor to handle.
+            // The selection executor reads _pending_variation_item and _pending_variation_options
+            // together with _user_message to match and build the PHP variation array.
+            saveToContext: {
+              _variation_raw_selection: '{{_user_message}}',
+            },
+          },
+          output: '_variation_saved',
+        },
+      ],
+      transitions: {
+        default: 'process_selection',
+      },
+    },
+
+    // 🍟 Prompt add-on selection for item
+    prompt_addon_selection: {
+      type: 'wait',
+      description: 'Show add-ons for selected item',
+      onEntry: [
+        {
+          id: 'show_addons',
+          executor: 'response',
+          config: {
+            message: '🍟 **Add-ons available:**\n\n{{#each selection_result.addonOptions}}• {{this.name}} — ₹{{this.price}}\n{{/each}}\n\nSelect add-ons (or skip):',
+            buttons: [
+              { id: 'btn_skip_addon', label: '⏭️ No add-ons', value: 'skip_addon' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        skip_addon: 'process_selection',
+        user_message: 'save_addon_selection',
+        default: 'process_selection',
+      },
+    },
+
+    // 🍟 Save add-on selection to pending item context
+    save_addon_selection: {
+      type: 'action',
+      description: 'Save add-on selection to pending item context',
+      actions: [
+        {
+          id: 'save_addons',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              _pending_addon_selection: '{{_user_message}}',
+            },
+          },
+          output: '_addon_saved',
+        },
+      ],
+      transitions: {
         default: 'process_selection',
       },
     },
@@ -2780,7 +3000,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           id: 'display_cart',
           executor: 'response',
           config: {
-            message: '{{#if cart_items.length}}🛒 **Your Cart:**\n\n**Total: ₹{{cart_validation.totalPrice}}** ({{cart_validation.totalItems}} items)\n\nWhat would you like to do?{{else}}🛒 Your cart is empty!\n\nBrowse items above and add what you like.{{/if}}',
+            message: '{{#if cart_validation.cart_items.length}}🛒 **Your Cart:**\n\n**Total: ₹{{cart_validation.totalPrice}}** ({{cart_validation.totalItems}} items)\n\nWhat would you like to do?{{else}}🛒 Your cart is empty!\n\nBrowse items above and add what you like.{{/if}}',
             cardsPath: 'cart_display',
             buttons: [
               { id: 'btn_add_more', label: '➕ Add More Items', value: 'add_more' },
@@ -2806,10 +3026,27 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       onEntry: [],
       actions: [],
       transitions: {
-        user_message: 'handle_cart_action',
+        user_message: 'check_cart_input_type',  // 🔧 FIX: detect item_ID before NLU cascade
         checkout: 'check_auth_for_checkout',
         add_more: 'show_results',
         clear_cart: 'clear_cart_state',
+      },
+    },
+
+    // 🆕 Detect if user clicked an ADD button (item_ID) from cart-view state
+    // Must intercept BEFORE handle_cart_action which runs full NLU cascade
+    check_cart_input_type: {
+      type: 'decision',
+      description: 'Route item_ID button clicks to process_selection; everything else to cart action handler',
+      conditions: [
+        {
+          expression: `/^item_\\d+/i.test(context._user_message?.trim())`,
+          event: 'item_selected',
+        },
+      ],
+      transitions: {
+        item_selected: 'process_selection',
+        default: 'handle_cart_action',
       },
     },
 
@@ -3069,14 +3306,14 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           id: 'confirm_cart',
           executor: 'response',
           config: {
-            message: `✅ Added to cart!\n\n🛒 {{cart_update_result.cartSummary}}\n\nAdd more items or say "checkout" when ready.`,
+            message: `✅ Added to cart!\n\n🛒 {{cart_update_result.cartSummary}}\n\nAdd more of the same, add a different item, or checkout.`,
             responseType: 'cart_update',
             // Build cart cards from cart items for web display (use cart_items which is in card format)
             cardsPath: 'cart_update_result.cart_items',
             buttons: [
               { id: 'btn_checkout', label: '🛒 Checkout', value: 'checkout' },
-              { id: 'btn_add_more', label: '➕ Add More', value: 'add more food' },
-              { id: 'btn_clear', label: '🗑️ Clear Cart', value: 'clear cart' },
+              { id: 'btn_repeat', label: '🔁 +1 Same Item', value: 'repeat_last_item' },
+              { id: 'btn_add_more', label: '🍽️ Add Different', value: 'add more food' },
             ],
             // Save the cart state (cart_data is raw format for cart operations)
             saveToContext: {
@@ -3093,6 +3330,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       actions: [],
       transitions: {
+        repeat_last_item: 'add_to_cart',       // 🆕 Re-add same item — selection_result still in context
         user_message: 'handle_post_cart_input',
         default: 'handle_post_cart_input',
       },
@@ -3953,7 +4191,93 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
-        calculated: 'collect_payment_method',
+        calculated: 'check_surge_price',
+      },
+    },
+
+    // 💰 Check surge pricing before showing payment options (non-blocking)
+    check_surge_price: {
+      type: 'action',
+      description: 'Check if surge pricing applies for current time/zone',
+      actions: [
+        {
+          id: 'get_surge',
+          executor: 'php_api',
+          config: {
+            action: 'get_surge_price',
+            zone_id: '{{zone_id}}',
+            module_id: 4,
+          },
+          output: 'surge_info',
+        },
+      ],
+      transitions: {
+        success: 'route_surge_check',
+        error: 'collect_payment_method',
+        default: 'collect_payment_method',
+      },
+    },
+
+    // Route based on whether surge applies
+    route_surge_check: {
+      type: 'decision',
+      description: 'Route to surge notice if surge applies, else skip to payment',
+      conditions: [
+        {
+          expression: 'context.surge_info && context.surge_info.hasSurge === true',
+          event: 'surge',
+        },
+      ],
+      transitions: {
+        surge: 'show_surge_notice',
+        default: 'collect_payment_method',
+      },
+    },
+
+    // 💰 Show surge pricing notice to user
+    show_surge_notice: {
+      type: 'wait',
+      description: 'Inform user about surge pricing',
+      onEntry: [
+        {
+          id: 'surge_message',
+          executor: 'response',
+          config: {
+            message: '⚡ **{{surge_info.title}}**\n\n{{surge_info.customerNote}}\n\nSurge charge: ₹{{surge_info.price}} extra.\n\nDo you want to continue?',
+            buttons: [
+              { id: 'btn_surge_yes', label: '✅ Continue', value: 'confirm_surge' },
+              { id: 'btn_surge_no', label: '❌ Cancel Order', value: 'cancel' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        confirm_surge: 'collect_payment_method',
+        cancel: 'cancelled',
+        user_message: 'handle_surge_response',
+        default: 'collect_payment_method',
+      },
+    },
+
+    handle_surge_response: {
+      type: 'decision',
+      description: 'Handle user response to surge pricing',
+      conditions: [
+        {
+          expression: '/yes|ok|okay|confirm|continue|theek|haan|ha/i.test(context._user_message || "")',
+          event: 'confirmed',
+        },
+        {
+          expression: '/no|cancel|nahi|nhi|band|stop/i.test(context._user_message || "")',
+          event: 'cancelled',
+        },
+      ],
+      transitions: {
+        confirmed: 'collect_payment_method',
+        cancelled: 'cancelled',
+        default: 'collect_payment_method',
       },
     },
 
@@ -4117,7 +4441,7 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
-        default: 'show_order_summary',
+        default: 'prompt_coupon_code',
       },
     },
 
@@ -4238,7 +4562,7 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
-        default: 'show_order_summary',
+        default: 'prompt_coupon_code',
       },
     },
 
@@ -4259,6 +4583,104 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
+        default: 'prompt_coupon_code',
+      },
+    },
+
+    // Prompt user for coupon code before order summary
+    prompt_coupon_code: {
+      type: 'wait',
+      description: 'Ask if user has a coupon code',
+      onEntry: [
+        {
+          id: 'ask_coupon',
+          executor: 'response',
+          config: {
+            message: '🏷️ Do you have a coupon code? Type it for a discount, or skip.',
+            buttons: [
+              { id: 'btn_skip_coupon', label: '⏭️ Skip', value: 'skip_coupon' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        skip_coupon: 'show_order_summary',
+        user_message: 'apply_coupon_code',
+        default: 'apply_coupon_code',
+      },
+    },
+
+    // Apply coupon code
+    apply_coupon_code: {
+      type: 'action',
+      description: 'Validate and apply coupon code',
+      actions: [
+        {
+          id: 'validate_coupon',
+          executor: 'php_api',
+          config: {
+            action: 'apply_coupon',
+            code: '{{_user_message}}',
+            order_amount: '{{pricing.total}}',
+          },
+          output: 'coupon_result',
+        },
+      ],
+      transitions: {
+        success: 'coupon_applied',
+        error: 'coupon_invalid',
+        default: 'coupon_invalid',
+      },
+    },
+
+    // Coupon applied successfully
+    coupon_applied: {
+      type: 'action',
+      description: 'Show coupon discount and update pricing',
+      actions: [
+        {
+          id: 'save_coupon',
+          executor: 'response',
+          config: {
+            message: '✅ **Coupon Applied!** You save ₹{{coupon_result.discount_amount}}!',
+            saveToContext: {
+              coupon_code: '{{_user_message}}',
+              coupon_discount: '{{coupon_result.discount_amount}}',
+              coupon_id: '{{coupon_result.coupon_id}}',
+            },
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'show_order_summary',
+      },
+    },
+
+    // Coupon invalid
+    coupon_invalid: {
+      type: 'action',
+      description: 'Show invalid coupon message',
+      actions: [
+        {
+          id: 'show_invalid',
+          executor: 'response',
+          config: {
+            message: '❌ Invalid or expired coupon code. Would you like to try another?',
+            buttons: [
+              { id: 'btn_try_again', label: '🔄 Try Another', value: 'try_coupon_again' },
+              { id: 'btn_skip', label: '⏭️ Skip', value: 'skip_coupon' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        try_coupon_again: 'prompt_coupon_code',
+        skip_coupon: 'show_order_summary',
+        user_message: 'apply_coupon_code',
         default: 'show_order_summary',
       },
     },
@@ -4272,9 +4694,10 @@ Reply "confirm" to book the rider.`,
           id: 'summary_message',
           executor: 'response',
           config: {
-            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.deliveryFee}} ({{distance}}km)\n🧾 GST (5%): ₹{{pricing.tax}}\n💳 **Grand Total: ₹{{pricing.total}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}Reply "confirm" to place order or "cancel" to cancel.',
+            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km)\n🧾 GST (5%): ₹{{pricing.tax}}\n💳 **Grand Total: ₹{{pricing.total}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}Reply "confirm" to place order.',
             buttons: [
-              { id: 'btn_confirm', label: '✅ Confirm', value: 'confirm' },
+              { id: 'btn_confirm', label: '✅ Confirm Order', value: 'confirm' },
+              { id: 'btn_note', label: '📝 Add Note to Restaurant', value: 'add_note' },
               { id: 'btn_cancel', label: '❌ Cancel', value: 'cancel' },
             ],
           },
@@ -4282,8 +4705,56 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
+        add_note: 'collect_special_note',      // 🆕 User wants to add note to restaurant
         user_message: 'pre_check_confirmation',
         default: 'pre_check_confirmation',
+      },
+    },
+
+    // 🆕 Ask user for special instructions to the restaurant
+    collect_special_note: {
+      type: 'wait',
+      description: 'Collect special instructions for the restaurant',
+      onEntry: [
+        {
+          id: 'ask_note',
+          executor: 'response',
+          config: {
+            message: '📝 What special instructions should we send to the restaurant?\n\n_Examples: "extra spicy", "no onions", "extra gravy", "less oil"_',
+            buttons: [
+              { id: 'btn_skip_note', label: '⏭️ Skip', value: 'skip_note' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        skip_note: 'show_order_summary',
+        user_message: 'save_special_note',
+        default: 'save_special_note',
+      },
+    },
+
+    // 🆕 Save special note to context and return to order summary
+    save_special_note: {
+      type: 'action',
+      description: 'Save special note and return to order summary',
+      actions: [
+        {
+          id: 'save_note',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              order_note: '{{_user_message}}',
+            },
+          },
+          output: '_note_saved',
+        },
+      ],
+      transitions: {
+        default: 'show_order_summary',
       },
     },
 
@@ -4930,37 +5401,26 @@ Reply "confirm" to book the rider.`,
     no_results: {
       type: 'wait',
       description: 'No food items found',
-      actions: [
-        {
-          id: 'fetch_categories',
-          executor: 'search',
-          config: {
-            type: 'categories',
-            index: 'food_items',
-            limit: 8
-          },
-          output: 'popular_categories'
-        },
+      onEntry: [
         {
           id: 'no_results_message',
           executor: 'response',
           config: {
-            message: 'Maaf kijiye, "{{_user_message}}" ke liye kuch nahi mila. 😕\n\nAap try kar sakte hain:\n• Pizza 🍕\n• Burger 🍔\n• Biryani 🍛\n• Momos 🥟\n\nKya order karna chahte ho?',
-            responseType: 'text', // Clear any previous responseType
+            message: 'Maaf kijiye, "{{original_food_query || _user_message}}" ke liye kuch nahi mila. 😕\n\nAap try kar sakte hain:\n• Missal Pav\n• Biryani\n• Vada Pav\n\nKya order karna chahte ho?',
+            responseType: 'text',
             buttons: [
-              { id: 'btn_pizza', label: '🍕 Pizza', value: 'pizza' },
-              { id: 'btn_burger', label: '🍔 Burger', value: 'burger' },
+              { id: 'btn_missal', label: '🍛 Missal Pav', value: 'missal pav' },
               { id: 'btn_biryani', label: '🍛 Biryani', value: 'biryani' },
+              { id: 'btn_browse', label: '📋 Browse Menu', value: 'browse_menu' },
             ],
           },
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
         user_message: 'understand_request',
-        pizza: 'process_specific_food',
-        burger: 'process_specific_food',
-        biryani: 'process_specific_food',
+        browse_menu: 'show_categories',
         default: 'understand_request',
       },
     },

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { adminBackendClient } from '@/lib/api/admin-backend';
+import { RoleGuard, useToast } from '@/components/shared';
 import { useAdminAuthStore } from '@/store/adminAuthStore';
 import {
   UserPlus,
@@ -47,6 +48,8 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deactivateTarget, setDeactivateTarget] = useState<{ id: string; name: string } | null>(null);
+  const toast = useToast();
 
   // Create form state
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -123,15 +126,21 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDeactivate = async (adminId: string, adminName: string) => {
-    if (!confirm(`Deactivate admin "${adminName}"? They will no longer be able to log in.`)) return;
+  const handleDeactivate = (adminId: string, adminName: string) =>
+    setDeactivateTarget({ id: adminId, name: adminName });
+
+  const confirmDeactivate = async () => {
+    if (!deactivateTarget) return;
+    const { id } = deactivateTarget;
+    setDeactivateTarget(null);
     try {
-      const result = await adminBackendClient.deactivateAdmin(adminId);
+      const result = await adminBackendClient.deactivateAdmin(id);
       if (result.success) {
         loadUsers();
+        toast.success('Admin deactivated');
       }
     } catch {
-      // silent
+      toast.error('Failed to deactivate admin');
     }
   };
 
@@ -149,6 +158,7 @@ export default function AdminUsersPage() {
   };
 
   return (
+    <RoleGuard allowedRoles={['super_admin', 'admin']}>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -395,5 +405,32 @@ export default function AdminUsersPage() {
         </div>
       )}
     </div>
+
+      {/* Deactivate Confirmation Modal */}
+      {deactivateTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Deactivate Admin</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Deactivate admin <strong>"{deactivateTarget.name}"</strong>? They will no longer be able to log in.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeactivateTarget(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeactivate}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Deactivate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </RoleGuard>
   );
 }

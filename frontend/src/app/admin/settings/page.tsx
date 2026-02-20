@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Settings, ExternalLink, CheckCircle, XCircle, AlertCircle, Mic, Speaker, HardDrive, Database, Brain } from 'lucide-react';
 import { adminBackendClient } from '@/lib/api/admin-backend';
+import { useToast } from '@/components/shared';
 
 export default function SettingsPage() {
   const [labelStudioUrl, setLabelStudioUrl] = useState('');
@@ -23,6 +24,7 @@ export default function SettingsPage() {
   // Minio State
   const [minioTestStatus, setMinioTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [minioTestMessage, setMinioTestMessage] = useState('');
+  const toast = useToast();
 
   useEffect(() => {
     loadSettings();
@@ -133,11 +135,11 @@ export default function SettingsPage() {
         { key: 'label-studio-api-key', value: labelStudioToken },
         { key: 'system-prompt', value: systemPrompt }
       ]);
-      alert('Settings saved successfully!');
+      toast.success('Settings saved successfully!');
       setSaving(false);
     } catch (error) {
       console.error('Failed to save settings:', error);
-      alert('Failed to save settings');
+      toast.error('Failed to save settings');
       setSaving(false);
     }
   };

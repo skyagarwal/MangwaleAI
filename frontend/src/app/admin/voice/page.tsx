@@ -9,6 +9,7 @@ import {
   Smile, MessageSquare, Sparkles
 } from 'lucide-react';
 import { adminBackendClient } from '@/lib/api/admin-backend';
+import { useToast } from '@/components/shared';
 
 // Mercury Service Status Types
 interface MercuryStatus {
@@ -76,6 +77,7 @@ interface VoicesData {
 }
 
 export default function VoiceSettingsPage() {
+  const toast = useToast();
   // Mercury status
   const [mercuryStatus, setMercuryStatus] = useState<MercuryStatus | null>(null);
   const [voices, setVoices] = useState<VoicesData | null>(null);
@@ -248,7 +250,7 @@ export default function VoiceSettingsPage() {
       setIsRecording(true);
     } catch (error) {
       console.error('Failed to start recording:', error);
-      alert('Microphone access denied or not available');
+      toast.error('Microphone access denied or not available');
     }
   };
 
@@ -315,7 +317,7 @@ export default function VoiceSettingsPage() {
       }
     } catch (error) {
       console.error('Download error:', error);
-      alert('Failed to download audio');
+      toast.error('Failed to download audio');
     }
   };
 
@@ -360,7 +362,7 @@ export default function VoiceSettingsPage() {
     } catch (error) {
       console.error('TTS error:', error);
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Failed to generate speech: ${errorMsg}\n\nMake sure Mercury TTS service is running at localhost:7002`);
+      toast.error(`Failed to generate speech: ${errorMsg}. Make sure Mercury TTS service is running at localhost:7002`);
     } finally {
       setIsGenerating(false);
     }
@@ -1033,7 +1035,7 @@ export default function VoiceSettingsPage() {
                       cfg_weight: ttsCfgWeight,
                       pitch: ttsPitch,
                     }));
-                    alert('✅ Settings saved successfully!');
+                    toast.success('Settings saved successfully!');
                   }}
                   className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 flex items-center gap-2"
                 >

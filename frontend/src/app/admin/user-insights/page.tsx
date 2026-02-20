@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
 import {
   Sparkles,
   Search,
@@ -45,9 +46,9 @@ interface InsightType {
   count: number;
 }
 
-const API_BASE = '';
-
 export default function UserInsightsPage() {
+  const { token } = useAdminAuthStore();
+  const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   const [insights, setInsights] = useState<Insight[]>([]);
   const [stats, setStats] = useState<InsightStats | null>(null);
   const [insightTypes, setInsightTypes] = useState<InsightType[]>([]);
@@ -66,7 +67,7 @@ export default function UserInsightsPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/insights/stats`);
+      const response = await fetch(`/api/personalization/insights/stats`);
       if (response.ok) {
         const data = await response.json();
         if (data.success) setStats(data);
@@ -78,7 +79,7 @@ export default function UserInsightsPage() {
 
   const fetchTypes = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/insights/types`);
+      const response = await fetch(`/api/personalization/insights/types`);
       if (response.ok) {
         const data = await response.json();
         if (data.success) setInsightTypes(data.types);
@@ -99,7 +100,7 @@ export default function UserInsightsPage() {
       if (minConfidence > 0) params.append('minConfidence', minConfidence.toString());
       if (searchTerm) params.append('search', searchTerm);
 
-      const response = await fetch(`${API_BASE}/api/personalization/insights/all?${params}`);
+      const response = await fetch(`/api/personalization/insights/all?${params}`);
       if (!response.ok) throw new Error('Failed to fetch insights');
 
       const data = await response.json();
@@ -116,7 +117,7 @@ export default function UserInsightsPage() {
 
   const fetchUserInsights = async (userId: number) => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/insights?userId=${userId}&limit=50`);
+      const response = await fetch(`/api/personalization/insights?userId=${userId}&limit=50`);
       if (response.ok) {
         const data = await response.json();
         setUserInsights(data.insights || []);
@@ -189,7 +190,7 @@ export default function UserInsightsPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

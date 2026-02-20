@@ -315,7 +315,7 @@ export function InlineLogin({ onClose, onSuccess }: InlineLoginProps) {
         onLoad={() => setGoogleScriptLoaded(true)}
       />
       
-      <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-[200]">
       <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-slide-up max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button

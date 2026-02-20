@@ -151,7 +151,9 @@ export class SearchExecutor implements ActionExecutor {
 
       // Handle Category Browsing (get items by category_id)
       if (type === 'category_items') {
-        const categoryId = Number(config.categoryId);
+        // 🔧 FIX: Strip 'cat_' prefix added by display_categories to avoid numeric item-selection conflict
+        const rawCategoryId = String(config.categoryId || '').replace(/^cat_/i, '');
+        const categoryId = Number(rawCategoryId);
         if (!categoryId || isNaN(categoryId)) {
           this.logger.warn(`Invalid categoryId: ${config.categoryId}`);
           return { success: false, output: [], event: 'no_items' };
@@ -271,7 +273,7 @@ export class SearchExecutor implements ActionExecutor {
       const useIntentSearch = config.useIntentSearch || config.intentSearch || false;
       const useSmartSearch = config.useSmartSearch || config.smartSearch || false;
       const queryMode = config.queryMode as string; // 'multi-term', 'recommendation'
-      const userId = context.data._user_id || context.data.userId;
+      const userId = context.data._user_id || context.data.userId || context.data.user_id;
       const platform = context.data.platform || 'unknown';
 
       // 🎯 SMART RECOMMENDATION & MULTI-TERM MODE
@@ -770,7 +772,7 @@ export class SearchExecutor implements ActionExecutor {
         if (isLikelyNotFood) {
           try {
             const storeCheck = await this.searchService.findStoreByName(query, { module_id: context.data.module_id || (index.includes('food') ? 4 : 5) });
-            if (storeCheck.storeId && storeCheck.score >= 500) {
+            if (storeCheck.storeId && storeCheck.score >= 300) {
               this.logger.log(`🏪 Store-first match: "${query}" → ${storeCheck.storeName} (ID: ${storeCheck.storeId}, score: ${storeCheck.score})`);
               // Add store_id filter and change query to broad menu search
               filters.push({
@@ -1041,7 +1043,7 @@ export class SearchExecutor implements ActionExecutor {
             price: itemMrp ? `₹${itemMrp}` : (itemPrice ? `₹${itemPrice}` : undefined),
             rawPrice: itemMrp || itemPrice,
             image: getImageUrl(item),
-            rating: item.rating || item.avg_rating || src.avg_rating || '0.0',
+            rating: (() => { const r = parseFloat(item.rating || item.avg_rating || src.avg_rating || '0'); return r > 0 ? r.toFixed(1) : undefined; })(),
             deliveryTime: item.delivery_time || src.delivery_time || '30-45 min',
             brand: item.brand || src.brand,
             category: item.category || item.category_name || src.category_name,
@@ -1163,7 +1165,7 @@ export class SearchExecutor implements ActionExecutor {
         price: item.price ? `₹${item.price}` : (item.mrp ? `₹${item.mrp}` : undefined),
         rawPrice: item.price || item.mrp,
         image: getImageUrl(item),
-        rating: item.rating || item.avg_rating || '0.0',
+        rating: (() => { const r = parseFloat(item.rating || item.avg_rating || '0'); return r > 0 ? r.toFixed(1) : undefined; })(),
         deliveryTime: item.delivery_time || '30-45 min',
         brand: item.brand,
         category: item.category_name || item.category,
@@ -1235,7 +1237,7 @@ export class SearchExecutor implements ActionExecutor {
         price: item.mrp ? `₹${item.mrp}` : (item.price ? `₹${item.price}` : undefined),
         rawPrice: item.mrp || item.price,
         image: getImageUrl(item),
-        rating: item.rating || item.avg_rating || '0.0',
+        rating: (() => { const r = parseFloat(item.rating || item.avg_rating || '0'); return r > 0 ? r.toFixed(1) : undefined; })(),
         deliveryTime: item.delivery_time || '30-45 min',
         brand: item.brand,
         category: item.category || item.category_name,
@@ -1378,7 +1380,7 @@ export class SearchExecutor implements ActionExecutor {
         price: item.price ? `₹${item.price}` : undefined,
         rawPrice: item.price,
         image: getImageUrl(item),
-        rating: item.avg_rating || item.rating || '0.0',
+        rating: (() => { const r = parseFloat(item.avg_rating || item.rating || '0'); return r > 0 ? r.toFixed(1) : undefined; })(),
         deliveryTime: item.delivery_time || '30-45 min',
         category: item.category_name || item.category,
         storeName: item.store_name,

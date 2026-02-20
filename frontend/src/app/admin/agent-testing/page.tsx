@@ -145,10 +145,10 @@ export default function AgentTestingPage() {
   const selectedAgentData = moduleAgents.find(a => a.id === selectedAgent);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Agent Testing Lab</h1>
-        <p className="text-gray-600 mt-2">Test NLU classification against the live backend (IndicBERTv2 + LLM fallback)</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Agent Testing Lab</h1>
+        <p className="text-gray-500 mt-1">Test NLU classification against the live backend (IndicBERTv2 + LLM fallback)</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

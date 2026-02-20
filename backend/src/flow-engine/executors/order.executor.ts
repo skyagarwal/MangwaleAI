@@ -426,6 +426,20 @@ export class OrderExecutor implements ActionExecutor {
   }
 
   /**
+   * Normalize order_note / preference to a plain string.
+   * NER returns preference as an array (e.g., ["no tarri", "extra spicy"]).
+   * PHP's order_note field expects a single string.
+   */
+  private resolveOrderNote(...sources: any[]): string | undefined {
+    for (const src of sources) {
+      if (!src) continue;
+      if (Array.isArray(src) && src.length > 0) return src.join(', ');
+      if (typeof src === 'string' && src.trim()) return src.trim();
+    }
+    return undefined;
+  }
+
+  /**
    * Build order note from parcel details with sensible defaults
    */
   private buildParcelNote(parcelDetails: any): string {
@@ -469,7 +483,7 @@ export class OrderExecutor implements ActionExecutor {
     // but we still record/forward user preference when available.
     const paymentMethod = this.resolvePaymentMethod(config, context, 'digital_payment');
     // Check order_note from config, context data, or extracted_food special_instructions
-    const orderNote = config.order_note || context.data.order_note || context.data.extracted_food?.special_instructions;
+    const orderNote = this.resolveOrderNote(config.order_note, context.data.order_note, context.data.extracted_food?.special_instructions);
 
     if (!items || items.length === 0) {
       return {
@@ -555,6 +569,7 @@ export class OrderExecutor implements ActionExecutor {
       orderNote,
       moduleId, // Pass moduleId from item data
       userId,   // Pass userId for WhatsApp verified users without auth_token
+      couponCode: context.data.coupon_code,
     });
 
     // 💳 For digital payments or partial payments, create Razorpay order
@@ -640,7 +655,7 @@ export class OrderExecutor implements ActionExecutor {
     const orderGroups = config.orderGroups || context.data.cart_validation?.orderGroups || [];
     const deliveryAddress = config.delivery_address || context.data.delivery_address;
     const paymentMethod = this.resolvePaymentMethod(config, context, 'digital_payment');
-    const orderNote = config.order_note || context.data.order_note || context.data.extracted_food?.special_instructions;
+    const orderNote = this.resolveOrderNote(config.order_note, context.data.order_note, context.data.extracted_food?.special_instructions);
 
     if (!orderGroups || orderGroups.length === 0) {
       return {
@@ -915,7 +930,7 @@ export class OrderExecutor implements ActionExecutor {
         message: 'Payment method is required. Please select a payment method before placing the order.',
       };
     }
-    const orderNote = config.order_note || context.data.order_note;
+    const orderNote = this.resolveOrderNote(config.order_note, context.data.order_note);
 
     if (!items || items.length === 0) {
       return {

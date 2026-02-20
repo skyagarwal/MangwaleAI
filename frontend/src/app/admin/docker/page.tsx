@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
+import { RoleGuard } from '@/components/shared';
+import {
   Box, Server, Play, Square, RefreshCw, Trash2, RotateCcw,
   Activity, Cpu, HardDrive, MemoryStick, Clock, CheckCircle, 
   XCircle, AlertCircle, Settings, Terminal, Eye, Download,
@@ -242,6 +243,7 @@ export default function DockerManagementPage() {
   }
 
   return (
+    <RoleGuard allowedRoles={['super_admin', 'admin']}>
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-700 to-slate-900 rounded-2xl p-8 text-white shadow-lg">
@@ -418,5 +420,6 @@ export default function DockerManagementPage() {
         </div>
       </div>
     </div>
+    </RoleGuard>
   );
 }

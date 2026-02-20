@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Key, Plus, Copy, Trash2, Eye, EyeOff, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
-import { useToast } from '@/components/shared';
+import { useToast, RoleGuard } from '@/components/shared';
 
 interface APIKey {
   id: string;
@@ -23,6 +23,8 @@ export default function APIKeysPage() {
   const [creating, setCreating] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
   const [newKeyPermissions, setNewKeyPermissions] = useState<string[]>(['read']);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [rotateTarget, setRotateTarget] = useState<string | null>(null);
   const toast = useToast();
 
   const loadApiKeys = useCallback(async () => {
@@ -80,9 +82,12 @@ export default function APIKeysPage() {
     }
   };
 
-  const deleteKey = async (id: string) => {
-    if (!confirm('Are you sure? This action cannot be undone.')) return;
+  const deleteKey = (id: string) => setDeleteTarget(id);
 
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     try {
       const response = await fetch(`/api/admin/api-keys/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete API key');
@@ -94,9 +99,12 @@ export default function APIKeysPage() {
     }
   };
 
-  const rotateKey = async (id: string) => {
-    if (!confirm('Are you sure you want to rotate this key? The old key will stop working immediately.')) return;
+  const rotateKey = (id: string) => setRotateTarget(id);
 
+  const confirmRotate = async () => {
+    if (!rotateTarget) return;
+    const id = rotateTarget;
+    setRotateTarget(null);
     try {
       const response = await fetch(`/api/admin/api-keys/${id}/rotate`, { method: 'POST' });
       if (!response.ok) throw new Error('Failed to rotate API key');
@@ -114,6 +122,7 @@ export default function APIKeysPage() {
   };
 
   return (
+    <RoleGuard allowedRoles={['super_admin', 'admin']}>
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex items-center justify-between">
@@ -295,5 +304,58 @@ export default function APIKeysPage() {
         </div>
       )}
     </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete API Key</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              This action cannot be undone. The API key will be permanently deleted and any integrations using it will stop working.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rotate Confirmation Modal */}
+      {rotateTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Rotate API Key</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              The old key will stop working immediately. Make sure to update any integrations with the new key before rotating.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setRotateTarget(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRotate}
+                className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+              >
+                Rotate Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </RoleGuard>
   );
 }

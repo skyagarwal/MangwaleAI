@@ -27,6 +27,7 @@ export default function FlowsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedModule, setSelectedModule] = useState<string>('all');
   const [showWizard, setShowWizard] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const toast = useToast();
 
   const modules = ['all', 'food', 'ecom', 'parcel', 'ride', 'health', 'rooms', 'movies', 'services'];
@@ -79,9 +80,12 @@ export default function FlowsPage() {
     }
   };
 
-  const deleteFlow = async (flowId: string) => {
-    if (!confirm('Are you sure you want to delete this flow?')) return;
+  const deleteFlow = (flowId: string) => setDeleteTarget(flowId);
 
+  const confirmDeleteFlow = async () => {
+    if (!deleteTarget) return;
+    const flowId = deleteTarget;
+    setDeleteTarget(null);
     try {
       await mangwaleAIClient.deleteFlow(flowId);
       setFlows(prev => prev.filter(f => f.id !== flowId));
@@ -305,6 +309,32 @@ export default function FlowsPage() {
         onClose={() => setShowWizard(false)}
         onSuccess={loadFlows}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Flow</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete this flow? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteFlow}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Flow
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

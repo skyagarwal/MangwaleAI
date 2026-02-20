@@ -6,6 +6,7 @@ import {
   Settings, Globe, Heart, Palette, BarChart3, RefreshCw,
   ChevronDown, ChevronUp, CheckCircle, AlertCircle, Loader2
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface VoiceCharacter {
   id: string;
@@ -67,6 +68,7 @@ interface StylePreset {
 const API_BASE = "/api";
 
 export default function VoiceCharactersPage() {
+  const toast = useToast();
   const [characters, setCharacters] = useState<VoiceCharacter[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<VoiceCharacter | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +77,11 @@ export default function VoiceCharactersPage() {
   const [activeTab, setActiveTab] = useState<'settings' | 'emotions' | 'styles' | 'languages' | 'test'>('settings');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('basic');
+
+  // Confirm delete state
+  const [deleteCharacterTarget, setDeleteCharacterTarget] = useState<string | null>(null);
+  const [deleteEmotionTarget, setDeleteEmotionTarget] = useState<string | null>(null);
+  const [deleteStyleTarget, setDeleteStyleTarget] = useState<string | null>(null);
   
   // Test state
   const [testText, setTestText] = useState('नमस्ते, मैं आपकी सेवा में हाज़िर हूं।');
@@ -209,8 +216,14 @@ export default function VoiceCharactersPage() {
     }
   };
 
-  const deleteCharacter = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this character?')) return;
+  const deleteCharacter = (id: string) => {
+    setDeleteCharacterTarget(id);
+  };
+
+  const confirmDeleteCharacter = async () => {
+    if (!deleteCharacterTarget) return;
+    const id = deleteCharacterTarget;
+    setDeleteCharacterTarget(null);
     try {
       const res = await fetch(`${API_BASE}/voice-characters/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete character');
@@ -262,8 +275,14 @@ export default function VoiceCharactersPage() {
     }
   };
 
-  const deleteEmotionPreset = async (emotionId: string) => {
-    if (!confirm('Delete this emotion preset?')) return;
+  const deleteEmotionPreset = (emotionId: string) => {
+    setDeleteEmotionTarget(emotionId);
+  };
+
+  const confirmDeleteEmotionPreset = async () => {
+    if (!deleteEmotionTarget) return;
+    const emotionId = deleteEmotionTarget;
+    setDeleteEmotionTarget(null);
     try {
       await fetch(`${API_BASE}/voice-characters/emotions/${emotionId}`, { method: 'DELETE' });
       await loadCharacters();
@@ -311,8 +330,14 @@ export default function VoiceCharactersPage() {
     }
   };
 
-  const deleteStylePreset = async (styleId: string) => {
-    if (!confirm('Delete this style preset?')) return;
+  const deleteStylePreset = (styleId: string) => {
+    setDeleteStyleTarget(styleId);
+  };
+
+  const confirmDeleteStylePreset = async () => {
+    if (!deleteStyleTarget) return;
+    const styleId = deleteStyleTarget;
+    setDeleteStyleTarget(null);
     try {
       await fetch(`${API_BASE}/voice-characters/styles/${styleId}`, { method: 'DELETE' });
       await loadCharacters();
@@ -954,6 +979,48 @@ export default function VoiceCharactersPage() {
           )}
         </div>
       </div>
+
+      {/* Delete Character Confirm Modal */}
+      {deleteCharacterTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Character</h3>
+            <p className="text-gray-600 text-sm mb-6">Are you sure you want to delete this character? This cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteCharacterTarget(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirmDeleteCharacter} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Emotion Preset Confirm Modal */}
+      {deleteEmotionTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Emotion Preset</h3>
+            <p className="text-gray-600 text-sm mb-6">Are you sure? This cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteEmotionTarget(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirmDeleteEmotionPreset} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Style Preset Confirm Modal */}
+      {deleteStyleTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Style Preset</h3>
+            <p className="text-gray-600 text-sm mb-6">Are you sure? This cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteStyleTarget(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirmDeleteStylePreset} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create Character Modal */}
       {showCreateModal && (

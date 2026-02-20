@@ -33,6 +33,12 @@ interface MatchedItem {
   storeLng?: number;
   extractedName: string;  // What user asked for
   matchScore: number;
+  /** PHP variation format: [{"name": "...", "values": [{"label": "...", "optionPrice": "..."}]}] */
+  variation?: any[];
+  /** Add-on IDs selected by user */
+  add_on_ids?: any[];
+  /** Quantities for each selected add-on */
+  add_on_qtys?: any[];
 }
 
 /**
@@ -54,12 +60,24 @@ export class AutoCartExecutor implements ActionExecutor {
     try {
       const extractedItemsPath = config.extractedItemsPath || 'extracted_food.items';
       const searchResultsPath = config.searchResultsPath || 'search_results.cards';
+      // 🆕 defaultQuantity: used when items are plain strings (express order path, e.g., "add 5 samosa from satyam")
+      const defaultQuantity = parseInt(String(config.defaultQuantity || 1)) || 1;
 
       // Get extracted items from context
-      const extractedItems = this.getNestedValue(context.data, extractedItemsPath) as ExtractedItem[];
+      const rawExtractedItems = this.getNestedValue(context.data, extractedItemsPath);
       const searchResults = this.getNestedValue(context.data, searchResultsPath) as CardItem[];
 
-      if (!extractedItems || !Array.isArray(extractedItems) || extractedItems.length === 0) {
+      // 🆕 Normalize: items may be plain strings ["samosa"] OR objects [{name, quantity}]
+      // Normalize to ExtractedItem[] always
+      const extractedItems: ExtractedItem[] = Array.isArray(rawExtractedItems)
+        ? rawExtractedItems.map((item: any) =>
+            typeof item === 'string'
+              ? { name: item, quantity: defaultQuantity }
+              : { name: item?.name || String(item), quantity: item?.quantity || defaultQuantity }
+          )
+        : [];
+
+      if (!extractedItems || extractedItems.length === 0) {
         return {
           success: false,
           error: 'No extracted items found',
@@ -75,7 +93,7 @@ export class AutoCartExecutor implements ActionExecutor {
         };
       }
 
-      this.logger.log(`🛒 Auto-cart: Matching ${extractedItems.length} extracted items against ${searchResults.length} search results`);
+      this.logger.log(`🛒 Auto-cart: Matching ${extractedItems.length} extracted items (defaultQty=${defaultQuantity}) against ${searchResults.length} search results`);
 
       // Match each extracted item to search results
       // 🏪 STORE AFFINITY: When user orders multiple items without specifying stores,
@@ -88,17 +106,17 @@ export class AutoCartExecutor implements ActionExecutor {
       for (const extracted of extractedItems) {
         // Check for close matches (disambiguation needed)
         const closeMatches = this.findCloseMatches(extracted.name, searchResults, preferredStoreId);
-        
+
         if (closeMatches.length > 1) {
           // Multiple similar items found — ask user to choose
           this.logger.log(`🤔 Multiple close matches for "${extracted.name}": ${closeMatches.map(m => `${m.card.name}@${m.card.storeName}(${m.score})`).join(', ')}`);
-          
+
           return {
             success: true,
             output: {
               disambiguationNeeded: true,
               disambiguationItem: extracted.name,
-              disambiguationQuantity: extracted.quantity || 1,
+              disambiguationQuantity: extracted.quantity || defaultQuantity,
               disambiguationOptions: closeMatches.slice(0, 5).map((m, idx) => ({
                 id: `opt_${m.card.id}`,
                 label: `${m.card.name} - ₹${this.parsePrice(m.card.price)} (${m.card.storeName || 'Unknown'})`,
@@ -143,6 +161,9 @@ export class AutoCartExecutor implements ActionExecutor {
             storeLng: match.card.storeLng,
             extractedName: extracted.name,
             matchScore: match.score,
+            variation: [],
+            add_on_ids: [],
+            add_on_qtys: [],
           });
           
           // 🏪 Set store affinity after first successful match

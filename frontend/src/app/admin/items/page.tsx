@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAdminItems, Item, QueryParams, PaginationMeta } from '@/hooks/useAdminCrud';
+import { useToast } from '@/components/shared';
 import { 
   Search, Plus, Edit, Trash2, RefreshCw, ChevronLeft, ChevronRight,
   Package, Store, Tag, CheckCircle2, XCircle, Loader2, AlertCircle
@@ -27,6 +28,9 @@ export default function ItemsManagementPage() {
   const [meta, setMeta] = useState<PaginationMeta>({ total: 0, page: 1, limit: 20, total_pages: 1 });
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const [bulkStatusConfirm, setBulkStatusConfirm] = useState<number | null>(null);
+  const toast = useToast();
   
   const [filters, setFilters] = useState<QueryParams>({
     page: 1,
@@ -57,30 +61,38 @@ export default function ItemsManagementPage() {
     setFilters({ ...filters, page: 1 });
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this item? This will also remove it from search.')) return;
-    
+  const handleDelete = (id: number) => setDeleteConfirmId(id);
+
+  const confirmDeleteItem = async () => {
+    if (!deleteConfirmId) return;
+    const id = deleteConfirmId;
+    setDeleteConfirmId(null);
     setDeleting(id);
     try {
       await deleteItem(id);
       await loadItems();
     } catch {
-      alert('Failed to delete item');
+      toast.error('Failed to delete item');
     } finally {
       setDeleting(null);
     }
   };
 
-  const handleBulkStatusUpdate = async (status: number) => {
+  const handleBulkStatusUpdate = (status: number) => {
     if (selectedItems.length === 0) return;
-    if (!confirm(`Update ${selectedItems.length} items to ${status === 1 ? 'Active' : 'Inactive'}?`)) return;
+    setBulkStatusConfirm(status);
+  };
 
+  const confirmBulkStatusUpdate = async () => {
+    if (bulkStatusConfirm === null) return;
+    const status = bulkStatusConfirm;
+    setBulkStatusConfirm(null);
     try {
       await bulkUpdate(selectedItems, { status });
       setSelectedItems([]);
       await loadItems();
     } catch {
-      alert('Failed to update items');
+      toast.error('Failed to update items');
     }
   };
 
@@ -99,7 +111,7 @@ export default function ItemsManagementPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <><div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex items-center justify-between">
@@ -427,5 +439,58 @@ export default function ItemsManagementPage() {
         </div>
       </div>
     </div>
+
+      {/* Delete Item Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Item</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete this item? It will also be removed from search.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteItem}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Item
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Status Update Confirmation Modal */}
+      {bulkStatusConfirm !== null && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Update Items</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Update {selectedItems.length} items to {bulkStatusConfirm === 1 ? 'Active' : 'Inactive'}?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setBulkStatusConfirm(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBulkStatusUpdate}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

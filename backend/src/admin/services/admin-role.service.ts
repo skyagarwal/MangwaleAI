@@ -318,7 +318,7 @@ export class AdminRoleService {
   }
 
   /**
-   * Update admin password
+   * Update admin password (by email — used by forgot-password flow)
    */
   async updatePassword(email: string, newPassword: string): Promise<void> {
     const hashedPassword = await bcrypt.hash(newPassword, 12);
@@ -326,6 +326,32 @@ export class AdminRoleService {
       UPDATE admin_users SET password_hash = ${hashedPassword} WHERE email = ${email}
     `;
     this.logger.log(`Password updated for admin: ${email}`);
+  }
+
+  /**
+   * Change password (by adminId — requires current password verification)
+   */
+  async changePassword(adminId: string, oldPassword: string, newPassword: string): Promise<void> {
+    const result = await this.prisma.$queryRaw<any[]>`
+      SELECT id, email, password_hash FROM admin_users WHERE id = ${adminId}::uuid AND is_active = true
+    `;
+
+    if (result.length === 0) {
+      throw new UnauthorizedException('Admin not found');
+    }
+
+    const user = result[0];
+    const isValid = await bcrypt.compare(oldPassword, user.password_hash);
+
+    if (!isValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await this.prisma.$executeRaw`
+      UPDATE admin_users SET password_hash = ${hashedPassword} WHERE id = ${adminId}::uuid
+    `;
+    this.logger.log(`Password changed for admin: ${user.email}`);
   }
 
   private generateToken(user: AdminUser): string {

@@ -1,14 +1,16 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
-import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
 
 /**
  * Pricing Executor
- * 
- * Calculates pricing for orders/deliveries.
- * Primary: Calls PHP backend's get-Tax API (source of truth)
- * Fallback: Local calculation if PHP API unavailable
+ *
+ * Calculates pricing for orders/deliveries using local calculation.
+ *
+ * NOTE: PHP's get-Tax endpoint reads items from the PHP cart table (not request body),
+ * so it always returns tax=0 at the pricing step (cart is not yet populated).
+ * We use local calculation for all pre-order pricing previews.
+ * PHP determines the real order total internally at placement time.
  */
 @Injectable()
 export class PricingExecutor implements ActionExecutor {
@@ -16,7 +18,6 @@ export class PricingExecutor implements ActionExecutor {
   private readonly logger = new Logger(PricingExecutor.name);
 
   constructor(
-    @Optional() private readonly phpPaymentService?: PhpPaymentService,
     @Optional() private readonly configService?: ConfigService,
   ) {}
 
@@ -29,20 +30,12 @@ export class PricingExecutor implements ActionExecutor {
 
       let output: any;
 
-      // Try PHP backend pricing first (source of truth for live charges)
-      if (this.phpPaymentService && type === 'food') {
-        output = await this.calculateViaPhpApi(config, context);
-      }
-
-      // Fallback to local calculation if PHP call failed or for non-food types
-      if (!output) {
-        if (type === 'food') {
-          output = this.calculateFoodPricing(config, context);
-        } else if (type === 'parcel') {
-          output = this.calculateParcelPricing(config, context);
-        } else {
-          output = this.calculateEcommercePricing(config, context);
-        }
+      if (type === 'food') {
+        output = this.calculateFoodPricing(config, context);
+      } else if (type === 'parcel') {
+        output = this.calculateParcelPricing(config, context);
+      } else {
+        output = this.calculateEcommercePricing(config, context);
       }
 
       this.logger.debug(`Pricing calculated: ₹${output.total}`);
@@ -62,55 +55,8 @@ export class PricingExecutor implements ActionExecutor {
     }
   }
 
-  /**
-   * Call PHP backend's get-Tax API for accurate pricing (source of truth)
-   */
-  private async calculateViaPhpApi(config: any, context: FlowContext): Promise<any | null> {
-    try {
-      const items = config.items || context.data.selected_items || [];
-      const distance = config.distance || context.data.distance || 0;
-      const deliveryFeePerKm = parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
-      const minDeliveryFee = parseFloat(process.env.DEFAULT_MIN_DELIVERY_FEE) || 30;
-      const deliveryCharge = Math.max(distance * deliveryFeePerKm, minDeliveryFee);
-
-      const result = await this.phpPaymentService.calculateTax({
-        items: items.map((item: any) => ({
-          item_id: item.id || item.item_id,
-          quantity: item.quantity || 1,
-          price: item.price,
-        })),
-        deliveryCharge,
-        distance,
-      });
-
-      if (result.success && result.total > 0) {
-        const itemsTotal = items.reduce((sum: number, item: any) => sum + (item.price * (item.quantity || 1)), 0);
-        this.logger.log(`PHP API pricing: ₹${result.total} (tax: ₹${result.tax})`);
-        return {
-          items_total: itemsTotal,
-          delivery_fee: deliveryCharge,
-          subtotal: itemsTotal + deliveryCharge,
-          tax: result.tax,
-          total: result.total,
-          source: 'php_api',
-          breakdown: {
-            items: itemsTotal,
-            delivery: deliveryCharge,
-            tax: result.tax,
-          },
-        };
-      }
-
-      this.logger.warn('PHP pricing returned no result, falling back to local calc');
-      return null;
-    } catch (error) {
-      this.logger.warn(`PHP pricing API failed: ${error.message}, falling back to local calc`);
-      return null;
-    }
-  }
-
   private calculateFoodPricing(config: any, context: FlowContext): any {
-    this.logger.debug('Using local food pricing calculation (PHP API unavailable)');
+    this.logger.debug('Using local food pricing calculation');
     const items = config.items || context.data.selected_items || [];
     const distance = config.distance || context.data.distance || 0;
     const deliveryFeePerKm = config.delivery_fee_per_km || parseFloat(process.env.DEFAULT_DELIVERY_FEE_PER_KM) || 10;
@@ -128,6 +74,7 @@ export class PricingExecutor implements ActionExecutor {
 
     return {
       items_total: itemsTotal,
+      itemsTotal,
       delivery_fee: deliveryFee,
       subtotal,
       tax,
@@ -162,8 +109,9 @@ export class PricingExecutor implements ActionExecutor {
   }
 
   private calculateEcommercePricing(config: any, context: FlowContext): any {
-    const items = config.items || context.data.cart_items || [];
-    
+    this.logger.debug('Using local ecommerce pricing calculation (PHP API unavailable)');
+    const items = config.items || context.data.cart_items || context.data.selected_items || [];
+
     const itemsTotal = items.reduce((sum: number, item: any) => {
       return sum + (item.price * (item.quantity || 1));
     }, 0);
@@ -171,13 +119,18 @@ export class PricingExecutor implements ActionExecutor {
     const freeShippingThreshold = this.configService?.get<number>('pricing.ecomFreeShippingThreshold') || 500;
     const baseShippingFee = this.configService?.get<number>('pricing.ecomShippingFee') || 40;
     const shippingFee = itemsTotal > freeShippingThreshold ? 0 : baseShippingFee;
+    const freeShipping = shippingFee === 0;
     const subtotal = itemsTotal + shippingFee;
     const tax = Math.ceil(subtotal * 0.18); // 18% GST
     const total = subtotal + tax;
 
     return {
       items_total: itemsTotal,
-      shipping_fee: shippingFee,
+      itemsTotal,                  // camelCase alias for {{pricing.itemsTotal}} template
+      delivery_fee: shippingFee,   // fix: was missing — used by {{pricing.delivery_fee}}
+      shipping_fee: shippingFee,   // backward compat
+      shippingFee,                 // camelCase alias for {{pricing.shippingFee}} template
+      freeShipping,                // for {{#if pricing.freeShipping}} template
       subtotal,
       tax,
       total,

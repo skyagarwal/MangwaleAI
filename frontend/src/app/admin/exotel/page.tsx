@@ -7,6 +7,7 @@ import {
   AlertCircle, Play, Square, Mic, Volume2, Activity, Zap,
   Clock, Globe, Hash, List, Send, Radio, Headphones
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface ExotelStatus {
   status: string;
@@ -33,6 +34,7 @@ export default function ExotelPage() {
   const [partyA, setPartyA] = useState('');
   const [partyB, setPartyB] = useState('');
   const [creatingMask, setCreatingMask] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     loadStatus();
@@ -65,12 +67,12 @@ export default function ExotelPage() {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Call initiated successfully! Agent will receive call first.');
+        toast.success('Call initiated successfully! Agent will receive call first.');
       } else {
-        alert('Failed to initiate call: ' + (data.error || 'Unknown error'));
+        toast.error('Failed to initiate call: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
-      alert('Error initiating call');
+      toast.error('Error initiating call');
     } finally {
       setCalling(false);
     }
@@ -87,12 +89,12 @@ export default function ExotelPage() {
       });
       const data = await response.json();
       if (data.success) {
-        alert(`Virtual number created: ${data.virtualNumber}\nValid for 24 hours`);
+        toast.success(`Virtual number created: ${data.virtualNumber} — Valid for 24 hours`);
       } else {
-        alert('Failed to create masked number');
+        toast.error('Failed to create masked number');
       }
     } catch (error) {
-      alert('Error creating masked number');
+      toast.error('Error creating masked number');
     } finally {
       setCreatingMask(false);
     }

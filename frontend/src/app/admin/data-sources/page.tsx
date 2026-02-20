@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Database, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  RefreshCw, 
-  CheckCircle2, 
+import {
+  Database,
+  Plus,
+  Edit2,
+  Trash2,
+  RefreshCw,
+  CheckCircle2,
   XCircle,
   AlertTriangle,
   ArrowUpDown,
@@ -15,6 +15,7 @@ import {
   Pause,
   ExternalLink
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface DataSource {
   id: number;
@@ -74,6 +75,8 @@ export default function DataSourcesPage() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingSource, setEditingSource] = useState<DataSource | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -136,14 +139,19 @@ export default function DataSourcesPage() {
     }
   };
 
-  const deleteDataSource = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this data source?')) return;
-    
+  const deleteDataSource = (id: number) => setDeleteConfirmId(id);
+
+  const confirmDeleteDataSource = async () => {
+    if (!deleteConfirmId) return;
+    const id = deleteConfirmId;
+    setDeleteConfirmId(null);
     try {
       await fetch(`/api/admin/data-sources/${id}`, { method: 'DELETE' });
       loadDataSources();
+      toast.success('Data source deleted');
     } catch (error) {
       console.error('Failed to delete data source:', error);
+      toast.error('Failed to delete data source');
     }
   };
 
@@ -160,9 +168,10 @@ export default function DataSourcesPage() {
     try {
       const response = await fetch(`/api/admin/data-sources/${id}/test`, { method: 'POST' });
       const result = await response.json();
-      alert(result.success ? 'Test successful!' : `Test failed: ${result.error}`);
+      if (result.success) toast.success('Test successful!');
+      else toast.error(`Test failed: ${result.error}`);
     } catch (error) {
-      alert('Test failed');
+      toast.error('Test failed');
     }
   };
 
@@ -549,6 +558,32 @@ export default function DataSourcesPage() {
                 className="px-4 py-2 bg-[#059211] text-white rounded-lg hover:bg-[#047a0e]"
               >
                 {editingSource ? 'Update' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Data Source</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete this data source? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteDataSource}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
               </button>
             </div>
           </div>

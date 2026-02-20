@@ -14,30 +14,39 @@ export class PhpPaymentService extends PhpApiService {
 
   /**
    * Calculate tax for order
+   * @param cartData.moduleId Optional module ID header (4=Food, 5=Ecommerce) for zone-specific tax rates
    */
   async calculateTax(cartData: {
     items: any[];
     deliveryCharge: number;
     distance: number;
+    moduleId?: number;
   }): Promise<{
     success: boolean;
     tax?: number;
-    total?: number;
+    /** true when tax is already included in item prices (PHP tax_included === 1) */
+    taxIncluded?: boolean;
     message?: string;
   }> {
     try {
-      this.logger.log('💰 Calculating tax');
+      this.logger.log(`💰 Calculating tax (module: ${cartData.moduleId || 'default'})`);
+
+      const headers: Record<string, string> = {};
+      if (cartData.moduleId) {
+        headers['moduleId'] = String(cartData.moduleId);
+      }
 
       const response: any = await this.post('/api/v1/customer/order/get-Tax', {
         items: cartData.items,
         delivery_charge: cartData.deliveryCharge,
         distance: cartData.distance,
-      });
+      }, headers);
 
+      // PHP returns { tax_amount, tax_included } — NOT tax, total, or delivery_charge
       return {
         success: true,
-        tax: parseFloat(response.tax || 0),
-        total: parseFloat(response.total || 0),
+        tax: parseFloat(response.tax_amount ?? 0),
+        taxIncluded: response.tax_included === 1,
       };
     } catch (error) {
       this.logger.error(`Failed to calculate tax: ${error.message}`);
@@ -331,5 +340,40 @@ export class PhpPaymentService extends PhpApiService {
       offline_payment: 'Offline Payment',
     };
     return methodMap[method] || method;
+  }
+
+  /**
+   * Get surge price for current time/zone/module
+   * POST /api/v1/customer/order/get-surge-price
+   */
+  async getSurgePrice(zoneId: number, moduleId: number): Promise<{
+    success: boolean;
+    hasSurge?: boolean;
+    title?: string;
+    customerNote?: string;
+    price?: number;
+    priceType?: 'fixed' | 'percent';
+    message?: string;
+  }> {
+    try {
+      const response: any = await this.post('/api/v1/customer/order/get-surge-price', {
+        zone_id: zoneId,
+        module_id: moduleId,
+        date_time: new Date().toISOString(),
+      });
+
+      const hasSurge = response && parseFloat(response.price || 0) > 0;
+      return {
+        success: true,
+        hasSurge,
+        title: response?.title || '',
+        customerNote: response?.customer_note || '',
+        price: parseFloat(response?.price || 0),
+        priceType: response?.price_type || 'fixed',
+      };
+    } catch (error) {
+      this.logger.warn(`Surge price check failed (non-blocking): ${error.message}`);
+      return { success: false, message: error.message };
+    }
   }
 }

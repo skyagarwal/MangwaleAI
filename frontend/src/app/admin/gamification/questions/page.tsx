@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { mangwaleAIClient } from '@/lib/api/mangwale-ai';
 import Link from 'next/link';
+import { useToast } from '@/components/shared';
 
 interface GameQuestion {
   id: number;
@@ -44,22 +45,27 @@ interface QuestionStats {
 }
 
 export default function QuestionsPage() {
+  const toast = useToast();
   const [questions, setQuestions] = useState<GameQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<QuestionStats | null>(null);
-  
+
   // Filters
   const [gameTypeFilter, setGameTypeFilter] = useState<string>('all');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'enabled' | 'disabled'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Selection
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  
+
   // Inline edit
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<GameQuestion>>({});
+
+  // Confirm delete state
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [bulkDeletePending, setBulkDeletePending] = useState(false);
 
   useEffect(() => {
     loadQuestions();
@@ -87,16 +93,21 @@ export default function QuestionsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this question?')) return;
-    
+  const handleDelete = (id: number) => {
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteTarget === null) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     try {
       await mangwaleAIClient.delete(`/gamification/questions/${id}`);
       await loadQuestions();
       await loadStats();
     } catch (error) {
       console.error('Failed to delete question:', error);
-      alert('Failed to delete question');
+      toast.error('Failed to delete question');
     }
   };
 
@@ -111,13 +122,16 @@ export default function QuestionsPage() {
     }
   };
 
-  const handleBulkDelete = async () => {
+  const handleBulkDelete = () => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`Delete ${selectedIds.size} selected questions?`)) return;
+    setBulkDeletePending(true);
+  };
 
+  const confirmBulkDelete = async () => {
+    setBulkDeletePending(false);
     try {
       await Promise.all(
-        Array.from(selectedIds).map(id => 
+        Array.from(selectedIds).map(id =>
           mangwaleAIClient.delete(`/gamification/questions/${id}`)
         )
       );
@@ -126,7 +140,7 @@ export default function QuestionsPage() {
       await loadStats();
     } catch (error) {
       console.error('Failed to bulk delete:', error);
-      alert('Failed to delete some questions');
+      toast.error('Failed to delete some questions');
     }
   };
 
@@ -166,7 +180,7 @@ export default function QuestionsPage() {
       await loadQuestions();
     } catch (error) {
       console.error('Failed to save edit:', error);
-      alert('Failed to save changes');
+      toast.error('Failed to save changes');
     }
   };
 
@@ -552,6 +566,34 @@ export default function QuestionsPage() {
       <div className="mt-4 text-sm text-gray-600 text-center">
         Showing {filteredQuestions.length} of {questions.length} questions
       </div>
+
+      {/* Delete Single Question Confirm Modal */}
+      {deleteTarget !== null && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Question</h3>
+            <p className="text-gray-600 text-sm mb-6">Are you sure you want to delete this question? This cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirm Modal */}
+      {bulkDeletePending && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Selected Questions</h3>
+            <p className="text-gray-600 text-sm mb-6">Delete {selectedIds.size} selected questions? This cannot be undone.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setBulkDeletePending(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button onClick={confirmBulkDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

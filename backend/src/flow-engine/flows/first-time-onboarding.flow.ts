@@ -473,9 +473,110 @@ export const firstTimeOnboardingFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        success: 'onboarding_complete_full',
-        default: 'onboarding_complete_full',
+        success: 'ask_save_home_address',
+        default: 'ask_save_home_address',
         cancel: 'onboarding_skipped',
+      },
+    },
+
+    // 🏠 NEW: Ask user to save home address for faster delivery
+    ask_save_home_address: {
+      type: 'wait',
+      description: 'Ask new user to save home address for faster ordering',
+      onEntry: [
+        {
+          id: 'home_address_prompt',
+          executor: 'response',
+          config: {
+            message: "🏠 Last step! Save your home address for faster ordering.\n\nJust type your complete home address and I'll save it for you.\n(e.g., \"12 Gangapur Road, Opp. HDFC Bank, Nashik 422005\")",
+            buttons: [
+              { id: 'share_loc', label: '📍 Use My Location', value: '__LOCATION__' },
+              { id: 'skip_addr', label: 'Skip for now', value: 'skip_address' },
+            ],
+          },
+        },
+      ],
+      transitions: {
+        location_shared: 'save_home_location',       // User shared GPS for home
+        user_message: 'check_address_or_skip',       // User typed address or skip
+        default: 'check_address_or_skip',
+      },
+    },
+
+    // Check if user typed skip or provided an address
+    check_address_or_skip: {
+      type: 'decision',
+      description: 'Check if user skipped or provided home address',
+      conditions: [
+        {
+          expression: '/^(skip|skip_address|later|no|nahi|baad mein)$/i.test(context._user_message?.trim() || "") || context._user_message?.trim() === "skip_address"',
+          event: 'skip',
+        },
+        {
+          // GPS location shared
+          expression: 'context._user_message?.startsWith("LOCATION:") || (context.location?.lat && context.location?.lng)',
+          event: 'location_shared',
+        },
+        {
+          // User typed actual address (longer than 10 chars)
+          expression: '(context._user_message?.length || 0) > 10',
+          event: 'has_address',
+        },
+      ],
+      transitions: {
+        skip: 'onboarding_complete_full',
+        location_shared: 'save_home_location',
+        has_address: 'save_home_text_address',
+        default: 'onboarding_complete_full',
+      },
+    },
+
+    // Save GPS location as home address
+    save_home_location: {
+      type: 'action',
+      description: 'Save GPS coordinates as home address via PHP API',
+      actions: [
+        {
+          id: 'save_address_action',
+          executor: 'session',
+          config: {
+            action: 'save',
+            key: 'onboarding_home_location_set',
+            value: true,
+          },
+          onError: 'continue',
+        },
+      ],
+      transitions: {
+        default: 'onboarding_complete_full',
+      },
+    },
+
+    // Save text address as home address
+    save_home_text_address: {
+      type: 'action',
+      description: 'Save typed address as home address via PHP API',
+      actions: [
+        {
+          id: 'save_text_address',
+          executor: 'session',
+          config: {
+            action: 'save',
+            key: 'onboarding_home_address_text',
+            value: '{{_user_message}}',
+          },
+          onError: 'continue',
+        },
+        {
+          id: 'confirm_address_saved',
+          executor: 'response',
+          config: {
+            message: '✅ Great! I\'ve noted your address. You can add it as a saved address from the app settings for even faster ordering.',
+          },
+        },
+      ],
+      transitions: {
+        default: 'onboarding_complete_full',
       },
     },
 

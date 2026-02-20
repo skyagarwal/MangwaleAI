@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useToast } from '@/components/shared';
 import {
   Database,
   Play,
@@ -51,6 +52,7 @@ interface TrainingJob {
 }
 
 export default function TrainingPage() {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'datasets' | 'jobs'>('datasets');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
@@ -58,6 +60,13 @@ export default function TrainingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [syncing, setSyncing] = useState(false);
+
+  // Confirm action state
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   // WebSocket connection for real-time updates
   const { isConnected } = useTrainingWebSocket({
@@ -172,86 +181,100 @@ export default function TrainingPage() {
       }
     } catch (err) {
       console.error('Failed to create dataset:', err);
-      alert('Failed to create dataset. Please try again.');
+      toast.error('Failed to create dataset. Please try again.');
     }
   };
 
-  const handleDeleteDataset = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this dataset?')) return;
-    
-    try {
-      await adminBackendClient.deleteDataset(id);
-      setDatasets(datasets.filter((d) => d.id !== id));
-    } catch (err) {
-      console.error('Failed to delete dataset:', err);
-      alert('Failed to delete dataset. Please try again.');
-    }
+  const handleDeleteDataset = (id: string) => {
+    setConfirmAction({
+      title: 'Delete Dataset',
+      message: 'Are you sure you want to delete this dataset?',
+      onConfirm: async () => {
+        try {
+          await adminBackendClient.deleteDataset(id);
+          setDatasets(datasets.filter((d) => d.id !== id));
+        } catch (err) {
+          console.error('Failed to delete dataset:', err);
+          toast.error('Failed to delete dataset. Please try again.');
+        }
+      },
+    });
   };
 
-  const handlePushToLabelStudio = async (datasetId: string) => {
-    try {
-      const dataset = datasets.find(d => d.id === datasetId);
-      if (!dataset) return;
+  const handlePushToLabelStudio = (datasetId: string) => {
+    const dataset = datasets.find(d => d.id === datasetId);
+    if (!dataset) return;
 
-      if (!confirm(`Push "${dataset.name}" (${dataset.examples} examples) to Label Studio?`)) return;
-
-      const result = await adminBackendClient.pushToLabelStudio(datasetId);
-      alert(`✅ Successfully pushed ${result.pushed} examples to Label Studio!\n\nProject ID: ${result.projectId}`);
-    } catch (err) {
-      console.error('Failed to push to Label Studio:', err);
-      alert('❌ Failed to push to Label Studio. Make sure Label Studio is configured in settings.');
-    }
+    setConfirmAction({
+      title: 'Push to Label Studio',
+      message: `Push "${dataset.name}" (${dataset.examples} examples) to Label Studio?`,
+      onConfirm: async () => {
+        try {
+          const result = await adminBackendClient.pushToLabelStudio(datasetId);
+          toast.success(`Successfully pushed ${result.pushed} examples to Label Studio! Project ID: ${result.projectId}`);
+        } catch (err) {
+          console.error('Failed to push to Label Studio:', err);
+          toast.error('Failed to push to Label Studio. Make sure Label Studio is configured in settings.');
+        }
+      },
+    });
   };
 
-  const handlePullFromLabelStudio = async (datasetId: string) => {
-    try {
-      const dataset = datasets.find(d => d.id === datasetId);
-      if (!dataset) return;
+  const handlePullFromLabelStudio = (datasetId: string) => {
+    const dataset = datasets.find(d => d.id === datasetId);
+    if (!dataset) return;
 
-      if (!confirm(`Pull annotations from Label Studio for "${dataset.name}"?`)) return;
+    setConfirmAction({
+      title: 'Pull from Label Studio',
+      message: `Pull annotations from Label Studio for "${dataset.name}"?`,
+      onConfirm: async () => {
+        try {
+          const result = await adminBackendClient.pullFromLabelStudio(datasetId);
+          toast.success(`Successfully imported ${result.imported} annotations from Label Studio!`);
 
-      const result = await adminBackendClient.pullFromLabelStudio(datasetId);
-      alert(`✅ Successfully imported ${result.imported} annotations from Label Studio!`);
-      
-      // Reload datasets to update example count
-      const updatedDatasets = await adminBackendClient.getDatasets();
-      const mappedDatasets: Dataset[] = updatedDatasets.map((d) => ({
-        id: d.id,
-        name: d.name,
-        type: d.type,
-        module: d.module || 'unknown',
-        examples: d.exampleCount || 0,
-        created: d.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-        status: 'ready',
-      }));
-      setDatasets(mappedDatasets);
-    } catch (err) {
-      console.error('Failed to pull from Label Studio:', err);
-      alert('❌ Failed to pull from Label Studio. Make sure Label Studio is configured in settings.');
-    }
+          // Reload datasets to update example count
+          const updatedDatasets = await adminBackendClient.getDatasets();
+          const mappedDatasets: Dataset[] = updatedDatasets.map((d) => ({
+            id: d.id,
+            name: d.name,
+            type: d.type,
+            module: d.module || 'unknown',
+            examples: d.exampleCount || 0,
+            created: d.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+            status: 'ready',
+          }));
+          setDatasets(mappedDatasets);
+        } catch (err) {
+          console.error('Failed to pull from Label Studio:', err);
+          toast.error('Failed to pull from Label Studio. Make sure Label Studio is configured in settings.');
+        }
+      },
+    });
   };
 
-  const handleSyncLabelStudio = async () => {
+  const handleSyncLabelStudio = () => {
     if (syncing) return;
-    
-    if (!confirm('This will sync all pending data to Label Studio and pull approved annotations back. Continue?')) {
-      return;
-    }
 
-    setSyncing(true);
-    try {
-      const result = await adminBackendClient.syncLabelStudio();
-      if (result.success) {
-        alert('✅ Sync completed successfully!');
-      } else {
-        alert(`❌ Sync failed: ${result.message}`);
-      }
-    } catch (err) {
-      console.error('Sync failed:', err);
-      alert('❌ Sync failed. Check console for details.');
-    } finally {
-      setSyncing(false);
-    }
+    setConfirmAction({
+      title: 'Sync with Label Studio',
+      message: 'This will sync all pending data to Label Studio and pull approved annotations back. Continue?',
+      onConfirm: async () => {
+        setSyncing(true);
+        try {
+          const result = await adminBackendClient.syncLabelStudio();
+          if (result.success) {
+            toast.success('Sync completed successfully!');
+          } else {
+            toast.error(`Sync failed: ${result.message}`);
+          }
+        } catch (err) {
+          console.error('Sync failed:', err);
+          toast.error('Sync failed. Check console for details.');
+        } finally {
+          setSyncing(false);
+        }
+      },
+    });
   };
 
   if (loading) {
@@ -685,6 +708,29 @@ export default function TrainingPage() {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateDataset}
       />
+
+      {/* Generic Confirm Modal */}
+      {confirmAction && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">{confirmAction.title}</h3>
+            <p className="text-gray-600 text-sm mb-6">{confirmAction.message}</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setConfirmAction(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+              <button
+                onClick={() => {
+                  const action = confirmAction;
+                  setConfirmAction(null);
+                  action.onConfirm();
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

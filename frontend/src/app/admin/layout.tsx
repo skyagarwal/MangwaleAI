@@ -21,33 +21,61 @@ import {
   Users,
   Megaphone,
   Monitor,
+  UserCheck,
+  User,
+  Shield,
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
-const navigation = [
+type NavRole = 'super_admin' | 'admin' | 'manager' | 'reviewer' | 'viewer';
+
+const ALL: NavRole[] = ['super_admin', 'admin', 'manager', 'reviewer', 'viewer'];
+const MANAGER_PLUS: NavRole[] = ['super_admin', 'admin', 'manager'];
+const ADMIN_PLUS: NavRole[] = ['super_admin', 'admin'];
+const SUPER_ONLY: NavRole[] = ['super_admin'];
+
+interface NavChild {
+  name: string;
+  href: string;
+  allowedRoles?: NavRole[];
+}
+
+interface NavItem {
+  name: string;
+  icon: React.ComponentType<{ size?: number }>;
+  href?: string;
+  children?: NavChild[];
+  allowedRoles?: NavRole[];
+}
+
+const navigation: NavItem[] = [
   {
     name: 'Dashboard',
     href: '/admin/dashboard',
     icon: LayoutDashboard,
+    // visible to all roles
   },
   {
     name: 'AI Hub',
     href: '/admin/ai-hub',
     icon: Sparkles,
+    allowedRoles: MANAGER_PLUS,
   },
   {
     name: 'Self-Learning',
     icon: GraduationCap,
+    allowedRoles: ['super_admin', 'admin', 'manager', 'reviewer'],
     children: [
-      { name: 'Learning Dashboard', href: '/admin/learning' },
+      { name: 'Learning Dashboard', href: '/admin/learning', allowedRoles: MANAGER_PLUS },
       { name: 'Review Queue', href: '/admin/learning/review' },
-      { name: 'Label Studio', href: '/admin/learning/label-studio' },
+      { name: 'Label Studio', href: '/admin/learning/label-studio', allowedRoles: MANAGER_PLUS },
     ],
   },
   {
     name: 'Data Sources',
     icon: Database,
+    allowedRoles: MANAGER_PLUS,
     children: [
       { name: 'Source Management', href: '/admin/data-sources' },
       { name: 'Competitor Scraper', href: '/admin/scraper' },
@@ -59,6 +87,7 @@ const navigation = [
   {
     name: 'User Management',
     icon: Users,
+    allowedRoles: ADMIN_PLUS,
     children: [
       { name: 'Admin Users', href: '/admin/users' },
       { name: 'Activity Log', href: '/admin/users/activity' },
@@ -67,31 +96,38 @@ const navigation = [
   {
     name: 'AI Management',
     icon: Brain,
+    allowedRoles: MANAGER_PLUS,
     children: [
       { name: 'Models Registry', href: '/admin/models' },
       { name: 'Agent Settings', href: '/admin/agent-settings' },
+      { name: 'Agent Testing', href: '/admin/agent-testing' },
       { name: 'Voice AI (ASR/TTS)', href: '/admin/voice' },
       { name: 'Voice Characters', href: '/admin/voice/characters' },
-      { name: 'Docker Management', href: '/admin/docker' },
-      { name: 'vLLM Settings', href: '/admin/vllm-settings' },
+      { name: 'Docker Management', href: '/admin/docker', allowedRoles: ADMIN_PLUS },
+      { name: 'vLLM Settings', href: '/admin/vllm-settings', allowedRoles: ADMIN_PLUS },
       { name: 'LLM Failover', href: '/admin/llm-failover' },
       { name: 'LLM Chat', href: '/admin/llm-chat' },
       { name: 'LLM Models', href: '/admin/llm-models' },
       { name: 'LLM Providers', href: '/admin/llm-providers' },
       { name: 'LLM Analytics', href: '/admin/llm-analytics' },
+      { name: 'LLM Cost Tracking', href: '/admin/llm-cost-tracking' },
       { name: 'Agents', href: '/admin/agents' },
       { name: 'Intents', href: '/admin/intents' },
       { name: 'NLU Testing', href: '/admin/nlu-testing' },
       { name: 'NER Entities', href: '/admin/ner-entities' },
       { name: 'Training', href: '/admin/training' },
       { name: 'Flows', href: '/admin/flows' },
+      { name: 'Flow Analytics', href: '/admin/flow-analytics' },
+      { name: 'Self-Healing', href: '/admin/self-healing' },
       { name: 'Semantic Cache', href: '/admin/semantic-cache' },
+      { name: 'Nerve Voice', href: '/admin/nerve' },
       { name: 'Exotel Voice', href: '/admin/exotel' },
     ],
   },
   {
     name: 'Gamification',
     icon: Gamepad2,
+    allowedRoles: MANAGER_PLUS,
     children: [
       { name: 'Dashboard', href: '/admin/gamification' },
       { name: 'Settings', href: '/admin/gamification/settings' },
@@ -101,7 +137,8 @@ const navigation = [
   },
   {
     name: 'Personalization',
-    icon: Sparkles,
+    icon: UserCheck,
+    allowedRoles: MANAGER_PLUS,
     children: [
       { name: 'User Profiles', href: '/admin/user-profiles' },
       { name: 'User Insights', href: '/admin/user-insights' },
@@ -114,21 +151,22 @@ const navigation = [
     name: 'Search Management',
     icon: Search,
     children: [
-      { name: 'Search Config', href: '/admin/search-config' },
+      { name: 'System Health & Metrics', href: '/admin/search-config', allowedRoles: MANAGER_PLUS },
       { name: 'Analytics', href: '/admin/search-analytics' },
-      { name: 'Trending', href: '/admin/trending' },
-      { name: 'Testing', href: '/admin/search-testing' },
-      { name: 'Index Management', href: '/admin/search-indices' },
-      { name: 'Data Sync', href: '/admin/search-data-sync' },
-      { name: 'Query Logs', href: '/admin/search-logs' },
-      { name: 'Items', href: '/admin/items' },
-      { name: 'Stores', href: '/admin/stores' },
-      { name: 'Categories', href: '/admin/categories' },
+      { name: 'Trending', href: '/admin/trending', allowedRoles: MANAGER_PLUS },
+      { name: 'Testing', href: '/admin/search-testing', allowedRoles: MANAGER_PLUS },
+      { name: 'Index Management', href: '/admin/search-indices', allowedRoles: ADMIN_PLUS },
+      { name: 'Data Sync', href: '/admin/search-data-sync', allowedRoles: ADMIN_PLUS },
+      { name: 'Query Logs', href: '/admin/search-logs', allowedRoles: MANAGER_PLUS },
+      { name: 'Items', href: '/admin/items', allowedRoles: ADMIN_PLUS },
+      { name: 'Stores', href: '/admin/stores', allowedRoles: ADMIN_PLUS },
+      { name: 'Categories', href: '/admin/categories', allowedRoles: ADMIN_PLUS },
     ],
   },
   {
     name: 'Integrations',
     icon: Webhook,
+    allowedRoles: ADMIN_PLUS,
     children: [
       { name: 'Webhooks', href: '/admin/webhooks' },
       { name: 'API Keys', href: '/admin/api-keys' },
@@ -139,6 +177,7 @@ const navigation = [
   {
     name: 'Marketing',
     icon: Megaphone,
+    allowedRoles: MANAGER_PLUS,
     children: [
       { name: 'WhatsApp Broadcast', href: '/admin/broadcast' },
       { name: 'Analytics', href: '/admin/analytics' },
@@ -147,17 +186,34 @@ const navigation = [
   {
     name: 'System',
     icon: Monitor,
+    allowedRoles: ADMIN_PLUS,
     children: [
       { name: 'System Settings', href: '/admin/settings' },
-      { name: 'System Monitoring', href: '/admin/monitoring' },
+      { name: 'System Monitoring', href: '/admin/monitoring', allowedRoles: ALL },
+      { name: 'Zones', href: '/admin/zones' },
+      { name: 'Secrets', href: '/admin/secrets', allowedRoles: SUPER_ONLY },
     ],
   },
   {
     name: 'Audit Logs',
     href: '/admin/audit-logs',
     icon: FileText,
+    // visible to all roles
   },
 ];
+
+function hasAccess(allowedRoles: NavRole[] | undefined, userRole: string): boolean {
+  if (!allowedRoles) return true;
+  return allowedRoles.includes(userRole as NavRole);
+}
+
+const ROLE_COLORS: Record<string, string> = {
+  super_admin: 'bg-purple-100 text-purple-700',
+  admin: 'bg-blue-100 text-blue-700',
+  manager: 'bg-green-100 text-green-700',
+  reviewer: 'bg-yellow-100 text-yellow-700',
+  viewer: 'bg-gray-100 text-gray-600',
+};
 
 const AUTH_FREE_PATHS = ['/admin/login', '/admin/forgot-password'];
 
@@ -201,6 +257,23 @@ export default function AdminLayout({
     return null;
   }
 
+  const userRole = user?.role ?? 'viewer';
+
+  // Filter navigation based on user role
+  const filteredNavigation = navigation
+    .map((item) => {
+      if (!hasAccess(item.allowedRoles, userRole)) return null;
+      if (item.children) {
+        const filteredChildren = item.children.filter((child) =>
+          hasAccess(child.allowedRoles, userRole)
+        );
+        if (filteredChildren.length === 0) return null;
+        return { ...item, children: filteredChildren };
+      }
+      return item;
+    })
+    .filter(Boolean) as NavItem[];
+
   const toggleExpanded = (name: string) => {
     setExpandedItems((prev) =>
       prev.includes(name)
@@ -213,6 +286,8 @@ export default function AdminLayout({
     clearAuth();
     router.push('/admin/login');
   };
+
+  const roleBadgeClass = ROLE_COLORS[userRole] ?? 'bg-gray-100 text-gray-600';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -241,7 +316,7 @@ export default function AdminLayout({
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          {navigation.map((item) => {
+          {filteredNavigation.map((item) => {
             const isActive = item.href
               ? pathname === item.href
               : item.children?.some((child) => pathname === child.href);
@@ -306,14 +381,24 @@ export default function AdminLayout({
           })}
         </nav>
 
-        {/* Admin user info + Logout */}
+        {/* Admin user info + Profile + Logout */}
         <div className="border-t p-4">
           {user && (
             <div className="px-3 py-2 mb-2">
               <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
               <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${roleBadgeClass}`}>
+                {user.role.replace('_', ' ')}
+              </span>
             </div>
           )}
+          <Link
+            href="/admin/profile"
+            className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg w-full transition-colors"
+          >
+            <User size={20} />
+            <span>My Profile</span>
+          </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg w-full transition-colors"

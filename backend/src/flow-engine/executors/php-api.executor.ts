@@ -466,6 +466,12 @@ export class PhpApiExecutor implements ActionExecutor {
       case 'get_payment_methods':
         return this.paymentService.getPaymentMethods();
 
+      case 'get_surge_price': {
+        const zoneId = config.zone_id ? Number(config.zone_id) : 0;
+        const moduleId = config.module_id ? Number(config.module_id) : 4;
+        return this.paymentService.getSurgePrice(zoneId, moduleId);
+      }
+
       case 'get_wallet_balance':
         if (!config.token) {
           return { success: false, message: 'Auth token required to check wallet balance' };

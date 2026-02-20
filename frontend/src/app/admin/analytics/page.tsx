@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -68,8 +69,6 @@ interface HealthStatus {
   timestamp: string;
 }
 
-const API_BASE = '';
-
 export default function AnalyticsDashboard() {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [funnel, setFunnel] = useState<FunnelMetrics | null>(null);
@@ -78,14 +77,16 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const { token } = useAdminAuthStore();
+  const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
   const fetchAnalytics = async () => {
     try {
       const [overviewRes, funnelRes, intentsRes, healthRes] = await Promise.all([
-        fetch(`${API_BASE}/api/analytics/overview`),
-        fetch(`${API_BASE}/api/analytics/funnel`),
-        fetch(`${API_BASE}/api/analytics/top-intents?limit=10`),
-        fetch(`${API_BASE}/api/analytics/health`),
+        fetch('/api/analytics/overview', { headers: authHeader }),
+        fetch('/api/analytics/funnel', { headers: authHeader }),
+        fetch('/api/analytics/top-intents?limit=10', { headers: authHeader }),
+        fetch('/api/analytics/health', { headers: authHeader }),
       ]);
 
       if (overviewRes.ok) setOverview(await overviewRes.json());

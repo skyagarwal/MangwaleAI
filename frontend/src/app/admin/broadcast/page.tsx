@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Info,
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface Campaign {
   id: string;
@@ -32,6 +33,7 @@ interface AudienceCount {
 }
 
 export default function BroadcastPage() {
+  const toast = useToast();
   // ─── State ────────────────────────────────────────────────────
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +91,7 @@ export default function BroadcastPage() {
   // ─── Send Campaign ───────────────────────────────────────────
   const handleSend = async () => {
     if (!templateName.trim()) {
-      alert('Template name is required');
+      toast.error('Template name is required');
       return;
     }
 
@@ -105,10 +107,10 @@ export default function BroadcastPage() {
       if (audience === 'custom') {
         const phones = customPhones
           .split(/[,\n\s]+/)
-          .map(p => p.trim())
-          .filter(p => /^\d{10,15}$/.test(p));
+          .map((p) => p.trim())
+          .filter((p) => /^\d{10,15}$/.test(p));
         if (phones.length === 0) {
-          alert('Enter valid phone numbers');
+          toast.error('Enter valid phone numbers (10-15 digits each)');
           setSending(false);
           return;
         }
@@ -127,15 +129,16 @@ export default function BroadcastPage() {
       const data = await res.json();
 
       if (data.success) {
-        setCampaigns(prev => [data.campaign, ...prev]);
+        toast.success('Campaign sent successfully!');
+        setCampaigns((prev) => [data.campaign, ...prev]);
         setName('');
         setTemplateName('');
         setCustomPhones('');
       } else {
-        alert(`Send failed: ${data.message || 'Unknown error'}`);
+        toast.error(`Send failed: ${data.message || 'Unknown error'}`);
       }
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      toast.error(`Error: ${err.message}`);
     } finally {
       setSending(false);
     }

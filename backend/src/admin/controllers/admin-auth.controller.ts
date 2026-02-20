@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Put,
   Get,
   Body,
   Req,
@@ -19,7 +20,7 @@ import { AdminRoleService } from '../services/admin-role.service';
 import { AdminEmailService } from '../services/admin-email.service';
 import { AdminActivityLogService } from '../services/admin-activity-log.service';
 import { AdminJwtGuard } from '../guards/admin-jwt.guard';
-import { LoginDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto } from '../dto/admin-auth.dto';
+import { LoginDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto, ChangePasswordDto } from '../dto/admin-auth.dto';
 
 @Controller('admin/auth')
 export class AdminAuthController {
@@ -206,6 +207,32 @@ export class AdminAuthController {
       success: true,
       message: 'Password reset successfully. You can now log in with your new password.',
     };
+  }
+
+  /**
+   * PUT /api/admin/auth/change-password
+   * Change password for the currently authenticated admin
+   */
+  @Put('change-password')
+  @UseGuards(AdminJwtGuard)
+  @HttpCode(HttpStatus.OK)
+  async changePassword(@Body() dto: ChangePasswordDto, @Req() req: Request) {
+    const adminUser = (req as any).adminUser;
+
+    try {
+      await this.adminRoleService.changePassword(adminUser.id, dto.oldPassword, dto.newPassword);
+      await this.activityLog.log(adminUser.id, 'password_changed', 'auth', {}, req.ip, req.headers['user-agent'] as string);
+
+      return {
+        success: true,
+        message: 'Password changed successfully.',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'Failed to change password.',
+      };
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useToast } from '@/components/shared';
 import { 
   Mic, Volume2, Settings, RefreshCw, CheckCircle, XCircle, AlertCircle,
   Play, Square, Upload, Download, Trash2, Plus, Copy, Pause,
@@ -62,6 +63,7 @@ const SAMPLE_TEXTS: Record<string, { text: string; language: string; flag: strin
 };
 
 export default function OrpheusStudioPage() {
+  const toast = useToast();
   const [health, setHealth] = useState<OrpheusHealth | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'synthesize' | 'voices' | 'emotions' | 'history'>('synthesize');
@@ -175,7 +177,7 @@ export default function OrpheusStudioPage() {
       }
     } catch (error) {
       console.error('TTS generation failed:', error);
-      alert('Failed to generate speech. Please try again.');
+      toast.error('Failed to generate speech. Please try again.');
     } finally {
       setIsGenerating(false);
     }

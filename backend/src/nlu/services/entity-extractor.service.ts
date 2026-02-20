@@ -148,7 +148,7 @@ export class EntityExtractorService {
         if (nerResult._confidence >= 0.7) {
           // Also run regex to get other entities (phone, email, etc.)
           const regexEntities = await this.extractWithRegex(text);
-          const merged = this.mergeNerWithRegex(nerResult, regexEntities);
+          const merged = this.mergeNerWithRegex(nerResult, regexEntities, text);
           this.logger.log(
             `🎯 NER extraction for "${text.substring(0, 30)}..." ` +
             `(confidence: ${nerResult._confidence.toFixed(2)}, ${Date.now() - startTime}ms)`
@@ -168,7 +168,13 @@ export class EntityExtractorService {
     
     if (needsLlm && this.useLlmExtraction && this.llmEntityExtractor) {
       try {
-        const llmEntities = await this.llmEntityExtractor.extract(text, context);
+        // 10-second timeout: LLM cold start can cause 60-90s hangs; fail fast and use regex
+        const llmEntities = await Promise.race([
+          this.llmEntityExtractor.extract(text, context),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('LLM entity extraction timeout (10s)')), 10000),
+          ),
+        ]) as Awaited<ReturnType<typeof this.llmEntityExtractor.extract>>;
         
         if (llmEntities.confidence >= this.llmFallbackThreshold) {
           // 🏪🏪 Inject store_references from NER if LLM didn't provide them
@@ -297,7 +303,8 @@ export class EntityExtractorService {
    */
   private mergeNerWithRegex(
     nerResult: NerExtractedEntities,
-    regexEntities: Record<string, any>
+    regexEntities: Record<string, any>,
+    originalText: string = ''
   ): Record<string, any> {
     const merged: Record<string, any> = { ...regexEntities };
     
@@ -366,6 +373,18 @@ export class EntityExtractorService {
       // If no valid NER food, keep regex results (already in merged from spread)
     }
     
+    // Post-process: Remove weight/measure unit words from food_reference
+    // NER sometimes tags unit abbreviations (grm, gm, kg) as FOOD tokens
+    if (merged.food_reference && Array.isArray(merged.food_reference)) {
+      const unitOnlyWords = ['grm', 'gram', 'grams', 'gm', 'g', 'kg', 'ml', 'liter', 'litre', 'liters', 'litres',
+                             'piece', 'pc', 'pcs', 'plate', 'plates', 'packet', 'packets', 'box', 'boxes',
+                             'cup', 'cups', 'glass', 'glasses', 'bowl', 'bowls', 'serve', 'serving', 'servings'];
+      merged.food_reference = merged.food_reference.filter((f: string) => !unitOnlyWords.includes(f.toLowerCase().trim()));
+      if (merged.food_reference.length > 0) {
+        merged.product_name = merged.food_reference.length === 1 ? merged.food_reference[0] : merged.food_reference;
+      }
+    }
+
     // Post-process: Remove store words from food_reference
     if (merged.store_reference && merged.food_reference && Array.isArray(merged.food_reference)) {
       const storeLower = merged.store_reference.toLowerCase();
@@ -399,11 +418,68 @@ export class EntityExtractorService {
       merged.location = nerResult.location_reference;
     }
     
-    // NER wins for preference
+    // NER wins for preference — with Nashik food instruction correction
     if (nerResult.preference && nerResult.preference.length > 0) {
-      merged.preference = nerResult.preference;
+      // Fix common BERT subword truncations in food instructions
+      // MuRIL tokenizes "tarri" → ["tar","##ri"], PREF label may stop at "tar"
+      const nashikFoodFixes: Record<string, string> = {
+        'no tar': 'no tarri',
+        'extra tar': 'extra tarri',
+        'less tar': 'less tarri',
+        'bina tar': 'bina tarri',
+        'with tar': 'with tarri',
+      };
+      merged.preference = nerResult.preference.map((p: string) => {
+        const lower = p.toLowerCase().trim();
+        return nashikFoodFixes[lower] || p;
+      });
     }
     
+    // Post-process: Fix split instruction phrases (e.g., NER returns PREF="no" + FOOD="tarri")
+    // Scan original text for "no/extra/less + instruction_noun" patterns and reassemble them
+    if (originalText) {
+      // Words that act as instruction modifiers
+      const instrModifiers = 'no|extra|less|bina|without|with|thoda|kam|jyada|aur';
+      // Words that are instruction targets (not standalone food orders)
+      const instrNouns = 'tarri|onion|garlic|mirchi|chilli|spice|masala|sugar|salt|chatni|chutney|lemon|nimbu|kanda|lehsun';
+      const instrPattern = new RegExp(`\\b(${instrModifiers})\\s+(${instrNouns})\\b`, 'gi');
+      const detectedInstructions: string[] = [];
+      let instrMatch: RegExpExecArray | null;
+      while ((instrMatch = instrPattern.exec(originalText)) !== null) {
+        detectedInstructions.push(instrMatch[0].toLowerCase().trim());
+      }
+
+      if (detectedInstructions.length > 0) {
+        // Remove the instruction nouns from food_reference (they're not food to order)
+        const instrNounSet = new Set(detectedInstructions.map(i => i.split(/\s+/).pop()!));
+        if (merged.food_reference && Array.isArray(merged.food_reference)) {
+          merged.food_reference = merged.food_reference.filter(
+            (f: string) => !instrNounSet.has(f.toLowerCase().trim())
+          );
+          if (merged.food_reference.length > 0) {
+            merged.product_name = merged.food_reference.length === 1
+              ? merged.food_reference[0]
+              : merged.food_reference;
+          }
+        }
+        // Replace orphaned prefix-only preference entries (e.g., "no") with full instructions
+        const orphanPrefixes = new Set(['no', 'extra', 'less', 'bina', 'without', 'with', 'thoda', 'kam', 'jyada']);
+        if (merged.preference && Array.isArray(merged.preference)) {
+          merged.preference = merged.preference.filter(
+            (p: string) => !orphanPrefixes.has(p.toLowerCase().trim())
+          );
+        } else {
+          merged.preference = [];
+        }
+        for (const inst of detectedInstructions) {
+          if (!merged.preference.some((p: string) => p.toLowerCase() === inst)) {
+            merged.preference.push(inst);
+          }
+        }
+        this.logger.debug(`🥗 Instruction fix: detected "${detectedInstructions.join(', ')}" from text, updated preference`);
+      }
+    }
+
     // 🏪🏪 Propagate multi-store references from NER (detected by detectMultiStoreHint)
     if (nerResult.store_references && Array.isArray(nerResult.store_references) && nerResult.store_references.length >= 2) {
       merged.store_references = nerResult.store_references;
@@ -627,13 +703,15 @@ export class EntityExtractorService {
       }
     }
     
-    // Pattern 2: "HINDI_NUMBER + FOOD" pattern (stop at restaurant name or other cues)
+    // Pattern 2: "HINDI_NUMBER + [UNIT] + FOOD" pattern (stop at restaurant name or other cues)
     // e.g., "saat momos Wow Momo se" -> extract "momos"
-    // Strategy: Match Hindi number + immediately following word(s), up to 2 words max
+    // e.g., "ek plate missal pav" -> skip "plate" (unit), extract "missal pav"
+    // Strategy: Match Hindi number + optional unit word + immediately following word(s), up to 2 words max
     // ✅ Exclude "do you" (English phrase, not Hindi "do" = 2)
-    const hindiNumRegex = /\b(ek|teen|char|paanch|panch|chhah|chha|saat|aath|nau|das|gyarah|barah)\s+([a-z]+(?:\s+[a-z]+)?)\b/gi;
+    // ✅ FIXED: Added optional unit-word group so "ek plate missal pav" → "missal pav" not "plate missal"
+    const hindiNumRegex = /\b(ek|teen|char|paanch|panch|chhah|chha|saat|aath|nau|das|gyarah|barah)\s+(?:(?:plate|plates|kg|g|gm|grm|gram|grams|piece|pc|pieces|packet|packets|glass|bowl|cup|box|serve|serving|servings)\s+)?([a-z]+(?:\s+[a-z]+)?)\b/gi;
     // ✅ Separate pattern for "do" that excludes "do you" (English)
-    const hindiDoRegex = /\bdo\s+(?!you\b)([a-z]+(?:\s+[a-z]+)?)\b/gi;
+    const hindiDoRegex = /\bdo\s+(?!you\b)(?:(?:plate|plates|kg|g|gm|grm|gram|grams|piece|pc|pieces|packet|packets|glass|bowl|cup|box|serve|serving|servings)\s+)?([a-z]+(?:\s+[a-z]+)?)\b/gi;
     let match;
     
     // Process "do" separately with English exclusion
@@ -674,9 +752,10 @@ export class EntityExtractorService {
       }
     }
     
-    // Pattern 2b: "DIGIT + FOOD" pattern
-    // e.g., "2 paneer tikka", "10 momos"
-    const digitFoodPattern = /(\d+)\s+([a-z]+(?:\s+[a-z]+)?(?:\s+[a-z]+)?)(?=\s+(?:and|aur|from|se\b|order|chahiye|,|[A-Z])|$)/gi;
+    // Pattern 2b: "DIGIT + [UNIT] + FOOD" pattern
+    // e.g., "2 paneer tikka", "10 momos", "400 grm gulkand" -> "gulkand"
+    // ✅ FIXED: Optional unit-word skip so "400 grm gulkand" → food="gulkand" not "grm gulkand"
+    const digitFoodPattern = /(\d+)\s+(?:(?:plate|plates|kg|g|gm|grm|gram|grams|piece|pc|pieces|packet|packets|glass|bowl|cup|box|serve|serving|servings)\s+)?([a-z]+(?:\s+[a-z]+)?(?:\s+[a-z]+)?)(?=\s+(?:and|aur|from|se\b|order|chahiye|,|[A-Z])|$)/gi;
     while ((match = digitFoodPattern.exec(lowerText)) !== null) {
       let item = match[2]?.trim();
       // If item has multiple words, check if last word looks like restaurant
@@ -1295,12 +1374,20 @@ export class EntityExtractorService {
     // e.g., "tushar se 4 plate missal" -> "tushar"
     // e.g., "dominos se pizza" -> "dominos"
     // e.g., "tushar se missal" -> "tushar"
-    // e.g., "hotel tushar se 2 plate missal pav" -> handled by Pattern 2 above
-    const seBareFoodMatch = lowerText.match(/^(\w+(?:\s+\w+)?)\s+se\s+(?:\d+\s+)?(?:(?:plate|plates|kg|g|gm|gram|piece|pc|pieces|packet|packets|glass|bowl|cup|box|serve|serving|servings)\s+)?\w+(?:\s+\w+)?\s*$/i);
+    // e.g., "dagu teli se, ek 400 grm gulkand ghar bhej dena" -> "dagu teli"
+    // FIXED: Allow comma/punctuation after "se" (se, ek ... pattern)
+    // FIXED: Added grm/grms to unit word list
+    const seBareFoodMatch = lowerText.match(/^(\w+(?:\s+\w+)?)\s+se[,\s]\s*(?:(?:\d+|ek|do|teen|char|paanch|panch|chhah|saat|aath|nau|das)\s+)?(?:(?:plate|plates|kg|g|gm|grm|gram|grams|piece|pc|pieces|packet|packets|glass|bowl|cup|box|serve|serving|servings)\s+)?\w/i);
     if (seBareFoodMatch && seBareFoodMatch[1]) {
       const name = seBareFoodMatch[1].trim();
-      if (!skipWords.includes(name.toLowerCase()) && 
-          !commonFoodWords.includes(name.toLowerCase()) && 
+      // Guard: skip if captured name contains unit words (e.g., "ek plate" → not a store)
+      const unitWords = ['plate', 'plates', 'kg', 'g', 'gm', 'grm', 'gram', 'grams', 'piece', 'pc', 'pieces', 'packet', 'packets', 'glass', 'bowl', 'cup', 'box', 'serve', 'serving', 'servings'];
+      const hindiNumbers = ['ek', 'do', 'teen', 'char', 'paanch', 'panch', 'chhah', 'saat', 'aath', 'nau', 'das', 'gyarah', 'barah'];
+      const nameWords = name.split(/\s+/);
+      if (!skipWords.includes(name.toLowerCase()) &&
+          !commonFoodWords.includes(name.toLowerCase()) &&
+          !hindiNumbers.includes(name.toLowerCase()) &&
+          !nameWords.some(w => unitWords.includes(w.toLowerCase())) &&
           name.length > 2) {
         this.logger.debug(`Extracted restaurant from "NAME se [QTY] FOOD" pattern: "${name}"`);
         return name;
@@ -1328,7 +1415,36 @@ export class EntityExtractorService {
         return name;
       }
     }
-    
+
+    // Pattern 5b: "FOOD of STORENAME [delivered/send/...]" - common English ordering pattern
+    // e.g., "missal pav of tushar delivered at home" → "tushar"
+    // e.g., "1 plate pizza of dominos delivered" → "dominos"
+    // e.g., "special misal of tushar misal send" → "tushar misal"
+    const ofDeliveryMatch = text.match(/\bof\s+([a-z]+(?:\s+[a-z]+)?)\s+(?:deliver|send|bhej|lao|order)/i);
+    if (ofDeliveryMatch && ofDeliveryMatch[1]) {
+      const name = ofDeliveryMatch[1].trim();
+      if (!skipWords.includes(name.toLowerCase()) &&
+          !commonFoodWords.includes(name.toLowerCase()) &&
+          name.length > 2) {
+        this.logger.debug(`Extracted restaurant from "of NAME delivery" pattern: "${name}"`);
+        return name;
+      }
+    }
+
+    // Pattern 5c: "of STORENAME" at end of sentence (no delivery verb needed)
+    // e.g., "1 plate missal pav of tushar" → "tushar"
+    // e.g., "order special misal of tushar" → "tushar"
+    const ofEndMatch = text.match(/\bof\s+([a-z]+(?:\s+[a-z]+)?)\s*$/i);
+    if (ofEndMatch && ofEndMatch[1]) {
+      const name = ofEndMatch[1].trim();
+      if (!skipWords.includes(name.toLowerCase()) &&
+          !commonFoodWords.includes(name.toLowerCase()) &&
+          name.length > 2) {
+        this.logger.debug(`Extracted restaurant from "of NAME$" pattern: "${name}"`);
+        return name;
+      }
+    }
+
     // Pattern 6: Capitalized proper noun "NAME se bhej/order" 
     const capitalMatch = text.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+se\s+(?:bhej|order|manga)/);
     if (capitalMatch && capitalMatch[1]) {

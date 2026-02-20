@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { adminBackendClient } from '@/lib/api/admin-backend';
+import { useToast } from '@/components/shared';
 import { 
   Brain, 
   Play, 
@@ -72,6 +73,7 @@ interface ModelInfo {
 }
 
 export default function NLUTrainingPage() {
+  const toast = useToast();
   const [mercuryHealth, setMercuryHealth] = useState<NLUHealth | null>(null);
   const [jupiterHealth, setJupiterHealth] = useState<NLUHealth | null>(null);
   const [trainingStatus, setTrainingStatus] = useState<TrainingServerStatus | null>(null);
@@ -202,12 +204,12 @@ export default function NLUTrainingPage() {
           message: 'Training job started'
         });
       } else {
-        alert(data.error || 'Failed to start training');
+        toast.error(data.error || 'Failed to start training');
         setTrainingInProgress(false);
       }
     } catch (error: any) {
       console.error('Failed to start training:', error);
-      alert(error.message || 'Failed to connect to training server');
+      toast.error(error.message || 'Failed to connect to training server');
       setTrainingInProgress(false);
     }
   };
@@ -217,13 +219,13 @@ export default function NLUTrainingPage() {
     try {
       const data = await adminBackendClient.deployModel({ modelName }) as any;
       if (data.success) {
-        alert(`Model ${modelName} deployed! Restart NLU service to activate.`);
+        toast.success(`Model ${modelName} deployed! Restart NLU service to activate.`);
       } else {
-        alert(data.error || 'Deployment failed');
+        toast.error(data.error || 'Deployment failed');
       }
     } catch (error: any) {
       console.error('Deployment failed:', error);
-      alert(error.message || 'Failed to deploy model');
+      toast.error(error.message || 'Failed to deploy model');
     } finally {
       setDeployingModel(null);
     }

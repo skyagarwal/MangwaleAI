@@ -775,9 +775,10 @@ function ChatContent() {
           }
         }
 
-        // Detect auth prompt - don't auto-open modal, let user tap auth card buttons
+        // Detect auth prompt - auto-open login modal so user doesn't need to tap a button
         if (message.metadata?.responseType === 'request_phone') {
-          console.log('🔐 Auth prompt detected (request_phone) - showing auth card');
+          console.log('🔐 Auth prompt detected - auto-opening login modal');
+          setShowInlineLogin(true);
         }
 
         // Handle both content (new) and text (legacy) fields
@@ -2452,41 +2453,42 @@ function ChatContent() {
           </div>
         </div>
 
-        {/* Modals */}
-        {showLocationPicker && (
-            <LocationPicker
-            onLocationConfirm={handleLocationConfirm}
-            onCancel={() => setShowLocationPicker(false)}
-            />
-        )}
-
-        {/* Inline Login Modal */}
-        {showInlineLogin && (
-          <InlineLogin
-            onClose={() => {
-              setShowInlineLogin(false)
-              // Send cancel to exit checkout flow
-              handleSend('cancel', 'cancel')
-            }}
-            onSuccess={(data) => {
-              setShowInlineLogin(false)
-              // Sync auth to backend session via WebSocket
-              if (wsClientRef.current && sessionIdState) {
-                wsClientRef.current.syncAuthLogin({
-                  phone: data.phone,
-                  token: data.token,
-                  userId: data.userId,
-                  userName: data.userName,
-                  platform: 'web',
-                  sessionId: sessionIdState,
-                })
-              }
-              // Resume checkout flow after a brief delay for auth sync
-              setTimeout(() => handleSend('checkout'), 800)
-            }}
-          />
-        )}
       </div>
+
+      {/* Modals — rendered OUTSIDE the overflow-hidden container so they are never clipped on mobile */}
+      {showLocationPicker && (
+          <LocationPicker
+          onLocationConfirm={handleLocationConfirm}
+          onCancel={() => setShowLocationPicker(false)}
+          />
+      )}
+
+      {/* Inline Login Modal */}
+      {showInlineLogin && (
+        <InlineLogin
+          onClose={() => {
+            setShowInlineLogin(false)
+            // Send cancel to exit checkout flow
+            handleSend('cancel', 'cancel')
+          }}
+          onSuccess={(data) => {
+            setShowInlineLogin(false)
+            // Sync auth to backend session via WebSocket
+            if (wsClientRef.current && sessionIdState) {
+              wsClientRef.current.syncAuthLogin({
+                phone: data.phone,
+                token: data.token,
+                userId: data.userId,
+                userName: data.userName,
+                platform: 'web',
+                sessionId: sessionIdState,
+              })
+            }
+            // Resume checkout flow after a brief delay for auth sync
+            setTimeout(() => handleSend('checkout'), 800)
+          }}
+        />
+      )}
     </>
   )
 }

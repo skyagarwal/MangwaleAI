@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Database, 
-  Zap, 
-  TrendingUp, 
+import {
+  Database,
+  Zap,
+  TrendingUp,
   DollarSign,
   RefreshCw,
   Trash2,
@@ -13,6 +13,7 @@ import {
   Clock,
   Target
 } from 'lucide-react';
+import { useToast } from '@/components/shared';
 
 interface CacheStats {
   totalEntries: number;
@@ -40,6 +41,8 @@ export default function SemanticCachePage() {
   const [loading, setLoading] = useState(true);
   const [selectedTenant, setSelectedTenant] = useState('mangwale');
   const [showConfig, setShowConfig] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const toast = useToast();
   const [config, setConfig] = useState({
     enabled: true,
     ttlSeconds: 3600,
@@ -84,21 +87,22 @@ export default function SemanticCachePage() {
     return () => clearInterval(interval);
   }, [loadData]);
 
-  const clearCache = async () => {
-    if (!confirm(`Clear all cache entries for tenant "${selectedTenant}"?`)) return;
-    
+  const clearCache = () => setConfirmClear(true);
+
+  const executeClearCache = async () => {
+    setConfirmClear(false);
     try {
       const response = await fetch(`${BACKEND_URL}/api/ai/cache/tenant/${selectedTenant}`, {
         method: 'DELETE',
       });
       const data = await response.json();
       if (data.success) {
-        alert(`Cleared ${data.cleared} cache entries`);
+        toast.success(`Cleared ${data.cleared} cache entries`);
         loadData();
       }
     } catch (error) {
       console.error('Failed to clear cache:', error);
-      alert('Failed to clear cache');
+      toast.error('Failed to clear cache');
     }
   };
 
@@ -111,12 +115,12 @@ export default function SemanticCachePage() {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Configuration updated');
+        toast.success('Configuration updated');
         setShowConfig(false);
       }
     } catch (error) {
       console.error('Failed to update config:', error);
-      alert('Failed to update configuration');
+      toast.error('Failed to update configuration');
     }
   };
 
@@ -136,7 +140,7 @@ export default function SemanticCachePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <><div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -407,5 +411,32 @@ export default function SemanticCachePage() {
         </ul>
       </div>
     </div>
+
+      {/* Clear Cache Confirmation Modal */}
+      {confirmClear && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Clear Cache</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Clear all cache entries for tenant <strong>"{selectedTenant}"</strong>? This cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmClear(false)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={executeClearCache}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Clear Cache
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -31,15 +31,19 @@ interface IndicBERTClassifyResponse {
 }
 
 @Injectable()
-export class IndicBERTService {
+export class IndicBERTService implements OnModuleDestroy {
   private readonly logger = new Logger(IndicBERTService.name);
-  
+
   // Primary NLU endpoint (Mercury GPU) and fallback (Jupiter CPU)
   private readonly primaryNluEndpoint: string;
   private readonly fallbackNluEndpoint: string;
   private useFallback: boolean = false;
   private lastHealthCheck: number = 0;
   private readonly healthCheckInterval: number = 30000; // 30 seconds
+
+  // Warmup interval to prevent GPU cold-start latency (78s → <200ms)
+  private warmupInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly WARMUP_INTERVAL_MS = 4 * 60 * 1000; // 4 minutes
 
   constructor(
     private readonly configService: ConfigService,
@@ -56,12 +60,55 @@ export class IndicBERTService {
     if (!configuredPrimary) {
       this.logger.warn('NLU_PRIMARY_ENDPOINT is not set; using fallback endpoint as primary');
     }
-    
+
     this.logger.log(`🚀 IndicBERT NLU Primary: ${this.primaryNluEndpoint}`);
     this.logger.log(`🔄 IndicBERT NLU Fallback: ${this.fallbackNluEndpoint}`);
-    
-    // Initial health check
-    this.checkPrimaryHealth();
+
+    // Initial health check + warmup to prevent 78s cold-start on first real request
+    this.checkPrimaryHealth().then(() => {
+      if (!this.useFallback) {
+        this.warmupClassify().catch(() => {});
+      }
+    });
+
+    // Periodic warmup every 4 minutes to keep GPU model hot
+    // Without warmup: cold Mercury IndicBERT = 78s latency; with warmup: <200ms
+    this.warmupInterval = setInterval(async () => {
+      const wasFallback = this.useFallback;
+      await this.checkPrimaryHealth();
+      if (!this.useFallback) {
+        // Re-warm on recovery or periodic keep-alive
+        if (wasFallback) {
+          this.logger.log('🔥 IndicBERT primary recovered — warming up GPU model');
+        }
+        this.warmupClassify().catch(() => {});
+      }
+    }, this.WARMUP_INTERVAL_MS);
+  }
+
+  onModuleDestroy() {
+    if (this.warmupInterval) {
+      clearInterval(this.warmupInterval);
+    }
+  }
+
+  /**
+   * Send a minimal classify request to keep the GPU model hot.
+   * Prevents 60-90s cold-start latency on real user requests.
+   */
+  private async warmupClassify(): Promise<void> {
+    try {
+      await firstValueFrom(
+        this.httpService.post(
+          `${this.primaryNluEndpoint}/classify`,
+          { text: 'chai order karna hai' },
+          { timeout: 30000 }, // Generous timeout for cold-start scenario
+        ),
+      );
+      this.logger.debug('🔥 IndicBERT warmup ping sent');
+    } catch {
+      // Ignore warmup errors — service may be restarting
+    }
   }
 
   /**
@@ -163,7 +210,7 @@ export class IndicBERTService {
           `${this.nluEndpoint}/classify`,
           { text } as IndicBERTClassifyRequest,
           {
-            timeout: 5000, // Increased to 5s for network latency to Mercury
+            timeout: 8000, // 8s — allows for Mercury network latency + brief warm-up delay
             headers: { 'Content-Type': 'application/json' },
           },
         ),

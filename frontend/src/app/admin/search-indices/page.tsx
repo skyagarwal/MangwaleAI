@@ -93,11 +93,12 @@ export default function SearchIndicesPage() {
     }
   };
 
-  const handleDeleteIndex = async (indexName: string) => {
-    if (!confirm(`Are you sure you want to delete index "${indexName}"? This action cannot be undone.`)) {
-      return;
-    }
+  const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<string | null>(null);
 
+  const handleDeleteIndex = (indexName: string) => setConfirmDeleteIndex(indexName);
+
+  const executeDeleteIndex = async (indexName: string) => {
+    setConfirmDeleteIndex(null);
     setSelectedIndex(indexName);
     setOperation('delete');
     try {
@@ -365,6 +366,32 @@ export default function SearchIndicesPage() {
           <p className="text-sm text-gray-600">Configure index parameters</p>
         </button>
       </div>
+
+      {/* Delete Index Confirmation Modal */}
+      {confirmDeleteIndex && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Index</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Are you sure you want to delete index <strong>"{confirmDeleteIndex}"</strong>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDeleteIndex(null)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => executeDeleteIndex(confirmDeleteIndex)}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete Index
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

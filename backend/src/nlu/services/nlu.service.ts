@@ -40,22 +40,14 @@ export class NluService {
     const startTime = Date.now();
 
     try {
-      // Step 1: Classify intent using IndicBERT
-      const intentResult = await this.intentClassifier.classify(
-        dto.text,
-        dto.language,
-        dto.context,
-      );
-
-      // Step 2: Extract entities
-      const entities = await this.entityExtractor.extract(
-        dto.text,
-        intentResult.intent,
-        dto.language,
-      );
-
-      // Step 3: Analyze tone (advanced 7-emotion analysis)
-      const toneResult = await this.toneAnalyzer.analyzeTone(dto.text, dto.language);
+      // Run intent classification, entity extraction, and tone analysis in parallel.
+      // Entity extractor does not depend on the intent result (the intent param is unused),
+      // so all three can run concurrently for significant latency reduction.
+      const [intentResult, entities, toneResult] = await Promise.all([
+        this.intentClassifier.classify(dto.text, dto.language, dto.context),
+        this.entityExtractor.extract(dto.text, '', dto.language),
+        this.toneAnalyzer.analyzeTone(dto.text, dto.language),
+      ]);
 
       // Step 4: Capture training data - ENHANCED to capture all predictions for learning
       // Capture Strategy (unified thresholds):

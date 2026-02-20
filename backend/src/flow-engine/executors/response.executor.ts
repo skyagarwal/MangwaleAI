@@ -191,6 +191,7 @@ export class ResponseExecutor implements ActionExecutor {
           label: btn.label,
           value: btn.value,
           type: btn.type || 'quick_reply',
+          action: btn.action,       // Pass action field through (e.g., 'trigger_auth_modal')
           metadata: btn.metadata || {},
         }));
         
@@ -205,11 +206,12 @@ export class ResponseExecutor implements ActionExecutor {
         if (Array.isArray(dynamicButtons) && dynamicButtons.length > 0) {
           const labelPath = buttonConfig?.labelPath || 'label';
           const valuePath = buttonConfig?.valuePath || 'value';
-          
+          const valuePrefix = (buttonConfig as any)?.valuePrefix || '';
+
           const mappedButtons = dynamicButtons.map((item, index) => ({
-            id: item.id || `btn-${index}`,
+            id: `btn-${index}`,
             label: this.getValueByPath(item, labelPath) || item.name || item.label || `Option ${index + 1}`,
-            value: this.getValueByPath(item, valuePath) || item.id || item.value || `option_${index}`,
+            value: valuePrefix + (this.getValueByPath(item, valuePath) || item.id || item.value || `option_${index}`),
             type: item.type || 'quick_reply',
             metadata: item.metadata || {},
           }));

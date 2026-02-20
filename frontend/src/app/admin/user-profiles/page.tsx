@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAdminAuthStore } from '@/store/adminAuthStore';
 import {
   User,
   Search,
@@ -68,9 +69,9 @@ interface ConversationInsight {
   created_at: string;
 }
 
-const API_BASE = '';
-
 export default function UserProfilesPage() {
+  const { token } = useAdminAuthStore();
+  const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [stats, setStats] = useState<ProfileStats | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
@@ -83,6 +84,7 @@ export default function UserProfilesPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showBackfillConfirm, setShowBackfillConfirm] = useState(false);
 
   const fetchProfiles = useCallback(async () => {
     try {
@@ -96,7 +98,7 @@ export default function UserProfilesPage() {
         sortOrder,
       });
 
-      const response = await fetch(`${API_BASE}/api/personalization/profiles?${params}`);
+      const response = await fetch(`/api/personalization/profiles?${params}`);
       if (!response.ok) throw new Error('Failed to fetch profiles');
       
       const data = await response.json();
@@ -113,7 +115,7 @@ export default function UserProfilesPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/profiles/stats`);
+      const response = await fetch(`/api/personalization/profiles/stats`);
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -125,7 +127,7 @@ export default function UserProfilesPage() {
 
   const fetchInsights = async (userId: number) => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/profiles/${userId}/insights`);
+      const response = await fetch(`/api/personalization/profiles/${userId}/insights`);
       if (response.ok) {
         const data = await response.json();
         setInsights(data);
@@ -148,7 +150,7 @@ export default function UserProfilesPage() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/profiles/export`);
+      const response = await fetch(`/api/personalization/profiles/export`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -171,15 +173,17 @@ export default function UserProfilesPage() {
   } | null>(null);
 
   const handleBackfill = async () => {
-    if (!confirm('This will analyze existing conversations and create profiles for phones without one. Continue?')) {
-      return;
-    }
+    setShowBackfillConfirm(true);
+  };
+
+  const confirmBackfill = async () => {
+    setShowBackfillConfirm(false);
     
     setBackfillRunning(true);
     setBackfillResult(null);
     
     try {
-      const response = await fetch(`${API_BASE}/api/personalization/profiles/backfill?limit=500`, {
+      const response = await fetch(`/api/personalization/profiles/backfill?limit=500`, {
         method: 'POST',
       });
       const data = await response.json();
@@ -204,7 +208,7 @@ export default function UserProfilesPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -672,6 +676,32 @@ export default function UserProfilesPage() {
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Backfill Confirmation Modal */}
+      {showBackfillConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Analyze & Backfill Profiles</h3>
+            <p className="text-gray-600 mb-4">
+              This will analyze existing conversations and create profiles for phones that don&apos;t have one yet (up to 500). Continue?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowBackfillConfirm(false)}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBackfill}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Continue
               </button>
             </div>
           </div>
