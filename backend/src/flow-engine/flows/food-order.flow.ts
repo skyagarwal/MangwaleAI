@@ -4025,6 +4025,7 @@ Ask if they want to:
       ],
       transitions: {
         address_valid: 'validate_zone',
+        address_invalid: 'collect_address',  // No coordinates → re-ask (clears options, shows location prompt)
         waiting_for_input: null,  // 🔧 FIX: Stay in current wait state, don't re-enter and re-trigger onEntry
         error: 'address_error',
       },
@@ -4048,6 +4049,8 @@ Ask if they want to:
       transitions: {
         zone_valid: 'check_distance_type', // Changed from calculate_distance
         zone_invalid: 'out_of_zone',
+        default: 'collect_address',  // Zone executor failed (missing/null coordinates) → ask again
+        error: 'collect_address',    // Explicit error fallback
       },
     },
 
@@ -4254,10 +4257,10 @@ Reply "confirm" to book the rider.`,
       ],
       actions: [],
       transitions: {
-        confirm_surge: 'collect_payment_method',
+        confirm_surge: 'save_surge_confirmed',
         cancel: 'cancelled',
         user_message: 'handle_surge_response',
-        default: 'collect_payment_method',
+        default: 'save_surge_confirmed',
       },
     },
 
@@ -4275,8 +4278,32 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
-        confirmed: 'collect_payment_method',
+        confirmed: 'save_surge_confirmed',
         cancelled: 'cancelled',
+        default: 'save_surge_confirmed',
+      },
+    },
+
+    // Save surge amount to context so order summary can display it
+    save_surge_confirmed: {
+      type: 'action',
+      description: 'Persist surge amount into context.data before payment selection',
+      actions: [
+        {
+          id: 'persist_surge',
+          executor: 'response',
+          config: {
+            skipResponse: true,
+            saveToContext: {
+              surge_amount: '{{surge_info.price}}',
+              surge_title: '{{surge_info.title}}',
+              surge_applied: true,
+            },
+          },
+          output: '_surge_saved',
+        },
+      ],
+      transitions: {
         default: 'collect_payment_method',
       },
     },
@@ -4694,7 +4721,7 @@ Reply "confirm" to book the rider.`,
           id: 'summary_message',
           executor: 'response',
           config: {
-            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km){{#if pricing.tax}}\n🧾 Tax: ₹{{pricing.tax}}{{/if}}\n{{#if coupon_discount}}🏷️ Coupon Discount: -₹{{coupon_discount}}\n{{/if}}💳 **Grand Total: ₹{{pricing.total}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}_Pricing confirmed via PHP. Final amount may vary slightly based on store._\n\nReply "confirm" to place order.',
+            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km){{#if pricing.tax}}\n🧾 Tax: ₹{{pricing.tax}}{{/if}}{{#if surge_amount}}\n⚡ Surge ({{surge_title}}): ₹{{surge_amount}}{{/if}}\n{{#if coupon_discount}}🏷️ Coupon Discount: -₹{{coupon_discount}}\n{{/if}}💳 **Grand Total: ₹{{pricing.total}}{{#if surge_amount}} + ₹{{surge_amount}} surge{{/if}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}_Pricing confirmed via PHP. Final amount may vary slightly based on store._\n\nReply "confirm" to place order.',
             buttons: [
               { id: 'btn_confirm', label: '✅ Confirm Order', value: 'confirm' },
               { id: 'btn_note', label: '📝 Add Note to Restaurant', value: 'add_note' },
@@ -5392,6 +5419,18 @@ Reply "confirm" to book the rider.`,
             onlyIfIncomplete: true,
           },
           output: '_profile_question',
+        },
+        {
+          id: 'save_last_delivery_address',
+          executor: 'response',
+          config: {
+            // Save delivery address so next order can auto-offer it without re-asking
+            saveToContext: {
+              last_delivery_address: '{{delivery_address}}',
+            },
+            event: 'saved',
+          },
+          output: '_address_saved',
         },
       ],
       transitions: {},
