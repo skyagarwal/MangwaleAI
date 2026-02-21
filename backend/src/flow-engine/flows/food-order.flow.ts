@@ -317,8 +317,8 @@ export const foodOrderFlow: FlowDefinition = {
           config: {
             saveToContext: {
               location: {
-                lat: '{{delivery_address.lat}}',
-                lng: '{{delivery_address.lng}}',
+                lat: '{{delivery_address.latitude}}',
+                lng: '{{delivery_address.longitude}}',
               },
               _address_auto_selected: true,
               _location_source: 'saved_address',
@@ -4267,8 +4267,8 @@ Ask if they want to:
           id: 'check_zone',
           executor: 'zone',
           config: {
-            latPath: 'delivery_address.lat',
-            lngPath: 'delivery_address.lng',
+            latPath: 'delivery_address.latitude',
+            lngPath: 'delivery_address.longitude',
           },
           output: 'delivery_zone',
         },
