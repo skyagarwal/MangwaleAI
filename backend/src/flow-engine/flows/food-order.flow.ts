@@ -491,7 +491,11 @@ export const foodOrderFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        user_message: 'understand_request',
+        browse_menu: 'check_show_collections',  // Direct route for browse_menu button click
+        view_cart: 'show_current_cart',          // Direct route for view_cart button click
+        checkout: 'check_auth_for_checkout',     // Direct route for checkout button click
+        user_message: 'understand_request',      // User typed something → NLU
+        default: 'understand_request',           // Fallback for any other events
       },
     },
 
