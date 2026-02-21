@@ -24,22 +24,24 @@ export const feedbackFlow: FlowDefinition = {
     ask_rating: {
       type: 'wait',
       description: 'Ask user to rate their experience',
-      actions: [
+      onEntry: [
         {
           id: 'rating_prompt',
           executor: 'response',
           config: {
-            message: "We'd love your feedback! 📊\n\nHow would you rate your experience with Mangwale?\n\n[BUTTON:Excellent 😄:1]\n[BUTTON:Good 🙂:2]\n[BUTTON:Okay 😐:3]\n[BUTTON:Poor 😞:4]",
+            message: "⭐ **How was your experience?**\n\nTap a star to rate:",
             buttons: [
-              { id: 'rate_1', label: 'Excellent 😄', value: '1' },
-              { id: 'rate_2', label: 'Good 🙂', value: '2' },
-              { id: 'rate_3', label: 'Okay 😐', value: '3' },
-              { id: 'rate_4', label: 'Poor 😞', value: '4' }
+              { id: 'rate_1', label: '⭐ 1 — Poor', value: 'rating_1' },
+              { id: 'rate_2', label: '⭐⭐ 2 — Fair', value: 'rating_2' },
+              { id: 'rate_3', label: '⭐⭐⭐ 3 — Good', value: 'rating_3' },
+              { id: 'rate_4', label: '⭐⭐⭐⭐ 4 — Great', value: 'rating_4' },
+              { id: 'rate_5', label: '⭐⭐⭐⭐⭐ 5 — Excellent!', value: 'rating_5' },
             ]
           },
           output: '_last_response',
         },
       ],
+      actions: [],
       transitions: {
         user_message: 'ask_comment',
         default: 'ask_comment',

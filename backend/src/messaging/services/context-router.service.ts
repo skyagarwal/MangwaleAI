@@ -610,10 +610,34 @@ export class ContextRouterService implements OnModuleInit {
     }
 
     // STEP 4a-5: Review / rate order - simple direct response
-    if (intent.intent === 'submit_review' || intent.intent === 'rate_order' || intent.intent === 'leave_review') {
+    if (intent.intent === 'submit_review' || intent.intent === 'rate_order' || intent.intent === 'leave_review' || intent.intent === 'feedback') {
+      // Check for inline rating value like "rating_4" or "rate 4 stars"
+      const ratingMatch = event.message?.match(/(?:rating_|rate\s+)?(\d)(?:\s*(?:star|stars)?)/i);
+      const ratingValue = ratingMatch ? parseInt(ratingMatch[1]) : null;
+
+      if (ratingValue && ratingValue >= 1 && ratingValue <= 5) {
+        const stars = '⭐'.repeat(ratingValue) + '☆'.repeat(5 - ratingValue);
+        return {
+          message: `${stars} **Thank you for your ${ratingValue}-star rating!**\n\nYour feedback helps us improve. 🙏`,
+          buttons: [
+            { label: '🍔 Order Again', value: 'order food', action: 'order_food' },
+            ...this.getMainMenuButtons().slice(0, 2),
+          ],
+          routedTo: 'direct',
+          intent,
+          metadata: { handler: 'submit_review', ratingValue },
+        };
+      }
+
       return {
-        message: `⭐ **Rate Your Order**\n\nTo rate your order, please share:\n1. Your order ID (e.g., #12345)\n2. Your rating (1–5 stars)\n\n_Example: "Order #12345 - 5 stars, great food!"_`,
-        buttons: this.getMainMenuButtons(),
+        message: `⭐ **How was your order?**\n\nTap a star to rate:`,
+        buttons: [
+          { label: '⭐ 1 Star', value: 'rating_1', action: 'rate_order' },
+          { label: '⭐⭐ 2 Stars', value: 'rating_2', action: 'rate_order' },
+          { label: '⭐⭐⭐ 3 Stars', value: 'rating_3', action: 'rate_order' },
+          { label: '⭐⭐⭐⭐ 4 Stars', value: 'rating_4', action: 'rate_order' },
+          { label: '⭐⭐⭐⭐⭐ 5 Stars', value: 'rating_5', action: 'rate_order' },
+        ],
         routedTo: 'direct',
         intent,
         metadata: { handler: 'submit_review' },
