@@ -669,10 +669,12 @@ phase_3_whatsapp() {
   fi
 
   local WA_PHONE="91${RETURNING_PHONE}"
+  # Backend normalizes phone to E.164 (+91...) — Redis key uses + prefix
+  local WA_REDIS_KEY="+$WA_PHONE"
   log_info "WhatsApp phone: +$WA_PHONE"
 
-  # Clear stale WA session
-  $REDIS DEL "session:$WA_PHONE" >/dev/null 2>&1
+  # Clear stale WA session (session key uses +prefix format after normalization)
+  $REDIS DEL "session:$WA_REDIS_KEY" "bot_messages:$WA_REDIS_KEY" >/dev/null 2>&1
 
   # Step 3.1 — Text greeting
   log_step "3.1 WA text: 'hi'"
@@ -680,26 +682,26 @@ phase_3_whatsapp() {
   payload=$(wa_text_payload "$WA_PHONE" "hi")
   wa_send "$payload" >/dev/null
   local wa_resp
-  wa_resp=$(redis_wait "bot_messages:$WA_PHONE" 6)
+  wa_resp=$(redis_wait "bot_messages:$WA_REDIS_KEY" 6)
   if [[ -n "$wa_resp" ]]; then
     log_pass "3.1 WA greeting: response in Redis"
     if $VERBOSE; then echo "    Response: $(echo "$wa_resp" | head -c 200)"; fi
   else
     log_warn "3.1 WA greeting: no Redis response within 6s (async may be slower)"
   fi
-  $REDIS DEL "bot_messages:$WA_PHONE" >/dev/null 2>&1
+  $REDIS DEL "bot_messages:$WA_REDIS_KEY" >/dev/null 2>&1
 
   # Step 3.2 — Food intent
   log_step "3.2 WA text: food order intent"
   payload=$(wa_text_payload "$WA_PHONE" "mujhe khaana order karna hai")
   wa_send "$payload" >/dev/null
-  wa_resp=$(redis_wait "bot_messages:$WA_PHONE" 6)
+  wa_resp=$(redis_wait "bot_messages:$WA_REDIS_KEY" 6)
   if [[ -n "$wa_resp" ]]; then
     log_pass "3.2 WA food intent: response in Redis"
   else
     log_warn "3.2 WA food intent: no response within 6s"
   fi
-  $REDIS DEL "bot_messages:$WA_PHONE" >/dev/null 2>&1
+  $REDIS DEL "bot_messages:$WA_REDIS_KEY" >/dev/null 2>&1
 
   # Step 3.3 — Location
   log_step "3.3 WA location message"
@@ -707,7 +709,7 @@ phase_3_whatsapp() {
   wa_send "$payload" >/dev/null
   sleep 2
   local wa_lat
-  wa_lat=$(redis_get_session_field "$WA_PHONE" '.data.user_lat // .data.location.lat // ""')
+  wa_lat=$(redis_get_session_field "$WA_REDIS_KEY" '.data.user_lat // .data.location.lat // ""')
   if [[ -n "$wa_lat" && "$wa_lat" != "null" ]]; then
     log_pass "3.3 WA location: lat=$wa_lat saved in session"
   else
@@ -723,10 +725,10 @@ phase_3_whatsapp() {
 
   # Step 3.5 — Wallet check via WA
   log_step "3.5 WA text: wallet balance"
-  $REDIS DEL "bot_messages:$WA_PHONE" >/dev/null 2>&1
+  $REDIS DEL "bot_messages:$WA_REDIS_KEY" >/dev/null 2>&1
   payload=$(wa_text_payload "$WA_PHONE" "wallet balance")
   wa_send "$payload" >/dev/null
-  wa_resp=$(redis_wait "bot_messages:$WA_PHONE" 6)
+  wa_resp=$(redis_wait "bot_messages:$WA_REDIS_KEY" 6)
   if [[ -n "$wa_resp" ]]; then
     if echo "$wa_resp" | grep -qi "₹\|wallet\|balance"; then
       log_pass "3.5 WA wallet: ₹ balance in response"
@@ -738,7 +740,7 @@ phase_3_whatsapp() {
   fi
 
   # Cleanup
-  $REDIS DEL "bot_messages:$WA_PHONE" "session:$WA_PHONE" >/dev/null 2>&1
+  $REDIS DEL "bot_messages:$WA_REDIS_KEY" "session:$WA_REDIS_KEY" >/dev/null 2>&1
 }
 
 # Inject authentication directly into Redis web session (bypass OTP for E2E)
@@ -1086,8 +1088,9 @@ cleanup() {
   # Remove test sessions from Redis
   $REDIS DEL "session:$WEB_SESSION" >/dev/null 2>&1
   $REDIS DEL "bot_messages:$WEB_SESSION" >/dev/null 2>&1
-  local WA_PHONE="91${RETURNING_PHONE}"
-  $REDIS DEL "session:$WA_PHONE" "bot_messages:$WA_PHONE" >/dev/null 2>&1
+  local WA_PHONE_CLEAN="91${RETURNING_PHONE}"
+  local WA_REDIS_KEY_CLEAN="+$WA_PHONE_CLEAN"
+  $REDIS DEL "session:$WA_REDIS_KEY_CLEAN" "bot_messages:$WA_REDIS_KEY_CLEAN" >/dev/null 2>&1
 }
 
 # =============================================================================

@@ -14,6 +14,7 @@ import { MessageGatewayService } from '../../messaging/services/message-gateway.
 import { WhatsAppCloudService } from '../services/whatsapp-cloud.service';
 import * as crypto from 'crypto';
 import { Request } from 'express';
+import { normalizePhoneNumber } from '../../common/utils/helpers';
 
 @SkipThrottle({ default: true })
 @Controller('webhook/whatsapp')
@@ -159,7 +160,8 @@ export class WebhookController {
   private async handleIncomingMessage(message: any): Promise<void> {
     try {
       const messageId = message.id;
-      const from = message.from;
+      // Normalize to E.164 (+91...) so session keys match MessageGatewayService
+      const from = normalizePhoneNumber(message.from) || message.from;
       const type = message.type;
 
       this.logger.log(`📩 Message from ${from}: ${type}`);
