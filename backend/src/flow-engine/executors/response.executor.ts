@@ -238,8 +238,10 @@ export class ResponseExecutor implements ActionExecutor {
           // Merge with existing buttons
           response.buttons = [...(response.buttons || []), ...mappedButtons];
           this.logger.log(`Response executor: Added ${mappedButtons.length} buttons from path ${buttonsPath}`);
-        } else {
-          this.logger.warn(`Response executor: Buttons path ${buttonsPath} did not resolve to an array. Value: ${JSON.stringify(dynamicButtons)}`);
+        } else if (dynamicButtons !== undefined && dynamicButtons !== null && !Array.isArray(dynamicButtons)) {
+          // Only warn when the value exists but is not an array (genuine type mismatch)
+          // Empty array [] is expected when no filter buttons are needed
+          this.logger.warn(`Response executor: Buttons path ${buttonsPath} resolved to unexpected type: ${JSON.stringify(dynamicButtons)?.slice(0, 100)}`);
         }
       }
 
