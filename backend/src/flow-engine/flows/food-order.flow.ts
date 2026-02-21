@@ -4006,15 +4006,20 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
     otp_retry: {
       type: 'wait',
       description: 'Ask user to re-enter OTP',
-      actions: [
+      onEntry: [
         {
+          id: 'otp_retry_prompt',
           executor: 'response',
           config: {
-            message: 'That OTP doesn\'t seem right. Please try again or type "resend" to get a new OTP.',
+            message: '❌ That OTP is incorrect. Please try again or type "resend" to get a new OTP.',
+            buttons: [
+              { label: '🔄 Resend OTP', value: 'resend' },
+            ],
           },
           output: '_retry_response',
         },
       ],
+      actions: [],
       transitions: {
         user_message: 'check_otp_or_resend',
         default: 'check_otp_or_resend',

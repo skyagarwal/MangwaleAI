@@ -321,6 +321,14 @@ export class ContextRouterService implements OnModuleInit {
         return this.executeAgentSync(event, session, buttonIntent);
       }
 
+      // 🔧 FIX: Card "Add to cart" buttons send action=item_XXXX but message=item name or "Add".
+      // The flow checks _user_message (= event.message) with /^item_\d+/ regex.
+      // Override event.message with the action so _user_message matches the selection pattern.
+      if (/^item_\d+$/i.test(buttonAction)) {
+        event.message = buttonAction;
+        this.logger.log(`🛒 Item selection override: _user_message set to "${buttonAction}" (was "${buttonValue}")`);
+      }
+
       // Continue the flow with the button VALUE as the event for correct transition
       return this.continueFlowSync(event, session, flowContinueIntent, buttonValue);
     }
@@ -1272,6 +1280,10 @@ export class ContextRouterService implements OnModuleInit {
       'await_payment_retry', 'await_food_payment_retry',
       // Location wait states — user is sharing GPS/location, don't switch to address flow
       'request_location', 'handle_location_response', 'ask_location',
+      // Auth/OTP states — user is entering phone or OTP, don't switch to auth flow
+      'request_phone', 'verify_otp', 'otp_retry', 'collect_phone', 'ask_for_otp',
+      // Name/profile collection states
+      'ask_name', 'ask_email',
     ];
     
     const isInCriticalState = CRITICAL_WAIT_STATES.includes(currentState);
