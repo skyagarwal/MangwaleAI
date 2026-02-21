@@ -297,10 +297,13 @@ export class ContextRouterService implements OnModuleInit {
       const TOP_LEVEL_ACTIONS = new Set([
         'order_food', 'book_parcel', 'track_order', 'help',
         'parcel_booking', 'send_parcel', 'order_tracking',
-        // Food/ecommerce flow buttons that must never bleed into parcel flow:
-        'checkout', 'view_cart', 'main_menu', 'go_home', 'browse_menu',
+        'main_menu', 'go_home',
       ]);
-      if (TOP_LEVEL_ACTIONS.has(buttonAction)) {
+      // These actions are top-level ONLY when they arrive while a PARCEL flow is active.
+      // When in food/ecommerce flows, checkout/view_cart/browse_menu are handled by the flow itself.
+      const PARCEL_ONLY_BREAK_ACTIONS = new Set(['checkout', 'view_cart', 'browse_menu']);
+      const isParcelFlow = activeFlow?.includes('parcel');
+      if (TOP_LEVEL_ACTIONS.has(buttonAction) || (isParcelFlow && PARCEL_ONLY_BREAK_ACTIONS.has(buttonAction))) {
         this.logger.log(`🔀 Top-level button "${buttonAction}" while in flow ${activeFlow} — clearing flow and routing fresh`);
         await this.sessionService.updateSession(event.identifier, {
           activeFlow: null,
