@@ -1253,9 +1253,10 @@ export const foodOrderFlow: FlowDefinition = {
       transitions: {
         user_message: 'parse_new_delivery_address',
         location: 'save_parcel_delivery_location',
+        default: 'parse_new_delivery_address',
       }
     },
-    
+
     // Parse typed delivery address
     parse_new_delivery_address: {
       type: 'action',
@@ -1572,9 +1573,10 @@ export const foodOrderFlow: FlowDefinition = {
       transitions: {
         user_message: 'handle_custom_pickup_location',
         location: 'save_custom_pickup_location',
+        default: 'handle_custom_pickup_location',
       }
     },
-    
+
     // Capture custom order items
     capture_custom_order_items: {
       type: 'action',
@@ -1629,9 +1631,10 @@ export const foodOrderFlow: FlowDefinition = {
       ],
       transitions: {
         user_message: 'capture_custom_order_items',
+        default: 'capture_custom_order_items',
       }
     },
-    
+
     // Confirm custom order
     confirm_custom_order: {
       type: 'wait',
@@ -2526,6 +2529,7 @@ export const foodOrderFlow: FlowDefinition = {
       transitions: {
         user_message: 'handle_external_selection',
         select_external: 'confirm_external_pickup', // Direct selection from card
+        default: 'handle_external_selection',
       }
     },
 
@@ -2660,6 +2664,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       transitions: {
         user_message: 'handle_custom_pickup_response',
+        default: 'handle_custom_pickup_response',
       }
     },
 
@@ -2698,6 +2703,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       transitions: {
         user_message: 'extract_custom_pickup',
+        default: 'extract_custom_pickup',
       }
     },
 
@@ -3198,6 +3204,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         checkout: 'check_auth_for_checkout',
         add_more: 'show_results',
         clear_cart: 'clear_cart_state',
+        default: 'check_cart_input_type',
       },
     },
 
@@ -3334,6 +3341,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         checkout: 'check_auth_for_checkout',
         add_more: 'show_results',
         view_cart: 'show_current_cart',
+        default: 'handle_cart_action',
       },
     },
 
@@ -3438,6 +3446,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       transitions: {
         user_message: 'process_selection',
+        default: 'process_selection',
       },
     },
 
@@ -3965,6 +3974,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       actions: [],
       transitions: {
         user_message: 'check_otp',
+        default: 'check_otp',
       },
     },
 
@@ -4007,6 +4017,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       ],
       transitions: {
         user_message: 'check_otp_or_resend',
+        default: 'check_otp_or_resend',
       },
     },
 
