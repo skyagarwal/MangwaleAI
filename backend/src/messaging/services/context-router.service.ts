@@ -345,7 +345,24 @@ export class ContextRouterService implements OnModuleInit {
       if (buttonAction === 'cancel' || event.message?.toLowerCase() === 'cancel') {
         return this.handleCommandSync(event, session, { intent: 'cancel', confidence: 1.0 });
       }
-      
+
+      // Special case: Rating/review actions — show star buttons directly without NLU routing
+      if (buttonAction === 'rate_order' || buttonAction === 'submit_review' || buttonAction === 'leave_review') {
+        return {
+          message: `⭐ **How was your order?**\n\nTap a star to rate:`,
+          buttons: [
+            { label: '⭐ 1 Star', value: 'rating_1', action: 'rate_order' },
+            { label: '⭐⭐ 2 Stars', value: 'rating_2', action: 'rate_order' },
+            { label: '⭐⭐⭐ 3 Stars', value: 'rating_3', action: 'rate_order' },
+            { label: '⭐⭐⭐⭐ 4 Stars', value: 'rating_4', action: 'rate_order' },
+            { label: '⭐⭐⭐⭐⭐ 5 Stars', value: 'rating_5', action: 'rate_order' },
+          ],
+          routedTo: 'direct',
+          intent: { intent: 'rate_order', confidence: 1.0 },
+          metadata: { handler: 'submit_review' },
+        };
+      }
+
       // Use button action as the intent (e.g., 'parcel_booking', 'order_food')
       // Get proper flow routing from IntentRouter
       const routeDecision = await this.intentRouter.route(buttonAction, event.message || buttonAction, {
