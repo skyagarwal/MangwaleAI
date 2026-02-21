@@ -655,13 +655,14 @@ export class FlowEngineService {
   /**
    * Get current flow context for session (includes currentState)
    */
-  async getContext(sessionId: string): Promise<{ flowRunId: string; currentState: string } | null> {
+  async getContext(sessionId: string): Promise<{ flowRunId: string; currentState: string; flowId?: string } | null> {
     const session = await this.sessionService.getSession(sessionId);
     const flowContext = session?.data?.flowContext;
     if (!flowContext?.flowRunId) return null;
     return {
       flowRunId: flowContext.flowRunId,
       currentState: flowContext.currentState || '',
+      flowId: flowContext.flowId,
     };
   }
 

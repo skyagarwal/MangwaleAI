@@ -875,6 +875,18 @@ export class UserContextService {
   // ==========================================
 
   /**
+   * Get order history directly by user ID (for CollectionsService and other internal callers)
+   */
+  async getOrderHistoryById(userId: number): Promise<UserOrderHistory | null> {
+    try {
+      return await this.getOrderHistory(userId);
+    } catch (error) {
+      this.logger.error(`getOrderHistoryById failed for ${userId}: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
    * Get order history by phone number (for UserPreferenceService integration)
    */
   async getOrderHistoryByPhone(phone: string): Promise<UserOrderHistory | null> {

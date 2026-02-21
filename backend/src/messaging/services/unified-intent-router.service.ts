@@ -154,7 +154,7 @@ export class UnifiedIntentRouterService implements OnModuleInit {
     // STEP 2: AI-Powered Semantic Detection
     // ========================================
     // Check for food intent using AI (more accurate than keywords)
-    const foodResult = await this.foodDetector.detectFoodIntent(message);
+    const foodResult = await this.foodDetector.detectFood(message);
     if (foodResult.isFood && foodResult.confidence > 0.7) {
       this.logger.log(`🍔 AI food detection: ${foodResult.confidence.toFixed(2)} confidence`);
       matchedRules.push('ai_food_detector');
@@ -176,7 +176,7 @@ export class UnifiedIntentRouterService implements OnModuleInit {
     }
 
     // Check for parcel intent using AI
-    const parcelResult = await this.parcelDetector.detectParcelIntent(message);
+    const parcelResult = await this.parcelDetector.detectParcel(message);
     if (parcelResult.isParcel && parcelResult.confidence > 0.7) {
       this.logger.log(`📦 AI parcel detection: ${parcelResult.confidence.toFixed(2)} confidence`);
       matchedRules.push('ai_parcel_detector');

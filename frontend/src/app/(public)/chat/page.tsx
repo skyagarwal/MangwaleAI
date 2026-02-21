@@ -22,6 +22,7 @@ import type { ChatMessage } from '@/types/chat'
 import { useAuthStore } from '@/store/authStore'
 import type { User } from '@/store/authStore'
 import { InlineLogin } from '@/components/chat/InlineLogin'
+import OrderStatusTracker from '@/components/chat/OrderStatusTracker'
 
 // Use Google Maps based location picker for better UX
 // Backend still uses OSRM for distance calculations (cost-effective)
@@ -89,6 +90,8 @@ function ChatContent() {
   const [voiceCallMode, setVoiceCallMode] = useState(false) // Voice call mode - auto TTS for responses
   const [isTTSPlaying, setIsTTSPlaying] = useState(false) // TTS playback status
   const [greeting, setGreeting] = useState('Hello! 👋') // Client-side greeting to avoid hydration mismatch
+  const [mealSuggestions, setMealSuggestions] = useState<{ label: string; query: string }[]>([]) // Time-aware meal category pills
+  const [personalCollections, setPersonalCollections] = useState<Array<{ id: string; title: string; subtitle: string; query: string; emoji: string }>>([]) // Personalised collections
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [voiceError, setVoiceError] = useState<string | null>(null) // Voice error messages
   const [showKeyboardHints, setShowKeyboardHints] = useState(false) // Show keyboard shortcuts
@@ -353,13 +356,46 @@ function ChatContent() {
     }
   }, [isTyping])
 
-  // Set greeting on client-side to avoid hydration mismatch
+  // Set greeting and time-aware meal pills on client-side to avoid hydration mismatch
   useEffect(() => {
     const hour = new Date().getHours()
     if (hour < 12) setGreeting('Good Morning! ☀️')
     else if (hour < 17) setGreeting('Good Afternoon! 🌤️')
     else if (hour < 21) setGreeting('Good Evening! 🌅')
     else setGreeting('Hello Night Owl! 🌙')
+
+    // Time-aware meal suggestions
+    if (hour >= 6 && hour < 11) {
+      setMealSuggestions([
+        { label: '☕ Chai & Breakfast', query: 'chai and breakfast' },
+        { label: '🥪 Sandwiches', query: 'sandwich' },
+        { label: '🍳 Poha & Upma', query: 'poha upma' },
+      ])
+    } else if (hour >= 11 && hour < 15) {
+      setMealSuggestions([
+        { label: '🍛 Biryani', query: 'biryani' },
+        { label: '🥗 Thali', query: 'thali' },
+        { label: '🍕 Pizza', query: 'pizza' },
+      ])
+    } else if (hour >= 15 && hour < 18) {
+      setMealSuggestions([
+        { label: '☕ Chai & Snacks', query: 'chai snacks' },
+        { label: '🍩 Sweets', query: 'sweets mithai' },
+        { label: '🧆 Samosa & Kachori', query: 'samosa kachori' },
+      ])
+    } else if (hour >= 18 && hour < 23) {
+      setMealSuggestions([
+        { label: '🍖 Dinner', query: 'dinner' },
+        { label: '🍜 Noodles & Chinese', query: 'noodles chinese' },
+        { label: '🥩 Grills & BBQ', query: 'grill bbq' },
+      ])
+    } else {
+      setMealSuggestions([
+        { label: '🌙 Late Night Bites', query: 'late night food' },
+        { label: '🍦 Ice Cream', query: 'ice cream' },
+        { label: '🍕 Pizza', query: 'pizza' },
+      ])
+    }
   }, [])
 
   // Initialize session ID and profile
@@ -663,6 +699,21 @@ function ChatContent() {
         try {
           localStorage.setItem('mangwale-user-context', JSON.stringify(data))
         } catch (e) { /* ignore */ }
+        // Fetch personalised collections for authenticated returning users
+        const authUser = useAuthStore.getState().user
+        const userId = authUser?.id
+        if (userId && data.totalOrders >= 0) {
+          try {
+            const loc = JSON.parse(localStorage.getItem('mangwale-user-location') || '{}')
+            const params = new URLSearchParams({ user_id: String(userId) })
+            if (loc.lat) params.set('lat', String(loc.lat))
+            if (loc.lng) params.set('lng', String(loc.lng))
+            fetch(`/api/personalization/collections?${params}`)
+              .then(r => r.ok ? r.json() : { collections: [] })
+              .then(d => { if (Array.isArray(d.collections)) setPersonalCollections(d.collections) })
+              .catch(() => {}) // silent — collections are non-critical
+          } catch { /* ignore */ }
+        }
       },
       onCartUpdate: (data) => {
         console.log('🛒 Cart update received:', data.totalItems, 'items')
@@ -797,7 +848,8 @@ function ChatContent() {
           
           // Extract paymentLink from metadata if present
           const paymentLink = message.metadata?.payment_data?.paymentLink || undefined;
-          
+          const orderTracking = message.metadata?.order_tracking || undefined;
+
           return [...prev, {
             id: messageId,
             // Handle both role (new) and sender (legacy) fields
@@ -806,10 +858,11 @@ function ChatContent() {
             timestamp: message.timestamp || receivedAt,
             buttons: parsedButtons.length > 0 ? parsedButtons : (message.buttons || undefined),
             cards: message.cards || (message.metadata && message.metadata.cards) || undefined,
-            metadata: (paymentLink || message.metadata?.responseType)
+            metadata: (paymentLink || message.metadata?.responseType || orderTracking)
               ? {
                   ...(paymentLink ? { paymentLink } : {}),
                   ...(message.metadata?.responseType ? { responseType: message.metadata.responseType } : {}),
+                  ...(orderTracking ? { order_tracking: orderTracking } : {}),
                 }
               : undefined,
           }]
@@ -1714,15 +1767,27 @@ function ChatContent() {
                     <div className="w-full max-w-md sm:max-w-2xl mb-4">
                       <p className="text-xs font-medium text-gray-500 mb-2 text-left px-1">Your favourites</p>
                       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
-                        {userContext.recentOrders.length > 0 && userContext.recentOrders[0].storeName && (
-                          <button
-                            onClick={() => handleSend(`Order from ${userContext.recentOrders[0].storeName}`)}
-                            className="snap-start flex-shrink-0 flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 hover:border-orange-300 transition-all text-sm"
-                          >
-                            <RotateCcw className="w-3.5 h-3.5 text-orange-500" />
-                            <span className="text-gray-700 whitespace-nowrap">Reorder from {userContext.recentOrders[0].storeName}</span>
-                          </button>
-                        )}
+                        {/* Reorder pills: show top 2 recent food orders with item name when available */}
+                        {userContext.recentOrders
+                          .filter(o => o.storeName && (o as any).moduleType !== 'ecom' && (o as any).moduleType !== 'parcel')
+                          .slice(0, 2)
+                          .map((order, i) => {
+                            const itemName = order.items?.[0]
+                            const label = itemName
+                              ? `🔁 ${itemName.length > 20 ? itemName.slice(0, 20) + '…' : itemName}`
+                              : `🔁 ${order.storeName}`
+                            return (
+                              <button
+                                key={i}
+                                onClick={() => handleSend('order again')}
+                                className="snap-start flex-shrink-0 flex flex-col items-start px-3 py-2 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 hover:border-orange-300 transition-all"
+                              >
+                                <span className="text-sm text-gray-700 whitespace-nowrap font-medium">{label}</span>
+                                {itemName && <span className="text-[10px] text-gray-400 whitespace-nowrap">from {order.storeName}</span>}
+                              </button>
+                            )
+                          })
+                        }
                         {userContext.favoriteStores.slice(0, 2).map((store, i) => (
                           <button
                             key={i}
@@ -1747,6 +1812,46 @@ function ChatContent() {
                     </div>
                   )}
                   
+                  {/* Time-aware meal category pills */}
+                  {mealSuggestions.length > 0 && (
+                    <div className="w-full max-w-md sm:max-w-2xl mb-4">
+                      <p className="text-xs font-medium text-gray-500 mb-2 text-left px-1">Trending now</p>
+                      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                        {mealSuggestions.map((s, i) => (
+                          <button
+                            key={i}
+                            onClick={() => handleSend(s.query)}
+                            className="flex-shrink-0 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full text-sm text-gray-700 hover:bg-orange-100 hover:border-orange-300 transition-all whitespace-nowrap"
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Personalised smart collections — for authenticated returning users */}
+                  {personalCollections.length > 0 && (
+                    <div className="w-full max-w-md sm:max-w-2xl mb-4">
+                      <p className="text-xs font-medium text-gray-500 mb-2 text-left px-1">For you</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {personalCollections.map((col) => (
+                          <button
+                            key={col.id}
+                            onClick={() => handleSend(col.query)}
+                            className="flex items-start gap-2.5 px-3 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50/50 hover:shadow-sm active:scale-[0.98] transition-all text-left"
+                          >
+                            <span className="text-xl flex-shrink-0 mt-0.5">{col.emoji}</span>
+                            <div className="min-w-0">
+                              <p className="text-[12px] font-semibold text-gray-800 leading-tight truncate">{col.title}</p>
+                              <p className="text-[10px] text-gray-400 leading-tight truncate mt-0.5">{col.subtitle}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Quick action cards */}
                   <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full max-w-md sm:max-w-2xl mb-4 sm:mb-5">
                     <button 
@@ -1988,6 +2093,14 @@ function ChatContent() {
                                 Pay Now
                               </button>
                             </div>
+                          )}
+
+                          {/* Live order status tracker — shown after order is placed */}
+                          {message.role === 'assistant' && message.metadata?.order_tracking?.orderId && (
+                            <OrderStatusTracker
+                              orderId={Number(message.metadata.order_tracking.orderId)}
+                              initialStoreName={message.metadata.order_tracking.storeName}
+                            />
                           )}
 
                           {/* Buttons - Zomato style compact pills */}

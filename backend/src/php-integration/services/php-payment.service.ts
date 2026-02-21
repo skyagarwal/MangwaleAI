@@ -111,6 +111,8 @@ export class PhpPaymentService extends PhpApiService {
       type: string;
       enabled: boolean;
     }>;
+    partialPaymentEnabled?: boolean;
+    partialPaymentMethod?: string;
     message?: string;
   }> {
     try {
@@ -388,8 +390,9 @@ export class PhpPaymentService extends PhpApiService {
   /**
    * Get surge price for current time/zone/module
    * POST /api/v1/customer/order/get-surge-price
+   * Requires auth token — PHP endpoint returns 401 without it.
    */
-  async getSurgePrice(zoneId: number, moduleId: number): Promise<{
+  async getSurgePrice(zoneId: number, moduleId: number, token?: string): Promise<{
     success: boolean;
     hasSurge?: boolean;
     title?: string;
@@ -399,11 +402,15 @@ export class PhpPaymentService extends PhpApiService {
     message?: string;
   }> {
     try {
-      const response: any = await this.post('/api/v1/customer/order/get-surge-price', {
+      const body = {
         zone_id: zoneId,
         module_id: moduleId,
         date_time: new Date().toISOString(),
-      });
+      };
+
+      const response: any = token
+        ? await this.authenticatedRequest('post', '/api/v1/customer/order/get-surge-price', token, body)
+        : await this.post('/api/v1/customer/order/get-surge-price', body);
 
       const hasSurge = response && parseFloat(response.price || 0) > 0;
       return {

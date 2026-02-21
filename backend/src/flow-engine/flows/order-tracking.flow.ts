@@ -384,13 +384,21 @@ Keep under 300 chars.`,
             message: `📍 **Order Tracking**\n\n{{tracking_message}}\n\n🔗 Live Track: ${process.env.TRACKING_BASE_URL || 'https://track.mangwale.in'}/track/{{selection.order_id}}/{{order_details.receiverPhone}}`,
             buttons: [
               { id: 'refresh', label: '🔄 Refresh', value: 'track order {{selection.order_id}}' },
+              { id: 'rate', label: '⭐ Rate Order', value: 'rate_order' },
               { id: 'cancel', label: '❌ Cancel Order', value: 'cancel order {{selection.order_id}}' },
               { id: 'back', label: '🔙 Back', value: 'back to menu' },
             ],
+            metadata: {
+              order_tracking: {
+                orderId: '{{selection.order_id}}',
+                storeName: '{{order_details.storeName}}',
+              },
+            },
           },
         },
       ],
       transitions: {
+        rate_order: 'collect_order_rating',
         user_message: 'route_action',
         'back to menu': 'show_options',
         default: 'route_action',
@@ -742,6 +750,141 @@ Keep it concise with status emojis.`,
         default: 'route_action',
       },
     },
+
+    // ─── Post-delivery review ─────────────────────────────────────────────────
+
+    // Ask user to rate their order (1-5 stars via buttons)
+    collect_order_rating: {
+      type: 'wait',
+      description: 'Ask user to rate their order',
+      onEntry: [
+        {
+          id: 'ask_rating',
+          executor: 'response',
+          config: {
+            message: '⭐ How was your order? Tap a star to rate!',
+            buttons: [
+              { label: '⭐ 1', value: 'rating_1' },
+              { label: '⭐⭐ 2', value: 'rating_2' },
+              { label: '⭐⭐⭐ 3', value: 'rating_3' },
+              { label: '⭐⭐⭐⭐ 4', value: 'rating_4' },
+              { label: '⭐⭐⭐⭐⭐ 5', value: 'rating_5' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        rating_1: 'capture_rating',
+        rating_2: 'capture_rating',
+        rating_3: 'capture_rating',
+        rating_4: 'capture_rating',
+        rating_5: 'capture_rating',
+        user_message: 'capture_rating',
+        default: 'capture_rating',
+      },
+    },
+
+    // Save rating to context and decide whether to ask for a comment
+    capture_rating: {
+      type: 'action',
+      description: 'Save the star rating to context',
+      actions: [
+        {
+          id: 'save_rating',
+          executor: 'session',
+          config: {
+            action: 'set',
+            key: 'order_rating',
+            value: '{{_user_message}}',
+          },
+          output: '_rating_saved',
+        },
+      ],
+      transitions: {
+        default: 'ask_review_comment',
+      },
+    },
+
+    // Optionally ask for a text comment
+    ask_review_comment: {
+      type: 'wait',
+      description: 'Ask for an optional review comment',
+      onEntry: [
+        {
+          id: 'ask_comment',
+          executor: 'response',
+          config: {
+            message: '💬 Want to add a comment? (Optional — helps us improve!)',
+            buttons: [
+              { label: '⏭️ Skip', value: 'skip_review_comment' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        skip_review_comment: 'save_order_rating',
+        user_message: 'save_order_rating',
+        default: 'save_order_rating',
+      },
+    },
+
+    // Submit rating + comment to PHP
+    save_order_rating: {
+      type: 'action',
+      description: 'Submit rating and optional comment to PHP backend',
+      actions: [
+        {
+          id: 'submit_review',
+          executor: 'php_api',
+          config: {
+            action: 'submit_order_review',
+            token: '{{auth_token}}',
+            order_id: '{{selection.order_id}}',
+            rating: '{{order_rating}}',
+            comment: '{{_user_message}}',
+          },
+          output: '_review_result',
+        },
+      ],
+      transitions: {
+        default: 'review_submitted',
+      },
+    },
+
+    // Thank-you screen after review
+    review_submitted: {
+      type: 'wait',
+      description: 'Thank user for their review',
+      onEntry: [
+        {
+          id: 'thank_you',
+          executor: 'response',
+          config: {
+            message: '🙏 Thank you for your feedback! It helps us serve you better.\n\n🍔 Hungry again?',
+            buttons: [
+              { label: '🔁 Order Again', value: 'order food' },
+              { label: '📋 My Orders', value: 'track order' },
+              { label: '🏠 Main Menu', value: 'back to menu' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        'order food': 'end_flow',
+        'track order': 'show_options',
+        'back to menu': 'end_flow',
+        user_message: 'end_flow',
+        default: 'end_flow',
+      },
+    },
+
+    // ─── End flow ─────────────────────────────────────────────────────────────
 
     // End flow
     end_flow: {

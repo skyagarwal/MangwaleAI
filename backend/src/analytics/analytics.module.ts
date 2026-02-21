@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { AnalyticsService } from './services/analytics.service';
 import { ConversionFunnelService } from './services/conversion-funnel.service';
 import { IntentAccuracyService } from './services/intent-accuracy.service';
@@ -35,7 +36,7 @@ import { DatabaseModule } from '../database/database.module';
  *    - User engagement metrics
  */
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, HttpModule],
   providers: [
     AnalyticsService,
     ConversionFunnelService,

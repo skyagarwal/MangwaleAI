@@ -108,7 +108,7 @@ export class ConversationEnrichmentService {
             userId,
             'communication_tone',
             toneAnalysis.tone,
-            'conversation_analysis',
+            'inferred' as 'explicit' | 'inferred' | 'gamification',
             toneAnalysis.confidence,
           );
           this.logger.debug(`🎙️ Updated communication tone for user ${userId}: ${toneAnalysis.tone}`);

@@ -12,12 +12,15 @@ import { OrderSyncService } from './order-sync.service';
 import { ProfileEnrichmentScheduler } from './profile-enrichment-scheduler.service';
 import { BehavioralAnalyticsService } from './services/behavioral-analytics.service';
 import { RecommendationEngineService } from './services/recommendation-engine.service';
+import { CollectionsService } from './collections.service';
 import { PersonalizationController } from './personalization.controller';
 import { RecommendationsController } from './controllers/recommendations.controller';
 import { LlmModule } from '../llm/llm.module';
 import { DatabaseModule } from '../database/database.module';
 import { UserContextModule } from '../user-context/user-context.module';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
+import { StoresModule } from '../stores/stores.module';
+import { SessionModule } from '../session/session.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 /**
@@ -48,6 +51,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     DatabaseModule,
     UserContextModule,
     PhpIntegrationModule,
+    StoresModule,
+    SessionModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [PersonalizationController, RecommendationsController],
@@ -65,6 +70,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProfileEnrichmentScheduler,
     BehavioralAnalyticsService,
     RecommendationEngineService,
+    CollectionsService,
   ],
   exports: [
     ConversationAnalyzerService,
@@ -80,6 +86,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProfileEnrichmentScheduler,
     BehavioralAnalyticsService,
     RecommendationEngineService,
+    CollectionsService,
   ],
 })
 export class PersonalizationModule {}

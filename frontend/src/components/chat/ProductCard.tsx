@@ -215,7 +215,48 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
   const [selectedVariation, setSelectedVariation] = useState<{ type: string; price: string; label: string } | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [addFeedback, setAddFeedback] = useState<'idle' | 'adding' | 'added'>('idle')
-  
+  const [descExpanded, setDescExpanded] = useState(false)
+  const [wishlisted, setWishlisted] = useState(false)
+
+  // Fire-and-forget click event for analytics / ranking signals
+  const fireClickEvent = (qty = 1) => {
+    try {
+      const itemId = card.id ? parseInt(String(card.id)) : undefined;
+      const storeId = card.storeId ? parseInt(String(card.storeId)) : undefined;
+      if (!itemId) return;
+      fetch('/api/analytics/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_type: 'add_to_cart',
+          item_id: itemId,
+          store_id: storeId,
+          position: index,
+          quantity: qty,
+          module_id: 4,
+          device: typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'web',
+        }),
+      }).catch(() => {/* analytics failure is non-fatal */});
+    } catch {/* noop */}
+  };
+
+  // Toggle wishlist via backend (requires active session)
+  const toggleWishlist = () => {
+    const itemId = card.id ? parseInt(String(card.id)) : undefined;
+    if (!itemId) return;
+    const sessionId = typeof window !== 'undefined' ? localStorage.getItem('mangwale-chat-session-id') : null;
+    if (!sessionId) return; // Not in an active session
+    const newState = !wishlisted;
+    setWishlisted(newState); // Optimistic update
+    fetch('/api/personalization/wishlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item_id: itemId, session_id: sessionId, action: newState ? 'add' : 'remove' }),
+    }).then(r => r.json()).then(data => {
+      if (!data.success) setWishlisted(!newState); // Revert on failure
+    }).catch(() => setWishlisted(!newState));
+  };
+
   // Trigger animation on mount with stagger delay - slide from sides
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), index * 80)
@@ -388,12 +429,21 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
             )}
 
             {/* Price + ADD row */}
-            <div className="flex items-center justify-between mt-1">
+            <div className="flex items-center justify-between mt-1 gap-1">
               <span className="text-[12px] font-bold text-white">{currentPrice}</span>
+              <div className="flex items-center gap-1">
+              <button
+                onClick={toggleWishlist}
+                className="text-[14px] leading-none p-0.5 transition-transform active:scale-90"
+                title={wishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+              >
+                {wishlisted ? '❤️' : '🤍'}
+              </button>
               <button
                 onClick={() => {
                   if (addFeedback !== 'idle') return
                   setAddFeedback('adding')
+                  fireClickEvent(1)
                   const actionValue = card.action?.value || ''
                   onAction(actionValue, {
                     item_id: card.id,
@@ -418,6 +468,7 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
               >
                 {addFeedback === 'adding' ? '...' : addFeedback === 'added' ? '✓' : 'ADD'}
               </button>
+              </div>
             </div>
           </div>
         </div>
@@ -570,9 +621,19 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
           ))}
 
           {card.description && (
-            <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 line-clamp-2">
-              {card.description}
-            </p>
+            <div className="mb-2 sm:mb-3">
+              <p className={`text-xs sm:text-sm text-gray-500 ${descExpanded ? '' : 'line-clamp-2'}`}>
+                {card.description}
+              </p>
+              {card.description.length > 80 && (
+                <button
+                  onClick={() => setDescExpanded(e => !e)}
+                  className="text-[10px] text-orange-500 font-medium mt-0.5 hover:text-orange-600"
+                >
+                  {descExpanded ? 'less ‹' : 'more ›'}
+                </button>
+              )}
+            </div>
           )}
 
           {/* Quantity selector + ADD */}
@@ -596,6 +657,7 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
               onClick={() => {
                 if (addFeedback !== 'idle') return
                 setAddFeedback('adding')
+                fireClickEvent(quantity)
                 const actionValue = card.action?.value || ''
                 onAction(actionValue, {
                   item_id: card.id,
@@ -635,6 +697,13 @@ function ProductCardInner({ card, onAction, index = 0, compact = false, directio
                   ADD
                 </>
               )}
+            </button>
+            <button
+              onClick={toggleWishlist}
+              className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 hover:border-red-300 transition-all active:scale-90"
+              title={wishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+            >
+              <span className="text-[18px] leading-none">{wishlisted ? '❤️' : '🤍'}</span>
             </button>
           </div>
         </div>

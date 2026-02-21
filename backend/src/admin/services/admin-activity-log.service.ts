@@ -7,6 +7,7 @@ export type AdminAction =
   | 'forgot_password'
   | 'otp_verified'
   | 'password_reset'
+  | 'password_changed'
   | 'profile_viewed';
 
 @Injectable()

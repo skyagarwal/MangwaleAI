@@ -8,6 +8,7 @@ import { PhpAddressService } from '../../php-integration/services/php-address.se
 import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
 import { PhpWalletService } from '../../php-integration/services/php-wallet.service';
 import { PhpCouponService } from '../../php-integration/services/php-coupon.service';
+import { PhpReviewService } from '../../php-integration/services/php-review.service';
 import { UserTypeDetectorService } from '../../php-integration/services/user-type-detector.service';
 import { VendorProfileService } from '../../profiles/services/vendor-profile.service';
 import { RiderProfileService } from '../../profiles/services/rider-profile.service';
@@ -41,6 +42,7 @@ export class PhpApiExecutor implements ActionExecutor {
     private readonly vendorProfileService: VendorProfileService,
     private readonly riderProfileService: RiderProfileService,
     @Optional() private readonly couponService?: PhpCouponService,
+    @Optional() private readonly reviewService?: PhpReviewService,
   ) {
     this.logger.log('🔌 PHP API Executor initialized');
   }
@@ -406,10 +408,47 @@ export class PhpApiExecutor implements ActionExecutor {
 
       case 'get_coupons': {
         const token = config.token || context.data.auth_token;
+        // Always include a Skip button as last option
+        const skipBtn = { label: '⏭️ Skip', value: 'skip_coupon' };
         if (!this.couponService) {
-          return { success: false, message: 'Coupon service unavailable' };
+          return { success: true, event: 'no_coupons', coupons: [skipBtn] };
         }
-        return this.couponService.getCoupons(token);
+        try {
+          const result = await this.couponService.getCoupons(token);
+          const raw = result.coupons || [];
+          const formatted = raw.slice(0, 3).map((c: any) => ({
+            label: `🎫 ${c.code}${c.discount_amount ? ` — ${c.discount_type === 'percent' ? c.discount_amount + '% off' : '₹' + c.discount_amount + ' off'}` : ''}`,
+            value: c.code,
+          }));
+          formatted.push(skipBtn);
+          return { success: true, event: formatted.length > 1 ? 'success' : 'no_coupons', coupons: formatted };
+        } catch {
+          return { success: true, event: 'no_coupons', coupons: [skipBtn] };
+        }
+      }
+
+      case 'submit_order_review': {
+        const token = config.token || context.data.auth_token;
+        if (!token || !this.reviewService) {
+          return { success: true, event: 'success' }; // silent pass-through
+        }
+        const orderId = parseInt(config.order_id || config.orderId || '0', 10);
+        if (!orderId) return { success: true, event: 'success' };
+        // Parse rating: 'rating_5' → 5
+        const ratingRaw = String(config.rating || '5');
+        const rating = ratingRaw.startsWith('rating_')
+          ? parseInt(ratingRaw.replace('rating_', ''), 10)
+          : (parseInt(ratingRaw, 10) || 5);
+        const comment = (config.comment && config.comment !== 'skip_review_comment') ? config.comment : '';
+        // Best-effort: get first item id from order context, fallback to orderId
+        const items = (context.data?.order_details as any)?.items;
+        const itemId = (Array.isArray(items) && items[0]?.id) ? parseInt(items[0].id, 10) : orderId;
+        try {
+          await this.reviewService.submitItemReview(token, itemId, orderId, rating, comment);
+        } catch {
+          // Swallow errors — UX should always thank the user
+        }
+        return { success: true, event: 'success' };
       }
 
       // ============================================
@@ -506,7 +545,9 @@ export class PhpApiExecutor implements ActionExecutor {
       case 'get_surge_price': {
         const zoneId = config.zone_id ? Number(config.zone_id) : 0;
         const moduleId = config.module_id ? Number(config.module_id) : 4;
-        return this.paymentService.getSurgePrice(zoneId, moduleId);
+        // Auth token is required by PHP — auto-pick from context if not in config
+        const surgeToken = config.token || context.data.auth_token;
+        return this.paymentService.getSurgePrice(zoneId, moduleId, surgeToken);
       }
 
       case 'get_wallet_balance':

@@ -267,8 +267,11 @@ export class ContextRouterService implements OnModuleInit {
     // Button actions like "razor_pay", "use_my_details", "confirm" should go directly to flow
     // 🔄 GAP 4: Use synced activeFlowInfo instead of raw session check
     const activeFlow = activeFlowInfo?.flowId || session.data?.activeFlow || session.data?.flowContext?.flowId;
-    const isButtonClick = event.metadata?.type === 'button_click' && event.metadata?.action;
-    
+    // A button click is detected when type='button_click' is set in metadata.
+    // We intentionally do NOT require 'action' — payment selection buttons only have 'value'
+    // (e.g. "wallet", "cash_on_delivery") and would otherwise fall through to NLU misclassification.
+    const isButtonClick = event.metadata?.type === 'button_click' && (event.metadata?.action || event.metadata?.value);
+
     // 🎯 OPTIMIZATION: For button clicks within active flows, skip NLU entirely
     // The flow engine knows what buttons it showed and expects specific actions
     if (activeFlow && isButtonClick) {
@@ -277,16 +280,44 @@ export class ContextRouterService implements OnModuleInit {
       // Button value is what the flow expects as event (e.g., 'popular', 'browse_menu')
       // The action is the button ID (e.g., 'btn_popular'), but value is the transition event
       const buttonValue = event.metadata.value || event.message?.toLowerCase();
-      this.logger.log(`🔘 Button click in active flow - action: ${buttonAction}, value: ${buttonValue}`);
-      
+      this.logger.log(`🔘 Button click in active flow - action: ${buttonAction || '(none)'}, value: ${buttonValue}`);
+
       // Use a synthetic intent that won't trigger command handlers
       const flowContinueIntent = { intent: 'flow_input', confidence: 1.0 };
-      
+
       // Special case: Only allow explicit cancel button clicks to cancel
       if (buttonAction === 'cancel' || buttonValue === 'cancel') {
         return this.handleCommandSync(event, session, { intent: 'cancel', confidence: 1.0 });
       }
-      
+
+      // 🔧 FIX: Top-level navigation buttons ALWAYS break out of any active flow.
+      // e.g. clicking "Book Parcel" while food_order_v1 is active should start parcel flow,
+      // NOT continue the food flow with 'book_parcel' as a flow event.
+      // These are the action values sent by getMainMenuButtons() and any top-level CTA.
+      const TOP_LEVEL_ACTIONS = new Set([
+        'order_food', 'book_parcel', 'track_order', 'help',
+        'parcel_booking', 'send_parcel', 'order_tracking',
+        // Food/ecommerce flow buttons that must never bleed into parcel flow:
+        'checkout', 'view_cart', 'main_menu', 'go_home', 'browse_menu',
+      ]);
+      if (TOP_LEVEL_ACTIONS.has(buttonAction)) {
+        this.logger.log(`🔀 Top-level button "${buttonAction}" while in flow ${activeFlow} — clearing flow and routing fresh`);
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+        session = await this.sessionService.getSession(event.identifier);
+        const routeDecision = await this.intentRouter.route(buttonAction, event.message || buttonAction, {
+          hasActiveFlow: false,
+          isAuthenticated: session.data?.authenticated === true,
+          channel: event.channel || 'web',
+        });
+        const buttonIntent = { intent: routeDecision.translatedIntent, confidence: 1.0, routeDecision };
+        const flowResponse = await this.startNewFlowSync(event, session, buttonIntent);
+        if (flowResponse) return flowResponse;
+        return this.executeAgentSync(event, session, buttonIntent);
+      }
+
       // Continue the flow with the button VALUE as the event for correct transition
       return this.continueFlowSync(event, session, flowContinueIntent, buttonValue);
     }
@@ -374,6 +405,18 @@ export class ContextRouterService implements OnModuleInit {
     // STEP 4a: Direct response intents (wallet, etc.) - handle BEFORE flow continuation
     // These are informational queries that don't need a flow — respond directly
     if (intent.intent === 'check_wallet') {
+      // Don't break out if user is in the middle of payment selection — "wallet" is a button value
+      const currentFlowState = session.data?.flowContext?.currentState;
+      const PAYMENT_SENSITIVE_STATES = [
+        'wait_payment_selection', 'collect_payment_method', 'collect_payment_method_fallback',
+        'select_payment_method', 'check_wallet_balance', 'decide_wallet_payment',
+        'show_wallet_empty', 'show_partial_payment_option',
+      ];
+      if (activeFlow && PAYMENT_SENSITIVE_STATES.includes(currentFlowState)) {
+        this.logger.log(`🔒 In payment state (${currentFlowState}) - NOT breaking out for check_wallet, letting flow handle`);
+        return this.continueFlowSync(event, session, intent, event.message?.toLowerCase());
+      }
+
       // If in active flow, clear it so user can continue after seeing wallet
       if (activeFlow) {
         this.logger.log(`💰 Breaking out of ${activeFlow} for wallet balance query`);
@@ -463,12 +506,27 @@ export class ContextRouterService implements OnModuleInit {
       try {
         const visitAgain = await this.phpOrderService?.getVisitAgain(authToken);
         if (visitAgain?.success && visitAgain.items?.length > 0) {
-          const itemList = visitAgain.items.slice(0, 5)
+          const items = visitAgain.items.slice(0, 5);
+          // Group by primary store (most common storeId)
+          const storeCounts: Record<number, string> = {};
+          for (const item of items) {
+            storeCounts[item.storeId] = (storeCounts[item.storeId] || item.storeName);
+          }
+          const primaryStoreId = items
+            .map(i => i.storeId)
+            .reduce((a, b) => items.filter(i => i.storeId === a).length >= items.filter(i => i.storeId === b).length ? a : b);
+          const primaryStoreName = storeCounts[primaryStoreId] || 'your last restaurant';
+
+          const itemList = items
             .map((item, i) => `${i + 1}. **${item.name}** — ₹${item.price}`)
             .join('\n');
+
           return {
-            message: `🔄 **Order Again**\n\nHere are items from your recent orders:\n\n${itemList}\n\nWhat would you like to reorder?`,
-            buttons: this.getMainMenuButtons(),
+            message: `🔄 **Repeat Your Last Order**\n\n🏪 From **${primaryStoreName}**:\n\n${itemList}\n\nTap below to add these to your cart instantly!`,
+            buttons: [
+              { label: '✅ Add All to Cart', value: 'quick reorder confirm', action: 'quick_reorder' },
+              { label: '🔍 Order Something Else', value: 'order food', action: 'order_food' },
+            ],
             routedTo: 'direct',
             intent,
           };
@@ -510,12 +568,20 @@ export class ContextRouterService implements OnModuleInit {
       try {
         const wishlist = await this.phpWishlistService?.getWishlist(authToken);
         if (wishlist?.success && wishlist.items?.length > 0) {
-          const itemList = wishlist.items.slice(0, 5)
-            .map((item, i) => `${i + 1}. ❤️ **${item.name}** — ₹${item.price}`)
-            .join('\n');
+          const cards = wishlist.items.slice(0, 8).map((item: any) => ({
+            id: item.itemId || item.id,
+            name: item.name,
+            price: Number(item.price) || 0,
+            storeId: item.storeId,
+            storeName: item.storeName,
+            moduleId: item.moduleId || 4,
+            action: { value: `item_${item.itemId || item.id}` },
+          }));
+          const extra = wishlist.items.length > 8 ? ` (+${wishlist.items.length - 8} more)` : '';
           return {
-            message: `❤️ **Your Wishlist**\n\n${itemList}\n\n${wishlist.items.length > 5 ? `+${wishlist.items.length - 5} more items` : ''}`,
-            buttons: this.getMainMenuButtons(),
+            message: `❤️ **Your Wishlist** — ${wishlist.items.length} item${wishlist.items.length !== 1 ? 's' : ''}${extra}`,
+            cards,
+            buttons: [{ label: '🔍 Order Something', value: 'order food', action: 'order_food' }, ...this.getMainMenuButtons().slice(0, 2)],
             routedTo: 'direct',
             intent,
           };
@@ -525,8 +591,8 @@ export class ContextRouterService implements OnModuleInit {
       }
 
       return {
-        message: '❤️ Your wishlist is empty.\n\nBrowse items and tap ❤️ to add them to your wishlist!',
-        buttons: this.getMainMenuButtons(),
+        message: '❤️ Your wishlist is empty.\n\nTap the ❤️ button on any item to save it here!',
+        buttons: [{ label: '🍔 Browse Food', value: 'order food', action: 'order_food' }, ...this.getMainMenuButtons().slice(0, 2)],
         routedTo: 'direct',
         intent,
       };

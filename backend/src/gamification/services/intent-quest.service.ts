@@ -108,10 +108,6 @@ export class IntentQuestService {
         where: { id: questionId },
         data: {
           usageCount: { increment: 1 },
-          successRate: {
-            // Recalculate success rate
-            // This is a simplified version; in production, track attempts separately
-          },
         },
       });
     } catch (error) {

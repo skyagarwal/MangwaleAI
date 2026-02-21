@@ -11,6 +11,7 @@ import { SentimentAnalysisService } from '../../agents/services/sentiment-analys
 import { AdvancedLearningService } from '../../agents/services/advanced-learning.service';
 import { resolveImageUrl } from '../../common/utils/image-url.util';
 import { StoreScheduleService } from '../../stores/services/store-schedule.service';
+import { NerEntityExtractorService } from '../../nlu/services/ner-entity-extractor.service';
 
 /**
  * Search Executor
@@ -40,6 +41,7 @@ export class SearchExecutor implements ActionExecutor {
     @Optional() private readonly queryExpansion?: QueryExpansionService,
     @Optional() private readonly configService?: ConfigService,
     @Optional() private readonly storeScheduleService?: StoreScheduleService,
+    @Optional() private readonly nerExtractor?: NerEntityExtractorService,
   ) {
     this.storageCdnUrl = this.configService?.get<string>('storage.cdnUrl') || 'https://storage.mangwale.ai/mangwale/product';
   }
@@ -74,6 +76,96 @@ export class SearchExecutor implements ActionExecutor {
       if (!status) return card;
       return { ...card, isOpen: status.is_open, storeStatusMessage: status.message };
     });
+  }
+
+  /**
+   * Build contextual filter quick-reply buttons based on the result set.
+   * Uses natural-language values so they flow through the existing NLU/entity-resolution
+   * pipeline (resolve_user_intent → check_resolution_result → re-search).
+   * Only generates buttons that would meaningfully change results.
+   */
+  private buildFilterButtons(cards: any[], currentVeg?: string, currentRatingMin?: number): Array<{ label: string; value: string }> {
+    if (!cards?.length) return [];
+
+    const buttons: Array<{ label: string; value: string }> = [];
+
+    // Veg filter: only show if both veg and non-veg items exist and no veg filter is active
+    if (!currentVeg) {
+      const hasVeg = cards.some(c => c.veg === 1 || c.veg === true || c.veg === '1');
+      const hasNonVeg = cards.some(c => c.veg === 0 || c.veg === false || c.veg === '0');
+      if (hasVeg && hasNonVeg) {
+        buttons.push({ label: '🥦 Veg only', value: 'show veg only' });
+      }
+    }
+
+    // Rating filter: only show if some items are 4+ rated and no rating filter active
+    if (!currentRatingMin) {
+      const hasTopRated = cards.some(c => parseFloat(c.rating || '0') >= 4.0);
+      if (hasTopRated) {
+        buttons.push({ label: '⭐ Top rated', value: 'show top rated options' });
+      }
+    }
+
+    // Price filter: only show if price spread is meaningful (max > 1.5x min)
+    const prices = cards.map(c => c.rawPrice || parseFloat((c.price || '₹0').replace('₹', '') || '0')).filter(p => p > 0);
+    if (prices.length > 1) {
+      const minP = Math.min(...prices);
+      const maxP = Math.max(...prices);
+      if (maxP > minP * 1.5) {
+        const budgetMax = Math.round(minP + (maxP - minP) * 0.35);
+        buttons.push({ label: `💰 Under ₹${budgetMax}`, value: `budget options under ${budgetMax} rupees` });
+      }
+    }
+
+    return buttons;
+  }
+
+  /**
+   * Extract FOOD/PREF entities from user query via Mercury NER (non-blocking).
+   * Returns { vegFilter, refinedQuery } — both may be undefined if NER fails/times-out.
+   * NER runs with a 3s timeout so it never delays a search by more than that.
+   */
+  private async extractSearchEntities(query: string): Promise<{ vegFilter?: 1 | 0; refinedQuery?: string }> {
+    if (!this.nerExtractor) return {};
+    try {
+      const entities = await Promise.race([
+        this.nerExtractor.extract(query),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('NER timeout')), 3000)),
+      ]);
+
+      const result: { vegFilter?: 1 | 0; refinedQuery?: string } = {};
+
+      // PREF → veg filter
+      if (entities.preference?.length) {
+        const pref = entities.preference.join(' ').toLowerCase();
+        if (pref.includes('veg') && !pref.includes('non-veg') && !pref.includes('nonveg')) {
+          result.vegFilter = 1;
+        } else if (pref.includes('non-veg') || pref.includes('nonveg')) {
+          result.vegFilter = 0;
+        }
+      }
+
+      // FOOD → use as refined query when the raw query is conversational (has stop-words)
+      // e.g. "I want biryani near station" → refinedQuery = "biryani"
+      const foodRefs = entities.food_reference;
+      if (foodRefs?.length) {
+        const foodStr = foodRefs.join(' ').toLowerCase();
+        // Only refine if NER extracted a distinct food term and query is longer (conversational)
+        const queryWords = query.trim().split(/\s+/).length;
+        if (queryWords >= 4 && foodStr.length >= 3) {
+          result.refinedQuery = foodStr;
+        }
+      }
+
+      if (result.vegFilter !== undefined || result.refinedQuery) {
+        this.logger.log(`🏷️ NER extracted: vegFilter=${result.vegFilter}, refinedQuery="${result.refinedQuery}" from "${query}"`);
+      }
+
+      return result;
+    } catch (err) {
+      this.logger.debug(`NER extraction skipped: ${err.message}`);
+      return {};
+    }
   }
 
   /**
@@ -224,7 +316,7 @@ export class SearchExecutor implements ActionExecutor {
           return {
             id: item.id,
             name: item.name || item.description?.substring(0, 50),
-            description: item.category_name || item.description,
+            description: item.description || item.category_name,
             price: item.price ? `₹${item.price}` : undefined,
             rawPrice: item.price,
             image: getImageUrl(item),
@@ -309,6 +401,7 @@ export class SearchExecutor implements ActionExecutor {
       const useIntentSearch = config.useIntentSearch || config.intentSearch || false;
       const useSmartSearch = config.useSmartSearch || config.smartSearch || false;
       const queryMode = config.queryMode as string; // 'multi-term', 'recommendation'
+      const openNowMode = !!config.open_now;
       const userId = context.data._user_id || context.data.userId || context.data.user_id;
       const platform = context.data.platform || 'unknown';
 
@@ -337,9 +430,11 @@ export class SearchExecutor implements ActionExecutor {
               this.logger.log(`👤 Personalizing recommendations for user ${userId}`);
 
               // Apply dietary filter
-              if (userProfile.food_preferences?.dietary_type === 'vegetarian' && !filters.find(f => f.field === 'veg')) {
+              const dietType = (userProfile.food_preferences?.dietary_type || userProfile.dietary_type || '').toLowerCase();
+              const isVegProfile = ['vegetarian','veg','vegan','jain','eggetarian'].includes(dietType);
+              if (isVegProfile && !filters.find((f: any) => f.field === 'veg')) {
                 filters.push({ field: 'veg', operator: 'equals', value: 1 });
-                this.logger.log('🥗 Applied vegetarian filter from user profile');
+                this.logger.log(`🥗 Applied veg filter from user profile (dietary_type: ${dietType})`);
               }
 
               // Get boosts for reranking
@@ -489,6 +584,13 @@ export class SearchExecutor implements ActionExecutor {
         // Enrich cards with store open/closed status
         if (result.output?.cards) {
           result.output.cards = await this.enrichWithSchedule(result.output.cards);
+          // Float open restaurants before closed (stable: preserves personalization rank within each group)
+          if (result.output.cards?.length > 0) {
+            result.output.cards = [
+              ...result.output.cards.filter((c: any) => c.isOpen !== false),
+              ...result.output.cards.filter((c: any) => c.isOpen === false),
+            ];
+          }
         }
 
         // For recommendation mode, add time-aware greeting to output
@@ -496,6 +598,14 @@ export class SearchExecutor implements ActionExecutor {
           const { emoji, greeting, mealType } = SearchExecutor.getTimeAwareGreeting();
           result.output._greeting = `${emoji} ${greeting}! ${mealType} ke liye kuch tasty items:`;
           result.output._mealType = mealType;
+        }
+
+        // Always set headerMessage for show_results template
+        if (result.output && !result.output.headerMessage) {
+          const count = result.output.cards?.length ?? 0;
+          result.output.headerMessage = openNowMode
+            ? `🟢 ${count} restaurants open right now!`
+            : count > 0 ? `Found ${count} options nearby 🍴` : `No results found nearby`;
         }
 
         return result;
@@ -528,9 +638,11 @@ export class SearchExecutor implements ActionExecutor {
             this.logger.log(`👤 Applying personalization for user ${userId}`);
             
             // Apply dietary preferences as filters
-            if (userProfile.food_preferences?.dietary_type === 'vegetarian' && !filters.find(f => f.field === 'veg')) {
+            const dietType = (userProfile.food_preferences?.dietary_type || userProfile.dietary_type || '').toLowerCase();
+            const isVegProfile = ['vegetarian','veg','vegan','jain','eggetarian'].includes(dietType);
+            if (isVegProfile && !filters.find((f: any) => f.field === 'veg')) {
               filters.push({ field: 'veg', operator: 'equals', value: 1 });
-              this.logger.log('🥗 Applied vegetarian filter from user profile');
+              this.logger.log(`🥗 Applied veg filter from user profile (dietary_type: ${dietType})`);
             }
             
             // Get personalization boosts (favorite items, categories, stores)
@@ -545,7 +657,7 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
 
-      // � NLU PREFERENCE: Apply veg filter from NLU-extracted preference (e.g., "i am vegetarian")
+      // 🥗 NLU PREFERENCE: Apply veg filter from NLU-extracted preference (e.g., "i am vegetarian")
       // This catches preferences from the CURRENT message, not just user profile
       if (!filters.find(f => f.field === 'veg')) {
         const nluPreference = context.data._user_food_preference || context.data.extracted_food?.preference;
@@ -556,7 +668,23 @@ export class SearchExecutor implements ActionExecutor {
         }
       }
 
-      // �🧠 V3 SEARCH INTEGRATION: Use AI understanding for complex queries
+      // 🏷️ NER ENTITY EXTRACTION: Run Mercury NER in parallel with query expansion
+      // Extracts PREF (veg/non-veg) and FOOD (dish name) from conversational queries.
+      // Runs non-blocking with a 3s timeout — never delays search meaningfully.
+      // Only apply NER veg filter if no veg filter already set by NLU/profile.
+      {
+        const nerEntities = await this.extractSearchEntities(query);
+        if (nerEntities.vegFilter !== undefined && !filters.find(f => f.field === 'veg')) {
+          filters.push({ field: 'veg', operator: 'equals', value: nerEntities.vegFilter });
+          this.logger.log(`🏷️ NER: Applied veg=${nerEntities.vegFilter} filter from PREF entity`);
+        }
+        if (nerEntities.refinedQuery) {
+          query = nerEntities.refinedQuery;
+          this.logger.log(`🏷️ NER: Refined query to "${query}" from FOOD entity`);
+        }
+      }
+
+      // 🧠 V3 SEARCH INTEGRATION: Use AI understanding for complex queries
       const hasComplexFilters = /\b(cheap|veg|non[- ]?veg|under|below|above|near|around|fastest|quick)\b/i.test(query);
       
       if (hasComplexFilters && this.searchAI && !useSmartSearch) {
@@ -789,6 +917,19 @@ export class SearchExecutor implements ActionExecutor {
         const formatted = this.formatSearchResults(results, limit);
         if (formatted.output?.cards) {
           formatted.output.cards = await this.enrichWithSchedule(formatted.output.cards);
+          // Float open restaurants before closed (stable: preserves personalization rank within each group)
+          if (formatted.output.cards?.length > 0) {
+            formatted.output.cards = [
+              ...formatted.output.cards.filter((c: any) => c.isOpen !== false),
+              ...formatted.output.cards.filter((c: any) => c.isOpen === false),
+            ];
+          }
+        }
+        if (formatted.output && !formatted.output.headerMessage) {
+          const count = formatted.output.cards?.length ?? 0;
+          formatted.output.headerMessage = count > 0
+            ? `Found ${count} options nearby 🍴`
+            : `No results found nearby`;
         }
         return formatted;
       }
@@ -1132,12 +1273,70 @@ export class SearchExecutor implements ActionExecutor {
 
       // Set friendly error for no results so response executor can show a helpful message
       if (!output.hasResults) {
-        context.data._friendly_error = `Hmm, I couldn't find anything for "${query}". Try searching for something else, like a dish name or restaurant?`;
+        const COMMON_ALTERNATIVES = ['biryani', 'pizza', 'thali', 'burger', 'paneer', 'roti'];
+        const suggestions = COMMON_ALTERNATIVES.filter(s => !query.toLowerCase().includes(s)).slice(0, 3).join(', ');
+        context.data._friendly_error = `Couldn't find anything for *"${query}"* nearby 😔\n\nTry searching for: ${suggestions}, or browse our categories below.`;
+        output.zeroResultQuery = query;
       }
 
       // Enrich cards with store open/closed status
       if (output.cards) {
         output.cards = await this.enrichWithSchedule(output.cards);
+        // Float open restaurants before closed (stable: preserves personalization rank within each group)
+        if (output.cards?.length > 0) {
+          output.cards = [
+            ...output.cards.filter((c: any) => c.isOpen !== false),
+            ...output.cards.filter((c: any) => c.isOpen === false),
+          ];
+        }
+        // 🟢 OPEN NOW MODE: Filter to only open restaurants if flag set
+        if (openNowMode && output.cards?.length > 0) {
+          const before = output.cards.length;
+          output.cards = output.cards.filter((c: any) => c.isOpen !== false);
+          output.totalItems = output.cards.length;
+          output.openNowFiltered = true;
+          output.headerMessage = `🟢 ${output.cards.length} restaurants open right now!`;
+          this.logger.log(`🟢 Open-now filter: ${before} → ${output.cards.length} restaurants`);
+        }
+        // Build contextual filter buttons based on result set
+        if (!openNowMode) {
+          const vegFilterEntry = filters?.find((f: any) => f.field === 'veg');
+          const ratingFilterEntry = filters?.find((f: any) => f.field === 'rating_min');
+          output.filterButtons = this.buildFilterButtons(
+            output.cards,
+            vegFilterEntry?.value as string | undefined,
+            ratingFilterEntry?.value as number | undefined,
+          );
+        }
+        // Store result count for friendly message interpolation
+        output.totalItems = output.cards.length;
+        // Always set headerMessage so show_results {{search_results.headerMessage}} has a value
+        if (!output.headerMessage) {
+          output.headerMessage = output.cards.length > 0
+            ? `Found ${output.cards.length} options nearby 🍴`
+            : `No results found nearby`;
+        }
+      }
+
+      // Fallback: ensure headerMessage is always set even when output.cards is undefined (zero results path)
+      if (!output.headerMessage) {
+        output.headerMessage = `No results found nearby`;
+      }
+
+      // Log with location for geographic insights (non-blocking)
+      if (this.searchAnalytics && lat && lng) {
+        this.searchAnalytics.logSearch({
+          query,
+          searchType: useSmartSearch ? 'smart' : 'standard',
+          filters: filters.reduce((acc: Record<string, any>, f: any) => { acc[f.field] = f.value; return acc; }, {}),
+          resultsCount: output.totalItems ?? output.cards?.length ?? 0,
+          executionTimeMs: 0,
+          sessionId: context.data._session_id || context.data.sessionId,
+          userId: userId,
+          platform,
+          lat: typeof lat === 'string' ? parseFloat(lat) : lat,
+          lon: typeof lng === 'string' ? parseFloat(String(lng)) : (lng as number),
+        }).catch(() => {});
       }
 
       return {

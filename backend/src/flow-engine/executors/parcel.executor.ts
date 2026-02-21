@@ -56,7 +56,11 @@ export class ParcelExecutor implements ActionExecutor {
       // 1. Get pickup location to determine zone
       const pickupAddress = this.resolve(context, config.pickupAddressPath, 'sender_address') || config.pickup_address;
       
-      if (!pickupAddress || !pickupAddress.lat || !pickupAddress.lng) {
+      // Support both .latitude/.longitude (PHP API format) and .lat/.lng (legacy)
+      const pickupLat = pickupAddress?.latitude ?? pickupAddress?.lat;
+      const pickupLng = pickupAddress?.longitude ?? pickupAddress?.lng;
+
+      if (!pickupAddress || !pickupLat || !pickupLng) {
         // Fallback to default if no address (should not happen in flow)
         this.logger.warn('No pickup address found, using default zone');
       }
@@ -65,11 +69,11 @@ export class ParcelExecutor implements ActionExecutor {
       let moduleId = config.moduleId;
 
       // If we have coordinates, get the real zone
-      if (!zoneId && pickupAddress?.lat && pickupAddress?.lng) {
+      if (!zoneId && pickupLat && pickupLng) {
         try {
           const zoneInfo = await this.phpParcelService.getZoneByLocation(
-            pickupAddress.lat,
-            pickupAddress.lng
+            pickupLat,
+            pickupLng
           );
           zoneId = zoneInfo.primaryZoneId;
           moduleId = zoneInfo.primaryModuleId;

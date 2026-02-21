@@ -126,7 +126,6 @@ export const addressManagementFlow: FlowDefinition = {
       description: 'Wait for user to make a choice',
       transitions: {
         user_message: 'handle_choice',
-        user_message: 'handle_choice',
         timeout: 'completed',
       },
       timeout: 300000,

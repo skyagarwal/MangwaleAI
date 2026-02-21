@@ -50,6 +50,12 @@ export interface UserPreferences {
     polite?: boolean;
   };
   
+  // Demographics
+  familySize?: number;
+  occupation?: string;
+  ageGroup?: string;
+  preferredArea?: string;
+
   // Recent Insights
   recentInsights?: Array<{
     type: string;
@@ -164,7 +170,7 @@ export class UserPreferenceService {
       recentInsights: insights.map(insight => ({
         type: insight.insight_type,
         key: insight.insight_key,
-        value: insight.insight_value,
+        value: String(insight.insight_value),
         confidence: parseFloat(insight.confidence?.toString() || '0'),
         detectedAt: insight.extracted_at, // Fix: use correct field name
       })),

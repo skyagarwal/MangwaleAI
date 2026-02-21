@@ -1,5 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Optional, Logger } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { firstValueFrom } from 'rxjs';
 
 interface TrendingQuery {
   query: string;
@@ -28,6 +31,35 @@ interface TrendingLocation {
 @ApiTags('trending')
 @Controller('trending')
 export class TrendingController {
+  private readonly logger = new Logger(TrendingController.name);
+  private readonly searchApiUrl: string;
+
+  constructor(
+    @Optional() private readonly httpService?: HttpService,
+    @Optional() private readonly configService?: ConfigService,
+  ) {
+    this.searchApiUrl = this.configService?.get<string>('SEARCH_API_URL') || 'http://localhost:3100';
+  }
+
+  private rangeToWindow(range: string): string {
+    const map: Record<string, string> = { '1h': '1h', '24h': '1d', '7d': '7d', '30d': '30d' };
+    return map[range] || range;
+  }
+
+  private async fetchClickHouseTrending(window: string, module?: string): Promise<any[]> {
+    if (!this.httpService) return [];
+    try {
+      const params: Record<string, any> = { window };
+      if (module && module !== 'all') params.module = module;
+      const response = await firstValueFrom(
+        this.httpService.get(`${this.searchApiUrl}/analytics/trending`, { params, timeout: 5000 })
+      );
+      return response.data?.rows || [];
+    } catch (err) {
+      this.logger.warn(`ClickHouse trending fetch failed: ${err.message}`);
+      return [];
+    }
+  }
 
   @Get()
   @ApiOperation({ summary: 'Get all trending data' })
@@ -48,7 +80,7 @@ export class TrendingController {
   }
 
   @Get('queries')
-  @ApiOperation({ summary: 'Get trending search queries' })
+  @ApiOperation({ summary: 'Get trending search queries from ClickHouse' })
   @ApiQuery({ name: 'range', required: false })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'module', required: false })
@@ -58,60 +90,49 @@ export class TrendingController {
     @Query('limit') limit: number = 20,
     @Query('module') module?: string,
   ): Promise<TrendingQuery[]> {
-    // In a real implementation, this would query the search_log table
-    // and calculate trends based on time windows
-    const mockQueries: TrendingQuery[] = [
-      { query: 'pizza delivery', count: 2450, trend: 245, module: 'Food', velocity: 'rising' },
-      { query: 'grocery home delivery', count: 1890, trend: 189, module: 'Ecom', velocity: 'rising' },
-      { query: 'urgent parcel', count: 1560, trend: 156, module: 'Parcel', velocity: 'rising' },
-      { query: 'airport taxi', count: 1340, trend: 134, module: 'Ride', velocity: 'stable' },
-      { query: 'medicine delivery', count: 980, trend: 98, module: 'Health', velocity: 'rising' },
-      { query: 'biryani near me', count: 876, trend: 87, module: 'Food', velocity: 'rising' },
-      { query: 'cab booking', count: 765, trend: 45, module: 'Ride', velocity: 'stable' },
-      { query: 'track my order', count: 654, trend: -12, module: 'General', velocity: 'falling' },
-      { query: 'vegetable delivery', count: 543, trend: 67, module: 'Ecom', velocity: 'rising' },
-      { query: 'late night food', count: 432, trend: 89, module: 'Food', velocity: 'rising' },
-    ];
-
-    // Filter by module if specified
-    let filtered = mockQueries;
-    if (module && module !== 'all') {
-      filtered = mockQueries.filter(q => q.module.toLowerCase() === module.toLowerCase());
-    }
-
-    return filtered.slice(0, limit);
+    const rows = await this.fetchClickHouseTrending(this.rangeToWindow(range), module);
+    return rows.slice(0, Number(limit)).map(r => ({
+      query: r.q,
+      count: r.count || 0,
+      trend: r.count || 0,
+      module: r.module || 'Food',
+      velocity: r.count > 50 ? 'rising' : r.count > 10 ? 'stable' : 'falling',
+    }));
   }
 
   @Get('products')
-  @ApiOperation({ summary: 'Get trending products' })
-  @ApiQuery({ name: 'range', required: false })
+  @ApiOperation({ summary: 'Get popular products by clicks, cart adds and orders from ClickHouse' })
+  @ApiQuery({ name: 'hours', required: false, description: 'Lookback hours (default: 24)' })
+  @ApiQuery({ name: 'module_id', required: false, description: '4=food, 5=ecom (default: 4)' })
   @ApiQuery({ name: 'limit', required: false })
-  @ApiQuery({ name: 'category', required: false })
-  @ApiResponse({ status: 200, description: 'Trending products retrieved' })
+  @ApiResponse({ status: 200, description: 'Popular products retrieved from ClickHouse click_events' })
   async getTrendingProducts(
-    @Query('range') range: string = '24h',
-    @Query('limit') limit: number = 10,
-    @Query('category') category?: string,
-  ): Promise<TrendingProduct[]> {
-    // In a real implementation, this would query order data
-    const mockProducts: TrendingProduct[] = [
-      { product_id: '1', name: 'Margherita Pizza', category: 'Food', orders: 345, trend: 156, revenue: 69000 },
-      { product_id: '2', name: 'Chicken Biryani', category: 'Food', orders: 298, trend: 89, revenue: 59600 },
-      { product_id: '3', name: 'Onions (1kg)', category: 'Grocery', orders: 567, trend: 45, revenue: 17010 },
-      { product_id: '4', name: 'Milk Packet', category: 'Grocery', orders: 890, trend: 23, revenue: 44500 },
-      { product_id: '5', name: 'Cough Syrup', category: 'Medicine', orders: 234, trend: 78, revenue: 28080 },
-      { product_id: '6', name: 'Paneer Butter Masala', category: 'Food', orders: 276, trend: 112, revenue: 55200 },
-      { product_id: '7', name: 'Rice (5kg)', category: 'Grocery', orders: 445, trend: 34, revenue: 89000 },
-      { product_id: '8', name: 'Paracetamol', category: 'Medicine', orders: 189, trend: 56, revenue: 7560 },
-    ];
-
-    // Filter by category if specified
-    let filtered = mockProducts;
-    if (category && category !== 'all') {
-      filtered = mockProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    @Query('hours') hours: string = '24',
+    @Query('module_id') moduleId: string = '4',
+    @Query('limit') limit: string = '20',
+  ): Promise<any> {
+    if (this.httpService) {
+      try {
+        const response = await firstValueFrom(
+          this.httpService.get(`${this.searchApiUrl}/v2/analytics/popular-products`, {
+            params: { hours, module_id: moduleId, limit },
+            timeout: 5000,
+          })
+        );
+        return response.data;
+      } catch (err) {
+        this.logger.warn(`Popular products from ClickHouse failed: ${err.message}`);
+      }
     }
 
-    return filtered.slice(0, limit);
+    return {
+      products: [],
+      hours: parseInt(hours),
+      module_id: parseInt(moduleId),
+      count: 0,
+      source: 'unavailable',
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Get('locations')
@@ -121,69 +142,100 @@ export class TrendingController {
   async getTrendingLocations(
     @Query('range') range: string = '24h',
   ): Promise<TrendingLocation[]> {
-    // In a real implementation, this would group search data by location
-    const mockLocations: TrendingLocation[] = [
-      { location: 'Indore', top_queries: ['pizza', 'grocery', 'medicine'], total_searches: 5670, change: 23 },
-      { location: 'Bhopal', top_queries: ['cab', 'food', 'parcel'], total_searches: 4320, change: 15 },
-      { location: 'Mumbai', top_queries: ['late night food', 'cab'], total_searches: 8900, change: 34 },
-      { location: 'Delhi', top_queries: ['grocery', 'medicine'], total_searches: 7650, change: 28 },
-      { location: 'Bangalore', top_queries: ['food delivery', 'grocery'], total_searches: 6540, change: 19 },
-      { location: 'Hyderabad', top_queries: ['biryani', 'ride'], total_searches: 5430, change: 21 },
-      { location: 'Chennai', top_queries: ['pharmacy', 'food'], total_searches: 4890, change: 17 },
-      { location: 'Pune', top_queries: ['parcel', 'medicine'], total_searches: 4210, change: 14 },
-    ];
-
-    return mockLocations;
+    return [];
   }
 
   @Get('peak-hours')
-  @ApiOperation({ summary: 'Get peak usage hours' })
+  @ApiOperation({ summary: 'Get peak usage hours from ClickHouse search events' })
   @ApiQuery({ name: 'range', required: false })
   @ApiResponse({ status: 200, description: 'Peak hours data retrieved' })
   async getPeakHours(@Query('range') range: string = '24h') {
-    // In a real implementation, this would analyze request timestamps
-    const peakHours = [
-      { hour: '12:00 - 14:00', label: 'Lunch Rush', percent: 85, requests: 12500 },
-      { hour: '19:00 - 21:00', label: 'Dinner Peak', percent: 92, requests: 15800 },
-      { hour: '09:00 - 11:00', label: 'Morning Orders', percent: 65, requests: 9200 },
-      { hour: '15:00 - 17:00', label: 'Afternoon', percent: 45, requests: 6500 },
-      { hour: '22:00 - 00:00', label: 'Late Night', percent: 55, requests: 7800 },
-      { hour: '06:00 - 09:00', label: 'Early Morning', percent: 35, requests: 4200 },
-    ];
+    const rows = await this.fetchClickHouseTrending(this.rangeToWindow(range));
+
+    const todLabels: Record<string, string> = {
+      morning: '06:00 - 12:00',
+      afternoon: '12:00 - 17:00',
+      evening: '17:00 - 21:00',
+      night: '21:00 - 06:00',
+    };
+
+    const buckets: Record<string, number> = {};
+    for (const r of rows) {
+      const tod = r.time_of_day || 'afternoon';
+      buckets[tod] = (buckets[tod] || 0) + (r.count || 0);
+    }
+
+    const total = Object.values(buckets).reduce((a, b) => a + b, 0) || 1;
+    const peakHours = Object.entries(buckets).map(([tod, count]) => ({
+      hour: todLabels[tod] || tod,
+      label: tod.charAt(0).toUpperCase() + tod.slice(1),
+      percent: Math.round((count / total) * 100),
+      requests: count,
+    })).sort((a, b) => b.requests - a.requests);
 
     return { peak_hours: peakHours, range };
   }
 
   @Get('module-distribution')
-  @ApiOperation({ summary: 'Get search volume by module' })
+  @ApiOperation({ summary: 'Get search volume by module from ClickHouse' })
   @ApiQuery({ name: 'range', required: false })
   @ApiResponse({ status: 200, description: 'Module distribution retrieved' })
   async getModuleDistribution(@Query('range') range: string = '24h') {
-    const distribution = [
-      { module: 'Food', percent: 35, count: 45000, color: '#f97316' },
-      { module: 'Ecom', percent: 28, count: 36000, color: '#3b82f6' },
-      { module: 'Ride', percent: 18, count: 23000, color: '#22c55e' },
-      { module: 'Parcel', percent: 12, count: 15500, color: '#8b5cf6' },
-      { module: 'Health', percent: 7, count: 9000, color: '#ef4444' },
-    ];
+    const rows = await this.fetchClickHouseTrending(this.rangeToWindow(range));
+
+    const moduleColors: Record<string, string> = {
+      food: '#f97316', ecom: '#3b82f6', parcel: '#8b5cf6', ride: '#22c55e', health: '#ef4444',
+    };
+
+    const moduleMap: Record<string, number> = {};
+    for (const r of rows) {
+      const mod = (r.module || 'food').toLowerCase();
+      moduleMap[mod] = (moduleMap[mod] || 0) + (r.count || 0);
+    }
+
+    const total = Object.values(moduleMap).reduce((a, b) => a + b, 0) || 1;
+    const distribution = Object.entries(moduleMap).map(([mod, count]) => ({
+      module: mod.charAt(0).toUpperCase() + mod.slice(1),
+      percent: Math.round((count / total) * 100),
+      count,
+      color: moduleColors[mod] || '#6b7280',
+    })).sort((a, b) => b.count - a.count);
 
     return { distribution, range };
   }
 
   @Get('real-time')
-  @ApiOperation({ summary: 'Get real-time trending data' })
+  @ApiOperation({ summary: 'Get real-time trending queries from ClickHouse (last 1 hour)' })
   @ApiResponse({ status: 200, description: 'Real-time data retrieved' })
   async getRealTimeTrends() {
-    // No real-time metrics pipeline exists yet — return zeros instead of fake data
     const now = new Date();
+    const rows = await this.fetchClickHouseTrending('1h');
+
+    if (rows.length > 0) {
+      const totalSearches = rows.reduce((sum, r) => sum + (r.count || 0), 0);
+      return {
+        current_searches_per_minute: Math.round(totalSearches / 60),
+        total_searches_last_hour: totalSearches,
+        active_sessions: 0,
+        orders_in_progress: 0,
+        top_query_now: rows[0]?.q || null,
+        top_queries: rows.slice(0, 10).map(r => ({ query: r.q, count: r.count })),
+        busiest_location: null,
+        timestamp: now.toISOString(),
+        source: 'clickhouse',
+      };
+    }
 
     return {
       current_searches_per_minute: 0,
+      total_searches_last_hour: 0,
       active_sessions: 0,
       orders_in_progress: 0,
       top_query_now: null,
+      top_queries: [],
       busiest_location: null,
       timestamp: now.toISOString(),
+      source: 'unavailable',
     };
   }
 }

@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Body, Query, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Logger, HttpCode } from '@nestjs/common';
+import { ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { UserProfilingService } from './user-profiling.service';
 import { ConversationAnalyzerService } from './conversation-analyzer.service';
 import { PrismaService } from '../database/prisma.service';
+import { CollectionsService } from './collections.service';
+import { PhpWishlistService } from '../php-integration/services/php-wishlist.service';
+import { SessionService } from '../session/session.service';
 
 /**
  * Personalization API Controller
@@ -20,6 +24,9 @@ export class PersonalizationController {
     private readonly userProfilingService: UserProfilingService,
     private readonly conversationAnalyzerService: ConversationAnalyzerService,
     private readonly prisma: PrismaService,
+    private readonly collectionsService: CollectionsService,
+    private readonly phpWishlistService: PhpWishlistService,
+    private readonly sessionService: SessionService,
   ) {}
 
   /**
@@ -83,8 +90,36 @@ export class PersonalizationController {
   }
 
   /**
+   * Get Personalized Collections
+   *
+   * Returns up to 4 smart home-screen tiles personalised for the given user.
+   * Tiles are derived from order history, favourite stores, and current time.
+   *
+   * GET /personalization/collections?user_id=123&lat=21.1&lng=79.0
+   */
+  @Get('collections')
+  @ApiOperation({ summary: 'Get personalized food collections for current user' })
+  @ApiQuery({ name: 'user_id', required: true })
+  @ApiQuery({ name: 'lat', required: false })
+  @ApiQuery({ name: 'lng', required: false })
+  async getCollections(
+    @Query('user_id') userId: string,
+    @Query('lat') lat?: string,
+    @Query('lng') lng?: string,
+  ) {
+    if (!userId || isNaN(Number(userId))) {
+      return { collections: [] };
+    }
+    const collections = await this.collectionsService.generateCollections(Number(userId), {
+      lat: lat ? parseFloat(lat) : undefined,
+      lng: lng ? parseFloat(lng) : undefined,
+    });
+    return { collections, timestamp: new Date().toISOString() };
+  }
+
+  /**
    * Track Search Pattern
-   * 
+   *
    * Called by Search API after each search to track behavior
    * 
    * POST /personalization/track/search
@@ -391,6 +426,43 @@ export class PersonalizationController {
     } catch (error) {
       this.logger.error('Failed to get insight types:', error);
       return { success: false, types: [] };
+    }
+  }
+
+  /**
+   * Wishlist Toggle
+   *
+   * Add or remove an item from the authenticated user's wishlist.
+   * Uses the session_id to look up the PHP auth token from Redis/DB.
+   *
+   * POST /personalization/wishlist/toggle
+   * { "item_id": 123, "session_id": "uuid-or-phone", "action": "add" | "remove" }
+   */
+  @Post('wishlist/toggle')
+  @HttpCode(200)
+  async toggleWishlist(
+    @Body() body: { item_id: number; session_id: string; action?: 'add' | 'remove' },
+  ) {
+    const { item_id, session_id, action = 'add' } = body;
+    if (!item_id || !session_id) {
+      return { success: false, message: 'item_id and session_id are required' };
+    }
+    try {
+      const session = await this.sessionService.getSession(session_id);
+      const authToken = session?.data?.auth_token;
+      if (!authToken) {
+        return { success: false, message: 'Not authenticated', code: 'no_auth' };
+      }
+      if (action === 'remove') {
+        const result = await this.phpWishlistService.removeFromWishlist(authToken, item_id);
+        return result;
+      } else {
+        const result = await this.phpWishlistService.addToWishlist(authToken, item_id);
+        return result;
+      }
+    } catch (err) {
+      this.logger.warn(`Wishlist toggle failed: ${err.message}`);
+      return { success: false, message: err.message };
     }
   }
 

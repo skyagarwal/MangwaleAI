@@ -41,6 +41,8 @@ import { MultiStoreSearchExecutor } from './executors/multi-store-search.executo
 import { NluConditionExecutor } from './executors/nlu-condition.executor';
 import { PureNerExecutor } from './executors/pure-ner.executor';
 import { AgentExecutor } from './executors/agent.executor';
+import { CollectionsExecutor } from './executors/collections.executor';
+import { QuickReorderExecutor } from './executors/quick-reorder.executor';
 // Game executors disabled - Prisma schema mismatch
 // import { GameScorerExecutor } from './executors/game-scorer.executor';
 // import { RewardPointsExecutor } from './executors/reward-points.executor';
@@ -145,6 +147,8 @@ import { AddressValidatorService } from '../common/validators/address.validator'
     NluConditionExecutor, // Replace .includes() with ML-based conditions
     PureNerExecutor, // Pure ML entity extraction (no regex fallback)
     AgentExecutor, // LLM tool-use agent for dynamic orchestration
+    CollectionsExecutor, // Smart personalised collections for home screen
+    QuickReorderExecutor, // 🔄 One-tap repeat last order
     // GameScorerExecutor, // Disabled - Prisma schema mismatch
     // RewardPointsExecutor, // Disabled - Prisma schema mismatch
   ],
@@ -196,6 +200,8 @@ export class FlowEngineModule {
     private readonly nluConditionExecutor: NluConditionExecutor,
     private readonly pureNerExecutor: PureNerExecutor,
     private readonly agentExecutor: AgentExecutor,
+    private readonly collectionsExecutor: CollectionsExecutor,
+    private readonly quickReorderExecutor: QuickReorderExecutor,
     // private readonly gameScorerExecutor: GameScorerExecutor, // Disabled
     // private readonly rewardPointsExecutor: RewardPointsExecutor, // Disabled
   ) {
@@ -232,6 +238,8 @@ export class FlowEngineModule {
     this.executorRegistry.register(nluConditionExecutor);
     this.executorRegistry.register(pureNerExecutor);
     this.executorRegistry.register(agentExecutor);
+    this.executorRegistry.register(collectionsExecutor);
+    this.executorRegistry.register(quickReorderExecutor);
     // this.executorRegistry.register(gameScorerExecutor); // Disabled
     // this.executorRegistry.register(rewardPointsExecutor); // Disabled
   }

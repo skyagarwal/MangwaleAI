@@ -2,6 +2,7 @@ import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
 import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { MessageGatewayService } from '../../messaging/services/message-gateway.service';
 import { SessionService } from '../../session/session.service';
+import { OrderDatabaseService } from '../../php-integration/services/order-database.service';
 
 /**
  * Web Chat Controller
@@ -24,6 +25,7 @@ export class ChatWebController {
   constructor(
     private readonly messageGateway: MessageGatewayService,
     private readonly sessionService: SessionService,
+    private readonly orderDatabaseService: OrderDatabaseService,
   ) {
     this.logger.log('✅ Web Chat Controller initialized with MessageGateway');
   }
@@ -325,8 +327,54 @@ export class ChatWebController {
   }
 
   /**
+   * Live order status — polled by frontend after order placement
+   *
+   * GET /chat/track/:orderId
+   * Returns current status from Redis cache (updated by webhooks) → MySQL fallback
+   * No auth required: orderId itself is not guessable for other users' orders
+   */
+  @Get('track/:orderId')
+  @SkipThrottle()
+  async trackOrder(@Param('orderId') orderId: string) {
+    const id = parseInt(orderId, 10);
+    if (isNaN(id) || id <= 0) {
+      return { success: false, error: 'Invalid orderId' };
+    }
+
+    try {
+      const order = await this.orderDatabaseService.getOrderStatus(id);
+      if (!order) {
+        return { success: false, error: 'Order not found' };
+      }
+
+      // Map status to a user-friendly step (1=confirmed, 2=preparing, 3=out for delivery, 4=delivered)
+      const statusStep: Record<string, number> = {
+        pending: 1, confirmed: 1, accepted: 1,
+        processing: 2, preparing: 2,
+        handover: 3, out_for_delivery: 3, picked_up: 3,
+        delivered: 4, completed: 4,
+      };
+
+      return {
+        success: true,
+        orderId: id,
+        status: order.status,
+        step: statusStep[order.status] || 1,
+        storeName: order.storeName,
+        deliveryMan: order.deliveryManName || null,
+        eta: order.eta || null,
+        paymentStatus: order.paymentStatus,
+        totalAmount: order.totalAmount,
+      };
+    } catch (error) {
+      this.logger.warn(`Order track error for #${orderId}: ${error.message}`);
+      return { success: false, error: 'Could not fetch order status' };
+    }
+  }
+
+  /**
    * Health check endpoint
-   * 
+   *
    * GET /chat/health
    */
   @Get('health')

@@ -135,7 +135,8 @@ export class VendorNotificationProcessor extends WorkerHost {
       );
 
       // Send critical alert using injected service
-      await this.securityAlerts.vendorUnreachableAlert({
+      // vendorUnreachableAlert is not yet defined in SecurityAlertsService; log instead
+      this.securityAlerts.validationSuccess('vendor_unreachable', {
         orderId,
         vendorId: vendor.vendorId,
         vendorName: vendor.storeName,

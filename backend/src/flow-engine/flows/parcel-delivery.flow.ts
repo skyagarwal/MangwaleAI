@@ -403,6 +403,8 @@ export const parcelDeliveryFlow: FlowDefinition = {
       transitions: {
         zone_valid: 'prepare_delivery',
         zone_invalid: 'pickup_out_of_zone',
+        error: 'prepare_delivery', // If zone check fails, assume valid and proceed
+        default: 'prepare_delivery',
       },
     },
 
@@ -520,6 +522,8 @@ export const parcelDeliveryFlow: FlowDefinition = {
       transitions: {
         zone_valid: 'check_auth_for_recipient',
         zone_invalid: 'delivery_out_of_zone',
+        error: 'check_auth_for_recipient', // If zone check fails, assume valid and proceed
+        default: 'check_auth_for_recipient',
       },
     },
 
@@ -678,6 +682,9 @@ export const parcelDeliveryFlow: FlowDefinition = {
         },
       ],
       transitions: {
+        copied: 'confirm_recipient_copy',
+        profile_incomplete: 'check_auth_for_recipient', // Sender profile incomplete — collect manually
+        error: 'check_auth_for_recipient',
         default: 'confirm_recipient_copy',
       },
     },
@@ -808,9 +815,9 @@ export const parcelDeliveryFlow: FlowDefinition = {
           id: 'auto_select',
           executor: 'response',
           config: {
-            message: '✅ Recipient confirmed!\n\n🚗 **Question 4/5:** Vehicle selected automatically:\n\n**{{vehicle_categories[0].name}}** - {{vehicle_categories[0].price}}',
+            message: '✅ Recipient confirmed!\n\n🚗 **Question 4/5:** Vehicle selected automatically:\n\n**{{vehicle_categories.0.name}}** - {{vehicle_categories.0.price}}',
             saveToContext: {
-              'parcel_category_id': '{{vehicle_categories[0].id}}',
+              'parcel_category_id': '{{vehicle_categories.0.id}}',
             },
           },
           output: '_last_response',
@@ -1609,28 +1616,35 @@ Return ONLY the numeric ID, nothing else.`,
       },
     },
 
-    // Fallback if API fails - show default options
+    // Fallback if API fails — retry fetching payment methods once
     select_payment_method_fallback: {
-      type: 'wait',
-      description: 'Show default payment options if API fails',
-      onEntry: [
+      type: 'action',
+      description: 'Retry fetching payment methods if first attempt failed',
+      actions: [
         {
-          id: 'default_payment_options',
+          id: 'retry_fetch_payment_methods',
+          executor: 'php_api',
+          config: {
+            action: 'get_payment_methods',
+          },
+          output: 'payment_methods_response',
+        },
+        {
+          id: 'show_payment_options_retry',
           executor: 'response',
           config: {
             message: '💳 **Select Payment Method:**',
-            buttons: [
-              { label: '💵 Cash on Delivery', value: 'cash_on_delivery', action: 'cod' },
-              { label: '💳 Digital Payment', value: 'digital_payment', action: 'digital' },
-            ],
+            buttonsPath: 'payment_methods_response.methods',
+            buttonConfig: {
+              labelPath: 'name',
+              valuePath: 'id',
+            },
           },
           output: '_last_response',
         },
       ],
-      actions: [],
       transitions: {
-        user_message: 'handle_payment_selection',
-        default: 'handle_payment_selection', // Handle button clicks
+        default: 'wait_payment_selection',
       },
     },
 
@@ -1825,7 +1839,7 @@ Return ONLY the numeric ID, nothing else.`,
       onEntry: [],
       transitions: {
         user_message: 'check_payment_result', // Route to decision state
-        timeout: 'payment_timeout',
+        timeout: 'check_cod_after_timeout',
         default: 'check_payment_result', // Handle payment callback events
       },
     },
@@ -1854,7 +1868,7 @@ Return ONLY the numeric ID, nothing else.`,
       ],
       transitions: {
         payment_success: 'completed',
-        payment_failed: 'payment_failed',
+        payment_failed: 'check_cod_after_failure',
         cancelled: 'order_cancelled',
         maybe_paid: 'verify_payment_via_api',
         default: 'payment_still_waiting',
@@ -1944,9 +1958,25 @@ Return ONLY the numeric ID, nothing else.`,
       },
     },
 
-    payment_failed: {
+    // Check if COD is available before showing payment failure options
+    check_cod_after_failure: {
+      type: 'decision',
+      description: 'Check COD availability before showing payment retry options',
+      conditions: [
+        {
+          expression: "context.payment_methods_response?.methods?.some(m => m.type === 'cash')",
+          event: 'cod_available',
+        },
+      ],
+      transitions: {
+        cod_available: 'payment_failed_with_cod',
+        default: 'payment_failed_no_cod',
+      },
+    },
+
+    payment_failed_with_cod: {
       type: 'action',
-      description: 'Handle payment failure',
+      description: 'Handle payment failure — COD available for this zone',
       actions: [
         {
           id: 'payment_error',
@@ -1956,6 +1986,28 @@ Return ONLY the numeric ID, nothing else.`,
             buttons: [
               { label: '🔄 Retry Payment', value: 'retry_payment', action: 'retry_payment' },
               { label: '💵 Cash on Delivery', value: 'cod', action: 'switch_to_cod' },
+              { label: '❌ Cancel Order', value: 'cancel', action: 'cancel_order' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'await_payment_retry',
+      },
+    },
+
+    payment_failed_no_cod: {
+      type: 'action',
+      description: 'Handle payment failure — COD not available for this zone',
+      actions: [
+        {
+          id: 'payment_error_no_cod',
+          executor: 'response',
+          config: {
+            message: '❌ **Payment Failed**\n\nYour payment could not be completed. The order has been saved.\n\nPlease retry the payment:',
+            buttons: [
+              { label: '🔄 Retry Payment', value: 'retry_payment', action: 'retry_payment' },
               { label: '❌ Cancel Order', value: 'cancel', action: 'cancel_order' },
             ],
           },
@@ -1997,7 +2049,27 @@ Return ONLY the numeric ID, nothing else.`,
         },
       ],
       transitions: {
-        default: 'await_payment_retry',
+        default: 'route_retry_decision',
+      },
+    },
+
+    // Route LLM output _retry_decision to correct state
+    route_retry_decision: {
+      type: 'decision',
+      description: 'Route payment retry decision from LLM',
+      conditions: [
+        { expression: "context._retry_decision === 'retry_payment'", event: 'retry_payment' },
+        {
+          expression: "context._retry_decision === 'switch_to_cod' && context.payment_methods_response?.methods?.some(m => m.type === 'cash')",
+          event: 'use_cod',
+        },
+        { expression: "context._retry_decision === 'cancel_order'", event: 'cancel_payment' },
+      ],
+      transitions: {
+        retry_payment: 'show_payment_gateway',
+        use_cod: 'switch_to_cod_payment',
+        cancel_payment: 'order_cancelled',
+        default: 'await_payment_retry', // Unknown response — go back to retry prompt
       },
     },
 
@@ -2006,20 +2078,13 @@ Return ONLY the numeric ID, nothing else.`,
       description: 'Switch order to Cash on Delivery',
       actions: [
         {
-          id: 'update_to_cod',
-          executor: 'order',
-          config: {
-            action: 'update_payment_method',
-            orderId: '{{order_result.orderId}}',
-            paymentMethod: 'cash_on_delivery',
-          },
-          output: '_cod_result',
-        },
-        {
           id: 'cod_confirm',
           executor: 'response',
           config: {
-            message: '✅ Payment method updated to **Cash on Delivery**.\n\nPay ₹{{pricing.total_charge}} when your parcel is delivered.',
+            message: '✅ Payment method switched to **Cash on Delivery**.\n\nPay ₹{{pricing.total_charge}} when your parcel is delivered.',
+            saveToContext: {
+              payment_method: 'cod',
+            },
           },
         },
       ],
@@ -2060,9 +2125,25 @@ Return ONLY the numeric ID, nothing else.`,
       },
     },
 
-    payment_timeout: {
+    // Check if COD is available after payment timeout
+    check_cod_after_timeout: {
+      type: 'decision',
+      description: 'Check COD availability after payment timeout',
+      conditions: [
+        {
+          expression: "context.payment_methods_response?.methods?.some(m => m.type === 'cash')",
+          event: 'cod_available',
+        },
+      ],
+      transitions: {
+        cod_available: 'payment_timeout_with_cod',
+        default: 'payment_timeout_no_cod',
+      },
+    },
+
+    payment_timeout_with_cod: {
       type: 'action',
-      description: 'Payment timed out',
+      description: 'Payment timed out — COD available for this zone',
       actions: [
         {
           id: 'timeout_msg',
@@ -2072,6 +2153,27 @@ Return ONLY the numeric ID, nothing else.`,
             buttons: [
               { label: '🔄 Retry Payment', value: 'retry_payment', action: 'retry_payment' },
               { label: '💵 Cash on Delivery', value: 'cod', action: 'switch_to_cod' },
+              { label: '❌ Cancel', value: 'cancel', action: 'cancel_order' },
+            ],
+          },
+        },
+      ],
+      transitions: {
+        default: 'await_payment_retry',
+      },
+    },
+
+    payment_timeout_no_cod: {
+      type: 'action',
+      description: 'Payment timed out — COD not available for this zone',
+      actions: [
+        {
+          id: 'timeout_msg_no_cod',
+          executor: 'response',
+          config: {
+            message: '⏰ **Payment Timeout**\n\nPayment session expired. Your order has been saved.\n\nWould you like to retry the payment?',
+            buttons: [
+              { label: '🔄 Retry Payment', value: 'retry_payment', action: 'retry_payment' },
               { label: '❌ Cancel', value: 'cancel', action: 'cancel_order' },
             ],
           },
@@ -2171,110 +2273,139 @@ Return ONLY the numeric ID, nothing else.`,
       transitions: {},
     },
 
-    // Error states
+    // Error states — converted from terminal 'end' to recoverable 'action' states with retry buttons
+
     pickup_error: {
-      type: 'end',
-      description: 'Pickup address error',
+      type: 'action',
+      description: 'Pickup address error — offer retry',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not understand pickup address. Please start again.',
+            message: '❌ Could not understand the pickup address.\n\n[BTN|🔄 Try Again|retry_pickup][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     delivery_error: {
-      type: 'end',
-      description: 'Delivery address error',
+      type: 'action',
+      description: 'Delivery address error — offer retry',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not understand delivery address. Please start again.',
+            message: '❌ Could not understand the delivery address.\n\n[BTN|🔄 Try Again|retry_delivery][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     pickup_out_of_zone: {
-      type: 'end',
-      description: 'Pickup outside Nashik',
+      type: 'action',
+      description: 'Pickup outside Nashik — offer different address',
       actions: [
         {
           id: 'zone_error',
           executor: 'response',
           config: {
-            message: '❌ **Pickup location is outside Nashik.**\n\nWe currently deliver only within Nashik city. We\'ll notify you when we expand!',
+            message: '❌ **Pickup location is outside Nashik.**\n\nWe currently deliver only within Nashik city.\n\n[BTN|📍 Try Different Address|retry_pickup][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     delivery_out_of_zone: {
-      type: 'end',
-      description: 'Delivery outside Nashik',
+      type: 'action',
+      description: 'Delivery outside Nashik — offer different address',
       actions: [
         {
           id: 'zone_error',
           executor: 'response',
           config: {
-            message: '❌ **Delivery location is outside Nashik.**\n\nWe currently deliver only within Nashik city. We\'ll notify you when we expand!',
+            message: '❌ **Delivery location is outside Nashik.**\n\nWe currently deliver only within Nashik city.\n\n[BTN|📍 Try Different Address|retry_delivery][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     distance_error: {
-      type: 'end',
-      description: 'Distance calculation failed',
+      type: 'action',
+      description: 'Distance calculation failed — offer restart',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not calculate distance. Please try again.',
+            message: '❌ Could not calculate distance between the addresses.\n\n[BTN|🔄 Try Again|retry_from_start][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     category_error: {
-      type: 'end',
-      description: 'Failed to fetch vehicles',
+      type: 'action',
+      description: 'Failed to fetch vehicle categories — offer restart',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not load vehicles. Please try again.',
+            message: '❌ Could not load available vehicles. Please try again.\n\n[BTN|🔄 Try Again|retry_from_start][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
     },
 
     pricing_error: {
-      type: 'end',
-      description: 'Pricing calculation failed',
+      type: 'action',
+      description: 'Pricing calculation failed — offer restart',
       actions: [
         {
           id: 'error',
           executor: 'response',
           config: {
-            message: '❌ Could not calculate price. Please try again.',
+            message: '❌ Could not calculate the delivery price. Please try again.\n\n[BTN|🔄 Try Again|retry_from_start][BTN|❌ Cancel|cancel]',
           },
         },
       ],
-      transitions: {},
+      transitions: {
+        default: 'parcel_error_recovery',
+      },
+    },
+
+    // Shared recovery wait state for all parcel error states
+    parcel_error_recovery: {
+      type: 'wait',
+      description: 'Wait for user retry or cancel after an error',
+      actions: [],
+      transitions: {
+        retry_pickup: 'collect_pickup',
+        retry_delivery: 'collect_delivery',
+        retry_from_start: 'collect_pickup', // Restart from pickup for transient errors
+        cancel: 'cancelled',
+        default: 'cancelled',
+      },
     },
 
     order_failed: {
@@ -2301,6 +2432,7 @@ Return ONLY the numeric ID, nothing else.`,
     wait_order_retry: {
       type: 'wait',
       description: 'Wait for user to retry or cancel after order failure',
+      actions: [],
       transitions: {
         retry_order: 'check_auth_before_order',
         cancel: 'cancelled',
@@ -2330,5 +2462,5 @@ Return ONLY the numeric ID, nothing else.`,
   },
 
   initialState: 'check_trigger',
-  finalStates: ['finish', 'cancelled', 'pickup_error', 'delivery_error', 'pickup_out_of_zone', 'delivery_out_of_zone', 'distance_error', 'category_error', 'pricing_error'],
+  finalStates: ['finish', 'cancelled'],
 };

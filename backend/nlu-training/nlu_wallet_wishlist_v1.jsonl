@@ -1,0 +1,600 @@
+{"text": "check wallet balance", "intent": "check_wallet"}
+{"text": "what is my wallet balance", "intent": "check_wallet"}
+{"text": "how much money is in my wallet", "intent": "check_wallet"}
+{"text": "show me my wallet balance", "intent": "check_wallet"}
+{"text": "view wallet balance", "intent": "check_wallet"}
+{"text": "how much do I have in my wallet", "intent": "check_wallet"}
+{"text": "wallet balance please", "intent": "check_wallet"}
+{"text": "can you show my wallet amount", "intent": "check_wallet"}
+{"text": "tell me my wallet balance", "intent": "check_wallet"}
+{"text": "my wallet amount", "intent": "check_wallet"}
+{"text": "see wallet balance", "intent": "check_wallet"}
+{"text": "what's in my wallet", "intent": "check_wallet"}
+{"text": "how much is available in wallet", "intent": "check_wallet"}
+{"text": "wallet amount check karna hai", "intent": "check_wallet"}
+{"text": "check my wallet", "intent": "check_wallet"}
+{"text": "show wallet", "intent": "check_wallet"}
+{"text": "my wallet details", "intent": "check_wallet"}
+{"text": "current wallet balance", "intent": "check_wallet"}
+{"text": "available wallet balance", "intent": "check_wallet"}
+{"text": "how many rupees in my wallet", "intent": "check_wallet"}
+{"text": "wallet balance kya hai", "intent": "check_wallet"}
+{"text": "is there enough money in my wallet", "intent": "check_wallet"}
+{"text": "wallet funds available", "intent": "check_wallet"}
+{"text": "check balance in wallet", "intent": "check_wallet"}
+{"text": "show my mangwale wallet", "intent": "check_wallet"}
+{"text": "wallet pe kitna hai", "intent": "check_wallet"}
+{"text": "how much credit do I have", "intent": "check_wallet"}
+{"text": "remaining wallet balance", "intent": "check_wallet"}
+{"text": "wallet amount dikhao", "intent": "check_wallet"}
+{"text": "view my wallet", "intent": "check_wallet"}
+{"text": "see how much is in wallet", "intent": "check_wallet"}
+{"text": "wallet balance check please", "intent": "check_wallet"}
+{"text": "how much wallet money I have", "intent": "check_wallet"}
+{"text": "my wallet info", "intent": "check_wallet"}
+{"text": "can you tell me wallet balance", "intent": "check_wallet"}
+{"text": "check wallet now", "intent": "check_wallet"}
+{"text": "wallet balance show karo", "intent": "check_wallet"}
+{"text": "I want to see my wallet balance", "intent": "check_wallet"}
+{"text": "show available wallet amount", "intent": "check_wallet"}
+{"text": "wallet mein paisa kitna bcha hai", "intent": "check_wallet"}
+{"text": "whats my wallet balance", "intent": "check_wallet"}
+{"text": "how much money left in wallet", "intent": "check_wallet"}
+{"text": "display wallet balance", "intent": "check_wallet"}
+{"text": "wallet money check", "intent": "check_wallet"}
+{"text": "I need to check my wallet", "intent": "check_wallet"}
+{"text": "check how much is in my wallet", "intent": "check_wallet"}
+{"text": "current balance in my wallet", "intent": "check_wallet"}
+{"text": "wallet balance kitna hai show karo", "intent": "check_wallet"}
+{"text": "my wallet has how much money", "intent": "check_wallet"}
+{"text": "open wallet and show balance", "intent": "check_wallet"}
+{"text": "wallet mein kitna paisa hai", "intent": "check_wallet"}
+{"text": "mera wallet balance batao", "intent": "check_wallet"}
+{"text": "wallet balance check karo", "intent": "check_wallet"}
+{"text": "mere wallet mein kitna hai", "intent": "check_wallet"}
+{"text": "wallet pe kitna paisa hai mera", "intent": "check_wallet"}
+{"text": "mera wallet dikhao", "intent": "check_wallet"}
+{"text": "kitna paisa bachha hai wallet mein", "intent": "check_wallet"}
+{"text": "bhai wallet balance bata", "intent": "check_wallet"}
+{"text": "wallet amount batao mujhe", "intent": "check_wallet"}
+{"text": "meri wallet mein kitna hai", "intent": "check_wallet"}
+{"text": "wallet balance dekhna hai mujhe", "intent": "check_wallet"}
+{"text": "mera wallet ka balance kya hai", "intent": "check_wallet"}
+{"text": "wallet mein paisa check karo", "intent": "check_wallet"}
+{"text": "abhi wallet mein kitna paise hai", "intent": "check_wallet"}
+{"text": "wallet balance show karo please", "intent": "check_wallet"}
+{"text": "mere paas wallet mein kitna hai", "intent": "check_wallet"}
+{"text": "mera wallet amount kya hai", "intent": "check_wallet"}
+{"text": "wallet balance janna hai", "intent": "check_wallet"}
+{"text": "kya tum mera wallet balance bata skte ho", "intent": "check_wallet"}
+{"text": "wallet mein available balance kitna hai", "intent": "check_wallet"}
+{"text": "aaj wallet mein kitna paisa hai", "intent": "check_wallet"}
+{"text": "wallet balance check krna tha", "intent": "check_wallet"}
+{"text": "mera wallet kitna bhara hua hai", "intent": "check_wallet"}
+{"text": "wallet ka paisa dekhna tha", "intent": "check_wallet"}
+{"text": "mujhe mera wallet check karna hai", "intent": "check_wallet"}
+{"text": "wallet total amount batao", "intent": "check_wallet"}
+{"text": "wallet mein abhi kitna credit hai", "intent": "check_wallet"}
+{"text": "food order karne se pehle wallet balance check karna hai", "intent": "check_wallet"}
+{"text": "order ke baad wallet balance check karo", "intent": "check_wallet"}
+{"text": "wallet mein remaining balance kya hai", "intent": "check_wallet"}
+{"text": "mere wallet account mein kitna hai", "intent": "check_wallet"}
+{"text": "wallet se paisa use karna hai pehle balance dekho", "intent": "check_wallet"}
+{"text": "mera wallet details batao", "intent": "check_wallet"}
+{"text": "wallet balance ek baar dikhao", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट बैलेंस क्या है", "intent": "check_wallet"}
+{"text": "वॉलेट में कितना पैसा है", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट चेक करो", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस दिखाओ", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट में कितना है", "intent": "check_wallet"}
+{"text": "वॉलेट का पैसा कितना है", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट बैलेंस बताओ", "intent": "check_wallet"}
+{"text": "वॉलेट में कितने रुपए हैं", "intent": "check_wallet"}
+{"text": "मेरी वॉलेट की राशि दिखाओ", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस चेक करना है", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट में पैसा कितना बचा है", "intent": "check_wallet"}
+{"text": "वॉलेट में उपलब्ध राशि बताओ", "intent": "check_wallet"}
+{"text": "अभी वॉलेट में कितना है", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस देखना है", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट खोलो और बैलेंस बताओ", "intent": "check_wallet"}
+{"text": "वॉलेट में कितने पैसे हैं मेरे", "intent": "check_wallet"}
+{"text": "मुझे वॉलेट बैलेंस जानना है", "intent": "check_wallet"}
+{"text": "क्या आप मेरा वॉलेट बैलेंस बता सकते हो", "intent": "check_wallet"}
+{"text": "वॉलेट में बचा हुआ पैसा दिखाओ", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट में कितना क्रेडिट है", "intent": "check_wallet"}
+{"text": "फूड ऑर्डर करने से पहले वॉलेट चेक करना है", "intent": "check_wallet"}
+{"text": "वॉलेट की जानकारी दो", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट का विवरण दिखाओ", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस अभी दिखाओ", "intent": "check_wallet"}
+{"text": "मुझे मेरा वॉलेट देखना है", "intent": "check_wallet"}
+{"text": "वॉलेट में कुल कितना है", "intent": "check_wallet"}
+{"text": "भाई वॉलेट बैलेंस बताओ", "intent": "check_wallet"}
+{"text": "ऑर्डर के बाद वॉलेट चेक करो", "intent": "check_wallet"}
+{"text": "वॉलेट में पैसे हैं क्या", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट कितना भरा है", "intent": "check_wallet"}
+{"text": "वॉलेट से खाना ऑर्डर करना है पहले बैलेंस देखो", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस एक बार दिखाओ", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट अकाउंट में क्या है", "intent": "check_wallet"}
+{"text": "वॉलेट राशि चेक करो", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट कितने का है", "intent": "check_wallet"}
+{"text": "वॉलेट में रुपए देखने हैं", "intent": "check_wallet"}
+{"text": "मेरे पास वॉलेट में कितना है", "intent": "check_wallet"}
+{"text": "वॉलेट बैलेंस प्लीज़ बताओ", "intent": "check_wallet"}
+{"text": "आज वॉलेट में कितना पैसा है", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट में शेष राशि क्या है", "intent": "check_wallet"}
+{"text": "वॉलेट खोलकर बैलेंस दिखाओ", "intent": "check_wallet"}
+{"text": "मेरा कुल वॉलेट बैलेंस बताओ", "intent": "check_wallet"}
+{"text": "वॉलेट में कितना बकाया है", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट में पैसे हैं ना", "intent": "check_wallet"}
+{"text": "वॉलेट का बैलेंस क्या चल रहा है", "intent": "check_wallet"}
+{"text": "मेरा वॉलेट स्टेटस बताओ", "intent": "check_wallet"}
+{"text": "वॉलेट में कितना क्रेडिट बचा है", "intent": "check_wallet"}
+{"text": "मुझे अभी वॉलेट बैलेंस चाहिए", "intent": "check_wallet"}
+{"text": "वॉलेट में पैसा देखना है", "intent": "check_wallet"}
+{"text": "मेरे वॉलेट की शेष राशि दिखाओ", "intent": "check_wallet"}
+{"text": "check my loyalty points", "intent": "check_loyalty_points"}
+{"text": "how many loyalty points do I have", "intent": "check_loyalty_points"}
+{"text": "show my reward points", "intent": "check_loyalty_points"}
+{"text": "loyalty points balance", "intent": "check_loyalty_points"}
+{"text": "how many points have I earned", "intent": "check_loyalty_points"}
+{"text": "view my points", "intent": "check_loyalty_points"}
+{"text": "what is my points balance", "intent": "check_loyalty_points"}
+{"text": "show points balance", "intent": "check_loyalty_points"}
+{"text": "how many reward points do I have", "intent": "check_loyalty_points"}
+{"text": "my loyalty points balance", "intent": "check_loyalty_points"}
+{"text": "see my points", "intent": "check_loyalty_points"}
+{"text": "points balance please", "intent": "check_loyalty_points"}
+{"text": "how much points I have", "intent": "check_loyalty_points"}
+{"text": "check reward points", "intent": "check_loyalty_points"}
+{"text": "show loyalty points", "intent": "check_loyalty_points"}
+{"text": "my points total", "intent": "check_loyalty_points"}
+{"text": "how many points left", "intent": "check_loyalty_points"}
+{"text": "current loyalty points", "intent": "check_loyalty_points"}
+{"text": "display my reward points", "intent": "check_loyalty_points"}
+{"text": "I want to check my points", "intent": "check_loyalty_points"}
+{"text": "available loyalty points", "intent": "check_loyalty_points"}
+{"text": "total points earned", "intent": "check_loyalty_points"}
+{"text": "how many mangwale points do I have", "intent": "check_loyalty_points"}
+{"text": "points earned so far", "intent": "check_loyalty_points"}
+{"text": "tell me my loyalty points", "intent": "check_loyalty_points"}
+{"text": "can you show my points", "intent": "check_loyalty_points"}
+{"text": "reward points balance check", "intent": "check_loyalty_points"}
+{"text": "my current points", "intent": "check_loyalty_points"}
+{"text": "accumulated points so far", "intent": "check_loyalty_points"}
+{"text": "how many points have I collected", "intent": "check_loyalty_points"}
+{"text": "I need to check loyalty points", "intent": "check_loyalty_points"}
+{"text": "points summary please", "intent": "check_loyalty_points"}
+{"text": "how many bonus points do I have", "intent": "check_loyalty_points"}
+{"text": "check how many points I have", "intent": "check_loyalty_points"}
+{"text": "my points count", "intent": "check_loyalty_points"}
+{"text": "view loyalty rewards balance", "intent": "check_loyalty_points"}
+{"text": "show me reward points balance", "intent": "check_loyalty_points"}
+{"text": "points available in my account", "intent": "check_loyalty_points"}
+{"text": "earned points balance", "intent": "check_loyalty_points"}
+{"text": "loyalty points check please", "intent": "check_loyalty_points"}
+{"text": "how many points earned from orders", "intent": "check_loyalty_points"}
+{"text": "my food order points", "intent": "check_loyalty_points"}
+{"text": "points accumulated from food orders", "intent": "check_loyalty_points"}
+{"text": "what are my loyalty points right now", "intent": "check_loyalty_points"}
+{"text": "open points and show balance", "intent": "check_loyalty_points"}
+{"text": "show remaining loyalty points", "intent": "check_loyalty_points"}
+{"text": "my reward points info", "intent": "check_loyalty_points"}
+{"text": "how much points remaining", "intent": "check_loyalty_points"}
+{"text": "loyalty points kitne hain", "intent": "check_loyalty_points"}
+{"text": "points show karo", "intent": "check_loyalty_points"}
+{"text": "mere kitne points hain", "intent": "check_loyalty_points"}
+{"text": "loyalty points balance batao", "intent": "check_loyalty_points"}
+{"text": "mera points check karo", "intent": "check_loyalty_points"}
+{"text": "kitne reward points hain mere", "intent": "check_loyalty_points"}
+{"text": "points kitne earn kiye hain", "intent": "check_loyalty_points"}
+{"text": "mere loyalty points dikhao", "intent": "check_loyalty_points"}
+{"text": "points balance kya hai mera", "intent": "check_loyalty_points"}
+{"text": "mujhe points dekhne hain", "intent": "check_loyalty_points"}
+{"text": "bhai mere kitne points hain", "intent": "check_loyalty_points"}
+{"text": "total points kitne hain abhi", "intent": "check_loyalty_points"}
+{"text": "mera loyalty points check karna hai", "intent": "check_loyalty_points"}
+{"text": "points mein kitna hai mera", "intent": "check_loyalty_points"}
+{"text": "mera rewards balance batao", "intent": "check_loyalty_points"}
+{"text": "kitne points mila hai order se", "intent": "check_loyalty_points"}
+{"text": "reward points check karo please", "intent": "check_loyalty_points"}
+{"text": "points kitne accumulated hue hain", "intent": "check_loyalty_points"}
+{"text": "mera current points balance kya hai", "intent": "check_loyalty_points"}
+{"text": "points account mein kitna hai", "intent": "check_loyalty_points"}
+{"text": "abhi mere paas kitne points hain", "intent": "check_loyalty_points"}
+{"text": "loyalty points janna hai mujhe", "intent": "check_loyalty_points"}
+{"text": "mera points summary dikhao", "intent": "check_loyalty_points"}
+{"text": "order karne ke baad points kitne bane", "intent": "check_loyalty_points"}
+{"text": "points kha tak pahunche hain mere", "intent": "check_loyalty_points"}
+{"text": "mera points details batao", "intent": "check_loyalty_points"}
+{"text": "kitne points meine collect kiye hain", "intent": "check_loyalty_points"}
+{"text": "loyalty points remaining kitne hain", "intent": "check_loyalty_points"}
+{"text": "points total kya hai mera", "intent": "check_loyalty_points"}
+{"text": "mere account mein kitne points hain", "intent": "check_loyalty_points"}
+{"text": "food order se kitne points mila", "intent": "check_loyalty_points"}
+{"text": "mera points ka balance dikhao", "intent": "check_loyalty_points"}
+{"text": "mera reward points check karna tha", "intent": "check_loyalty_points"}
+{"text": "points kitne bachhe hain", "intent": "check_loyalty_points"}
+{"text": "मेरे कितने लॉयल्टी पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट दिखाओ", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट का बैलेंस क्या है", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी पॉइंट चेक करना है", "intent": "check_loyalty_points"}
+{"text": "मेरे कितने पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "पॉइंट बैलेंस बताओ", "intent": "check_loyalty_points"}
+{"text": "मेरे रिवॉर्ड पॉइंट दिखाओ", "intent": "check_loyalty_points"}
+{"text": "कितने लॉयल्टी पॉइंट मिले हैं", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट जानने हैं", "intent": "check_loyalty_points"}
+{"text": "पॉइंट कितने कमाए हैं मैंने", "intent": "check_loyalty_points"}
+{"text": "मेरा लॉयल्टी पॉइंट चेक करो", "intent": "check_loyalty_points"}
+{"text": "कुल पॉइंट कितने हैं", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट बैलेंस चेक करो", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट का विवरण दिखाओ", "intent": "check_loyalty_points"}
+{"text": "अभी मेरे पास कितने पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "ऑर्डर से कितने पॉइंट मिले", "intent": "check_loyalty_points"}
+{"text": "मेरा पॉइंट सारांश दिखाओ", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी रिवॉर्ड बैलेंस बताओ", "intent": "check_loyalty_points"}
+{"text": "मेरे खाते में कितने पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "पॉइंट कितने जमा हुए हैं", "intent": "check_loyalty_points"}
+{"text": "भाई मेरे कितने पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी पॉइंट कितने बचे हैं", "intent": "check_loyalty_points"}
+{"text": "मुझे पॉइंट बैलेंस जानना है", "intent": "check_loyalty_points"}
+{"text": "मेरे फूड ऑर्डर से पॉइंट कितने बने", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट कितने उपलब्ध हैं", "intent": "check_loyalty_points"}
+{"text": "मेरा कुल पॉइंट बैलेंस बताओ", "intent": "check_loyalty_points"}
+{"text": "पॉइंट खाते में कितने हैं", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट अभी कितने हैं", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी पॉइंट की जानकारी दो", "intent": "check_loyalty_points"}
+{"text": "मेरे रिवॉर्ड का हाल बताओ", "intent": "check_loyalty_points"}
+{"text": "पॉइंट बैलेंस एक बार दिखाओ", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट कहाँ तक पहुँचे हैं", "intent": "check_loyalty_points"}
+{"text": "मुझे मेरे पॉइंट देखने हैं", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी पॉइंट स्थिति बताओ", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट की संख्या बताओ", "intent": "check_loyalty_points"}
+{"text": "फूड ऑर्डर से कितने पॉइंट मिले मुझे", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट स्टेटस चेक करो", "intent": "check_loyalty_points"}
+{"text": "मेरे इनाम पॉइंट दिखाओ", "intent": "check_loyalty_points"}
+{"text": "पॉइंट का कुल योग क्या है", "intent": "check_loyalty_points"}
+{"text": "मेरे पास कितने रिवॉर्ड पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "लॉयल्टी पॉइंट बैलेंस प्लीज़ बताओ", "intent": "check_loyalty_points"}
+{"text": "क्या आप मेरे पॉइंट चेक कर सकते हो", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट कितने जुड़े हैं", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट की कुल संख्या बताओ", "intent": "check_loyalty_points"}
+{"text": "अभी मेरे लॉयल्टी पॉइंट क्या हैं", "intent": "check_loyalty_points"}
+{"text": "पॉइंट चेक करना था", "intent": "check_loyalty_points"}
+{"text": "मेरे नाम पर कितने पॉइंट हैं", "intent": "check_loyalty_points"}
+{"text": "रिवॉर्ड पॉइंट का हिसाब बताओ", "intent": "check_loyalty_points"}
+{"text": "मेरे पॉइंट बैलेंस की जानकारी चाहिए", "intent": "check_loyalty_points"}
+{"text": "show my wishlist", "intent": "view_wishlist"}
+{"text": "view wishlist", "intent": "view_wishlist"}
+{"text": "show saved items", "intent": "view_wishlist"}
+{"text": "open my wishlist", "intent": "view_wishlist"}
+{"text": "what is in my wishlist", "intent": "view_wishlist"}
+{"text": "see my saved food items", "intent": "view_wishlist"}
+{"text": "view my favourite items", "intent": "view_wishlist"}
+{"text": "show favourites", "intent": "view_wishlist"}
+{"text": "my saved items list", "intent": "view_wishlist"}
+{"text": "check my wishlist", "intent": "view_wishlist"}
+{"text": "what items did I save", "intent": "view_wishlist"}
+{"text": "favourite food items list", "intent": "view_wishlist"}
+{"text": "see wishlist please", "intent": "view_wishlist"}
+{"text": "display my saved food", "intent": "view_wishlist"}
+{"text": "saved dishes list", "intent": "view_wishlist"}
+{"text": "I want to see my wishlist", "intent": "view_wishlist"}
+{"text": "show me my favorites", "intent": "view_wishlist"}
+{"text": "view saved food list", "intent": "view_wishlist"}
+{"text": "my wishlist please", "intent": "view_wishlist"}
+{"text": "open wishlist", "intent": "view_wishlist"}
+{"text": "see all saved items", "intent": "view_wishlist"}
+{"text": "show my saved restaurants", "intent": "view_wishlist"}
+{"text": "view my bookmarked items", "intent": "view_wishlist"}
+{"text": "items I saved earlier", "intent": "view_wishlist"}
+{"text": "saved foods I want to order", "intent": "view_wishlist"}
+{"text": "list of my favourite foods", "intent": "view_wishlist"}
+{"text": "show bookmarked food items", "intent": "view_wishlist"}
+{"text": "wishlist items please", "intent": "view_wishlist"}
+{"text": "can you show my wishlist", "intent": "view_wishlist"}
+{"text": "my favourite food list", "intent": "view_wishlist"}
+{"text": "see saved orders list", "intent": "view_wishlist"}
+{"text": "view items I liked", "intent": "view_wishlist"}
+{"text": "display wishlist", "intent": "view_wishlist"}
+{"text": "show all my wishlisted items", "intent": "view_wishlist"}
+{"text": "see my liked items", "intent": "view_wishlist"}
+{"text": "saved item dikhao", "intent": "view_wishlist"}
+{"text": "foods I marked as favourite", "intent": "view_wishlist"}
+{"text": "my wishlist section", "intent": "view_wishlist"}
+{"text": "list of items I added to wishlist", "intent": "view_wishlist"}
+{"text": "show my saved food preferences", "intent": "view_wishlist"}
+{"text": "what food items have I saved", "intent": "view_wishlist"}
+{"text": "open my saved list", "intent": "view_wishlist"}
+{"text": "items added to my wishlist", "intent": "view_wishlist"}
+{"text": "check saved items", "intent": "view_wishlist"}
+{"text": "wishlist show karo", "intent": "view_wishlist"}
+{"text": "I saved some items earlier show them", "intent": "view_wishlist"}
+{"text": "see my food wishlist", "intent": "view_wishlist"}
+{"text": "bring up my wishlist", "intent": "view_wishlist"}
+{"text": "view favourite restaurants", "intent": "view_wishlist"}
+{"text": "my liked food items", "intent": "view_wishlist"}
+{"text": "meri wishlist dikhao", "intent": "view_wishlist"}
+{"text": "wishlist dekhna hai", "intent": "view_wishlist"}
+{"text": "meri saved items dikhao", "intent": "view_wishlist"}
+{"text": "favourite items dikhao", "intent": "view_wishlist"}
+{"text": "meri wishlist kya hai", "intent": "view_wishlist"}
+{"text": "saved food dikhao", "intent": "view_wishlist"}
+{"text": "mere saved items open karo", "intent": "view_wishlist"}
+{"text": "wishlist mein kya kya hai", "intent": "view_wishlist"}
+{"text": "meri wishlist check karo", "intent": "view_wishlist"}
+{"text": "saved dishes dikhao mujhe", "intent": "view_wishlist"}
+{"text": "mere favourite foods dikhao", "intent": "view_wishlist"}
+{"text": "meri wishlist kholni hai", "intent": "view_wishlist"}
+{"text": "wishlist wale items batao", "intent": "view_wishlist"}
+{"text": "mera saved food list dikha do", "intent": "view_wishlist"}
+{"text": "pehle se save kiye items dikhao", "intent": "view_wishlist"}
+{"text": "meri favourite list open karo", "intent": "view_wishlist"}
+{"text": "bhai meri wishlist dikha", "intent": "view_wishlist"}
+{"text": "wishlist mein kya save kiya hai", "intent": "view_wishlist"}
+{"text": "mera wishlist section dikhao", "intent": "view_wishlist"}
+{"text": "meri saved restaurants dikhao", "intent": "view_wishlist"}
+{"text": "items jo meine save kiye woh dikha", "intent": "view_wishlist"}
+{"text": "pehle favourite kiye hue items dikhao", "intent": "view_wishlist"}
+{"text": "meri wishlist ka list batao", "intent": "view_wishlist"}
+{"text": "liked items dikhao", "intent": "view_wishlist"}
+{"text": "meine jo save kiya woh dikhao", "intent": "view_wishlist"}
+{"text": "meri saved food dikhao please", "intent": "view_wishlist"}
+{"text": "wishlist abhi open karo", "intent": "view_wishlist"}
+{"text": "mera bookmark list dikhao", "intent": "view_wishlist"}
+{"text": "mere wishlist mein kya hai", "intent": "view_wishlist"}
+{"text": "aaj kya order karu wishlist dekh ke batao", "intent": "view_wishlist"}
+{"text": "meri favourite food list dikhao", "intent": "view_wishlist"}
+{"text": "meri wishlist ki items batao", "intent": "view_wishlist"}
+{"text": "jo save kiye hain woh items dikha do", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट दिखाओ", "intent": "view_wishlist"}
+{"text": "विशलिस्ट देखनी है", "intent": "view_wishlist"}
+{"text": "मेरी सेव की हुई चीजें दिखाओ", "intent": "view_wishlist"}
+{"text": "पसंदीदा खाना दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट खोलो", "intent": "view_wishlist"}
+{"text": "विशलिस्ट में क्या है", "intent": "view_wishlist"}
+{"text": "मेरे सेव आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "पसंदीदा आइटम की सूची दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट चेक करो", "intent": "view_wishlist"}
+{"text": "सेव किए हुए व्यंजन दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरे फेवरिट फूड दिखाओ", "intent": "view_wishlist"}
+{"text": "मुझे मेरी विशलिस्ट देखनी है", "intent": "view_wishlist"}
+{"text": "विशलिस्ट में जोड़े आइटम बताओ", "intent": "view_wishlist"}
+{"text": "मेरे सेव किए हुए खाने की सूची", "intent": "view_wishlist"}
+{"text": "पहले से सेव किए आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी पसंदीदा सूची खोलो", "intent": "view_wishlist"}
+{"text": "भाई मेरी विशलिस्ट दिखा", "intent": "view_wishlist"}
+{"text": "विशलिस्ट में क्या सेव किया है", "intent": "view_wishlist"}
+{"text": "मेरा विशलिस्ट सेक्शन दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी सेव की गई रेस्तराँ दिखाओ", "intent": "view_wishlist"}
+{"text": "जो आइटम मैंने सेव किए वो दिखाओ", "intent": "view_wishlist"}
+{"text": "पहले पसंदीदा किए हुए आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट की सूची बताओ", "intent": "view_wishlist"}
+{"text": "पसंद किए आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "मैंने जो सेव किया वो दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी सेव फूड दिखाओ प्लीज़", "intent": "view_wishlist"}
+{"text": "विशलिस्ट अभी खोलो", "intent": "view_wishlist"}
+{"text": "मेरी बुकमार्क लिस्ट दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट में क्या है", "intent": "view_wishlist"}
+{"text": "आज क्या ऑर्डर करूँ विशलिस्ट देख के बताओ", "intent": "view_wishlist"}
+{"text": "मेरी पसंदीदा खाने की सूची दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट की चीजें बताओ", "intent": "view_wishlist"}
+{"text": "विशलिस्ट में रखे आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरे पसंदीदा खाने की जानकारी दो", "intent": "view_wishlist"}
+{"text": "सेव आइटम की सूची देखनी है", "intent": "view_wishlist"}
+{"text": "मेरी विशलिस्ट एक बार दिखाओ", "intent": "view_wishlist"}
+{"text": "transfer points to wallet", "intent": "transfer_points"}
+{"text": "convert my loyalty points to wallet balance", "intent": "transfer_points"}
+{"text": "redeem my points", "intent": "transfer_points"}
+{"text": "I want to transfer points to wallet", "intent": "transfer_points"}
+{"text": "convert points to cash", "intent": "transfer_points"}
+{"text": "move points to wallet", "intent": "transfer_points"}
+{"text": "redeem loyalty points", "intent": "transfer_points"}
+{"text": "use my points as wallet balance", "intent": "transfer_points"}
+{"text": "add points to my wallet", "intent": "transfer_points"}
+{"text": "convert reward points to wallet", "intent": "transfer_points"}
+{"text": "points to wallet transfer", "intent": "transfer_points"}
+{"text": "how to redeem points", "intent": "transfer_points"}
+{"text": "I want to redeem my loyalty points", "intent": "transfer_points"}
+{"text": "transfer my reward points to wallet money", "intent": "transfer_points"}
+{"text": "convert accumulated points to money", "intent": "transfer_points"}
+{"text": "apply points to wallet", "intent": "transfer_points"}
+{"text": "use reward points in wallet", "intent": "transfer_points"}
+{"text": "convert all points to balance", "intent": "transfer_points"}
+{"text": "cash out my loyalty points", "intent": "transfer_points"}
+{"text": "redeem points for wallet credit", "intent": "transfer_points"}
+{"text": "add loyalty points to wallet", "intent": "transfer_points"}
+{"text": "I want to use my points in wallet", "intent": "transfer_points"}
+{"text": "exchange points for wallet balance", "intent": "transfer_points"}
+{"text": "points se wallet balance banana hai", "intent": "transfer_points"}
+{"text": "transfer all my points to wallet", "intent": "transfer_points"}
+{"text": "move my reward points as cash", "intent": "transfer_points"}
+{"text": "convert points into money", "intent": "transfer_points"}
+{"text": "use earned points for ordering food", "intent": "transfer_points"}
+{"text": "redeem points to pay for order", "intent": "transfer_points"}
+{"text": "credit my wallet with points", "intent": "transfer_points"}
+{"text": "turn my points into wallet money", "intent": "transfer_points"}
+{"text": "points ko wallet mein convert karo", "intent": "transfer_points"}
+{"text": "can I transfer my points to wallet", "intent": "transfer_points"}
+{"text": "loyalty points to wallet conversion", "intent": "transfer_points"}
+{"text": "transfer 100 points to wallet", "intent": "transfer_points"}
+{"text": "convert loyalty points to rupees in wallet", "intent": "transfer_points"}
+{"text": "redeem all loyalty points", "intent": "transfer_points"}
+{"text": "apply my points to wallet balance", "intent": "transfer_points"}
+{"text": "I would like to redeem loyalty points", "intent": "transfer_points"}
+{"text": "convert my points balance to wallet credit", "intent": "transfer_points"}
+{"text": "exchange loyalty points for wallet money", "intent": "transfer_points"}
+{"text": "please transfer my points to wallet", "intent": "transfer_points"}
+{"text": "reward points redeem karna hai", "intent": "transfer_points"}
+{"text": "use all my reward points as wallet balance", "intent": "transfer_points"}
+{"text": "I have many points transfer them to wallet", "intent": "transfer_points"}
+{"text": "how can I convert points to wallet", "intent": "transfer_points"}
+{"text": "points redeem karke wallet mein daalo", "intent": "transfer_points"}
+{"text": "loyalty points cash out", "intent": "transfer_points"}
+{"text": "send my points to wallet account", "intent": "transfer_points"}
+{"text": "convert points to wallet balance now", "intent": "transfer_points"}
+{"text": "points wallet mein daalo", "intent": "transfer_points"}
+{"text": "mere points wallet mein transfer karo", "intent": "transfer_points"}
+{"text": "loyalty points ko wallet mein convert karo", "intent": "transfer_points"}
+{"text": "points redeem karna hai", "intent": "transfer_points"}
+{"text": "mera points wallet mein add karo", "intent": "transfer_points"}
+{"text": "points ko paisa mein badlo", "intent": "transfer_points"}
+{"text": "points se wallet balance badhao", "intent": "transfer_points"}
+{"text": "mera reward points use karna hai wallet ke liye", "intent": "transfer_points"}
+{"text": "points transfer karo wallet mein please", "intent": "transfer_points"}
+{"text": "mera points cash out karo", "intent": "transfer_points"}
+{"text": "bhai mera points wallet mein daal de", "intent": "transfer_points"}
+{"text": "points ko wallet credit mein convert karo", "intent": "transfer_points"}
+{"text": "100 points wallet mein bhejo", "intent": "transfer_points"}
+{"text": "mera loyalty points wallet mein lagao", "intent": "transfer_points"}
+{"text": "points use karke wallet balance badhana hai", "intent": "transfer_points"}
+{"text": "mera sare points wallet mein daalo", "intent": "transfer_points"}
+{"text": "points ko wallet mein move karo", "intent": "transfer_points"}
+{"text": "reward points se wallet mein paise daalo", "intent": "transfer_points"}
+{"text": "points redeem karke wallet mein credit karo", "intent": "transfer_points"}
+{"text": "mera points wallet balance mein add karo please", "intent": "transfer_points"}
+{"text": "loyalty points ka fayda uthana hai wallet mein daalo", "intent": "transfer_points"}
+{"text": "points ko wallet mein exchange karo", "intent": "transfer_points"}
+{"text": "mera points ko rupees mein badal ke wallet mein daalo", "intent": "transfer_points"}
+{"text": "points aur wallet link karo", "intent": "transfer_points"}
+{"text": "points redeem karke order pay karna hai", "intent": "transfer_points"}
+{"text": "wallet mein points se paisa daal do", "intent": "transfer_points"}
+{"text": "mera earned points wallet mein bhejdo", "intent": "transfer_points"}
+{"text": "points ko wallet balance mein convert karna hai", "intent": "transfer_points"}
+{"text": "kitne points hai transfer karo wallet mein", "intent": "transfer_points"}
+{"text": "points ka use wallet ke liye karna hai", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट वॉलेट में ट्रांसफर करो", "intent": "transfer_points"}
+{"text": "लॉयल्टी पॉइंट को वॉलेट में बदलो", "intent": "transfer_points"}
+{"text": "पॉइंट रिडीम करना है", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "पॉइंट को पैसे में बदलो", "intent": "transfer_points"}
+{"text": "रिवॉर्ड पॉइंट वॉलेट में लगाओ", "intent": "transfer_points"}
+{"text": "पॉइंट से वॉलेट बैलेंस बढ़ाओ", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट को वॉलेट में जोड़ो", "intent": "transfer_points"}
+{"text": "पॉइंट रिडीम करके वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "मेरे लॉयल्टी पॉइंट वॉलेट में ट्रांसफर करो", "intent": "transfer_points"}
+{"text": "पॉइंट कैश आउट करना है", "intent": "transfer_points"}
+{"text": "भाई मेरे पॉइंट वॉलेट में डाल दे", "intent": "transfer_points"}
+{"text": "पॉइंट को वॉलेट क्रेडिट में बदलो", "intent": "transfer_points"}
+{"text": "100 पॉइंट वॉलेट में भेजो", "intent": "transfer_points"}
+{"text": "मेरे लॉयल्टी पॉइंट वॉलेट में लगाओ", "intent": "transfer_points"}
+{"text": "पॉइंट का फायदा उठाना है वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "पॉइंट को वॉलेट में एक्सचेंज करो", "intent": "transfer_points"}
+{"text": "पॉइंट को रुपए में बदलकर वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "पॉइंट और वॉलेट लिंक करो", "intent": "transfer_points"}
+{"text": "पॉइंट रिडीम करके ऑर्डर पे करना है", "intent": "transfer_points"}
+{"text": "वॉलेट में पॉइंट से पैसा डाल दो", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट वॉलेट में भेज दो", "intent": "transfer_points"}
+{"text": "पॉइंट को वॉलेट बैलेंस में बदलना है", "intent": "transfer_points"}
+{"text": "कितने पॉइंट हैं वॉलेट में ट्रांसफर करो", "intent": "transfer_points"}
+{"text": "पॉइंट का उपयोग वॉलेट के लिए करना है", "intent": "transfer_points"}
+{"text": "सारे पॉइंट वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "पॉइंट से वॉलेट में पैसे जोड़ो", "intent": "transfer_points"}
+{"text": "मेरे अर्जित पॉइंट वॉलेट में भेजो", "intent": "transfer_points"}
+{"text": "लॉयल्टी पॉइंट को वॉलेट में कनवर्ट करो", "intent": "transfer_points"}
+{"text": "पॉइंट का इस्तेमाल वॉलेट में करो", "intent": "transfer_points"}
+{"text": "wallet balance batana", "intent": "check_wallet"}
+{"text": "mera wallet status kya hai", "intent": "check_wallet"}
+{"text": "wallet mein kuch paisa hai kya", "intent": "check_wallet"}
+{"text": "wallet balance quick check", "intent": "check_wallet"}
+{"text": "mujhe wallet check karna tha", "intent": "check_wallet"}
+{"text": "wallet ka current status batao", "intent": "check_wallet"}
+{"text": "mera wallet abhi kitne ka hai", "intent": "check_wallet"}
+{"text": "wallet mein kya balance hai", "intent": "check_wallet"}
+{"text": "kitna balance bachha hai wallet mein mera", "intent": "check_wallet"}
+{"text": "wallet mein paisa dekhna tha", "intent": "check_wallet"}
+{"text": "mera wallet balance ek baar check karo", "intent": "check_wallet"}
+{"text": "wallet available amount kya hai", "intent": "check_wallet"}
+{"text": "mere wallet mein kitne rupay hain", "intent": "check_wallet"}
+{"text": "wallet se order kar sakta hu kitna hai", "intent": "check_wallet"}
+{"text": "pehle wallet dekho phir order karte hain", "intent": "check_wallet"}
+{"text": "mera wallet credit kitna hai", "intent": "check_wallet"}
+{"text": "मेरे पॉइंट की कुल गिनती बताओ", "intent": "check_loyalty_points"}
+{"text": "loyalty points kitne mile hain mujhe", "intent": "check_loyalty_points"}
+{"text": "mere kul points kitne hain", "intent": "check_loyalty_points"}
+{"text": "points kitne ho gaye hain mere", "intent": "check_loyalty_points"}
+{"text": "mera loyalty account mein kitne points hain", "intent": "check_loyalty_points"}
+{"text": "points abhi tak kitne jude hain", "intent": "check_loyalty_points"}
+{"text": "reward points ka total batao", "intent": "check_loyalty_points"}
+{"text": "kya aap mera points balance bata sakte ho", "intent": "check_loyalty_points"}
+{"text": "mera points balance ek baar dikhao", "intent": "check_loyalty_points"}
+{"text": "mere kitne bonus points hain", "intent": "check_loyalty_points"}
+{"text": "mangwale points kitne hain mere account mein", "intent": "check_loyalty_points"}
+{"text": "points kahan tak pahunch gaye hain", "intent": "check_loyalty_points"}
+{"text": "mera points count batao", "intent": "check_loyalty_points"}
+{"text": "mujhe mera loyalty points check karna hai", "intent": "check_loyalty_points"}
+{"text": "mere order se kitne points bane abhi tak", "intent": "check_loyalty_points"}
+{"text": "loyalty points ka current status kya hai", "intent": "check_loyalty_points"}
+{"text": "points kitne mil gaye hain order karke", "intent": "check_loyalty_points"}
+{"text": "reward balance kitna hai mera", "intent": "check_loyalty_points"}
+{"text": "mera total earned points batao", "intent": "check_loyalty_points"}
+{"text": "transfer my points now", "intent": "transfer_points"}
+{"text": "I want to cash in my loyalty points", "intent": "transfer_points"}
+{"text": "use my points to add wallet credit", "intent": "transfer_points"}
+{"text": "convert earned points to wallet rupees", "intent": "transfer_points"}
+{"text": "put my points into wallet", "intent": "transfer_points"}
+{"text": "swap my points for wallet balance", "intent": "transfer_points"}
+{"text": "claim points as wallet money", "intent": "transfer_points"}
+{"text": "I have enough points please transfer to wallet", "intent": "transfer_points"}
+{"text": "points se wallet mein credit aana chahiye", "intent": "transfer_points"}
+{"text": "mujhe apne points ko wallet mein daalna hai", "intent": "transfer_points"}
+{"text": "reward points ko wallet mein transfer karna chahta hun", "intent": "transfer_points"}
+{"text": "points redeem karke mera wallet bharo", "intent": "transfer_points"}
+{"text": "mere points ko wallet balance bana do", "intent": "transfer_points"}
+{"text": "points wala paisa wallet mein dalo", "intent": "transfer_points"}
+{"text": "points ko wallet rupees mein badal do", "intent": "transfer_points"}
+{"text": "mera earned points encash karke wallet mein add karo", "intent": "transfer_points"}
+{"text": "points use karna hai wallet top up ke liye", "intent": "transfer_points"}
+{"text": "points se wallet recharge karo", "intent": "transfer_points"}
+{"text": "mera points wallet mein convert ho jaye", "intent": "transfer_points"}
+{"text": "loyalty rewards ko wallet mein bhejo", "intent": "transfer_points"}
+{"text": "पॉइंट को वॉलेट में भुनाओ", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट से वॉलेट टॉप अप करो", "intent": "transfer_points"}
+{"text": "रिवॉर्ड को वॉलेट में बदलो", "intent": "transfer_points"}
+{"text": "पॉइंट को कैश में बदलकर वॉलेट में डालो", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट वॉलेट बैलेंस बनाओ", "intent": "transfer_points"}
+{"text": "लॉयल्टी पॉइंट से वॉलेट रिचार्ज करो", "intent": "transfer_points"}
+{"text": "पॉइंट को वॉलेट में भेजो अभी", "intent": "transfer_points"}
+{"text": "अपने पॉइंट वॉलेट में ट्रांसफर करने हैं", "intent": "transfer_points"}
+{"text": "पॉइंट एनकैश करके वॉलेट में जोड़ो", "intent": "transfer_points"}
+{"text": "रिवॉर्ड पॉइंट को वॉलेट रुपए में बदलो", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट से वॉलेट भरो", "intent": "transfer_points"}
+{"text": "पॉइंट के बदले वॉलेट क्रेडिट लो", "intent": "transfer_points"}
+{"text": "मेरे अर्जित पॉइंट वॉलेट बैलेंस में कनवर्ट करो", "intent": "transfer_points"}
+{"text": "लॉयल्टी रिवॉर्ड वॉलेट में भेजो", "intent": "transfer_points"}
+{"text": "पॉइंट रिडीम करके वॉलेट में क्रेडिट लो", "intent": "transfer_points"}
+{"text": "पॉइंट से वॉलेट रिचार्ज करना है", "intent": "transfer_points"}
+{"text": "मेरे पॉइंट को वॉलेट बैलेंस में बदलकर दो", "intent": "transfer_points"}
+{"text": "see my wishlist now", "intent": "view_wishlist"}
+{"text": "pull up my saved items", "intent": "view_wishlist"}
+{"text": "show all items in my wishlist", "intent": "view_wishlist"}
+{"text": "view all saved foods", "intent": "view_wishlist"}
+{"text": "check items I bookmarked", "intent": "view_wishlist"}
+{"text": "show my pinned food items", "intent": "view_wishlist"}
+{"text": "my saved list please", "intent": "view_wishlist"}
+{"text": "what food did I save for later", "intent": "view_wishlist"}
+{"text": "see what I wish listed", "intent": "view_wishlist"}
+{"text": "get my wishlist", "intent": "view_wishlist"}
+{"text": "wishlist open karo please", "intent": "view_wishlist"}
+{"text": "meri favourite dishes ki list dikhao", "intent": "view_wishlist"}
+{"text": "mere saved items ki list lao", "intent": "view_wishlist"}
+{"text": "wishlist wali food items dikhao", "intent": "view_wishlist"}
+{"text": "mera saved section dikhao", "intent": "view_wishlist"}
+{"text": "meine kya kya save kiya tha dikha do", "intent": "view_wishlist"}
+{"text": "wishlist se order karna hai pehle dikhao", "intent": "view_wishlist"}
+{"text": "मेरी पसंदीदा डिश की सूची दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरे सेव किए आइटम की सूची लाओ", "intent": "view_wishlist"}
+{"text": "विशलिस्ट वाली फूड आइटम दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरा सेव सेक्शन दिखाओ", "intent": "view_wishlist"}
+{"text": "मैंने क्या क्या सेव किया था दिखा दो", "intent": "view_wishlist"}
+{"text": "विशलिस्ट से ऑर्डर करना है पहले दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी पसंद की चीजें दिखाओ", "intent": "view_wishlist"}
+{"text": "सेव किए खाने देखने हैं", "intent": "view_wishlist"}
+{"text": "मेरी सेव लिस्ट खोलो", "intent": "view_wishlist"}
+{"text": "विशलिस्ट में कौन कौन सी चीजें हैं", "intent": "view_wishlist"}
+{"text": "पसंदीदा खाना देखना है", "intent": "view_wishlist"}
+{"text": "मेरी सेव की हुई फूड लिस्ट दिखाओ", "intent": "view_wishlist"}
+{"text": "मेरी बुकमार्क की हुई चीजें दिखाओ", "intent": "view_wishlist"}
+{"text": "points from last order transfer karo wallet mein", "intent": "transfer_points"}
+{"text": "mera sab points ek saath wallet mein bhejdo", "intent": "transfer_points"}
+{"text": "points convert ho jayein wallet credit mein", "intent": "transfer_points"}
+{"text": "meri saved restaurants list dikhao", "intent": "view_wishlist"}

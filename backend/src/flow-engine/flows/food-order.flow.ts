@@ -537,20 +537,47 @@ export const foodOrderFlow: FlowDefinition = {
       ],
       transitions: {
         // Always check if we have a search query first before searching
+        quick_reorder: 'load_reorder_cart',            // 🔄 One-tap repeat last order
         success: 'check_search_query_exists',
         order_food: 'check_search_query_exists',
         search_product: 'check_search_query_exists',
-        browse_menu: 'show_categories',              // 🔧 FIX: Browse menu → show categories, not search
+        browse_menu: 'check_show_collections',        // 🔧 FIX: Browse menu → smart collections gate
         browse_category: 'show_categories',
         browse_stores: 'show_partner_stores',  // User wants to see other stores/restaurants
         ask_recommendation: 'show_recommendations',
         ask_famous: 'show_recommendations',
         ask_fastest_delivery: 'search_fastest_delivery',
-        check_availability: 'check_search_query_exists',
+        check_availability: 'show_open_now',
         add_to_cart: 'process_selection',           // 🔧 FIX: Handle add-to-cart intent directly
         view_cart: 'show_current_cart',              // 🔧 FIX: Handle view cart intent
         checkout: 'check_auth_for_checkout',         // 🔧 FIX: Handle checkout intent
         default: 'check_search_query_exists',
+      },
+    },
+
+    // 🔄 Load last order items into cart for one-tap reorder
+    load_reorder_cart: {
+      type: 'action',
+      description: 'Pre-populate cart from last order so user skips search and goes straight to checkout',
+      actions: [
+        {
+          id: 'refresh_auth_reorder',
+          executor: 'session',
+          config: { action: 'refresh_auth' },
+          output: '_auth_reorder',
+        },
+        {
+          id: 'populate_reorder_cart',
+          executor: 'quick_reorder',
+          config: {},
+          output: 'cart_prefill',
+        },
+      ],
+      transitions: {
+        success: 'show_current_cart',
+        no_items: 'show_recommendations',
+        error: 'show_recommendations',
+        default: 'show_current_cart',
       },
     },
 
@@ -713,7 +740,7 @@ export const foodOrderFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        browse_menu: 'show_categories',
+        browse_menu: 'check_show_collections',
         popular: 'show_recommendations',
         surprise: 'show_recommendations',
         cancel: 'cancelled',
@@ -2034,6 +2061,87 @@ export const foodOrderFlow: FlowDefinition = {
       },
     },
 
+    show_open_now: {
+      type: 'action',
+      description: 'Show only currently open restaurants with time-appropriate items',
+      actions: [
+        {
+          id: 'search_open_now',
+          executor: 'search',
+          config: {
+            type: 'search',
+            index: 'food_items',
+            queryMode: 'recommendation',  // Uses time-of-day search terms
+            open_now: true,               // SearchExecutor will filter to open stores only
+            limit: 10,
+          },
+          output: 'search_results',
+        },
+      ],
+      transitions: {
+        success: 'show_results',
+        error: 'show_recommendations',
+        default: 'show_results',
+      },
+    },
+
+    // Gate: authenticated users get personalized collections, guests get generic categories
+    check_show_collections: {
+      type: 'decision',
+      description: 'Route browse to personalized collections for logged-in users',
+      conditions: [
+        {
+          expression: `context.authenticated === true && !!context.user_id`,
+          event: 'has_profile',
+        },
+      ],
+      transitions: {
+        has_profile: 'browse_collections',
+        default: 'show_categories',
+      },
+    },
+
+    // Load personalized collections
+    browse_collections: {
+      type: 'action',
+      description: 'Load smart personalized food collections for user',
+      actions: [
+        {
+          id: 'load_collections',
+          executor: 'collections',
+          config: { limit: 4 },
+          output: 'user_collections',
+        },
+      ],
+      transitions: {
+        success: 'display_collections',
+        error: 'show_categories',
+        default: 'show_categories',
+      },
+    },
+
+    // Display personalized collection tiles
+    display_collections: {
+      type: 'wait',
+      description: 'Show personalised collections and wait for user tap',
+      onEntry: [
+        {
+          id: 'show_collections',
+          executor: 'response',
+          config: {
+            message: 'What are you in the mood for? 😋',
+            responseType: 'buttons',
+            buttonsPath: 'user_collections',
+            buttonConfig: { labelPath: 'title', valuePath: 'query' },
+          },
+        },
+      ],
+      transitions: {
+        user_message: 'check_search_query_exists',
+        default: 'check_search_query_exists',
+      },
+    },
+
     // Display categories to user
     display_categories: {
       type: 'wait',
@@ -2630,13 +2738,26 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
           id: 'display_items',
           executor: 'response',
           config: {
-            message: 'Here are some delicious options I found for you:',
+            message: '{{search_results.headerMessage || "Here are the results:"}}',
             cardsPath: 'search_results.cards',
+            buttonsPath: 'search_results.filterButtons',
             buttons: [
               { id: 'btn_view_cart', label: '📋 View Cart', value: 'show cart' },
               { id: 'btn_browse', label: '📋 Browse Categories', value: 'browse_menu' },
-              { id: 'btn_search', label: '🔍 Search', value: 'search_different' },
+              { id: 'btn_describe', label: '📖 Tell me more about #1', value: 'describe_first_item' },
             ],
+            // WhatsApp Business API: max 3 quick reply buttons, no dynamic filter chips
+            channelResponses: {
+              whatsapp: {
+                message: '{{search_results.headerMessage || "Here are the results:"}}',
+                buttonsPath: '',   // Override to disable dynamic filter chips on WhatsApp
+                buttons: [
+                  { id: 'btn_view_cart', label: '🛒 Cart', value: 'show cart' },
+                  { id: 'btn_browse', label: '📋 Browse', value: 'browse_menu' },
+                  { id: 'btn_describe', label: '📖 More Info', value: 'describe_first_item' },
+                ],
+              },
+            },
           },
           output: '_last_response',
         },
@@ -2644,7 +2765,32 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       actions: [],
       transitions: {
         category_selected: 'search_by_category',  // 🔧 FIX: stale cat_N button click → re-search category
-        user_message: 'resolve_user_intent',  // ✅ First resolve entities using Search API
+        describe_first_item: 'describe_item',     // User wants full description of first result
+        user_message: 'resolve_user_intent',      // ✅ First resolve entities using Search API
+        default: 'resolve_user_intent',
+      },
+    },
+
+    // Show full description of the top search result
+    describe_item: {
+      type: 'wait',
+      description: 'Show full description of the first search result item',
+      onEntry: [
+        {
+          id: 'show_description',
+          executor: 'response',
+          config: {
+            message: '📖 **{{search_results.cards.0.name}}**\n\n{{search_results.cards.0.description}}\n\n💰 Price: {{search_results.cards.0.price}}  |  🏪 {{search_results.cards.0.storeName}}',
+            buttons: [
+              { id: 'btn_add', label: '🛒 Add to Cart', value: 'add {{search_results.cards.0.name}}' },
+              { id: 'btn_back', label: '⬅️ Back to Results', value: 'show results' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
         default: 'resolve_user_intent',
       },
     },
@@ -2681,6 +2827,22 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       type: 'decision',
       description: 'Route based on entity resolution results from OpenSearch. PRIORITY: Button actions > Selection patterns > Entity search!',
       conditions: [
+        {
+          // 🔄 Quick Reorder: user confirmed "Add All to Cart" from the reorder preview screen
+          expression: `/quick reorder confirm/i.test(context._user_message?.trim() || '')`,
+          event: 'quick_reorder',
+        },
+        {
+          // "what's open", "kya khula hai", "open now" → show open-only results
+          expression: `/\\b(open now|open|khula|available|kya khula|what.*open|which.*open|abhi.*open)\\b/i.test(context._user_message?.trim() || '')`,
+          event: 'open_now_requested',
+        },
+        {
+          // Case -4: Detect describe / "tell me more" when user is looking at results
+          // Triggers ONLY when search results are visible — prevents false-positives in other states
+          expression: `context.search_results?.cards?.length > 0 && /\\b(describe|tell me more|what.?s in|more about|ingredients|details|explain|more info|what is it)\\b/i.test(context._user_message?.trim() || '')`,
+          event: 'describe_requested',
+        },
         {
           // Case -3: HIGHEST PRIORITY - Detect "browse menu" / "browse categories" button click
           expression: `/^(browse_menu|browse\\s+menu|browse\\s+categories|categories)$/i.test(context._user_message?.trim()) || context.food_nlu?.intent === 'browse_menu' || context.food_nlu?.intent === 'browse_category'`,
@@ -2736,6 +2898,8 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         },
       ],
       transitions: {
+        open_now_requested: 'show_open_now',
+        describe_requested: 'describe_item',                  // 🆕 "Tell me more" → show item description
         browse_detected: 'show_categories',                   // 🔧 Browse categories from results
         search_different: 'ask_what_to_eat',                   // 🔧 New search from results
         checkout_detected: 'check_auth_for_checkout',       // 🔧 FIX: Direct route to checkout
@@ -3548,8 +3712,51 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
         },
       ],
       transitions: {
-        authenticated: 'collect_address',
+        authenticated: 'review_cart_before_checkout',  // 🛒 Show cart review before address
         default: 'request_phone',
+      },
+    },
+
+    // 🛒 Pre-checkout cart review: user sees cart + total BEFORE entering delivery address
+    review_cart_before_checkout: {
+      type: 'action',
+      description: 'Show cart summary with total so user can confirm or modify before entering address',
+      actions: [
+        {
+          id: 'validate_cart_review',
+          executor: 'cart_manager',
+          config: { operation: 'validate' },
+          output: 'cart_review',
+        },
+        {
+          id: 'show_cart_review',
+          executor: 'response',
+          config: {
+            message: '🛒 **Review Your Order**\n\n{{cart_review.cartSummary}}\n\n💰 **Total: ₹{{cart_review.totalPrice}}** ({{cart_review.totalItems}} items)\n\nReady to add your delivery address?',
+            buttons: [
+              { id: 'btn_proceed',    label: '✅ Confirm & Add Address', value: 'proceed' },
+              { id: 'btn_modify_cart', label: '✏️ Modify Cart',          value: 'modify_cart' },
+              { id: 'btn_cancel',     label: '❌ Cancel Order',          value: 'cancel' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: { default: 'wait_cart_review' },
+    },
+
+    // ⏳ Wait for user response to cart review
+    wait_cart_review: {
+      type: 'wait',
+      description: 'Wait for user to confirm, modify, or cancel after seeing cart review',
+      onEntry: [],
+      actions: [],
+      transitions: {
+        user_message: 'collect_address',   // Any free text → proceed to address
+        proceed:      'collect_address',
+        modify_cart:  'show_current_cart',
+        cancel:       'cancelled',
+        default:      'collect_address',
       },
     },
 
@@ -4216,8 +4423,8 @@ Reply "confirm" to book the rider.`,
       ],
       transitions: {
         success: 'route_surge_check',
-        error: 'collect_payment_method',
-        default: 'collect_payment_method',
+        error: 'check_saved_payment',
+        default: 'check_saved_payment',
       },
     },
 
@@ -4233,7 +4440,7 @@ Reply "confirm" to book the rider.`,
       ],
       transitions: {
         surge: 'show_surge_notice',
-        default: 'collect_payment_method',
+        default: 'check_saved_payment',
       },
     },
 
@@ -4304,6 +4511,113 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
+        default: 'check_saved_payment',
+      },
+    },
+
+    // ⭐ Payment Preference: load saved method and offer one-tap re-use
+    check_saved_payment: {
+      type: 'action',
+      description: 'Load preferred payment method from session (if previously saved)',
+      actions: [
+        {
+          id: 'load_pref',
+          executor: 'session',
+          config: {
+            action: 'get',
+            keys: ['preferred_payment_method', 'preferred_payment_label'],
+          },
+          output: 'pref_payment_data',
+        },
+      ],
+      transitions: {
+        session_retrieved: 'route_payment_preference',
+        default: 'collect_payment_method',
+      },
+    },
+
+    route_payment_preference: {
+      type: 'decision',
+      description: 'Route to saved payment offer if preference exists',
+      conditions: [
+        {
+          expression: `!!context.data?.pref_payment_data?.preferred_payment_method`,
+          event: 'has_pref',
+        },
+      ],
+      transitions: {
+        has_pref: 'offer_saved_payment',
+        default: 'collect_payment_method',
+      },
+    },
+
+    offer_saved_payment: {
+      type: 'wait',
+      description: 'Ask if user wants to use their saved payment method',
+      onEntry: [
+        {
+          id: 'show_saved_payment_offer',
+          executor: 'response',
+          config: {
+            message: '💳 **Payment Method**\n\nUse your last payment method?\n\n⭐ **{{pref_payment_data.preferred_payment_label}}**',
+            buttons: [
+              { id: 'btn_use_saved', label: '✅ Yes, use this', value: 'use_saved_payment' },
+              { id: 'btn_change_pmt', label: '🔄 Choose different', value: 'change_payment' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        use_saved_payment: 'apply_saved_payment',
+        change_payment: 'collect_payment_method',
+        user_message: 'handle_saved_payment_response',
+        default: 'apply_saved_payment',
+      },
+    },
+
+    handle_saved_payment_response: {
+      type: 'decision',
+      description: 'Parse yes/no response to saved payment offer',
+      conditions: [
+        {
+          expression: `/yes|ok|okay|haan|ha|use|same|theek|sure/i.test(context._user_message || '')`,
+          event: 'confirmed',
+        },
+        {
+          expression: `/no|change|different|other|nahi|nope|choose/i.test(context._user_message || '')`,
+          event: 'change',
+        },
+      ],
+      transitions: {
+        confirmed: 'apply_saved_payment',
+        change: 'collect_payment_method',
+        default: 'apply_saved_payment',
+      },
+    },
+
+    apply_saved_payment: {
+      type: 'decision',
+      description: 'Route to correct payment setter based on saved preference',
+      conditions: [
+        {
+          expression: `context.data?.pref_payment_data?.preferred_payment_method === 'cash_on_delivery'`,
+          event: 'cod',
+        },
+        {
+          expression: `context.data?.pref_payment_data?.preferred_payment_method === 'wallet'`,
+          event: 'wallet',
+        },
+        {
+          expression: `context.data?.pref_payment_data?.preferred_payment_method === 'digital_payment'`,
+          event: 'digital',
+        },
+      ],
+      transitions: {
+        cod: 'set_payment_cod',
+        wallet: 'check_wallet_balance',   // Wallet always needs balance check
+        digital: 'set_payment_digital',
         default: 'collect_payment_method',
       },
     },
@@ -4416,7 +4730,7 @@ Reply "confirm" to book the rider.`,
           executor: 'php_api',
           config: {
             action: 'get_wallet_balance',
-            token: '{{config.token}}',
+            token: '{{auth_token}}',
           },
           output: 'wallet_info',
         },
@@ -4465,6 +4779,18 @@ Reply "confirm" to book the rider.`,
             },
           },
           output: 'payment_saved',
+        },
+        {
+          id: 'remember_wallet_pref',
+          executor: 'session',
+          config: {
+            action: 'save',
+            data: {
+              preferred_payment_method: 'wallet',
+              preferred_payment_label: 'Wallet Balance 👛',
+            },
+          },
+          output: '_wallet_pref_saved',
         },
       ],
       transitions: {
@@ -4587,6 +4913,18 @@ Reply "confirm" to book the rider.`,
           },
           output: 'payment_saved',
         },
+        {
+          id: 'remember_cod_pref',
+          executor: 'session',
+          config: {
+            action: 'save',
+            data: {
+              preferred_payment_method: 'cash_on_delivery',
+              preferred_payment_label: 'Cash on Delivery 💵',
+            },
+          },
+          output: '_cod_pref_saved',
+        },
       ],
       transitions: {
         default: 'prompt_coupon_code',
@@ -4608,6 +4946,18 @@ Reply "confirm" to book the rider.`,
           },
           output: 'payment_saved',
         },
+        {
+          id: 'remember_digital_pref',
+          executor: 'session',
+          config: {
+            action: 'save',
+            data: {
+              preferred_payment_method: 'digital_payment',
+              preferred_payment_label: 'Online Payment (UPI/Card) 💳',
+            },
+          },
+          output: '_digital_pref_saved',
+        },
       ],
       transitions: {
         default: 'prompt_coupon_code',
@@ -4617,16 +4967,24 @@ Reply "confirm" to book the rider.`,
     // Prompt user for coupon code before order summary
     prompt_coupon_code: {
       type: 'wait',
-      description: 'Ask if user has a coupon code',
+      description: 'Fetch available coupons and ask if user wants to apply one',
       onEntry: [
+        {
+          id: 'fetch_coupons',
+          executor: 'php_api',
+          config: {
+            action: 'get_coupons',
+            token: '{{auth_token}}',
+          },
+          output: 'available_coupons',
+        },
         {
           id: 'ask_coupon',
           executor: 'response',
           config: {
-            message: '🏷️ Do you have a coupon code? Type it for a discount, or skip.',
-            buttons: [
-              { id: 'btn_skip_coupon', label: '⏭️ Skip', value: 'skip_coupon' },
-            ],
+            message: '🏷️ Got a coupon code? Pick one below or type your code — or skip to continue.',
+            buttonsPath: 'available_coupons.coupons',
+            buttonConfig: { labelPath: 'label', valuePath: 'value' },
           },
           output: '_last_response',
         },
@@ -4721,7 +5079,7 @@ Reply "confirm" to book the rider.`,
           id: 'summary_message',
           executor: 'response',
           config: {
-            message: '🧾 **Order Summary**\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km){{#if pricing.tax}}\n🧾 Tax: ₹{{pricing.tax}}{{/if}}{{#if surge_amount}}\n⚡ Surge ({{surge_title}}): ₹{{surge_amount}}{{/if}}\n{{#if coupon_discount}}🏷️ Coupon Discount: -₹{{coupon_discount}}\n{{/if}}💳 **Grand Total: ₹{{pricing.total}}{{#if surge_amount}} + ₹{{surge_amount}} surge{{/if}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivery to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} separate orders will be placed_\n\n{{/if}}_Pricing confirmed via PHP. Final amount may vary slightly based on store._\n\nReply "confirm" to place order.',
+            message: '🛒 **Looks good! Here\'s your order summary** 😋\n\n{{cart_update_result.cartSummary}}\n\n🚚 Delivery Fee: ₹{{pricing.delivery_fee}} ({{distance}}km){{#if pricing.tax}}\n🧾 Tax: ₹{{pricing.tax}}{{/if}}{{#if surge_amount}}\n⚡ Surge ({{surge_title}}): ₹{{surge_amount}}{{/if}}\n{{#if coupon_discount}}🏷️ Coupon Discount: -₹{{coupon_discount}}\n{{/if}}💳 **Grand Total: ₹{{pricing.total}}{{#if surge_amount}} + ₹{{surge_amount}} surge{{/if}}**\n💸 Payment: {{payment_method}}\n\n📍 Delivering to: {{delivery_address.label}}\n{{delivery_address.address}}\n\n{{#if order_note}}📝 Note: {{order_note}}\n\n{{/if}}{{#if cart_update_result.isMultiStore}}📦 _{{cart_update_result.storeCount}} restaurants will prepare your order_\n\n{{/if}}_Ready to go? Hit confirm and I\'ll get it started!_ 🚀',
             buttons: [
               { id: 'btn_confirm', label: '✅ Confirm Order', value: 'confirm' },
               { id: 'btn_note', label: '📝 Add Note to Restaurant', value: 'add_note' },
@@ -4995,7 +5353,7 @@ Reply "confirm" to book the rider.`,
           id: 'show_multi_confirmation',
           executor: 'response',
           config: {
-            message: '✅ **Orders Placed Successfully!**\n\n{{order_result.message}}\n\n📦 Order IDs: {{order_result.orderIds}}\n🔗 Track: {{order_result.trackingUrl}}\n\n_Each restaurant will prepare your order separately. You\'ll receive updates for each._',
+            message: '🎉 **All orders placed! Time to get hungry!** 🍴\n\n{{order_result.message}}\n\n📦 Order IDs: {{order_result.orderIds}}\n🔗 Track: {{order_result.trackingUrl}}\n\n_Each restaurant is now preparing your order. I\'ll send you WhatsApp updates as they progress!_ 📱',
           },
           output: '_last_response',
         },
@@ -5437,7 +5795,13 @@ Reply "confirm" to book the rider.`,
           id: 'success_message',
           executor: 'response',
           config: {
-            message: '✅ **Order placed!**\n\n✅ Order ID: #{{order_result.orderId}}\n💰 Total: ₹{{order_result.orderTotal}} _(PHP confirmed)_\n📍 Delivery: {{delivery_address.label}}\n⏱️ ETA: 30-45 minutes\n\n📍 Track your order:\n{{order_result.trackingUrl}}\n\nYou\'ll receive WhatsApp updates on each step!',
+            message: '🎉 **Order placed! Your food is on its way!** 🍴\n\n✅ Order ID: #{{order_result.orderId}}\n💰 Total: ₹{{order_result.orderTotal}}\n📍 Delivering to: {{delivery_address.label}}\n⏱️ ETA: 30–45 minutes\n\nI\'ll keep you posted on WhatsApp every step of the way! 📱',
+            metadata: {
+              order_tracking: {
+                orderId: '{{order_result.orderId}}',
+                storeName: '{{selected_store.name}}',
+              },
+            },
           },
           output: '_last_response',
         },
@@ -5471,6 +5835,17 @@ Reply "confirm" to book the rider.`,
           },
           output: '_address_saved',
         },
+        {
+          id: 'persist_order_id',
+          executor: 'session',
+          config: {
+            // Persist orderId to session so "track my order" works instantly after placement
+            action: 'save',
+            key: 'last_order_id',
+            valuePath: 'order_result.orderId',
+          },
+          output: '_order_id_persisted',
+        },
       ],
       transitions: {},
     },
@@ -5498,7 +5873,7 @@ Reply "confirm" to book the rider.`,
       actions: [],
       transitions: {
         user_message: 'understand_request',
-        browse_menu: 'show_categories',
+        browse_menu: 'check_show_collections',
         default: 'understand_request',
       },
     },

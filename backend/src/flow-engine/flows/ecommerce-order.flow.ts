@@ -108,8 +108,9 @@ export const ecommerceOrderFlow: FlowDefinition = {
           id: 'display_products',
           executor: 'response',
           config: {
-            message: 'Here are the products I found for you:',
+            message: 'Found {{search_results.totalItems}} items for you 🛍️',
             cardsPath: 'search_results.cards',
+            buttonsPath: 'search_results.filterButtons',
             buttons: [
               { id: 'btn_view_cart', label: '🛒 View Cart', value: 'view cart' },
               { id: 'btn_checkout', label: '✅ Checkout', value: 'checkout' },
@@ -320,18 +321,19 @@ Ask if they want to:
           id: 'summary_message',
           executor: 'llm',
           config: {
-            systemPrompt: 'Show e-commerce order summary clearly.',
-            prompt: `Order Summary:
+            systemPrompt: 'Show e-commerce order summary in a warm, friendly tone. Be concise.',
+            prompt: `🛒 **Looks good! Here's your order summary** 😊
+
 📦 Items: {{cart_items.length}} items
 💰 Subtotal: ₹{{pricing.itemsTotal}}
-🚚 Shipping: {{#if pricing.freeShipping}}FREE{{else}}₹{{pricing.shippingFee}}{{/if}}
+🚚 Shipping: {{#if pricing.freeShipping}}FREE 🎉{{else}}₹{{pricing.shippingFee}}{{/if}}
 🧾 GST (18%): ₹{{pricing.tax}}
-💳 Total: ₹{{pricing.total}}
+💳 **Total: ₹{{pricing.total}}**
 
-📍 Delivery: {{delivery_address.label}}
-⏱️ Estimated: 1-2 days
+📍 Delivering to: {{delivery_address.label}}
+⏱️ ETA: 1–2 business days
 
-Reply "confirm" to place order or "cancel" to cancel.`,
+Hit confirm and I'll place your order! 🚀`,
             temperature: 0.7,
             maxTokens: 300,
           },

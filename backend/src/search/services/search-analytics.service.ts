@@ -11,6 +11,8 @@ export interface SearchLog {
   sessionId?: string;
   userId?: string;
   platform?: string;
+  lat?: number;
+  lon?: number;
 }
 
 @Injectable()
@@ -44,6 +46,8 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
           session_id VARCHAR(100),
           user_id VARCHAR(100),
           platform VARCHAR(20) DEFAULT 'unknown',
+          lat DOUBLE PRECISION,
+          lon DOUBLE PRECISION,
           created_at TIMESTAMP DEFAULT NOW()
         );
 
@@ -59,6 +63,14 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
       // Create platform index (after column is guaranteed to exist)
       await client.query(`
         CREATE INDEX IF NOT EXISTS idx_search_logs_platform ON search_logs(platform)
+      `).catch(() => {});
+
+      // Add lat/lon columns for geographic search insights (migration for existing tables)
+      await client.query(`
+        ALTER TABLE search_logs ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION
+      `).catch(() => {});
+      await client.query(`
+        ALTER TABLE search_logs ADD COLUMN IF NOT EXISTS lon DOUBLE PRECISION
       `).catch(() => {});
       
       client.release();
@@ -76,8 +88,8 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.pool.query(
         `INSERT INTO search_logs
-         (id, query, search_type, filters, results_count, execution_time_ms, session_id, user_id, platform)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+         (id, query, search_type, filters, results_count, execution_time_ms, session_id, user_id, platform, lat, lon)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
         [
           randomUUID(),
           log.query,
@@ -88,6 +100,8 @@ export class SearchAnalyticsService implements OnModuleInit, OnModuleDestroy {
           log.sessionId || null,
           log.userId || null,
           log.platform || 'unknown',
+          log.lat ?? null,
+          log.lon ?? null,
         ]
       );
     } catch (error) {
