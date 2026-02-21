@@ -298,6 +298,8 @@ export class ContextRouterService implements OnModuleInit {
         'order_food', 'book_parcel', 'track_order', 'help',
         'parcel_booking', 'send_parcel', 'order_tracking',
         'main_menu', 'go_home',
+        // Rating/review actions always break out of any active flow
+        'rate_order', 'submit_review', 'leave_review',
       ]);
       // These actions are top-level ONLY when they arrive while a PARCEL flow is active.
       // When in food/ecommerce flows, checkout/view_cart/browse_menu are handled by the flow itself.
@@ -310,6 +312,24 @@ export class ContextRouterService implements OnModuleInit {
           flowContext: null,
         });
         session = await this.sessionService.getSession(event.identifier);
+
+        // After clearing flow, handle rating actions directly (IntentRouter would misclassify them)
+        if (buttonAction === 'rate_order' || buttonAction === 'submit_review' || buttonAction === 'leave_review') {
+          return {
+            message: `⭐ **How was your order?**\n\nTap a star to rate:`,
+            buttons: [
+              { label: '⭐ 1 Star', value: 'rating_1', action: 'rate_order' },
+              { label: '⭐⭐ 2 Stars', value: 'rating_2', action: 'rate_order' },
+              { label: '⭐⭐⭐ 3 Stars', value: 'rating_3', action: 'rate_order' },
+              { label: '⭐⭐⭐⭐ 4 Stars', value: 'rating_4', action: 'rate_order' },
+              { label: '⭐⭐⭐⭐⭐ 5 Stars', value: 'rating_5', action: 'rate_order' },
+            ],
+            routedTo: 'direct',
+            intent: { intent: 'rate_order', confidence: 1.0 },
+            metadata: { handler: 'submit_review' },
+          };
+        }
+
         const routeDecision = await this.intentRouter.route(buttonAction, event.message || buttonAction, {
           hasActiveFlow: false,
           isAuthenticated: session.data?.authenticated === true,
