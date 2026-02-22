@@ -546,7 +546,7 @@ export const foodOrderFlow: FlowDefinition = {
         order_food: 'check_search_query_exists',
         search_product: 'check_search_query_exists',
         browse_menu: 'check_show_collections',        // 🔧 FIX: Browse menu → smart collections gate
-        browse_category: 'show_categories',
+        browse_category: 'check_show_collections',  // 🔧 FIX: Route through personalization gate (was show_categories)
         browse_stores: 'show_partner_stores',  // User wants to see other stores/restaurants
         ask_recommendation: 'show_recommendations',
         ask_famous: 'show_recommendations',
@@ -2913,7 +2913,7 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       transitions: {
         open_now_requested: 'show_open_now',
         describe_requested: 'describe_item',                  // 🆕 "Tell me more" → show item description
-        browse_detected: 'show_categories',                   // 🔧 Browse categories from results
+        browse_detected: 'check_show_collections',              // 🔧 FIX: Route through personalization gate (was show_categories)
         search_different: 'ask_what_to_eat',                   // 🔧 New search from results
         checkout_detected: 'check_auth_for_checkout',       // 🔧 FIX: Direct route to checkout
         view_cart_detected: 'show_current_cart',             // 🔧 FIX: Direct route to cart view
