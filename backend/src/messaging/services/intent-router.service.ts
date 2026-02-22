@@ -378,12 +378,11 @@ export class IntentRouterService implements OnModuleInit {
       // "payment" or "pay" without wallet/loyalty context — keep as payment_issue
     }
 
-    // Heuristic override: wallet/balance queries that NLU misclassifies as anything else
-    // (NLU v8 correctly classifies check_wallet, but check_wallet samples are v8; older or
-    // edge-case queries may still land on browse_menu or search_product)
-    if (nluIntent !== 'check_wallet' && nluIntent !== 'payment_issue') {
-      const walletBalanceKeywords = /\bwallet\s*(balance|amount|kitna|mein|paisa|paise|funds?)\b|\b(balance|kitna)\s*(wallet|mein)\b/i;
-      if (walletBalanceKeywords.test(lowerText)) return 'check_wallet';
+    // Heuristic override: wallet/balance queries that NLU misclassifies
+    // "wallet balance" often lands on payment_issue — override to check_wallet
+    if (nluIntent !== 'check_wallet') {
+      const walletBalanceKeywords = /\bwallet\s*(balance|amount|kitna|mein|paisa|paise|funds?)?\b|\b(balance|kitna)\s*(wallet|mein)\b/i;
+      if (walletBalanceKeywords.test(lowerText) && /wallet/i.test(lowerText)) return 'check_wallet';
     }
 
     // Heuristic override: availability/open-now queries (NLU v8 lacks check_availability intent)
