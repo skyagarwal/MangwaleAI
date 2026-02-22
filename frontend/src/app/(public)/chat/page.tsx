@@ -9,6 +9,7 @@ import type { ChatWebSocketClient, UserContextData, CartUpdateData } from '@/lib
 import { parseButtonsFromText } from '@/lib/utils/helpers'
 import { ProductCard } from '@/components/chat/ProductCard'
 import { ParcelCard } from '@/components/chat/ParcelCard'
+import { VehicleCard } from '@/components/chat/VehicleCard'
 import RunningCart from '@/components/chat/RunningCart'
 import { useRouter } from 'next/navigation'
 import { VoiceInput } from '@/components/chat/VoiceInput'
@@ -2195,16 +2196,16 @@ function ChatContent() {
                                 {(expandedCards[message.id] ? message.cards : message.cards.slice(0, 4)).map((card, cardIndex) => {
                                   if (card.cardType === 'vehicle') {
                                     return (
-                                      <ParcelCard
+                                      <VehicleCard
                                         key={card.id}
-                                        pickup={{ address: card.description || 'Pickup location' }}
-                                        dropoff={{ address: card.name || 'Drop-off location' }}
-                                        distance={card.distance}
-                                        estimatedTime={card.deliveryTime}
-                                        price={card.price}
-                                        vehicleType={(card as any).vehicleType || 'bike'}
-                                        status={(card as any).status}
-                                        onAction={(action: string) => handleSend(action)}
+                                        id={card.id}
+                                        name={card.name}
+                                        description={card.metadata?.description || card.description}
+                                        image={card.image}
+                                        pricePerKm={card.metadata?.per_km_charge}
+                                        minimumCharge={card.metadata?.minimum_charge}
+                                        ordersCount={card.metadata?.orders_count}
+                                        onSelect={(id) => handleSend(id, 'button_click')}
                                       />
                                     );
                                   }

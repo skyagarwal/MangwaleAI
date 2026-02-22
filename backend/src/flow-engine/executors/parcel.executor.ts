@@ -93,23 +93,25 @@ export class ParcelExecutor implements ActionExecutor {
       const categories = await this.phpParcelService.getParcelCategories(moduleId, zoneId);
       this.logger.log(`📦 Fetched ${categories.length} categories for module ${moduleId}, zone ${zoneId}`);
 
-      // 3. Format as ProductCards
+      // 3. Format as ProductCards — pass ALL PHP fields through
       const cards = categories.map(cat => ({
         id: cat.id.toString(),
         name: cat.name,
-        description: `Min: ₹${cat.parcel_minimum_shipping_charge}`,
-        image: cat.image_full_url || cat.image, // Ensure full URL
+        description: cat.description || '',
+        image: cat.image_full_url || cat.image,
         price: `₹${cat.parcel_per_km_shipping_charge}/km`,
-        cardType: 'vehicle' as const, // Mark as vehicle card to hide food-specific UI
+        cardType: 'vehicle' as const,
         action: {
           label: 'Select',
-          value: cat.id.toString(), // The value sent when clicked
+          value: cat.id.toString(),
         },
-        // Add metadata for calculation
         metadata: {
-            per_km_charge: cat.parcel_per_km_shipping_charge,
-            minimum_charge: cat.parcel_minimum_shipping_charge,
-        }
+          per_km_charge: cat.parcel_per_km_shipping_charge,
+          minimum_charge: cat.parcel_minimum_shipping_charge,
+          description: cat.description,
+          orders_count: cat.orders_count,
+          module_id: cat.module_id,
+        },
       }));
 
       this.logger.log(`Generated ${cards.length} cards. First card image: ${cards[0]?.image}`);

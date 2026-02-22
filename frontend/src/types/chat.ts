@@ -70,6 +70,8 @@ export interface ProductCard {
   has_variant?: number
   food_variations?: FoodVariation[]
   rawPrice?: number
+  // Vehicle/parcel metadata from PHP API
+  metadata?: Record<string, any>
   action: {
     label: string
     value: string

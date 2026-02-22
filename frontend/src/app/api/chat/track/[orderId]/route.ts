@@ -4,9 +4,9 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3200';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { orderId: string } },
+  { params }: { params: Promise<{ orderId: string }> },
 ) {
-  const { orderId } = params;
+  const { orderId } = await params;
   try {
     const response = await fetch(`${BACKEND_URL}/api/chat/track/${orderId}`, {
       headers: { 'Content-Type': 'application/json' },
