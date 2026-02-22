@@ -932,6 +932,63 @@ export class ContextRouterService implements OnModuleInit {
       };
     }
 
+    // STEP 4a-10: Check store/item availability — "kya khula hai", "what's open now"
+    // Routes to food flow which shows open-now stores after location collection
+    if (intent.intent === 'check_availability') {
+      if (activeFlow) {
+        await this.sessionService.updateSession(event.identifier, {
+          activeFlow: null,
+          flowContext: null,
+        });
+      }
+      // If user already has a location, route directly into food flow with open_now hint
+      const userLat = session.data?.user_lat ?? session.data?.location?.lat;
+      if (userLat) {
+        // Rewrite message as "show open restaurants" so food flow picks up open_now
+        const modifiedEvent = { ...event, message: 'show open restaurants near me' };
+        const foodFlowResponse = await this.startNewFlowSync(modifiedEvent, session, {
+          intent: 'order_food', confidence: 0.95, entities: {},
+        });
+        if (foodFlowResponse) return foodFlowResponse;
+      }
+      return {
+        message: '🟢 **What\'s Open Now?**\n\nShare your location and I\'ll show you all open restaurants and stores near you!',
+        buttons: [
+          { label: '📍 Find Open Restaurants', value: 'order food', action: 'order_food' },
+          ...this.getMainMenuButtons().slice(0, 2),
+        ],
+        routedTo: 'direct',
+        intent,
+      };
+    }
+
+    // STEP 4a-11: Dietary preference update — "main veg hoon", "I prefer veg"
+    if (intent.intent === 'update_preference') {
+      const lowerMsg = (event.message || '').toLowerCase();
+      // Detect what preference is being set
+      const isVeg = /veg(etarian)?/.test(lowerMsg) && !/non.?veg/.test(lowerMsg);
+      const isNonVeg = /non.?veg/.test(lowerMsg);
+      const prefLabel = isVeg ? '🥦 Vegetarian' : isNonVeg ? '🍗 Non-Vegetarian' : '🍽️ Your preference';
+
+      // Save to session
+      if (isVeg) {
+        await this.sessionService.setData(event.identifier, 'dietary_preference', 'veg');
+      } else if (isNonVeg) {
+        await this.sessionService.setData(event.identifier, 'dietary_preference', 'non_veg');
+      }
+
+      return {
+        message: `✅ Got it! **${prefLabel}** preference saved.\n\nI'll filter your food results accordingly. Ready to order?`,
+        buttons: [
+          { label: '🍔 Order Food', value: 'order food', action: 'order_food' },
+          ...this.getMainMenuButtons().slice(0, 2),
+        ],
+        routedTo: 'direct',
+        intent,
+        metadata: { handler: 'update_preference', preference: isVeg ? 'veg' : isNonVeg ? 'non_veg' : 'unknown' },
+      };
+    }
+
     // STEP 4b: Continue Active Flow (with Intent Awareness)
     // Check both session.data.activeFlow AND flowContext
     if (activeFlow) {

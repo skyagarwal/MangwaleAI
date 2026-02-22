@@ -378,6 +378,27 @@ export class IntentRouterService implements OnModuleInit {
       // "payment" or "pay" without wallet/loyalty context — keep as payment_issue
     }
 
+    // Heuristic override: wallet/balance queries that NLU misclassifies as anything else
+    // (NLU v8 correctly classifies check_wallet, but check_wallet samples are v8; older or
+    // edge-case queries may still land on browse_menu or search_product)
+    if (nluIntent !== 'check_wallet' && nluIntent !== 'payment_issue') {
+      const walletBalanceKeywords = /\bwallet\s*(balance|amount|kitna|mein|paisa|paise|funds?)\b|\b(balance|kitna)\s*(wallet|mein)\b/i;
+      if (walletBalanceKeywords.test(lowerText)) return 'check_wallet';
+    }
+
+    // Heuristic override: availability/open-now queries (NLU v8 lacks check_availability intent)
+    // Maps to check_availability so context-router can handle open-now store search
+    if (nluIntent !== 'check_availability') {
+      const openNowKeywords = /\b(khula|khule|open|available|available)\b.*(hai|hain|kya|abhi|now)\b|\b(kya|konse?).*(khula|open|available)\b|\bopen\s*now\b|\babhi.*khula\b/i;
+      if (openNowKeywords.test(lowerText)) return 'check_availability';
+    }
+
+    // Heuristic override: dietary preference updates (NLU v8 lacks update_preference intent)
+    if (nluIntent !== 'update_preference') {
+      const prefKeywords = /\b(main|mera|meri|i\s+am|i'm)\s+(veg|vegetarian|non.?veg|jain|halal)\b|\bveg\s+(hoon|hu|hai|rehta|rehti)\b|\b(set|change|update).*(preference|diet|filter)\b|\bonly\s+veg\b/i;
+      if (prefKeywords.test(lowerText)) return 'update_preference';
+    }
+
     // Text-based disambiguation for view_cart → view_wishlist
     // NLU sometimes maps "view wishlist" to view_cart; disambiguate by text
     if (nluIntent === 'view_cart') {
