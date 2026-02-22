@@ -349,6 +349,20 @@ export class ContextRouterService implements OnModuleInit {
         this.logger.log(`🛒 Item selection override: _user_message set to "${buttonAction}" (was "${buttonValue}")`);
       }
 
+      // 🔧 FIX: Handle ParcelCard button actions within active flow.
+      // Without this, "edit_parcel" falls through to NLU and gets misclassified as "clear_cart".
+      // Map these actions to flow-recognized events.
+      if (buttonAction === 'edit_parcel') {
+        this.logger.log(`📦 edit_parcel action — passing to flow as edit_parcel event`);
+        event.message = 'edit_parcel';
+        return this.continueFlowSync(event, session, flowContinueIntent, 'edit_parcel');
+      }
+      if (buttonAction === 'confirm_parcel') {
+        this.logger.log(`📦 confirm_parcel action — mapping to "yes" for flow confirmation`);
+        event.message = 'yes';
+        return this.continueFlowSync(event, session, flowContinueIntent, 'yes');
+      }
+
       // Continue the flow with the button VALUE as the event for correct transition
       return this.continueFlowSync(event, session, flowContinueIntent, buttonValue);
     }
@@ -979,10 +993,7 @@ export class ContextRouterService implements OnModuleInit {
 
       return {
         message: `✅ Got it! **${prefLabel}** preference saved.\n\nI'll filter your food results accordingly. Ready to order?`,
-        buttons: [
-          { label: '🍔 Order Food', value: 'order food', action: 'order_food' },
-          ...this.getMainMenuButtons().slice(0, 2),
-        ],
+        buttons: this.getMainMenuButtons().slice(0, 2),
         routedTo: 'direct',
         intent,
         metadata: { handler: 'update_preference', preference: isVeg ? 'veg' : isNonVeg ? 'non_veg' : 'unknown' },
@@ -1854,9 +1865,9 @@ export class ContextRouterService implements OnModuleInit {
             const rating = card.rating && parseFloat(card.rating) > 0 ? `⭐${parseFloat(card.rating).toFixed(1)}` : '';
             const vegIcon = card.veg == 1 || card.veg === true ? '🟢' : card.veg == 0 || card.veg === false ? '🔴' : '';
 
-            // Add to message
+            // Add to message — always show store line for consistent layout
             itemsMessage += `${idx + 1}. ${vegIcon} ${name} ${price}\n`;
-            if (store) itemsMessage += `   📍 ${store} ${rating}\n`;
+            itemsMessage += `   📍 ${store || 'Unknown store'} ${rating}\n`;
             itemsMessage += '\n';
 
             // Add to rows for list - use item_ID format for consistent handling with web
@@ -1866,7 +1877,7 @@ export class ContextRouterService implements OnModuleInit {
             rows.push({
               id: String(rowId).substring(0, 200), // WhatsApp list row ID limit
               title: String(name).substring(0, 24),
-              description: `${vegIcon} ${price} • ${store}`.substring(0, 72),
+              description: `${vegIcon} ${price} • ${store || 'Unknown store'}`.substring(0, 72),
             });
           });
           

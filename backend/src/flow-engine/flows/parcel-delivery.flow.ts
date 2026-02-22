@@ -1025,6 +1025,7 @@ Return ONLY the numeric ID, nothing else.`,
       actions: [],
       transitions: {
         user_message: 'check_confirmation',
+        edit_parcel: 'show_categories', // "Edit Details" → go back to vehicle selection
         default: 'check_confirmation', // Handle confirm/cancel button clicks
       },
     },

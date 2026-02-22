@@ -2144,8 +2144,11 @@ export const foodOrderFlow: FlowDefinition = {
         },
       ],
       transitions: {
-        user_message: 'check_search_query_exists',
-        default: 'check_search_query_exists',
+        // 🔧 FIX: Route through route_food_choice so typed food names (e.g., "misal")
+        // go through entity extraction (process_specific_food) before check_search_query_exists.
+        // Previously went directly to check_search_query_exists which had no entities populated.
+        user_message: 'route_food_choice',
+        default: 'route_food_choice',
       },
     },
 
