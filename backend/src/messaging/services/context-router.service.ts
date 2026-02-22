@@ -19,6 +19,7 @@ import { SearchAnalyticsService } from '../../search/services/search-analytics.s
 import { PhpOrderService } from '../../php-integration/services/php-order.service';
 import { PhpWishlistService } from '../../php-integration/services/php-wishlist.service';
 import { PhpLoyaltyService } from '../../php-integration/services/php-loyalty.service';
+import { UserPreferenceService } from '../../personalization/user-preference.service';
 
 /**
  * Router Response - returned for SYNC channels (Web, Voice, Mobile)
@@ -76,6 +77,7 @@ export class ContextRouterService implements OnModuleInit {
     @Optional() private readonly phpOrderService?: PhpOrderService,
     @Optional() private readonly phpWishlistService?: PhpWishlistService,
     @Optional() private readonly phpLoyaltyService?: PhpLoyaltyService,
+    @Optional() private readonly userPreferenceService?: UserPreferenceService,
   ) {
     // Initialize Redis subscriber
     const redisConfig = {
@@ -989,6 +991,17 @@ export class ContextRouterService implements OnModuleInit {
         await this.sessionService.setData(event.identifier, 'dietary_preference', 'veg');
       } else if (isNonVeg) {
         await this.sessionService.setData(event.identifier, 'dietary_preference', 'non_veg');
+      }
+
+      // Persist to database so preference survives session expiry
+      const prefUserId = session.data?.user_id;
+      if (prefUserId && this.userPreferenceService) {
+        const dietValue = isVeg ? 'veg' : isNonVeg ? 'non_veg' : null;
+        if (dietValue) {
+          this.userPreferenceService.updatePreference(
+            Number(prefUserId), 'dietary_type', dietValue, 'explicit', 1.0,
+          ).catch(err => this.logger.warn(`Failed to persist dietary preference: ${err.message}`));
+        }
       }
 
       return {

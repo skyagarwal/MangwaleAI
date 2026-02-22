@@ -193,6 +193,27 @@ export class FlowEngineService {
       }
     }
 
+    // 🥗 INJECT DIETARY PREFERENCE FROM SESSION AND/OR DB
+    // Session value is immediate (set by update_preference handler).
+    // DB value is persistent (survives session expiry).
+    if (session?.data?.dietary_preference) {
+      context.data.dietary_preference = session.data.dietary_preference;
+      context.data._user_food_preference = session.data.dietary_preference;
+      this.logger.log(`🥗 Injected dietary preference from session: ${session.data.dietary_preference}`);
+    } else if (prefUserId && this.userProfiling) {
+      try {
+        const profile = await this.userProfiling.getProfile(Number(prefUserId));
+        const dietType = profile?.dietary_type || profile?.food_preferences?.dietary_type;
+        if (dietType) {
+          context.data.dietary_preference = dietType;
+          context.data._user_food_preference = dietType;
+          this.logger.log(`🥗 Injected dietary preference from DB: ${dietType}`);
+        }
+      } catch (err) {
+        this.logger.debug(`Could not load dietary preference: ${err.message}`);
+      }
+    }
+
     // Ensure _user_message is set (critical for NLU executors)
     // Support both 'message' and 'user_message' as input keys
     if (!context.data._user_message) {
@@ -391,6 +412,15 @@ export class FlowEngineService {
       context.data._extracted_entities = session.data._extracted_entities;
       context.data._nlu_confidence = session.data._nlu_confidence;
       context.data._nlu_intent = session.data._nlu_intent;
+    }
+
+    // 🥗 REFRESH DIETARY PREFERENCE FROM SESSION
+    // Picks up mid-flow preference changes (e.g., user says "main veg hoon" during food flow)
+    if (session?.data?.dietary_preference) {
+      context.data.dietary_preference = session.data.dietary_preference;
+      if (!context.data._user_food_preference) {
+        context.data._user_food_preference = session.data.dietary_preference;
+      }
     }
 
     // Store user message in context

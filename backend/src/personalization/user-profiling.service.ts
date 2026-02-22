@@ -555,6 +555,7 @@ export class UserProfilingService {
     return {
       user_id: row.user_id,
       phone: row.phone,
+      dietary_type: row.dietary_type,
       food_preferences: row.food_preferences,
       dietary_restrictions: row.dietary_restrictions,
       favorite_items: row.favorite_items,
@@ -712,6 +713,7 @@ export class UserProfilingService {
 export interface UserProfile {
   user_id: number;
   phone: string;
+  dietary_type?: string;
   food_preferences?: any;
   dietary_restrictions?: string[];
   favorite_items?: number[];

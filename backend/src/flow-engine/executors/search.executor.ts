@@ -460,7 +460,7 @@ export class SearchExecutor implements ActionExecutor {
 
         // 🥗 NLU PREFERENCE: Apply veg filter from current message preference
         if (!filters.find(f => f.field === 'veg')) {
-          const nluPreference = context.data._user_food_preference || context.data.extracted_food?.preference;
+          const nluPreference = context.data._user_food_preference || context.data.dietary_preference || context.data.extracted_food?.preference;
           const prefStr = Array.isArray(nluPreference) ? nluPreference.join(' ').toLowerCase() : String(nluPreference || '').toLowerCase();
           if (prefStr.includes('veg') && !prefStr.includes('non-veg') && !prefStr.includes('nonveg')) {
             filters.push({ field: 'veg', operator: 'equals', value: 1 });
@@ -660,7 +660,7 @@ export class SearchExecutor implements ActionExecutor {
       // 🥗 NLU PREFERENCE: Apply veg filter from NLU-extracted preference (e.g., "i am vegetarian")
       // This catches preferences from the CURRENT message, not just user profile
       if (!filters.find(f => f.field === 'veg')) {
-        const nluPreference = context.data._user_food_preference || context.data.extracted_food?.preference;
+        const nluPreference = context.data._user_food_preference || context.data.dietary_preference || context.data.extracted_food?.preference;
         const prefStr = Array.isArray(nluPreference) ? nluPreference.join(' ').toLowerCase() : String(nluPreference || '').toLowerCase();
         if (prefStr.includes('veg') && !prefStr.includes('non-veg') && !prefStr.includes('nonveg')) {
           filters.push({ field: 'veg', operator: 'equals', value: 1 });
