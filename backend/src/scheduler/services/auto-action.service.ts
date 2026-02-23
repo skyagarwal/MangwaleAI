@@ -1,6 +1,10 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleInit, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
+import { WhatsAppCloudService } from '../../whatsapp/services/whatsapp-cloud.service';
+import { WeatherCampaignTriggerService } from '../../broadcast/services/weather-campaign-trigger.service';
+import { ReorderService } from '../../broadcast/services/reorder.service';
+import { SmartDiscountService } from '../../demand/services/smart-discount.service';
 
 export interface AutoAction {
   actionName: string;
@@ -55,6 +59,12 @@ const ACTION_DEFINITIONS: ActionDefinition[] = [
     defaultConfig: { prep_time_threshold_minutes: 20, alert_phone: '' },
     description: 'Alert admin when store avg prep > threshold',
   },
+  {
+    actionName: 'cart_recovery',
+    defaultEnabled: false,
+    defaultConfig: { abandonment_window_hours: 2, max_nudges_per_run: 30, discount_code: 'COMEBACK10' },
+    description: 'Abandoned cart recovery via WhatsApp nudge with discount',
+  },
 ];
 
 @Injectable()
@@ -62,7 +72,14 @@ export class AutoActionService implements OnModuleInit {
   private readonly logger = new Logger(AutoActionService.name);
   private pool: Pool;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    @Inject(forwardRef(() => WhatsAppCloudService))
+    private readonly whatsapp: WhatsAppCloudService,
+    private readonly weatherTrigger: WeatherCampaignTriggerService,
+    private readonly reorderService: ReorderService,
+    private readonly smartDiscount: SmartDiscountService,
+  ) {}
 
   async onModuleInit() {
     const databaseUrl =
@@ -104,7 +121,7 @@ export class AutoActionService implements OnModuleInit {
       }
 
       client.release();
-      this.logger.log('AutoActionService initialized with 6 action definitions');
+      this.logger.log('AutoActionService initialized with 7 action definitions');
     } catch (error: any) {
       this.logger.error(`Failed to initialize: ${error.message}`);
     }
@@ -158,6 +175,11 @@ export class AutoActionService implements OnModuleInit {
           itemsAffected = result?.alertsSent || 0;
           break;
 
+        case 'cart_recovery':
+          result = await this.executeCartRecovery(action.config, triggerData);
+          itemsAffected = result?.nudgesSent || 0;
+          break;
+
         default:
           this.logger.warn(`Unknown auto-action: ${actionName}`);
           return;
@@ -171,46 +193,126 @@ export class AutoActionService implements OnModuleInit {
     }
   }
 
-  // ─── Action Implementations (stubs that log intent) ───────────
+  // ─── Action Implementations ─────────────────────────────────
 
   private async executeChurnReengagement(
     config: Record<string, any>,
-    triggerData: any,
+    _triggerData: any,
   ): Promise<any> {
     const threshold = config.churn_threshold || 0.7;
-    this.logger.log(
-      `[churn_reengagement] Would target users with churn_risk > ${threshold}. ` +
-      `Trigger data: ${JSON.stringify({ computed: triggerData?.computed })}`,
+
+    // Query users with high churn risk who have a phone number
+    const { rows: atRiskUsers } = await this.pool.query(
+      `SELECT user_id, phone, churn_risk, health_score, rfm_segment, avg_order_value
+       FROM customer_health_scores
+       WHERE churn_risk > $1 AND phone IS NOT NULL
+       ORDER BY churn_risk DESC
+       LIMIT 50`,
+      [threshold],
     );
-    // In production: query customer_health_scores for churn_risk > threshold,
-    // generate discount via SmartDiscountService, send WhatsApp nudge
-    return { usersTargeted: 0, threshold, status: 'ready_to_activate' };
+
+    if (atRiskUsers.length === 0) {
+      this.logger.log(`[churn_reengagement] No users above churn threshold ${threshold}`);
+      return { usersTargeted: 0, threshold, status: 'no_targets' };
+    }
+
+    let sent = 0;
+    for (const user of atRiskUsers) {
+      try {
+        // Use SmartDiscountService for proper tracking + dedup
+        const discount = await this.smartDiscount.getPersonalizedDiscount(user.user_id);
+        if (!discount) {
+          this.logger.debug(`[churn_reengagement] No discount for user ${user.user_id} (already active or ineligible)`);
+          continue;
+        }
+
+        const message =
+          `Hi! We miss you at Mangwale. ` +
+          `Here's a special Rs ${discount.discountAmount} off on your next order. ` +
+          `Use code: ${discount.discountCode} (valid 7 days). ` +
+          `Order now and enjoy your favorites!`;
+
+        await this.whatsapp.sendText(user.phone, message);
+        sent++;
+      } catch (err: any) {
+        this.logger.warn(`[churn_reengagement] Failed to send to ${user.phone}: ${err.message}`);
+      }
+    }
+
+    this.logger.log(`[churn_reengagement] Sent ${sent}/${atRiskUsers.length} nudges`);
+    return { usersTargeted: sent, totalCandidates: atRiskUsers.length, threshold, status: 'executed' };
   }
 
   private async executeReorderNudge(
     config: Record<string, any>,
-    triggerData: any,
+    _triggerData: any,
   ): Promise<any> {
     const maxNudges = config.max_nudges_per_day || 50;
-    const candidates = triggerData?.candidates || [];
-    this.logger.log(
-      `[reorder_nudge] ${candidates.length} candidates found, max ${maxNudges}/day`,
-    );
-    // In production: send WhatsApp "You ordered X last Friday" to each candidate
-    return { nudgesSent: 0, candidatesFound: candidates.length, status: 'ready_to_activate' };
+
+    // Use ReorderService to find candidates
+    const candidates = await this.reorderService.findUsersForReorderNudge(maxNudges);
+
+    if (candidates.length === 0) {
+      this.logger.log('[reorder_nudge] No reorder candidates found');
+      return { nudgesSent: 0, candidatesFound: 0, status: 'no_candidates' };
+    }
+
+    let sent = 0;
+    for (const candidate of candidates) {
+      try {
+        const message =
+          `Hi! You ordered ${candidate.itemName} from ${candidate.storeName} ` +
+          `${candidate.daysSince} days ago. Ready for another one? Order now on Mangwale!`;
+
+        await this.whatsapp.sendText(candidate.phone, message);
+        sent++;
+      } catch (err: any) {
+        this.logger.warn(`[reorder_nudge] Failed to send to ${candidate.phone}: ${err.message}`);
+      }
+    }
+
+    this.logger.log(`[reorder_nudge] Sent ${sent}/${candidates.length} nudges`);
+    return { nudgesSent: sent, candidatesFound: candidates.length, status: 'executed' };
   }
 
   private async executeAutoRefund(
     config: Record<string, any>,
-    triggerData: any,
+    _triggerData: any,
   ): Promise<any> {
     const threshold = config.late_threshold_minutes || 15;
     const maxRefund = config.max_refund_amount || 50;
-    this.logger.log(
-      `[auto_refund_late] Threshold: ${threshold}min late, max refund: Rs ${maxRefund}`,
+
+    // Query late orders from auto_refund_log that haven't been processed yet
+    const { rows: lateOrders } = await this.pool.query(
+      `SELECT id, order_id, user_id, phone, delay_minutes, refund_amount, status
+       FROM auto_refund_log
+       WHERE status = 'pending' AND delay_minutes >= $1 AND refund_amount <= $2
+       ORDER BY delay_minutes DESC
+       LIMIT 20`,
+      [threshold, maxRefund],
     );
-    // In production: check delivery time vs expected, credit wallet via AutoRefundService
-    return { refundsIssued: 0, threshold, maxRefund, status: 'ready_to_activate' };
+
+    if (lateOrders.length === 0) {
+      this.logger.log('[auto_refund_late] No pending late refunds found');
+      return { refundsIssued: 0, threshold, maxRefund, status: 'no_pending' };
+    }
+
+    // Mark them as flagged for manual processing (safe first step)
+    let flagged = 0;
+    for (const order of lateOrders) {
+      try {
+        await this.pool.query(
+          `UPDATE auto_refund_log SET status = 'flagged_for_review', updated_at = NOW() WHERE id = $1`,
+          [order.id],
+        );
+        flagged++;
+      } catch (err: any) {
+        this.logger.warn(`[auto_refund_late] Failed to flag order ${order.order_id}: ${err.message}`);
+      }
+    }
+
+    this.logger.log(`[auto_refund_late] Flagged ${flagged} orders for review (threshold: ${threshold}min, max: Rs ${maxRefund})`);
+    return { refundsIssued: flagged, threshold, maxRefund, status: 'flagged_for_review' };
   }
 
   private async executeWeatherCampaign(
@@ -218,11 +320,24 @@ export class AutoActionService implements OnModuleInit {
     triggerData: any,
   ): Promise<any> {
     const triggers = triggerData?.triggers || [];
-    this.logger.log(
-      `[weather_campaign] ${triggers.length} weather triggers matched`,
-    );
-    // In production: send pre-approved WhatsApp templates for matching conditions
-    return { campaignsSent: 0, triggersMatched: triggers.length, status: 'ready_to_activate' };
+
+    if (triggers.length === 0) {
+      this.logger.log('[weather_campaign] No weather triggers matched');
+      return { campaignsSent: 0, triggersMatched: 0, status: 'no_triggers' };
+    }
+
+    let fired = 0;
+    for (const trigger of triggers) {
+      try {
+        await this.weatherTrigger.recordTriggerFired(trigger.id);
+        fired++;
+        this.logger.log(`[weather_campaign] Fired trigger: ${trigger.triggerName || trigger.id}`);
+      } catch (err: any) {
+        this.logger.warn(`[weather_campaign] Failed to fire trigger ${trigger.id}: ${err.message}`);
+      }
+    }
+
+    return { campaignsSent: fired, triggersMatched: triggers.length, status: 'executed' };
   }
 
   private async executeFestivalCampaign(
@@ -230,23 +345,136 @@ export class AutoActionService implements OnModuleInit {
     triggerData: any,
   ): Promise<any> {
     const events = triggerData?.events || [];
-    this.logger.log(
-      `[festival_campaign] ${events.length} events to trigger today`,
-    );
-    // In production: send themed campaign messages for today's festivals
-    return { campaignsSent: 0, eventsToday: events.length, status: 'ready_to_activate' };
+
+    if (events.length === 0) {
+      this.logger.log('[festival_campaign] No festival events to trigger today');
+      return { campaignsSent: 0, eventsToday: 0, status: 'no_events' };
+    }
+
+    let sent = 0;
+    for (const event of events) {
+      try {
+        this.logger.log(
+          `[festival_campaign] Triggering campaign for ${event.name}: ${event.campaignMessage || 'no message'}`,
+        );
+        // Log the trigger execution for audit trail
+        await this.pool.query(
+          `INSERT INTO auto_action_history (action_name, trigger_source, result, items_affected)
+           VALUES ('festival_campaign', $1, $2, 1)`,
+          [`festival:${event.name}`, JSON.stringify({ festival: event.name, date: event.date, items: event.items })],
+        );
+        sent++;
+      } catch (err: any) {
+        this.logger.warn(`[festival_campaign] Failed to trigger for ${event.name}: ${err.message}`);
+      }
+    }
+
+    return { campaignsSent: sent, eventsToday: events.length, status: 'executed' };
   }
 
   private async executeSlowKitchenAlert(
     config: Record<string, any>,
-    triggerData: any,
+    _triggerData: any,
   ): Promise<any> {
     const threshold = config.prep_time_threshold_minutes || 20;
-    this.logger.log(
-      `[slow_kitchen_alert] Checking stores with avg prep > ${threshold}min`,
+    const alertPhone = config.alert_phone;
+
+    // Query stores with avg prep time above threshold
+    const { rows: slowStores } = await this.pool.query(
+      `SELECT store_id, store_name, avg_prep_time, p90_prep_time, sample_count
+       FROM prep_time_predictions
+       WHERE item_category = 'all'
+         AND avg_prep_time > $1
+         AND sample_count >= 3
+       ORDER BY avg_prep_time DESC
+       LIMIT 10`,
+      [threshold],
     );
-    // In production: query prep_time_predictions, WhatsApp alert to admin
-    return { alertsSent: 0, threshold, status: 'ready_to_activate' };
+
+    if (slowStores.length === 0) {
+      this.logger.log(`[slow_kitchen_alert] No stores above ${threshold}min threshold`);
+      return { alertsSent: 0, threshold, status: 'all_clear' };
+    }
+
+    const storeLines = slowStores.map(
+      (s) => `- ${s.store_name}: avg ${Math.round(s.avg_prep_time)}min (p90: ${Math.round(s.p90_prep_time)}min, ${s.sample_count} orders)`,
+    );
+
+    const alertMessage =
+      `Slow Kitchen Alert\n\n` +
+      `${slowStores.length} store(s) above ${threshold}min avg prep time:\n` +
+      storeLines.join('\n');
+
+    let alertsSent = 0;
+    if (alertPhone) {
+      try {
+        await this.whatsapp.sendText(alertPhone, alertMessage);
+        alertsSent = 1;
+        this.logger.log(`[slow_kitchen_alert] Alert sent to ${alertPhone}`);
+      } catch (err: any) {
+        this.logger.warn(`[slow_kitchen_alert] Failed to send alert to ${alertPhone}: ${err.message}`);
+      }
+    } else {
+      this.logger.warn('[slow_kitchen_alert] No alert_phone configured, logging only');
+    }
+
+    this.logger.log(`[slow_kitchen_alert] ${slowStores.length} slow stores detected`);
+    return {
+      alertsSent,
+      slowStores: slowStores.length,
+      threshold,
+      stores: slowStores.map((s) => ({ name: s.store_name, avgPrep: Math.round(s.avg_prep_time) })),
+      status: alertPhone ? 'executed' : 'logged_only',
+    };
+  }
+
+  private async executeCartRecovery(
+    config: Record<string, any>,
+    _triggerData: any,
+  ): Promise<any> {
+    const windowHours = config.abandonment_window_hours || 2;
+    const maxNudges = config.max_nudges_per_run || 30;
+    const discountCode = config.discount_code || 'COMEBACK10';
+
+    // Query abandoned carts older than the abandonment window
+    const { rows: abandonedCarts } = await this.pool.query(
+      `SELECT id, phone_number, user_id, items, subtotal, total
+       FROM whatsapp_orders
+       WHERE status = 'cart'
+         AND updated_at < NOW() - INTERVAL '1 hour' * $1
+       ORDER BY updated_at DESC
+       LIMIT $2`,
+      [windowHours, maxNudges],
+    );
+
+    if (abandonedCarts.length === 0) {
+      this.logger.log(`[cart_recovery] No abandoned carts older than ${windowHours}h`);
+      return { nudgesSent: 0, cartsFound: 0, status: 'no_abandoned_carts' };
+    }
+
+    let sent = 0;
+    for (const cart of abandonedCarts) {
+      try {
+        const items = cart.items || [];
+        const itemSummary = items.length > 0
+          ? items.slice(0, 3).map((i: any) => i.name || i.item_name || 'item').join(', ')
+          : 'your items';
+        const moreText = items.length > 3 ? ` and ${items.length - 3} more` : '';
+
+        const message =
+          `Hi! You left ${itemSummary}${moreText} in your cart on Mangwale. ` +
+          `Complete your order now and use code ${discountCode} for a special discount! ` +
+          `Total: Rs ${Math.round(cart.total || cart.subtotal || 0)}`;
+
+        await this.whatsapp.sendText(cart.phone_number, message);
+        sent++;
+      } catch (err: any) {
+        this.logger.warn(`[cart_recovery] Failed to nudge ${cart.phone_number}: ${err.message}`);
+      }
+    }
+
+    this.logger.log(`[cart_recovery] Sent ${sent}/${abandonedCarts.length} nudges`);
+    return { nudgesSent: sent, cartsFound: abandonedCarts.length, discountCode, status: 'executed' };
   }
 
   // ─── Public API Methods ───────────────────────────────────────

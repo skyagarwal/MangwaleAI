@@ -934,6 +934,23 @@ function ExecutionActionButton({
 
 // ---- Campaign Flows Tab ----
 
+interface CartRecoveryStats {
+  nudgesSent: number;
+  conversions: number;
+  discountCodesUsed: number;
+  totalRuns: number;
+}
+
+interface FlowRun {
+  id: string;
+  flowName: string;
+  sessionId: string;
+  status: string;
+  currentStep: string;
+  startedAt: string;
+  completedAt: string | null;
+}
+
 function CampaignFlowsTab({
   onError,
 }: {
@@ -941,6 +958,11 @@ function CampaignFlowsTab({
 }) {
   const [showTriggerForm, setShowTriggerForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [cartStats, setCartStats] = useState<CartRecoveryStats | null>(null);
+  const [flowRuns, setFlowRuns] = useState<FlowRun[]>([]);
+  const [testPhone, setTestPhone] = useState('');
+  const [testingCart, setTestingCart] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   // Trigger form
   const [campName, setCampName] = useState('');
@@ -949,6 +971,46 @@ function CampaignFlowsTab({
   const [campTone, setCampTone] = useState('professional');
   const [campBudget, setCampBudget] = useState(500);
   const [campPhone, setCampPhone] = useState('');
+
+  useEffect(() => {
+    loadCampaignData();
+  }, []);
+
+  const loadCampaignData = async () => {
+    setStatsLoading(true);
+    try {
+      const [stats, runs] = await Promise.all([
+        mangwaleAIClient.get<CartRecoveryStats>('/mos/action-engine/campaigns/cart-recovery-stats'),
+        mangwaleAIClient.get<FlowRun[]>('/mos/action-engine/flow-runs?limit=20'),
+      ]);
+      setCartStats(stats);
+      setFlowRuns(runs);
+    } catch (err: any) {
+      console.error('Failed to load campaign data:', err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  const handleTestCartRecovery = async () => {
+    if (!testPhone.trim()) return;
+    setTestingCart(true);
+    try {
+      const result = await mangwaleAIClient.post<any>('/mos/action-engine/campaigns/test-cart-recovery', {
+        phone: testPhone,
+      });
+      if (result.success) {
+        setTestPhone('');
+        loadCampaignData();
+      } else {
+        onError(result.error || 'Cart recovery test failed');
+      }
+    } catch (err: any) {
+      onError(err.message || 'Failed to test cart recovery');
+    } finally {
+      setTestingCart(false);
+    }
+  };
 
   const handleTrigger = async () => {
     if (!campName.trim() || !campProduct.trim()) return;
@@ -987,20 +1049,20 @@ function CampaignFlowsTab({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           icon={<Target size={22} />}
-          label="Campaigns Created"
-          value="0"
+          label="Cart Nudges Sent"
+          value={cartStats ? cartStats.nudgesSent.toLocaleString('en-IN') : '...'}
           color="blue"
         />
         <StatCard
           icon={<ShoppingCart size={22} />}
-          label="Cart Recoveries"
-          value="0"
+          label="Cart Conversions"
+          value={cartStats ? cartStats.conversions.toLocaleString('en-IN') : '...'}
           color="green"
         />
         <StatCard
           icon={<ArrowUpRight size={22} />}
-          label="Success Rate"
-          value="--"
+          label="Discounts Used"
+          value={cartStats ? cartStats.discountCodesUsed.toLocaleString('en-IN') : '...'}
           color="purple"
         />
       </div>
@@ -1143,41 +1205,101 @@ function CampaignFlowsTab({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div className="bg-gray-50 rounded-lg p-4 text-center">
             <p className="text-xs text-gray-500 mb-1">Nudges Sent</p>
-            <p className="text-xl font-bold text-gray-900">0</p>
+            <p className="text-xl font-bold text-gray-900">
+              {statsLoading ? '...' : cartStats?.nudgesSent ?? 0}
+            </p>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-center">
             <p className="text-xs text-gray-500 mb-1">Conversions</p>
-            <p className="text-xl font-bold text-green-600">0</p>
+            <p className="text-xl font-bold text-green-600">
+              {statsLoading ? '...' : cartStats?.conversions ?? 0}
+            </p>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 text-center">
             <p className="text-xs text-gray-500 mb-1">Discount Codes Used</p>
-            <p className="text-xl font-bold text-blue-600">0</p>
+            <p className="text-xl font-bold text-blue-600">
+              {statsLoading ? '...' : cartStats?.discountCodesUsed ?? 0}
+            </p>
           </div>
         </div>
 
-        <button
-          onClick={() => onError('Cart recovery test not yet implemented')}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm font-medium transition-all"
-        >
-          <ShoppingCart size={16} />
-          Test Cart Recovery
-        </button>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={testPhone}
+            onChange={(e) => setTestPhone(e.target.value)}
+            placeholder="+919876543210"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#059211] focus:border-transparent w-48"
+          />
+          <button
+            onClick={handleTestCartRecovery}
+            disabled={testingCart || !testPhone.trim()}
+            className="flex items-center gap-2 px-4 py-2 bg-[#059211] text-white rounded-lg hover:bg-[#047a0e] text-sm font-medium transition-all disabled:opacity-50"
+          >
+            {testingCart ? <RefreshCw size={16} className="animate-spin" /> : <ShoppingCart size={16} />}
+            {testingCart ? 'Testing...' : 'Test Cart Recovery'}
+          </button>
+        </div>
       </div>
 
       {/* Recent Flow Executions */}
       <div className="bg-white rounded-xl shadow-md border-2 border-gray-100 overflow-hidden">
         <div className="p-4 border-b">
           <h3 className="text-lg font-bold text-gray-900">
-            Recent Flow Executions
+            Recent Flow Executions ({flowRuns.length})
           </h3>
         </div>
-        <div className="p-12 text-center">
-          <Zap className="mx-auto text-gray-300 mb-3" size={48} />
-          <p className="text-gray-500">No flow executions yet</p>
-          <p className="text-sm text-gray-400 mt-1">
-            Trigger a campaign to see flow executions here
-          </p>
-        </div>
+        {flowRuns.length === 0 ? (
+          <div className="p-12 text-center">
+            <Zap className="mx-auto text-gray-300 mb-3" size={48} />
+            <p className="text-gray-500">No flow executions yet</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Trigger a campaign to see flow executions here
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600">Flow</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600">Session</th>
+                  <th className="px-4 py-3 text-center font-medium text-gray-600">Status</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600">Current Step</th>
+                  <th className="px-4 py-3 text-right font-medium text-gray-600">Started</th>
+                </tr>
+              </thead>
+              <tbody>
+                {flowRuns.map((run) => (
+                  <tr key={run.id} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {run.flowName}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs font-mono">
+                      {truncateText(run.sessionId || '', 16)}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        run.status === 'completed' ? 'bg-green-100 text-green-700' :
+                        run.status === 'active' ? 'bg-blue-100 text-blue-700' :
+                        run.status === 'failed' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>
+                        {run.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 text-xs">
+                      {run.currentStep || '--'}
+                    </td>
+                    <td className="px-4 py-3 text-right text-gray-500 text-xs">
+                      {timeAgo(run.startedAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

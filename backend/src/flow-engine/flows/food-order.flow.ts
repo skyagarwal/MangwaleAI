@@ -5621,6 +5621,12 @@ Reply "confirm" to book the rider.`,
       description: 'Check if food payment succeeded or failed',
       conditions: [
         {
+          // Safety valve: after 3 failed payment checks, offer COD fallback
+          // _payment_checks is a string counter ("x" per check), appended in food_payment_not_confirmed_yet
+          expression: '(context._payment_checks || "").length >= 3',
+          event: 'too_many_checks',
+        },
+        {
           expression: 'context._user_message === "__payment_success__"',
           event: 'payment_success',
         },
@@ -5638,6 +5644,7 @@ Reply "confirm" to book the rider.`,
         },
       ],
       transitions: {
+        too_many_checks: 'offer_cod_fallback',
         payment_success: 'completed',
         payment_failed: 'food_payment_failed',
         cancelled: 'cancelled',
@@ -5690,8 +5697,19 @@ Reply "confirm" to book the rider.`,
     // Food payment not yet confirmed on backend
     food_payment_not_confirmed_yet: {
       type: 'action',
-      description: 'Tell user food payment not yet confirmed',
+      description: 'Tell user food payment not yet confirmed, increment check counter',
       actions: [
+        {
+          id: 'increment_payment_check_count',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              // String-append counter: each check adds "x", condition checks length >= 3
+              _payment_checks: '{{_payment_checks}}x',
+            },
+          },
+          output: '_payment_counter_set',
+        },
         {
           id: 'food_not_confirmed_msg',
           executor: 'response',
@@ -5729,6 +5747,70 @@ Reply "confirm" to book the rider.`,
       },
     },
 
+    // COD fallback after multiple failed payment checks
+    offer_cod_fallback: {
+      type: 'action',
+      description: 'Online payment not going through — offer COD as fallback',
+      actions: [
+        {
+          id: 'cod_fallback_msg',
+          executor: 'response',
+          config: {
+            message: '😕 Online payment is not going through.\n\nWould you like to switch to **Cash on Delivery** instead?\n\n💰 Order Total: ₹{{order_result.orderTotal}}',
+            buttons: [
+              { label: '💵 Cash on Delivery', value: 'switch_to_cod', action: 'switch_to_cod' },
+              { label: '🔄 Try Again', value: 'retry_payment', action: 'retry_payment' },
+              { label: '❌ Cancel', value: 'cancel', action: 'cancel_order' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'await_cod_fallback_decision',
+      },
+    },
+
+    // Wait for user decision on COD fallback
+    await_cod_fallback_decision: {
+      type: 'wait',
+      description: 'Wait for user decision on COD fallback',
+      onEntry: [],
+      transitions: {
+        switch_to_cod: 'set_payment_cod',
+        retry_payment: 'show_food_payment_gateway',
+        cancel_order: 'cancelled',
+        user_message: 'handle_cod_fallback_input',
+        default: 'handle_cod_fallback_input',
+      },
+    },
+
+    // Handle text input for COD fallback decision
+    handle_cod_fallback_input: {
+      type: 'decision',
+      description: 'Interpret user text response for COD fallback',
+      conditions: [
+        {
+          expression: '/^(cod|cash|cash\\s*on\\s*delivery|haan\\s*cod|yes\\s*cod|switch)/i.test(String(context._user_message || "").trim())',
+          event: 'switch_to_cod',
+        },
+        {
+          expression: '/^(retry|try|phir\\s*se|again|dobara)/i.test(String(context._user_message || "").trim())',
+          event: 'retry_payment',
+        },
+        {
+          expression: '/^(cancel|nahi|no|stop)/i.test(String(context._user_message || "").trim())',
+          event: 'cancelled',
+        },
+      ],
+      transitions: {
+        switch_to_cod: 'set_payment_cod',
+        retry_payment: 'show_food_payment_gateway',
+        cancelled: 'cancelled',
+        default: 'set_payment_cod', // Default to COD since online wasn't working
+      },
+    },
+
     // Payment failed - offer retry or cancel
     food_payment_failed: {
       type: 'action',
@@ -5758,6 +5840,7 @@ Reply "confirm" to book the rider.`,
       description: 'Wait for user decision on food payment retry',
       onEntry: [],
       transitions: {
+        switch_to_cod: 'set_payment_cod',
         retry_payment: 'show_food_payment_gateway',
         cancel_order: 'cancelled',
         user_message: 'handle_food_payment_retry_input',
@@ -5790,7 +5873,7 @@ Reply "confirm" to book the rider.`,
     // Payment timeout
     food_payment_timeout: {
       type: 'action',
-      description: 'Food payment timed out',
+      description: 'Food payment timed out — offer COD, retry, or cancel',
       actions: [
         {
           id: 'timeout_msg',
@@ -5798,6 +5881,7 @@ Reply "confirm" to book the rider.`,
           config: {
             message: '⏰ **Payment Timeout**\n\nPayment session expired. Your order has been saved.\n\nWhat would you like to do?',
             buttons: [
+              { label: '💵 Cash on Delivery', value: 'switch_to_cod', action: 'switch_to_cod' },
               { label: '🔄 Retry Payment', value: 'retry_payment', action: 'retry_payment' },
               { label: '❌ Cancel', value: 'cancel', action: 'cancel_order' },
             ],
@@ -5978,5 +6062,5 @@ Reply "confirm" to book the rider.`,
   },
 
   initialState: 'check_trigger',
-  finalStates: ['completed', 'cancelled', 'address_error', 'out_of_zone', 'distance_error', 'order_failed', 'food_payment_timeout'],
+  finalStates: ['completed', 'cancelled', 'address_error', 'out_of_zone', 'distance_error', 'order_failed'],
 };

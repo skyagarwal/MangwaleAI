@@ -112,6 +112,7 @@ export class OrderWebhookController {
   private readonly webhookSecret: string;
   private riderQuestService: any = null;
   private adAttributionService: any = null;
+  private messageService: any = null;
 
   constructor(
     private readonly configService: ConfigService,
@@ -136,6 +137,12 @@ export class OrderWebhookController {
         const { AdAttributionService } = await import('../../marketing/services/ad-attribution.service');
         this.adAttributionService = this.moduleRef.get(AdAttributionService, { strict: false });
         if (this.adAttributionService) this.logger.log('AdAttributionService wired to order webhook');
+      } catch { /* optional dependency */ }
+
+      try {
+        const { MessageService } = await import('../../whatsapp/services/message.service');
+        this.messageService = this.moduleRef.get(MessageService, { strict: false });
+        if (this.messageService) this.logger.log('MessageService wired to order webhook');
       } catch { /* optional dependency */ }
     }, 2000);
   }
@@ -363,8 +370,22 @@ export class OrderWebhookController {
   }
 
   private async notifyCustomerOrderConfirmed(payload: OrderWebhookPayload): Promise<void> {
-    this.logger.log(`📱 Notifying customer: Order confirmed by ${payload.vendor.store_name}`);
-    // TODO: Send WhatsApp/SMS to customer
+    const { order, customer, vendor } = payload;
+    this.logger.log(`📱 Notifying customer: Order confirmed by ${vendor.store_name}`);
+
+    if (!this.messageService || !customer.phone) return;
+
+    try {
+      const eta = payload.processing_time || 30;
+      await this.messageService.sendTextMessage(customer.phone,
+        `✅ *Order Confirmed!*\n\n` +
+        `Order ${order.order_id} has been accepted by *${vendor.store_name}*.\n` +
+        `⏱️ Estimated time: ${eta} minutes\n\n` +
+        `We'll notify you when your order is being prepared!`
+      );
+    } catch (error: any) {
+      this.logger.warn(`Failed to notify customer about confirmation: ${error.message}`);
+    }
   }
 
   private async notifyCustomerOrderPreparing(payload: OrderWebhookPayload): Promise<void> {
@@ -379,13 +400,41 @@ export class OrderWebhookController {
   }
 
   private async notifyCustomerOrderPickedUp(payload: OrderWebhookPayload): Promise<void> {
-    this.logger.log(`📱 Notifying customer: Order picked up by ${payload.delivery_man?.name}`);
-    // TODO: Send WhatsApp/SMS to customer with live tracking link
+    const { order, customer, delivery_man } = payload;
+    this.logger.log(`📱 Notifying customer: Order picked up by ${delivery_man?.name}`);
+
+    if (!this.messageService || !customer.phone) return;
+
+    try {
+      await this.messageService.sendTextMessage(customer.phone,
+        `🚴 *Your order is on the way!*\n\n` +
+        `Order ${order.order_id}\n` +
+        `${delivery_man?.name || 'Your delivery partner'} has picked up your order.\n\n` +
+        `🔔 We'll let you know when it arrives!`
+      );
+    } catch (error: any) {
+      this.logger.warn(`Failed to notify customer about pickup: ${error.message}`);
+    }
   }
 
   private async notifyCustomerOrderDelivered(payload: OrderWebhookPayload): Promise<void> {
+    const { order, customer } = payload;
     this.logger.log(`📱 Notifying customer: Order delivered! Requesting feedback`);
-    // TODO: Send WhatsApp/SMS to customer with feedback link
+
+    if (!this.messageService || !customer.phone) return;
+
+    try {
+      await this.messageService.sendTextMessage(customer.phone,
+        `🎉 *Order Delivered!*\n\n` +
+        `Order ${order.order_id} has been delivered.\n` +
+        `💰 Total: ₹${order.total_amount}\n\n` +
+        `How was your experience? Reply with:\n` +
+        `⭐ 1-5 to rate\n\n` +
+        `Thank you for ordering with Mangwale! 🙏`
+      );
+    } catch (error: any) {
+      this.logger.warn(`Failed to notify customer about delivery: ${error.message}`);
+    }
   }
 
   private async notifyCustomerDeliveryAssigned(payload: OrderWebhookPayload): Promise<void> {

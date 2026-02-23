@@ -129,12 +129,23 @@ export class PhpApiExecutor implements ActionExecutor {
       if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
         const varName = value.slice(2, -2).trim();
         const resolvedValue = this.getNestedValue(context.data, varName);
+
+        // Fail fast on critical keys that resolve to undefined (prevents sending literal "{{auth_token}}" to PHP)
+        if (resolvedValue === undefined || resolvedValue === null) {
+          const criticalKeys = ['token', 'auth_token', 'phone', 'orderId', 'order_id'];
+          if (criticalKeys.includes(key)) {
+            this.logger.error(`Critical config key "${key}" resolved to undefined (template: "${value}", varName: "${varName}"). Available context keys: ${Object.keys(context.data || {}).join(', ')}`);
+            throw new Error(`Required flow context value "${varName}" is missing for key "${key}". User may need to re-authenticate.`);
+          }
+          this.logger.warn(`Config key "${key}" resolved to undefined (template: "${value}"), using placeholder`);
+        }
+
         resolved[key] = resolvedValue ?? value;
-        
+
         // Debug token resolution
         if (key === 'token') {
-          this.logger.debug(`🔑 Resolving token: varName="${varName}", resolved=${resolvedValue ? 'YES (' + String(resolvedValue).substring(0, 30) + '...)' : 'NO (falling back to placeholder)'}`);
-          this.logger.debug(`🔑 Available context.data keys: ${Object.keys(context.data || {}).join(', ')}`);
+          this.logger.debug(`Resolving token: varName="${varName}", resolved=${resolvedValue ? 'YES (' + String(resolvedValue).substring(0, 30) + '...)' : 'NO (falling back to placeholder)'}`);
+          this.logger.debug(`Available context.data keys: ${Object.keys(context.data || {}).join(', ')}`);
         }
       } else {
         resolved[key] = value;

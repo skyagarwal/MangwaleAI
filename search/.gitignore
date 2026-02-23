@@ -1,0 +1,89 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+.npm
+.eslintcache
+*.tsbuildinfo
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Docker
+**/.DS_Store
+
+# Data & Backups (use volumes instead)
+/data/
+/backups/
+*.sql
+*.sql.gz
+*.dump
+!scripts/*.sql
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.Python
+*.so
+
+# Logs
+logs/
+*.log
+api.log
+cdc.log
+search-api.log
+sync-complete.log
+sync-output.log
+vite.log
+logs-api.txt
+
+# PID files
+*.pid
+cdc.pid
+
+# Large SQL files (exclude database dumps)
+admin_prod*.sql
+*.sql.gz
+
+# Docker volumes and data
+docker-data/
+opensearch-data/
+mysql-data/
+redis-data/
+
+# Test outputs
+test-results/
+.nyc_output/
+myminio/
+letsencrypt/

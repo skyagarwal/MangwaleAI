@@ -1,12 +1,26 @@
+# =============================================================================
+# MangwaleAI Monorepo .gitignore
+# Covers: backend/ (NestJS), frontend/ (Next.js), search/ (Search API)
+# =============================================================================
+
 # Dependencies
 node_modules/
+**/node_modules/
 .pnpm-store/
+.npm
 
 # Build outputs
 dist/
-.next/
 build/
+.next/
 *.tsbuildinfo
+frontend/.next/
+frontend/.next-build/
+frontend/.next-output/
+frontend/.next.backup/
+frontend/.next.old/
+frontend/.turbo/
+search/dist/
 
 # Environment files
 .env
@@ -25,12 +39,16 @@ backend/models/
 backend/training-data/
 backend/labelstudio_data/
 
+# NLU/NER training data (large JSONL files)
+backend/nlu-training/*.jsonl
+
 # Logs
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+search/logs/
 
 # OS files
 .DS_Store
@@ -41,6 +59,8 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+*.sublime-project
+*.sublime-workspace
 
 # Docker
 docker-compose.override.yml
@@ -60,6 +80,10 @@ venv/
 env/
 ENV/
 .env.venv/
+**/venv/
+**/.venv/
+**/.venv_*/
+backend/nlu-training/.venv_train/
 
 # Python cache
 __pycache__/
@@ -67,61 +91,129 @@ __pycache__/
 *.pyo
 *.egg-info/
 .pytest_cache/
-
-# Large binary files
-*.so
-*.dylib
-*.dll
-*.exe
-*.node
-
-# Backup and temporary files
-*.backup
-*.tmp
-*.swp
-*.bak
-*~
-
-# Next.js and frontend caches
-frontend/.next/
-frontend/.next.backup/
-frontend/.next.old/
-frontend/node_modules/
-frontend/.turbo/
-
-# Backend caches
-backend/node_modules/
-backend/.venv/
-
-# Temp files
-*.tmp
-*.temp
-.cache/
-
-# Python virtual environments (CRITICAL - 70GB+)
-.venv/
-.venv_*/
-venv/
-**/venv/
-**/.venv/
-**/.venv_*/
-backend/nlu-training/.venv/
-backend/nlu-training/.venv_train/
-
-# More node_modules patterns
-**/node_modules/
+*$py.class
+.Python
 
 # Large binary files
 *.so
 *.so.*
+*.dylib
+*.dll
+*.exe
 *.node
 *.wasm
+
+# Backup and temporary files
+*.backup
+*.tmp
+*.temp
+*.bak
+*.bak.*
+*.rej
+*~
+.cache/
+tmp/
+temp/
+
+# Backend caches
+backend/.venv/
 
 # Core dumps
 core
 backend/core
 *.core
 
-# Accidental shell history files (SQL commands saved as filenames)
+# Accidental shell history files
 backend/s_2024*
 ql -h*
+
+# Images at root (cleanup artifacts)
+/*.jpeg
+/*.png
+
+# =============================================================================
+# Search stack specific
+# =============================================================================
+
+# Search data and infrastructure (use Docker volumes)
+search/data/*.sql
+search/data/*.sql.gz
+search/data/*.dump
+search/data/*.csv
+search/data/*.zip
+search/backups/
+search/opensearch-data/
+search/docker-data/
+search/mysql-data/
+search/redis-data/
+search/myminio/
+search/letsencrypt/
+search/coverage/
+search/.eslintcache
+search/test-results/
+search/.nyc_output/
+
+# Search env files (handled by top-level .env rules)
+# search/.env already covered
+
+# Search PID files
+*.pid
+
+# =============================================================================
+# Audit/doc clutter at root (auto-generated, not source code)
+# =============================================================================
+/*_FEB_*.md
+/*_2026*.md
+/*_COMPLETE*.md
+/*_REPORT*.md
+/*_SUMMARY*.md
+/*_STATUS*.md
+/*_AUDIT*.md
+/*_PLAN*.md
+/*_GUIDE*.md
+/*_FIX*.md
+/COMPLETE_*.md
+/COMPREHENSIVE_*.md
+/FINAL_*.md
+/DEEP_*.md
+/SYSTEM_*.md
+/PIPELINE_*.md
+/PRODUCT_IMAGE_*.md
+/HOTEL_*.md
+/LLM_*.md
+/NER_*.md
+/NLU_*.md
+/TRAINING_*.md
+/ARCHITECTURE_*.md
+/FOOD_ORDER_*.md
+/FLOW_*.md
+/SESSION_*.md
+/GOOGLE_MAPS_*.md
+/AGENTIC_*.md
+/FIXES_*.md
+
+# Large SQL dumps
+*.sql
+*.sql.gz
+!search/database/**/*.sql
+!search/scripts/**/*.sql
+
+# Zip archives
+*.zip
+
+# Postman collections (not source code)
+*.postman_collection.json
+postman/
+postman-*.json
+
+# Test artifacts at root
+*.csv
+comprehensive-test-report.json
+mysql-schema-summary.json
+response.json
+local_env.json
+gh_auth_output.txt
+
+# Reindex logs
+reindex*.log
+vector_sync*.log

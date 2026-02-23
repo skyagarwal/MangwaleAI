@@ -548,7 +548,7 @@ function TiersTab({
               className={`rounded-xl p-6 border-2 shadow-md hover:shadow-lg transition-all text-left ${config.bg} ${config.border} ${
                 isSelected ? 'ring-2 ring-offset-2' : ''
               }`}
-              style={isSelected ? { ringColor: config.color } : undefined}
+              style={isSelected ? { ['--tw-ring-color' as string]: config.color } as React.CSSProperties : undefined}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">

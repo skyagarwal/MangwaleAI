@@ -183,18 +183,23 @@ export class AdExecutionService implements OnModuleInit {
         extAdId = `sim_meta_${Date.now()}`;
       }
     } else if (ad.platform === 'google') {
-      // Google Ads API placeholder
-      this.logger.warn('Google Ads API not yet integrated, simulating publish');
+      this.logger.warn('Google Ads API not yet integrated, marking as simulated');
       extAdId = `sim_google_${Date.now()}`;
     } else {
       extAdId = `sim_${ad.platform}_${Date.now()}`;
     }
 
+    // Mark simulated executions explicitly in performance JSONB
+    const isSimulated = extAdId?.startsWith('sim_') || false;
+    const performanceUpdate = isSimulated
+      ? JSON.stringify({ simulated: true, simulatedAt: new Date().toISOString() })
+      : '{}';
+
     const result = await this.pool.query(
-      `UPDATE ad_executions SET status = 'live', ext_ad_id = $1, updated_at = NOW()
+      `UPDATE ad_executions SET status = 'live', ext_ad_id = $1, performance = performance || $3::jsonb, updated_at = NOW()
        WHERE id = $2
        RETURNING *`,
-      [extAdId, adId],
+      [extAdId, adId, performanceUpdate],
     );
 
     this.logger.log(`Ad ${adId} published on ${ad.platform} (ext: ${extAdId})`);

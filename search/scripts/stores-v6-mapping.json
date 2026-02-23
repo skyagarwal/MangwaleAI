@@ -1,0 +1,75 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "store_name_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": { "type": "long" },
+      "name": {
+        "type": "text",
+        "analyzer": "store_name_analyzer",
+        "fields": {
+          "keyword": { "type": "keyword", "ignore_above": 256 }
+        }
+      },
+      "slug": { "type": "keyword" },
+      "phone": { "type": "keyword" },
+      "email": { "type": "keyword" },
+      "logo": { "type": "keyword" },
+      "cover_photo": { "type": "keyword" },
+      "address": { "type": "text" },
+      "latitude": { "type": "text" },
+      "longitude": { "type": "text" },
+      "location": { "type": "geo_point" },
+      "status": { "type": "byte" },
+      "active": { "type": "byte" },
+      "featured": { "type": "byte" },
+      "module_id": { "type": "long" },
+      "vendor_id": { "type": "long" },
+      "zone_id": { "type": "long" },
+      "minimum_order": { "type": "double" },
+      "comission": { "type": "double" },
+      "tax": { "type": "double" },
+      "delivery_time": { "type": "keyword" },
+      "free_delivery": { "type": "byte" },
+      "delivery": { "type": "byte" },
+      "take_away": { "type": "byte" },
+      "schedule_order": { "type": "byte" },
+      "rating": { "type": "keyword" },
+      "order_count": { "type": "integer" },
+      "total_order": { "type": "integer" },
+      "veg": { "type": "byte" },
+      "non_veg": { "type": "byte" },
+      "store_business_model": { "type": "keyword" },
+      "package_id": { "type": "long" },
+      "off_day": { "type": "keyword" },
+      "close_time_slot": { "type": "keyword" },
+      "item_section": { "type": "byte" },
+      "reviews_section": { "type": "byte" },
+      "self_delivery_system": { "type": "byte" },
+      "pos_system": { "type": "byte" },
+      "prescription_order": { "type": "byte" },
+      "announcement": { "type": "byte" },
+      "cutlery": { "type": "byte" },
+      "minimum_shipping_charge": { "type": "double" },
+      "maximum_shipping_charge": { "type": "double" },
+      "per_km_shipping_charge": { "type": "double" },
+      "gst": { "type": "keyword" },
+      "gst_status": { "type": "keyword" },
+      "meta_title": { "type": "text" },
+      "meta_description": { "type": "text" },
+      "created_at": { "type": "date" },
+      "updated_at": { "type": "date" }
+    }
+  }
+}

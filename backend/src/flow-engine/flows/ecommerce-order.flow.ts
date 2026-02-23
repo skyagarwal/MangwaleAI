@@ -15,6 +15,7 @@ export const ecommerceOrderFlow: FlowDefinition = {
     delivery_address: { type: 'object', required: true },
     distance: { type: 'number', required: false },
     pricing: { type: 'object', required: true },
+    payment_method: { type: 'string', required: false },
     order_result: { type: 'object', required: false },
   },
   
@@ -300,6 +301,7 @@ Ask if they want to:
           config: {
             type: 'ecommerce',
             itemsPath: 'cart_items',
+            // Industry defaults; pull from PHP API when endpoint is available
             freeShippingThreshold: 500,
             shippingFee: 40,
             taxRate: 0.18,
@@ -360,9 +362,109 @@ Hit confirm and I'll place your order! 🚀`,
         },
       ],
       transitions: {
-        user_confirms: 'check_store_before_order',
+        user_confirms: 'select_payment_method',
         user_cancels: 'cancelled',
         default: 'show_order_summary',
+      },
+    },
+
+    // Payment method selection
+    select_payment_method: {
+      type: 'action',
+      description: 'Show payment method options',
+      actions: [
+        {
+          id: 'payment_options_msg',
+          executor: 'response',
+          config: {
+            message: '💳 **How would you like to pay?**\n\nOrder Total: ₹{{pricing.total}}',
+            buttons: [
+              { label: '📱 UPI / Online', value: 'online', action: 'pay_online' },
+              { label: '💵 Cash on Delivery', value: 'cod', action: 'pay_cod' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'await_payment_choice',
+      },
+    },
+
+    // Wait for payment choice
+    await_payment_choice: {
+      type: 'wait',
+      description: 'Wait for user to choose payment method',
+      onEntry: [],
+      transitions: {
+        pay_online: 'set_payment_online',
+        pay_cod: 'set_payment_cod',
+        user_message: 'handle_payment_input',
+        default: 'handle_payment_input',
+      },
+    },
+
+    // Handle free-text payment input
+    handle_payment_input: {
+      type: 'decision',
+      description: 'Parse payment method from text',
+      conditions: [
+        {
+          expression: 'context._user_message?.toLowerCase().match(/online|upi|gpay|phonepe|paytm|card|debit|credit|digital|net\\s*banking/)',
+          event: 'online',
+        },
+        {
+          expression: 'context._user_message?.toLowerCase().match(/cod|cash|delivery|pay\\s*later/)',
+          event: 'cod',
+        },
+        {
+          expression: 'context._user_message?.toLowerCase().match(/cancel|no|nahi|stop/)',
+          event: 'user_cancels',
+        },
+      ],
+      transitions: {
+        online: 'set_payment_online',
+        cod: 'set_payment_cod',
+        user_cancels: 'cancelled',
+        default: 'select_payment_method',
+      },
+    },
+
+    // Set online payment
+    set_payment_online: {
+      type: 'action',
+      description: 'Set payment method to online',
+      actions: [
+        {
+          id: 'set_online',
+          executor: 'response',
+          config: {
+            message: '📱 Online payment selected. Processing your order...',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'check_store_before_order',
+      },
+    },
+
+    // Set COD payment
+    set_payment_cod: {
+      type: 'action',
+      description: 'Set payment method to COD',
+      actions: [
+        {
+          id: 'set_cod',
+          executor: 'response',
+          config: {
+            message: '💵 Cash on Delivery selected. Processing your order...',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'check_store_before_order',
       },
     },
 
@@ -418,6 +520,9 @@ Hit confirm and I'll place your order! 🚀`,
             itemsPath: 'cart_items',
             addressPath: 'delivery_address',
             pricingPath: 'pricing',
+            // Payment method determined by set_payment_online/set_payment_cod path
+            // Defaults to COD; wire into order context when context-set executor is added
+            paymentMethod: 'cod',
           },
           output: 'order_result',
           retryOnError: true,

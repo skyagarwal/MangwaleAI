@@ -48,7 +48,7 @@ export interface RoutingContext {
   taskType?: 'extraction' | 'analysis' | 'creative' | 'reasoning' | 'classification' | 'generation';
 }
 
-interface ModelProfile {
+export interface ModelProfile {
   id: string;
   name: string;
   provider: string;

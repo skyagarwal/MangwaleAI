@@ -15,6 +15,7 @@ import { OrderFlowModule } from './order-flow/order-flow.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { ParcelModule } from './parcel/parcel.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { SmsModule } from './sms/sms.module';
 import { TestingModule } from './testing/testing.module';
 import { AgentsModule } from './agents/agents.module';
 import { ZonesModule } from './zones/zones.module'; // Zone-based Delivery Management
@@ -170,6 +171,7 @@ FlowManagementModule, // ✨ Visual Flow Builder & Execution
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel
     TelegramModule, // Telegram channel (inbound minimal)
+    SmsModule, // SMS channel (MSG91 + Twilio)
     // WebChatModule, // Future: Web chat channel
     TestingModule, // Lightweight chat endpoints for testing AI flows
   ],

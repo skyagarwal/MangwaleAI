@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { BroadcastService } from './services/broadcast.service';
 import { NotificationTimingService } from './services/notification-timing.service';
@@ -15,7 +15,7 @@ import { WhatsAppModule } from '../whatsapp/whatsapp.module';
   imports: [
     HttpModule,
     SessionModule,
-    WhatsAppModule,
+    forwardRef(() => WhatsAppModule),
   ],
   controllers: [BroadcastController, CampaignTriggerController],
   providers: [

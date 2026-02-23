@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+RUN pip install --no-cache-dir \
+    sentence-transformers \
+    fastapi \
+    uvicorn[standard] \
+    pydantic
+
+# Copy embedding service
+COPY scripts/embedding-service.py .
+
+# Download both models at build time (cache them in the image)
+# General model: 384-dim for ecom/general queries (~90 MB)
+RUN python3 -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+# Food model: 768-dim for food-specific semantic search (~420 MB)
+RUN python3 -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('jonny9f/food_embeddings')"
+
+EXPOSE 3101
+
+CMD ["python3", "embedding-service.py"]

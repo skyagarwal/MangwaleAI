@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Query, Body } from '@nestjs/common';
 import { WeatherCampaignTriggerService } from '../services/weather-campaign-trigger.service';
 import { FestivalCampaignService } from '../services/festival-campaign.service';
 import { EventTriggerService } from '../services/event-trigger.service';
@@ -48,6 +48,25 @@ export class CampaignTriggerController {
   @Get('festivals/today')
   async getFestivalsToday() {
     return this.festival.getFestivalsToTriggerToday();
+  }
+
+  @Post('festivals')
+  async createFestival(@Body() body: {
+    name: string; date: string; preDays?: number;
+    items?: string[]; message?: string;
+  }) {
+    return this.festival.createFestival(body);
+  }
+
+  @Patch('festivals/:id')
+  async updateFestival(@Param('id') id: string, @Body() body: any) {
+    return this.festival.updateFestival(id, body);
+  }
+
+  @Delete('festivals/:id')
+  async deleteFestival(@Param('id') id: string) {
+    const deleted = await this.festival.deleteFestival(id);
+    return { deleted };
   }
 
   @Get('events')

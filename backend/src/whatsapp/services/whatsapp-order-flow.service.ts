@@ -219,7 +219,7 @@ export class WhatsAppOrderFlowService implements OnModuleInit {
   }
 
   /**
-   * Confirm payment received.
+   * Confirm payment received and attempt PHP backend sync.
    */
   async confirmPayment(orderId: string, paymentRef?: string): Promise<any> {
     const { rows } = await this.pgPool.query(
@@ -232,9 +232,90 @@ export class WhatsAppOrderFlowService implements OnModuleInit {
 
     if (!rows.length) throw new Error('Order not in payment_pending state');
 
-    // TODO: create corresponding order in PHP backend
+    const order = this.mapOrder(rows[0]);
     this.logger.log(`Payment confirmed for order ${orderId}`);
-    return this.mapOrder(rows[0]);
+
+    // Attempt PHP backend sync (non-fatal)
+    await this.attemptPhpSync(order);
+
+    return order;
+  }
+
+  /**
+   * Attempt to sync a paid WhatsApp order to the PHP Laravel backend.
+   * Logs failures as non-fatal for manual reconciliation.
+   */
+  private async attemptPhpSync(order: any): Promise<void> {
+    const phpApiBase = this.config.get('PHP_API_BASE') || 'https://new.mangwale.com/api';
+
+    try {
+      const response = await fetch(`${phpApiBase}/whatsapp-orders/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          whatsapp_order_id: order.id,
+          phone: order.phoneNumber,
+          user_id: order.userId,
+          items: order.items,
+          subtotal: order.subtotal,
+          delivery_fee: order.deliveryFee,
+          total: order.total,
+          payment_method: order.paymentMethod,
+          payment_ref: order.paymentRef,
+          delivery_address: order.deliveryAddress,
+          store_id: order.storeId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const phpOrderId = data?.order_id || data?.id;
+
+        if (phpOrderId) {
+          await this.pgPool.query(
+            `UPDATE whatsapp_orders SET php_order_id = $1, updated_at = NOW() WHERE id = $2`,
+            [phpOrderId, order.id],
+          );
+          this.logger.log(`Order ${order.id} synced to PHP: php_order_id=${phpOrderId}`);
+        }
+      } else {
+        const errBody = await response.text();
+        this.logger.warn(
+          `PHP sync failed for order ${order.id} (HTTP ${response.status}): ${errBody.substring(0, 200)}. ` +
+          `Flagging for manual reconciliation.`,
+        );
+        await this.flagForManualSync(order.id, `HTTP ${response.status}: ${errBody.substring(0, 200)}`);
+      }
+    } catch (err: any) {
+      this.logger.warn(
+        `PHP sync failed for order ${order.id}: ${err.message}. Flagging for manual reconciliation.`,
+      );
+      await this.flagForManualSync(order.id, err.message);
+    }
+  }
+
+  private async flagForManualSync(orderId: string, reason: string): Promise<void> {
+    try {
+      await this.pgPool.query(
+        `CREATE TABLE IF NOT EXISTS whatsapp_order_sync_log (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          order_id UUID NOT NULL,
+          sync_status VARCHAR(20) DEFAULT 'pending',
+          error_reason TEXT,
+          retry_count INTEGER DEFAULT 0,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )`,
+      );
+      await this.pgPool.query(
+        `INSERT INTO whatsapp_order_sync_log (order_id, sync_status, error_reason)
+         VALUES ($1, 'failed', $2)
+         ON CONFLICT DO NOTHING`,
+        [orderId, reason],
+      );
+    } catch (logErr: any) {
+      this.logger.error(`Failed to log sync failure: ${logErr.message}`);
+    }
   }
 
   /**

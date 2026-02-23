@@ -5,7 +5,7 @@ const backendUrl = process.env.BACKEND_INTERNAL_URL || 'http://localhost:3200';
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
-  distDir: '.next-build',
+  distDir: '.next-output',
   
   images: {
     remotePatterns: [
