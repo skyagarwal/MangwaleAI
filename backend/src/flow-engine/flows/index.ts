@@ -21,6 +21,8 @@ import { orderTrackingFlow } from './order-tracking.flow';
 import { supportFlow } from './support.flow';
 import { addressManagementFlow } from './address-management.flow';
 import { firstTimeOnboardingFlow } from './first-time-onboarding.flow';
+import { campaignActionFlow } from './campaign-action.flow';
+import { cartRecoveryFlow } from './cart-recovery.flow';
 
 /**
  * All available flow definitions
@@ -42,6 +44,8 @@ export const flowDefinitions: FlowDefinition[] = [
   supportFlow,       // Priority 60 - Customer support
   profileFlow,
   addressManagementFlow, // Address management
+  campaignActionFlow,    // Phase 4: mOS campaign action pipeline
+  cartRecoveryFlow,      // Phase 4: Abandoned cart recovery
 ];
 
 /**
@@ -63,6 +67,8 @@ export const flowDefinitionsById: Record<string, FlowDefinition> = {
   [supportFlow.id]: supportFlow,
   [profileFlow.id]: profileFlow,
   [addressManagementFlow.id]: addressManagementFlow,
+  [campaignActionFlow.id]: campaignActionFlow,
+  [cartRecoveryFlow.id]: cartRecoveryFlow,
 };
 
 /**
@@ -83,6 +89,8 @@ export const flowDefinitionsByTrigger: Record<string, FlowDefinition> = {
   [supportFlow.trigger]: supportFlow,
   [profileFlow.trigger]: profileFlow,
   'manage_address': addressManagementFlow, // Address management by intent
+  [campaignActionFlow.trigger]: campaignActionFlow,
+  [cartRecoveryFlow.trigger]: cartRecoveryFlow,
 };
 
 /**

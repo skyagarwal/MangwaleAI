@@ -8,6 +8,7 @@ import {
   Headers,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { VendorNotificationService } from '../services/vendor-notification.service';
 import { OrderDatabaseService } from '../services/order-database.service';
@@ -109,16 +110,34 @@ export interface OrderWebhookPayload {
 export class OrderWebhookController {
   private readonly logger = new Logger(OrderWebhookController.name);
   private readonly webhookSecret: string;
+  private riderQuestService: any = null;
+  private adAttributionService: any = null;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly vendorNotificationService: VendorNotificationService,
     private readonly orderDatabaseService: OrderDatabaseService,
+    private readonly moduleRef: ModuleRef,
   ) {
     this.webhookSecret = this.configService.get<string>(
       'ORDER_WEBHOOK_SECRET',
       'mangwale_webhook_secret_2024'
     );
+
+    // Resolve cross-module services lazily
+    setTimeout(async () => {
+      try {
+        const { RiderQuestService } = await import('../../gamification/services/rider-quest.service');
+        this.riderQuestService = this.moduleRef.get(RiderQuestService, { strict: false });
+        if (this.riderQuestService) this.logger.log('RiderQuestService wired to order webhook');
+      } catch { /* optional dependency */ }
+
+      try {
+        const { AdAttributionService } = await import('../../marketing/services/ad-attribution.service');
+        this.adAttributionService = this.moduleRef.get(AdAttributionService, { strict: false });
+        if (this.adAttributionService) this.logger.log('AdAttributionService wired to order webhook');
+      } catch { /* optional dependency */ }
+    }, 2000);
   }
 
   /**
@@ -199,6 +218,9 @@ export class OrderWebhookController {
    */
   private async handleNewOrder(payload: OrderWebhookPayload): Promise<void> {
     this.logger.log(`🆕 New order #${payload.order.id} - notifying vendor`);
+
+    // Track UTM attribution if present in metadata
+    await this.trackOrderAttribution(payload);
 
     // Safely handle items array
     const items = payload.items || [];
@@ -286,6 +308,8 @@ export class OrderWebhookController {
       case 'delivered':
         // Order delivered - notify customer for feedback
         await this.notifyCustomerOrderDelivered(payload);
+        // Wire rider quest progress on delivery
+        await this.updateRiderQuestProgress(payload);
         break;
         
       case 'canceled':
@@ -391,5 +415,63 @@ export class OrderWebhookController {
   private async notifyDeliveryManOrderReady(payload: OrderWebhookPayload): Promise<void> {
     this.logger.log(`📱 Notifying delivery man: Order ready for pickup`);
     // TODO: Send notification to delivery man
+  }
+
+  // ========================================
+  // mOS Integration Methods
+  // ========================================
+
+  /**
+   * Update rider quest progress when an order is delivered.
+   * Finds all active delivery_count quests and increments progress.
+   */
+  private async updateRiderQuestProgress(payload: OrderWebhookPayload): Promise<void> {
+    if (!this.riderQuestService || !payload.delivery_man?.id) return;
+
+    try {
+      const riderId = payload.delivery_man.id;
+      // Get all active quests and update delivery-type ones
+      const quests = await this.riderQuestService.getActiveQuests();
+      for (const quest of quests) {
+        if (quest.quest_type === 'delivery_count' || quest.quest_type === 'zone_bonus') {
+          await this.riderQuestService.updateProgress(riderId, quest.id, 1);
+        }
+      }
+      this.logger.log(`🏍️ Updated quest progress for rider ${riderId}`);
+    } catch (error: any) {
+      this.logger.warn(`Failed to update rider quest progress: ${error.message}`);
+    }
+  }
+
+  /**
+   * Track UTM attribution for orders from web/WhatsApp deep links.
+   * Extracts utm_source, utm_medium, utm_campaign from order metadata.
+   */
+  private async trackOrderAttribution(payload: OrderWebhookPayload): Promise<void> {
+    if (!this.adAttributionService) return;
+
+    try {
+      // Check for UTM params in order metadata (sent by PHP in the payload)
+      const metadata = (payload as any).metadata || {};
+      const utmSource = metadata.utm_source;
+      const utmMedium = metadata.utm_medium;
+      const utmCampaign = metadata.utm_campaign;
+
+      if (!utmSource && !utmCampaign) return;
+
+      await this.adAttributionService.trackAttribution(
+        payload.order.id,
+        {
+          source: utmSource || 'direct',
+          medium: utmMedium || 'none',
+          campaign: utmCampaign || 'organic',
+          content: metadata.utm_content,
+        },
+        payload.order.total_amount,
+      );
+      this.logger.log(`📊 UTM attribution tracked for order #${payload.order.id}: source=${utmSource}`);
+    } catch (error: any) {
+      this.logger.warn(`Failed to track order attribution: ${error.message}`);
+    }
   }
 }

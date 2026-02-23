@@ -13,6 +13,8 @@ import { RagService } from './services/rag.service';
 import { RagDocumentService } from './services/rag-document.service';
 import { RagDocumentController } from './controllers/rag-document.controller';
 import { VllmProxyController } from './controllers/vllm-proxy.controller';
+import { ModelOrchestraController } from './controllers/model-orchestra.controller';
+import { SmartModelRouterService } from './services/smart-model-router.service';
 import { SearchModule } from '../search/search.module';
 import { AdminModule } from '../admin/admin.module';
 
@@ -27,12 +29,13 @@ import { AdminModule } from '../admin/admin.module';
     forwardRef(() => SearchModule), // For RAG service
     AdminModule,
   ],
-  controllers: [LlmController, FailoverStatusController, RagDocumentController, VllmProxyController],
+  controllers: [LlmController, FailoverStatusController, RagDocumentController, VllmProxyController, ModelOrchestraController],
   providers: [
     LlmService,
     VllmService,
     OllamaService,
     CloudLlmService,
+    SmartModelRouterService,
     PromptTemplateService,
     ModelRegistryService,
     LlmUsageTrackingService,
@@ -41,6 +44,8 @@ import { AdminModule } from '../admin/admin.module';
   ],
   exports: [
     LlmService,
+    CloudLlmService,
+    SmartModelRouterService,
     PromptTemplateService,
     ModelRegistryService,
     LlmUsageTrackingService,

@@ -30,6 +30,7 @@
     "export:production-samples": "ts-node scripts/export-production-samples.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@mangwale-ai/database": "file:libs/database",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/bullmq": "^11.0.4",

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { ZoneService } from './services/zone.service';
+import { ZoneHeatMapService } from './services/zone-heatmap.service';
 import { ZonesController } from './zones.controller';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 
@@ -12,7 +13,7 @@ import { PhpIntegrationModule } from '../php-integration/php-integration.module'
 @Module({
   imports: [HttpModule, ConfigModule, PhpIntegrationModule],
   controllers: [ZonesController],
-  providers: [ZoneService],
-  exports: [ZoneService],
+  providers: [ZoneService, ZoneHeatMapService],
+  exports: [ZoneService, ZoneHeatMapService],
 })
 export class ZonesModule {}

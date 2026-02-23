@@ -45,6 +45,7 @@ export interface RoutingContext {
   priority?: 'fast' | 'quality' | 'balanced';
   maxCost?: number;
   maxLatencyMs?: number;
+  taskType?: 'extraction' | 'analysis' | 'creative' | 'reasoning' | 'classification' | 'generation';
 }
 
 interface ModelProfile {
@@ -139,6 +140,90 @@ export class SmartModelRouterService implements OnModuleInit {
       capabilities: ['general', 'reasoning', 'complex', 'safety'],
       maxTokens: 200000,
       isActive: false, // Enable when key is added
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'gemini-flash',
+      name: 'Gemini 2.0 Flash',
+      provider: 'gemini',
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      tier: 1,
+      costPer1kTokens: 0.0005,
+      avgLatencyMs: 300,
+      successRate: 0.98,
+      capabilities: ['general', 'vision', 'fast', 'extraction', 'classification'],
+      maxTokens: 1048576,
+      isActive: false, // Enable when key is added
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'gemini-pro',
+      name: 'Gemini 1.5 Pro',
+      provider: 'gemini',
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      tier: 2,
+      costPer1kTokens: 0.003,
+      avgLatencyMs: 500,
+      successRate: 0.97,
+      capabilities: ['general', 'vision', 'reasoning', 'analysis', 'generation'],
+      maxTokens: 2097152,
+      isActive: false,
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'deepseek-chat',
+      name: 'DeepSeek Chat',
+      provider: 'deepseek',
+      endpoint: 'https://api.deepseek.com/v1',
+      tier: 1,
+      costPer1kTokens: 0.0002,
+      avgLatencyMs: 400,
+      successRate: 0.96,
+      capabilities: ['general', 'analysis', 'extraction', 'classification'],
+      maxTokens: 65536,
+      isActive: false,
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'deepseek-reasoner',
+      name: 'DeepSeek Reasoner',
+      provider: 'deepseek',
+      endpoint: 'https://api.deepseek.com/v1',
+      tier: 2,
+      costPer1kTokens: 0.001,
+      avgLatencyMs: 800,
+      successRate: 0.95,
+      capabilities: ['reasoning', 'analysis', 'complex'],
+      maxTokens: 65536,
+      isActive: false,
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'grok-mini',
+      name: 'Grok 3 Mini',
+      provider: 'grok',
+      endpoint: 'https://api.x.ai/v1',
+      tier: 1,
+      costPer1kTokens: 0.0004,
+      avgLatencyMs: 350,
+      successRate: 0.97,
+      capabilities: ['general', 'fast', 'extraction', 'creative'],
+      maxTokens: 131072,
+      isActive: false,
+      circuitBreakerOpen: false,
+    },
+    {
+      id: 'grok-3',
+      name: 'Grok 3',
+      provider: 'grok',
+      endpoint: 'https://api.x.ai/v1',
+      tier: 3,
+      costPer1kTokens: 0.009,
+      avgLatencyMs: 600,
+      successRate: 0.97,
+      capabilities: ['general', 'reasoning', 'creative', 'complex', 'generation'],
+      maxTokens: 131072,
+      isActive: false,
       circuitBreakerOpen: false,
     },
   ];
@@ -237,6 +322,24 @@ export class SmartModelRouterService implements OnModuleInit {
     const complexity = this.analyzeComplexity(context);
     const strategy = await this.getTenantStrategy(context.tenantId);
     const availableModels = this.getAvailableModels(strategy.blockedModels);
+
+    // If taskType is specified, filter by capability first
+    if (context.taskType) {
+      const capableModel = this.selectByCapability(availableModels, context.taskType, context);
+      if (capableModel) {
+        return {
+          modelId: capableModel.id,
+          modelName: capableModel.name,
+          provider: capableModel.provider,
+          endpoint: capableModel.endpoint,
+          tier: capableModel.tier,
+          estimatedCost: this.estimateCost(capableModel, context.query),
+          estimatedLatencyMs: capableModel.avgLatencyMs,
+          reason: `Task-type routing: Selected ${capableModel.name} for ${context.taskType} task`,
+          fallbackModels: this.getFallbackModels(capableModel, availableModels).map(m => m.id),
+        };
+      }
+    }
 
     let selectedModel: ModelProfile | null = null;
     let reason = '';
@@ -582,6 +685,37 @@ export class SmartModelRouterService implements OnModuleInit {
       cb.failures = Math.max(0, cb.failures - 1);
       cb.openUntil = null;
     }
+  }
+
+  /**
+   * Select model based on task type capabilities
+   */
+  selectByCapability(
+    models: ModelProfile[],
+    taskType: string,
+    context: RoutingContext,
+  ): ModelProfile | null {
+    // Filter models that have the required capability
+    const capable = models.filter(m => m.capabilities.includes(taskType));
+
+    if (capable.length === 0) {
+      // Fallback to general capability
+      return models.filter(m => m.capabilities.includes('general'))[0] || null;
+    }
+
+    // Use balanced selection among capable models
+    const complexity = this.analyzeComplexity(context);
+    return this.selectBalanced(capable, complexity, context);
+  }
+
+  /**
+   * Get all model profiles with current status
+   */
+  getModelProfiles(): Array<ModelProfile & { circuitBreakerStatus: { failures: number; openUntil: Date | null } }> {
+    return Array.from(this.modelProfiles.values()).map(profile => ({
+      ...profile,
+      circuitBreakerStatus: this.circuitBreakers.get(profile.id) || { failures: 0, openUntil: null },
+    }));
   }
 
   /**

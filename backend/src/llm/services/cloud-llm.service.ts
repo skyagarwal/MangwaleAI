@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ChatCompletionDto } from '../dto/chat-completion.dto';
 import { ChatCompletionResultDto } from '../dto/chat-completion-result.dto';
 import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 
 /**
  * Model mapping for cloud providers
@@ -26,12 +27,36 @@ const OPENROUTER_MODEL_MAPPING: Record<string, string> = {
   'default': 'meta-llama/llama-3.1-8b-instruct:free',
 };
 
+const GEMINI_MODEL_MAPPING: Record<string, string> = {
+  'default': 'gemini-2.0-flash',
+  'quality': 'gemini-1.5-pro',
+};
+
+const CLAUDE_MODEL_MAPPING: Record<string, string> = {
+  'default': 'claude-sonnet-4-20250514',
+  'fast': 'claude-haiku-4-5-20251001',
+};
+
+const DEEPSEEK_MODEL_MAPPING: Record<string, string> = {
+  'default': 'deepseek-chat',
+  'reasoning': 'deepseek-reasoner',
+};
+
+const GROK_MODEL_MAPPING: Record<string, string> = {
+  'default': 'grok-3-mini',
+  'quality': 'grok-3',
+};
+
 @Injectable()
 export class CloudLlmService {
   private readonly logger = new Logger(CloudLlmService.name);
   private openaiClient?: OpenAI;
   private groqClient?: OpenAI;
   private openrouterClient?: OpenAI;
+  private geminiClient?: OpenAI;
+  private anthropicClient?: Anthropic;
+  private deepseekClient?: OpenAI;
+  private grokClient?: OpenAI;
 
   constructor(private readonly config: ConfigService) {
     // Initialize OpenAI client
@@ -55,6 +80,39 @@ export class CloudLlmService {
       this.openrouterClient = new OpenAI({
         apiKey: openrouterKey,
         baseURL: 'https://openrouter.ai/api/v1',
+      });
+    }
+
+    // Gemini (uses OpenAI-compatible API)
+    const geminiKey = this.config.get('GEMINI_API_KEY');
+    if (geminiKey) {
+      this.geminiClient = new OpenAI({
+        apiKey: geminiKey,
+        baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      });
+    }
+
+    // Anthropic Claude (native SDK)
+    const anthropicKey = this.config.get('ANTHROPIC_API_KEY');
+    if (anthropicKey) {
+      this.anthropicClient = new Anthropic({ apiKey: anthropicKey });
+    }
+
+    // DeepSeek (uses OpenAI-compatible API)
+    const deepseekKey = this.config.get('DEEPSEEK_API_KEY');
+    if (deepseekKey) {
+      this.deepseekClient = new OpenAI({
+        apiKey: deepseekKey,
+        baseURL: 'https://api.deepseek.com/v1',
+      });
+    }
+
+    // xAI Grok (uses OpenAI-compatible API)
+    const grokKey = this.config.get('XAI_API_KEY');
+    if (grokKey) {
+      this.grokClient = new OpenAI({
+        apiKey: grokKey,
+        baseURL: 'https://api.x.ai/v1',
       });
     }
   }
@@ -211,6 +269,190 @@ export class CloudLlmService {
     throw new Error('HuggingFace not yet implemented');
   }
 
+  async chatGemini(dto: ChatCompletionDto): Promise<ChatCompletionResultDto> {
+    if (!this.geminiClient) {
+      throw new Error('Gemini API key not configured');
+    }
+
+    const startTime = Date.now();
+    const mappedModel = this.mapToGeminiModel(dto.model);
+
+    this.logger.debug(`Gemini model mapping: ${dto.model} → ${mappedModel}`);
+
+    try {
+      const completion = await this.geminiClient.chat.completions.create({
+        model: mappedModel,
+        messages: dto.messages as any,
+        temperature: dto.temperature,
+        max_tokens: dto.maxTokens,
+      });
+
+      const choice = completion.choices[0];
+
+      return {
+        id: completion.id,
+        model: completion.model,
+        provider: 'gemini',
+        content: choice.message?.content || '',
+        finishReason: choice.finish_reason as any,
+        usage: {
+          promptTokens: completion.usage?.prompt_tokens || 0,
+          completionTokens: completion.usage?.completion_tokens || 0,
+          totalTokens: completion.usage?.total_tokens || 0,
+        },
+        processingTimeMs: Date.now() - startTime,
+        estimatedCost: this.calculateGeminiCost(
+          completion.usage?.prompt_tokens || 0,
+          completion.usage?.completion_tokens || 0,
+          completion.model,
+        ),
+      };
+    } catch (error) {
+      this.logger.error(`Gemini chat failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  async chatClaude(dto: ChatCompletionDto): Promise<ChatCompletionResultDto> {
+    if (!this.anthropicClient) {
+      throw new Error('Anthropic API key not configured');
+    }
+
+    const startTime = Date.now();
+    const model = CLAUDE_MODEL_MAPPING[dto.model?.toLowerCase() || ''] || CLAUDE_MODEL_MAPPING['default'];
+
+    this.logger.debug(`Claude model mapping: ${dto.model} → ${model}`);
+
+    try {
+      // Convert messages format: separate system from user/assistant
+      const systemMessage = dto.messages.find(m => m.role === 'system')?.content || '';
+      const messages = dto.messages
+        .filter(m => m.role !== 'system')
+        .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+
+      const response = await this.anthropicClient.messages.create({
+        model,
+        max_tokens: dto.maxTokens || 4096,
+        system: systemMessage,
+        messages,
+        temperature: dto.temperature,
+      });
+
+      const textBlock = response.content.find(c => c.type === 'text');
+      const content = textBlock && textBlock.type === 'text' ? textBlock.text : '';
+
+      return {
+        id: response.id,
+        model: response.model,
+        provider: 'anthropic',
+        content,
+        finishReason: response.stop_reason as any,
+        usage: {
+          promptTokens: response.usage.input_tokens,
+          completionTokens: response.usage.output_tokens,
+          totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+        },
+        processingTimeMs: Date.now() - startTime,
+        estimatedCost: this.calculateClaudeCost(
+          response.usage.input_tokens,
+          response.usage.output_tokens,
+          response.model,
+        ),
+      };
+    } catch (error) {
+      this.logger.error(`Claude chat failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  async chatDeepSeek(dto: ChatCompletionDto): Promise<ChatCompletionResultDto> {
+    if (!this.deepseekClient) {
+      throw new Error('DeepSeek API key not configured');
+    }
+
+    const startTime = Date.now();
+    const mappedModel = this.mapToDeepSeekModel(dto.model);
+
+    this.logger.debug(`DeepSeek model mapping: ${dto.model} → ${mappedModel}`);
+
+    try {
+      const completion = await this.deepseekClient.chat.completions.create({
+        model: mappedModel,
+        messages: dto.messages as any,
+        temperature: dto.temperature,
+        max_tokens: dto.maxTokens,
+      });
+
+      const choice = completion.choices[0];
+
+      return {
+        id: completion.id,
+        model: completion.model,
+        provider: 'deepseek',
+        content: choice.message?.content || '',
+        finishReason: choice.finish_reason as any,
+        usage: {
+          promptTokens: completion.usage?.prompt_tokens || 0,
+          completionTokens: completion.usage?.completion_tokens || 0,
+          totalTokens: completion.usage?.total_tokens || 0,
+        },
+        processingTimeMs: Date.now() - startTime,
+        estimatedCost: this.calculateDeepSeekCost(
+          completion.usage?.prompt_tokens || 0,
+          completion.usage?.completion_tokens || 0,
+          completion.model,
+        ),
+      };
+    } catch (error) {
+      this.logger.error(`DeepSeek chat failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  async chatGrok(dto: ChatCompletionDto): Promise<ChatCompletionResultDto> {
+    if (!this.grokClient) {
+      throw new Error('Grok API key not configured');
+    }
+
+    const startTime = Date.now();
+    const mappedModel = this.mapToGrokModel(dto.model);
+
+    this.logger.debug(`Grok model mapping: ${dto.model} → ${mappedModel}`);
+
+    try {
+      const completion = await this.grokClient.chat.completions.create({
+        model: mappedModel,
+        messages: dto.messages as any,
+        temperature: dto.temperature,
+        max_tokens: dto.maxTokens,
+      });
+
+      const choice = completion.choices[0];
+
+      return {
+        id: completion.id,
+        model: completion.model,
+        provider: 'grok',
+        content: choice.message?.content || '',
+        finishReason: choice.finish_reason as any,
+        usage: {
+          promptTokens: completion.usage?.prompt_tokens || 0,
+          completionTokens: completion.usage?.completion_tokens || 0,
+          totalTokens: completion.usage?.total_tokens || 0,
+        },
+        processingTimeMs: Date.now() - startTime,
+        estimatedCost: this.calculateGrokCost(
+          completion.usage?.prompt_tokens || 0,
+          completion.usage?.completion_tokens || 0,
+          completion.model,
+        ),
+      };
+    } catch (error) {
+      this.logger.error(`Grok chat failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
   private calculateOpenAICost(tokens: number, model: string): number {
     const pricing: Record<string, number> = {
       'gpt-4': 0.00003, // per 1K tokens (average)
@@ -264,5 +506,56 @@ export class CloudLlmService {
       (promptTokens / 1_000_000) * rate.input +
       (completionTokens / 1_000_000) * rate.output
     );
+  }
+
+  private mapToGeminiModel(model?: string): string {
+    if (!model) return GEMINI_MODEL_MAPPING['default'];
+    return GEMINI_MODEL_MAPPING[model.toLowerCase()] || GEMINI_MODEL_MAPPING['default'];
+  }
+
+  private mapToDeepSeekModel(model?: string): string {
+    if (!model) return DEEPSEEK_MODEL_MAPPING['default'];
+    return DEEPSEEK_MODEL_MAPPING[model.toLowerCase()] || DEEPSEEK_MODEL_MAPPING['default'];
+  }
+
+  private mapToGrokModel(model?: string): string {
+    if (!model) return GROK_MODEL_MAPPING['default'];
+    return GROK_MODEL_MAPPING[model.toLowerCase()] || GROK_MODEL_MAPPING['default'];
+  }
+
+  private calculateGeminiCost(promptTokens: number, completionTokens: number, model: string): number {
+    const pricing: Record<string, { input: number; output: number }> = {
+      'gemini-2.0-flash': { input: 0.10, output: 0.40 },
+      'gemini-1.5-pro': { input: 1.25, output: 5.00 },
+    };
+    const rate = pricing[model] || { input: 0.10, output: 0.40 };
+    return (promptTokens / 1_000_000) * rate.input + (completionTokens / 1_000_000) * rate.output;
+  }
+
+  private calculateClaudeCost(promptTokens: number, completionTokens: number, model: string): number {
+    const pricing: Record<string, { input: number; output: number }> = {
+      'claude-sonnet-4-20250514': { input: 3.00, output: 15.00 },
+      'claude-haiku-4-5-20251001': { input: 0.80, output: 4.00 },
+    };
+    const rate = pricing[model] || { input: 3.00, output: 15.00 };
+    return (promptTokens / 1_000_000) * rate.input + (completionTokens / 1_000_000) * rate.output;
+  }
+
+  private calculateDeepSeekCost(promptTokens: number, completionTokens: number, model: string): number {
+    const pricing: Record<string, { input: number; output: number }> = {
+      'deepseek-chat': { input: 0.14, output: 0.28 },
+      'deepseek-reasoner': { input: 0.55, output: 2.19 },
+    };
+    const rate = pricing[model] || { input: 0.14, output: 0.28 };
+    return (promptTokens / 1_000_000) * rate.input + (completionTokens / 1_000_000) * rate.output;
+  }
+
+  private calculateGrokCost(promptTokens: number, completionTokens: number, model: string): number {
+    const pricing: Record<string, { input: number; output: number }> = {
+      'grok-3-mini': { input: 0.30, output: 0.50 },
+      'grok-3': { input: 3.00, output: 15.00 },
+    };
+    const rate = pricing[model] || { input: 0.30, output: 0.50 };
+    return (promptTokens / 1_000_000) * rate.input + (completionTokens / 1_000_000) * rate.output;
   }
 }

@@ -27,6 +27,7 @@ import { FlowEngineModule } from '../flow-engine/flow-engine.module';
 import { OrderTimeoutProcessor } from './processors/order-timeout.processor';
 import { VendorNotificationProcessor } from './processors/vendor-notification.processor';
 import { SecurityAlertsService } from '../common/monitoring/security-alerts.service';
+import { AutoRefundService } from './services/auto-refund.service';
 
 @Module({
   imports: [
@@ -92,6 +93,7 @@ import { SecurityAlertsService } from '../common/monitoring/security-alerts.serv
     VendorNotificationProcessor,
     // 🔒 Security monitoring
     SecurityAlertsService,
+    AutoRefundService,
   ],
   exports: [
     OrderOrchestratorService,
@@ -107,6 +109,7 @@ import { SecurityAlertsService } from '../common/monitoring/security-alerts.serv
     SmartOrderService,
     SmartRecommendationService,
     OrderLearningService,
+    AutoRefundService,
   ],
 })
 export class OrderFlowModule {}

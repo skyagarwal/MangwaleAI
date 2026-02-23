@@ -1,7 +1,7 @@
 export class ChatCompletionResultDto {
   id: string;
   model: string;
-  provider: 'vllm' | 'ollama' | 'openai' | 'groq' | 'openrouter' | 'huggingface' | 'together' | 'deepseek' | 'fallback';
+  provider: 'vllm' | 'ollama' | 'openai' | 'groq' | 'openrouter' | 'huggingface' | 'together' | 'deepseek' | 'gemini' | 'anthropic' | 'grok' | 'fallback';
   content: string;
   finishReason: 'stop' | 'length' | 'function_call' | 'error';
   

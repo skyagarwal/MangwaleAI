@@ -43,6 +43,12 @@ import { PureNerExecutor } from './executors/pure-ner.executor';
 import { AgentExecutor } from './executors/agent.executor';
 import { CollectionsExecutor } from './executors/collections.executor';
 import { QuickReorderExecutor } from './executors/quick-reorder.executor';
+// Phase 4: mOS Action Engine Executors
+import { AssetGenerationExecutor } from './executors/asset-generation.executor';
+import { AdExecutionExecutor } from './executors/ad-execution.executor';
+import { ApprovalGateExecutor } from './executors/approval-gate.executor';
+import { WhatsAppNotifyExecutor } from './executors/whatsapp-notify.executor';
+import { BroadcastExecutor } from './executors/broadcast.executor';
 // Game executors disabled - Prisma schema mismatch
 // import { GameScorerExecutor } from './executors/game-scorer.executor';
 // import { RewardPointsExecutor } from './executors/reward-points.executor';
@@ -75,6 +81,8 @@ import { ContextEnhancerService } from './services/context-enhancer.service';
 import { PricingValidatorService } from '../common/validators/pricing.validator';
 import { AuthValidatorService } from '../common/validators/auth.validator';
 import { AddressValidatorService } from '../common/validators/address.validator';
+import { BroadcastModule } from '../broadcast/broadcast.module';
+import { WhatsAppModule } from '../whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -94,6 +102,8 @@ import { AddressValidatorService } from '../common/validators/address.validator'
     ContextModule, // ✨ User Context (Weather, Festivals, City Knowledge)
     StoresModule, // Store schedule/open-closed status
     forwardRef(() => AgentsModule), // Use forwardRef to avoid circular dependency
+    forwardRef(() => BroadcastModule), // For BroadcastExecutor
+    forwardRef(() => WhatsAppModule), // For WhatsAppNotifyExecutor
   ],
   controllers: [FlowBuilderController, FlowsController],
   providers: [
@@ -151,6 +161,12 @@ import { AddressValidatorService } from '../common/validators/address.validator'
     QuickReorderExecutor, // 🔄 One-tap repeat last order
     // GameScorerExecutor, // Disabled - Prisma schema mismatch
     // RewardPointsExecutor, // Disabled - Prisma schema mismatch
+    // Phase 4: mOS Action Engine Executors
+    AssetGenerationExecutor,
+    AdExecutionExecutor,
+    ApprovalGateExecutor,
+    WhatsAppNotifyExecutor,
+    BroadcastExecutor,
   ],
   exports: [
     FlowEngineService,
@@ -204,6 +220,12 @@ export class FlowEngineModule {
     private readonly quickReorderExecutor: QuickReorderExecutor,
     // private readonly gameScorerExecutor: GameScorerExecutor, // Disabled
     // private readonly rewardPointsExecutor: RewardPointsExecutor, // Disabled
+    // Phase 4: mOS Action Engine Executors
+    private readonly assetGenerationExecutor: AssetGenerationExecutor,
+    private readonly adExecutionExecutor: AdExecutionExecutor,
+    private readonly approvalGateExecutor: ApprovalGateExecutor,
+    private readonly whatsAppNotifyExecutor: WhatsAppNotifyExecutor,
+    private readonly broadcastExecutor: BroadcastExecutor,
   ) {
     // Register all executors
     this.executorRegistry.register(llmExecutor);
@@ -242,5 +264,11 @@ export class FlowEngineModule {
     this.executorRegistry.register(quickReorderExecutor);
     // this.executorRegistry.register(gameScorerExecutor); // Disabled
     // this.executorRegistry.register(rewardPointsExecutor); // Disabled
+    // Phase 4: mOS Action Engine Executors
+    this.executorRegistry.register(assetGenerationExecutor);
+    this.executorRegistry.register(adExecutionExecutor);
+    this.executorRegistry.register(approvalGateExecutor);
+    this.executorRegistry.register(whatsAppNotifyExecutor);
+    this.executorRegistry.register(broadcastExecutor);
   }
 }

@@ -24,6 +24,7 @@ import {
   UserCheck,
   User,
   Shield,
+  Zap,
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -55,6 +56,27 @@ const navigation: NavItem[] = [
     href: '/admin/dashboard',
     icon: LayoutDashboard,
     // visible to all roles
+  },
+  {
+    name: 'mOS Command',
+    icon: Zap,
+    allowedRoles: MANAGER_PLUS,
+    children: [
+      { name: 'Neural Dashboard', href: '/admin/mos' },
+      { name: 'Model Orchestra', href: '/admin/mos/models' },
+      { name: 'Operations Intel', href: '/admin/mos/operations' },
+      { name: 'Customer Intelligence', href: '/admin/mos/customers' },
+      { name: 'Approval Queue', href: '/admin/mos/approvals' },
+      { name: 'Demand & Pricing', href: '/admin/mos/demand' },
+      { name: 'Campaign Builder', href: '/admin/mos/campaigns' },
+      { name: 'Retention Intel', href: '/admin/mos/retention' },
+      { name: 'Rider Command', href: '/admin/mos/riders' },
+      { name: 'Marketing Intel', href: '/admin/mos/marketing' },
+      { name: 'Strategy Ledger', href: '/admin/mos/strategy' },
+      { name: 'Action Engine', href: '/admin/mos/action-engine' },
+      { name: 'WhatsApp Commerce', href: '/admin/mos/whatsapp-commerce' },
+      { name: 'Scheduler', href: '/admin/mos/scheduler' },
+    ],
   },
   {
     name: 'AI Hub',

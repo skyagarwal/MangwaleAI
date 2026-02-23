@@ -15,6 +15,8 @@ import { RecommendationEngineService } from './services/recommendation-engine.se
 import { CollectionsService } from './collections.service';
 import { PersonalizationController } from './personalization.controller';
 import { RecommendationsController } from './controllers/recommendations.controller';
+import { CustomerIntelligenceController } from './controllers/customer-intelligence.controller';
+import { CustomerHealthService } from './services/customer-health.service';
 import { LlmModule } from '../llm/llm.module';
 import { DatabaseModule } from '../database/database.module';
 import { UserContextModule } from '../user-context/user-context.module';
@@ -55,7 +57,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SessionModule,
     ScheduleModule.forRoot(),
   ],
-  controllers: [PersonalizationController, RecommendationsController],
+  controllers: [PersonalizationController, RecommendationsController, CustomerIntelligenceController],
   providers: [
     ConversationAnalyzerService,
     UserProfilingService,
@@ -71,6 +73,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     BehavioralAnalyticsService,
     RecommendationEngineService,
     CollectionsService,
+    CustomerHealthService,
   ],
   exports: [
     ConversationAnalyzerService,
@@ -87,6 +90,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     BehavioralAnalyticsService,
     RecommendationEngineService,
     CollectionsService,
+    CustomerHealthService,
   ],
 })
 export class PersonalizationModule {}

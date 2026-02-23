@@ -58,9 +58,15 @@ import { MetricsModule } from './metrics/metrics.module'; // ✨ Prometheus Metr
 import { VisitorModule } from './visitor/visitor.module'; // ✨ Universal Visitor Identification
 import { AuthModule } from './auth/auth.module'; // ✨ Authentication (OTP, Login)
 import { BroadcastModule } from './broadcast/broadcast.module'; // ✨ WhatsApp Broadcast & Campaigns
+import { ApprovalModule } from './approval/approval.module'; // ✨ Approval Queue & Workflow
+import { DemandModule } from './demand/demand.module'; // ✨ Demand Forecasting & Dynamic Pricing
 import { RedisModule } from './redis/redis.module'; // 🔗 Centralized Redis Connection Pool
 import { AdminModule } from './admin/admin.module'; // ✨ Admin Auth (Login, OTP Password Reset)
 import { ExotelModule } from './exotel/exotel.module'; // ✨ Exotel + Nerve IVR
+import { MarketingModule } from './marketing/marketing.module'; // ✨ Social Trends & Ad Attribution
+import { StrategyModule } from './strategy/strategy.module'; // ✨ Strategy Ledger & Institutional Memory
+import { ActionEngineModule } from './action-engine/action-engine.module'; // ✨ mOS Action Engine (Campaigns, Cart Recovery)
+import { SchedulerModule } from './scheduler/scheduler.module'; // ✨ mOS Scheduler (Cron Jobs & Auto-Actions)
 // import { ClientLogsController } from './logging/controllers/client-logs.controller'; // ✨ Frontend Logging (FILE MISSING)
 
 @Module({
@@ -152,8 +158,14 @@ FlowManagementModule, // ✨ Visual Flow Builder & Execution
     VisitorModule, // ✨ Universal Visitor Identification (UUID for all users)
     AuthModule, // ✨ Authentication (OTP Login, User Management)
     BroadcastModule, // ✨ WhatsApp Broadcast & Campaign Management
+    ApprovalModule, // ✨ Approval Queue & Workflow
+    DemandModule, // ✨ Demand Forecasting & Dynamic Pricing
     AdminModule, // ✨ Admin Auth (Login, Email OTP Password Reset)
     ExotelModule, // ✨ Exotel + Nerve IVR Controllers
+    MarketingModule, // ✨ Social Trends & Ad Attribution
+    StrategyModule, // ✨ Strategy Ledger & Institutional Memory
+    ActionEngineModule, // ✨ mOS Action Engine (Campaigns, Cart Recovery)
+    SchedulerModule, // ✨ mOS Scheduler (Cron Jobs & Auto-Actions)
 
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel

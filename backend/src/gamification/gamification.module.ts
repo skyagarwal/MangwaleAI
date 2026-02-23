@@ -17,12 +17,17 @@ import { ProfileBuilderService } from './services/profile-builder.service';
 import { GameSessionService } from './services/game-session.service';
 import { GameOrchestratorService } from './services/game-orchestrator.service';
 
+// 🏍️ Rider gamification services
+import { RiderQuestService } from './services/rider-quest.service';
+import { RiderTierService } from './services/rider-tier.service';
+
 // 🎯 API Controllers
 import { GamificationSettingsController } from './controllers/gamification-settings.controller';
 import { TrainingSamplesController } from './controllers/training-samples.controller';
 import { GamificationStatsController } from './controllers/gamification-stats.controller';
 import { GameController } from './controllers/game.controller';
 import { QuestionsController } from './controllers/questions.controller';
+import { RiderCommandController } from './controllers/rider-command.controller';
 
 @Module({
   imports: [
@@ -38,6 +43,8 @@ import { QuestionsController } from './controllers/questions.controller';
     QuestionsController,
     // 🎮 Game play endpoints
     GameController,
+    // 🏍️ Rider Command (aggregates quests, tiers, zones, prep-time)
+    RiderCommandController,
   ],
   providers: [
     // 🎯 Database-driven gamification services
@@ -53,6 +60,10 @@ import { QuestionsController } from './controllers/questions.controller';
     ProfileBuilderService,
     GameSessionService,
     GameOrchestratorService,
+
+    // 🏍️ Rider gamification
+    RiderQuestService,
+    RiderTierService,
   ],
   exports: [
     // 🎯 Export database-driven services for use in other modules
@@ -68,6 +79,10 @@ import { QuestionsController } from './controllers/questions.controller';
     ProfileBuilderService,
     GameSessionService,
     GameOrchestratorService,
+
+    // 🏍️ Rider gamification
+    RiderQuestService,
+    RiderTierService,
   ],
 })
 export class GamificationModule {}
