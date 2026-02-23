@@ -9,6 +9,7 @@ import { PhpPaymentService } from '../../php-integration/services/php-payment.se
 import { PhpWalletService } from '../../php-integration/services/php-wallet.service';
 import { PhpCouponService } from '../../php-integration/services/php-coupon.service';
 import { PhpReviewService } from '../../php-integration/services/php-review.service';
+import { PhpStoreService } from '../../php-integration/services/php-store.service';
 import { UserTypeDetectorService } from '../../php-integration/services/user-type-detector.service';
 import { VendorProfileService } from '../../profiles/services/vendor-profile.service';
 import { RiderProfileService } from '../../profiles/services/rider-profile.service';
@@ -43,6 +44,7 @@ export class PhpApiExecutor implements ActionExecutor {
     private readonly riderProfileService: RiderProfileService,
     @Optional() private readonly couponService?: PhpCouponService,
     @Optional() private readonly reviewService?: PhpReviewService,
+    @Optional() private readonly storeService?: PhpStoreService,
   ) {
     this.logger.log('🔌 PHP API Executor initialized');
   }
@@ -644,6 +646,37 @@ export class PhpApiExecutor implements ActionExecutor {
       case 'update':
         // Generic update action - pass through
         return { success: true, ...config };
+
+      // ============================================
+      // STORE
+      // ============================================
+      case 'get_store_details': {
+        if (!this.storeService) {
+          return { success: false, message: 'Store service unavailable' };
+        }
+        const storeId = Number(config.storeId || config.store_id);
+        if (!storeId) {
+          return { success: false, message: 'Store ID required' };
+        }
+        const zoneId = config.zoneId || config.zone_id
+          ? Number(config.zoneId || config.zone_id)
+          : undefined;
+        return this.storeService.getStoreDetails(storeId, config.lat, config.lng, zoneId);
+      }
+
+      case 'check_store_status': {
+        if (!this.storeService) {
+          return { success: false, message: 'Store service unavailable' };
+        }
+        const storeId = Number(config.storeId || config.store_id);
+        if (!storeId) {
+          return { success: false, message: 'Store ID required' };
+        }
+        const zoneId = config.zoneId || config.zone_id
+          ? Number(config.zoneId || config.zone_id)
+          : undefined;
+        return this.storeService.checkStoreAvailability(storeId, zoneId);
+      }
 
       // ============================================
       // DEFAULT

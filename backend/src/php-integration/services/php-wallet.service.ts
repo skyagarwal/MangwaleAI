@@ -1,6 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PhpApiService } from './php-api.service';
+import { REDIS_CLIENT } from '../../redis/redis.module';
+import Redis from 'ioredis';
+
+/** Cache TTL for wallet balance (seconds) */
+const WALLET_CACHE_TTL = 120; // 2 minutes
+/** Lock TTL for wallet operations (milliseconds) */
+const WALLET_LOCK_TTL = 10_000; // 10 seconds
 
 /**
  * PHP Wallet Service
@@ -10,12 +17,21 @@ import { PhpApiService } from './php-api.service';
 export class PhpWalletService extends PhpApiService {
   protected readonly logger = new Logger(PhpWalletService.name);
 
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
+  ) {
     super(configService);
   }
 
+  /** Derive a short cache key suffix from the bearer token */
+  private tokenCacheKey(token: string): string {
+    // Last 16 chars of token — unique per user session, avoids storing full token
+    return token.length > 16 ? token.slice(-16) : token;
+  }
+
   /**
-   * Get user wallet balance
+   * Get user wallet balance (cached with 2-min TTL)
    */
   async getWalletBalance(token: string): Promise<{
     success: boolean;
@@ -34,8 +50,21 @@ export class PhpWalletService extends PhpApiService {
       };
     }
 
+    const cacheKey = `wallet:balance:${this.tokenCacheKey(token)}`;
+
+    // Try cache first
     try {
-      this.logger.log('👛 Fetching wallet balance');
+      const cached = await this.redis.get(cacheKey);
+      if (cached) {
+        this.logger.debug(`Wallet balance cache HIT`);
+        return JSON.parse(cached);
+      }
+    } catch (e) {
+      // cache miss or Redis error — fall through to PHP
+    }
+
+    try {
+      this.logger.log('👛 Fetching wallet balance from PHP');
 
       const response: any = await this.get('/api/v1/customer/info', {
         headers: { Authorization: `Bearer ${token}` },
@@ -43,17 +72,67 @@ export class PhpWalletService extends PhpApiService {
 
       const balance = parseFloat(response.wallet_balance || 0);
 
-      return {
+      const result = {
         success: true,
         balance,
         formattedBalance: `₹${balance.toFixed(2)}`,
       };
+
+      // Cache with TTL
+      try {
+        await this.redis.setex(cacheKey, WALLET_CACHE_TTL, JSON.stringify(result));
+      } catch (e) {
+        // cache write error — non-fatal
+      }
+
+      return result;
     } catch (error) {
       this.logger.error(`Failed to get wallet balance: ${error.message}`);
       return {
         success: false,
         message: error.message,
       };
+    }
+  }
+
+  /**
+   * Invalidate cached wallet balance (call after wallet deduction / recharge)
+   */
+  async invalidateWalletCache(token: string): Promise<void> {
+    const cacheKey = `wallet:balance:${this.tokenCacheKey(token)}`;
+    try {
+      await this.redis.del(cacheKey);
+      this.logger.debug('Wallet cache invalidated');
+    } catch (e) {
+      // non-fatal
+    }
+  }
+
+  /**
+   * Acquire a distributed lock before wallet deduction (prevents double-spend)
+   * Returns true if lock acquired, false if already locked.
+   */
+  async acquireWalletLock(token: string, ttlMs: number = WALLET_LOCK_TTL): Promise<boolean> {
+    const lockKey = `wallet:lock:${this.tokenCacheKey(token)}`;
+    try {
+      const result = await this.redis.set(lockKey, '1', 'PX', ttlMs, 'NX');
+      return result === 'OK';
+    } catch (e) {
+      // If Redis is down, allow the operation (fail-open for availability)
+      this.logger.warn(`Wallet lock acquire failed (allowing operation): ${e.message}`);
+      return true;
+    }
+  }
+
+  /**
+   * Release wallet lock after deduction completes
+   */
+  async releaseWalletLock(token: string): Promise<void> {
+    const lockKey = `wallet:lock:${this.tokenCacheKey(token)}`;
+    try {
+      await this.redis.del(lockKey);
+    } catch (e) {
+      // non-fatal — lock will auto-expire via TTL
     }
   }
 

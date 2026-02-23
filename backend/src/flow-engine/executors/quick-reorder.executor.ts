@@ -24,11 +24,14 @@ export class QuickReorderExecutor implements ActionExecutor {
   constructor(private readonly phpOrderService: PhpOrderService) {}
 
   async execute(
-    _config: Record<string, any>,
+    config: Record<string, any>,
     context: FlowContext,
   ): Promise<ActionExecutionResult> {
-    // Auth token is set by the session refresh_auth executor which runs in the same state
+    const filterModuleId = config.moduleId ? Number(config.moduleId) : null;
+
+    // Auth token from config (template-resolved) or context
     const authToken =
+      config.token ||
       context.data?.auth_token ||
       (context as any).auth_token ||
       (context as any).data?.auth_token;
@@ -47,7 +50,7 @@ export class QuickReorderExecutor implements ActionExecutor {
       }
 
       const items = visitAgain.items;
-      const cartItems = items.map((item: any) => ({
+      const allItems = items.map((item: any) => ({
         itemId: item.id,
         itemName: item.name,
         quantity: 1,
@@ -57,6 +60,16 @@ export class QuickReorderExecutor implements ActionExecutor {
         storeName: item.storeName,
         moduleId: item.moduleId || 4,
       }));
+
+      // Filter by module if specified (e.g. moduleId=5 for e-commerce, 4 for food)
+      const cartItems = filterModuleId
+        ? allItems.filter((item: any) => item.moduleId === filterModuleId)
+        : allItems;
+
+      if (!cartItems.length) {
+        this.logger.log(`QuickReorderExecutor: no items for moduleId=${filterModuleId}`);
+        return { success: false, event: 'no_items', output: { error: 'no_items' } };
+      }
 
       const totalPrice = cartItems.reduce((sum: number, i: any) => sum + i.price * i.quantity, 0);
       const totalItems = cartItems.reduce((sum: number, i: any) => sum + i.quantity, 0);

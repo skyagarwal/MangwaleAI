@@ -2,6 +2,7 @@ import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PhpOrderService } from '../../php-integration/services/php-order.service';
 import { PhpPaymentService } from '../../php-integration/services/php-payment.service';
+import { PhpWalletService } from '../../php-integration/services/php-wallet.service';
 import { SessionService } from '../../session/session.service';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
 import { SentimentAnalysisService } from '../../agents/services/sentiment-analysis.service';
@@ -26,6 +27,7 @@ export class OrderExecutor implements ActionExecutor {
     private readonly configService: ConfigService,
     private readonly phpOrderService: PhpOrderService,
     private readonly phpPaymentService: PhpPaymentService,
+    private readonly phpWalletService: PhpWalletService,
     private readonly sessionService: SessionService,
     private readonly sentimentAnalysis: SentimentAnalysisService,
     private readonly advancedLearning: AdvancedLearningService,
@@ -103,7 +105,13 @@ export class OrderExecutor implements ActionExecutor {
 
       if (result.success) {
         this.logger.log(`✅ Order created: ${result.orderId}`);
-        
+
+        // Invalidate wallet cache after wallet/partial payment (balance changed server-side)
+        const paymentMethod = context.data.payment_method || config.payment_method;
+        if (authToken && (paymentMethod === 'wallet' || paymentMethod === 'partial_payment')) {
+          this.phpWalletService.invalidateWalletCache(authToken).catch(() => {});
+        }
+
         // Phase 2: Record successful order
         await this.recordOrderInteraction(context, orderType, true);
 

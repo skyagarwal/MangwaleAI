@@ -63,9 +63,35 @@ export class TelegramWebhookController {
       // Handle different message types
       let messageText = '';
       let isVoice = false;
+      let isButtonClick = false;
+      let buttonAction: string | undefined;
+      let buttonValue: string | undefined;
 
+      // Check for callback_query (inline keyboard button click)
+      if (update?.callback_query) {
+        const callbackData = update.callback_query.data || '';
+        isButtonClick = true;
+
+        // Parse button metadata: format "action:value" or just "value"
+        if (callbackData.includes(':')) {
+          const [action, ...rest] = callbackData.split(':');
+          buttonAction = action;
+          buttonValue = rest.join(':') || action;
+        } else {
+          buttonAction = callbackData;
+          buttonValue = callbackData;
+        }
+        // Use callback data as message text (same as WhatsApp button_reply title)
+        messageText = callbackData;
+        this.logger.log(`🔘 Telegram callback_query: data="${callbackData}", action="${buttonAction}", value="${buttonValue}"`);
+
+        // Answer the callback to remove loading indicator on the button
+        this.answerCallbackQuery(update.callback_query.id).catch((e) =>
+          this.logger.warn(`Failed to answer callback_query: ${e.message}`),
+        );
+      }
       // Check for voice message
-      if (update?.message?.voice) {
+      else if (update?.message?.voice) {
         this.logger.log(`🎤 Voice message from ${recipientId} - transcribing...`);
         messageText = await this.handleVoiceMessage(update.message.voice);
         isVoice = true;
@@ -78,7 +104,6 @@ export class TelegramWebhookController {
       } else {
         // Extract text from regular messages
         messageText = update?.message?.text
-          || update?.callback_query?.data
           || update?.edited_message?.text
           || '';
       }
@@ -88,12 +113,12 @@ export class TelegramWebhookController {
         return { status: 'ignored' };
       }
 
-      this.logger.log(`💬 Telegram message from ${recipientId}: "${messageText}"`);
+      this.logger.log(`💬 Telegram message from ${recipientId}: "${messageText}" (button=${isButtonClick})`);
 
       // Get session data for user info
       const session = await this.sessionService.getSession(recipientId);
       const userId = session?.data?.user_id;
-      
+
       // Log user message to PostgreSQL (for continuous learning)
       await this.conversationLogger.logUserMessage({
         phone: recipientId,
@@ -115,9 +140,15 @@ export class TelegramWebhookController {
       // 🎯 UNIFIED ARCHITECTURE: Route through MessageGateway (Phase 1 refactor)
       this.logger.log(`🚀 Processing Telegram message through MessageGateway`);
       const result = await this.messageGateway.handleTelegramMessage(recipientId, messageText, {
-        messageId: update?.message?.message_id,
-        chatId: update?.message?.chat?.id,
+        messageId: update?.message?.message_id || update?.callback_query?.message?.message_id,
+        chatId,
         isVoice,
+        // Normalize button metadata so ContextRouter skips NLU for button clicks
+        ...(isButtonClick && {
+          type: 'button_click',
+          action: buttonAction,
+          value: buttonValue,
+        }),
       });
 
       this.logger.log(`✅ MessageGateway result: ${JSON.stringify(result)}`);
@@ -187,6 +218,24 @@ export class TelegramWebhookController {
     } catch (error) {
       this.logger.error(`Voice message handling failed: ${error.message}`, error.stack);
       return '';
+    }
+  }
+
+  /**
+   * Answer a Telegram callback_query to dismiss the loading spinner
+   * on the inline keyboard button that was clicked.
+   */
+  private async answerCallbackQuery(callbackQueryId: string): Promise<void> {
+    if (!this.botToken) return;
+    try {
+      await firstValueFrom(
+        this.httpService.post(
+          `https://api.telegram.org/bot${this.botToken}/answerCallbackQuery`,
+          { callback_query_id: callbackQueryId },
+        ),
+      );
+    } catch (error) {
+      this.logger.warn(`answerCallbackQuery failed: ${error.message}`);
     }
   }
 }

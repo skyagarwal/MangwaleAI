@@ -23,14 +23,20 @@ export const ecommerceOrderFlow: FlowDefinition = {
     // Check trigger
     check_trigger: {
       type: 'decision',
-      description: 'Check if user already specified a product',
+      description: 'Check if user already specified a product or wants to reorder',
       conditions: [
+        {
+          // Quick reorder intent
+          expression: '/reorder|order again|last order|usual|phir se|wahi|same order|dobara/i.test(String(context._user_message || ""))',
+          event: 'reorder',
+        },
         {
           expression: 'context._user_message && context._user_message.length > 3 && !["hi", "hello", "shop"].includes(context._user_message.toLowerCase())',
           event: 'has_query',
         }
       ],
       transitions: {
+        reorder: 'quick_reorder',
         has_query: 'understand_request',
         default: 'init',
       },
@@ -186,61 +192,126 @@ export const ecommerceOrderFlow: FlowDefinition = {
       },
     },
 
-    // Show cart
+    // Show cart — structured display with buttons
     show_cart: {
-      type: 'action',
-      description: 'Display shopping cart',
-      actions: [
+      type: 'wait',
+      description: 'Display shopping cart and wait for action',
+      onEntry: [
         {
           id: 'display_cart',
-          executor: 'llm',
+          executor: 'response',
           config: {
-            systemPrompt: 'Show shopping cart with items, quantities, prices, and total.',
-            prompt: `Show cart:
-{{#each cart_items}}
-- {{this.title}} x{{this.quantity}} = ₹{{this.price * this.quantity}}
-{{/each}}
-
-Subtotal: ₹{{pricing.itemsTotal}}
-
-Ask if they want to:
-1. Proceed to checkout
-2. Continue shopping
-3. Clear cart`,
-            temperature: 0.7,
-            maxTokens: 300,
+            message: '🛒 **Your Cart**\n\n{{#each cart_items}}{{@index_plus_1}}. *{{this.title}}* x{{this.quantity}} — ₹{{this.total}}\n{{/each}}\n\n💰 **Subtotal:** ₹{{pricing.itemsTotal}}',
+            buttons: [
+              { label: '✅ Checkout', value: 'checkout', action: 'proceed_checkout' },
+              { label: '🔄 Continue Shopping', value: 'continue', action: 'continue_shopping' },
+              { label: '🗑️ Clear Cart', value: 'clear', action: 'clear_cart' },
+            ],
           },
           output: '_last_response',
         },
       ],
       transitions: {
+        proceed_checkout: 'collect_address',
+        continue_shopping: 'search_products',
+        clear_cart: 'clear_cart_confirm',
         user_message: 'check_cart_action',
+        default: 'check_cart_action',
       },
     },
 
-    // Check cart action
+    // Check cart action from free text
     check_cart_action: {
       type: 'decision',
       description: 'Determine next step from cart',
       conditions: [
         {
-          expression: 'context._user_message?.toLowerCase().includes("checkout") || context._user_message?.toLowerCase().includes("proceed")',
+          expression: 'context._user_message?.toLowerCase().match(/checkout|proceed|order|buy|place/)',
           event: 'proceed_checkout',
         },
         {
-          expression: 'context._user_message?.toLowerCase().includes("shop") || context._user_message?.toLowerCase().includes("continue")',
+          expression: 'context._user_message?.toLowerCase().match(/shop|continue|more|browse/)',
           event: 'continue_shopping',
         },
         {
-          expression: 'context._user_message?.toLowerCase().includes("clear") || context._user_message?.toLowerCase().includes("empty")',
+          expression: 'context._user_message?.toLowerCase().match(/clear|empty|reset/)',
           event: 'clear_cart',
+        },
+        {
+          expression: 'context._user_message?.toLowerCase().match(/remove|delete|hata|nikal/)',
+          event: 'remove_item',
         },
       ],
       transitions: {
         proceed_checkout: 'collect_address',
         continue_shopping: 'search_products',
-        clear_cart: 'cancelled',
+        clear_cart: 'clear_cart_confirm',
+        remove_item: 'remove_from_cart',
         default: 'show_cart',
+      },
+    },
+
+    // Confirm cart clear
+    clear_cart_confirm: {
+      type: 'action',
+      description: 'Clear the cart and inform user',
+      actions: [
+        {
+          id: 'clear_msg',
+          executor: 'response',
+          config: {
+            message: '🗑️ Cart cleared! What would you like to shop for?',
+            saveToContext: {
+              cart_items: [],
+            },
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        default: 'search_products',
+      },
+    },
+
+    // Remove item from cart
+    remove_from_cart: {
+      type: 'action',
+      description: 'Ask which item to remove',
+      actions: [
+        {
+          id: 'ask_remove',
+          executor: 'response',
+          config: {
+            message: '🗑️ Which item do you want to remove? Reply with the item number.\n\n{{#each cart_items}}{{@index_plus_1}}. {{this.title}} x{{this.quantity}}\n{{/each}}',
+          },
+          output: '_last_response',
+        },
+      ],
+      transitions: {
+        user_message: 'show_cart',  // After removal input, redisplay cart
+        default: 'show_cart',
+      },
+    },
+
+    // Quick reorder — fetch last order and populate cart
+    quick_reorder: {
+      type: 'action',
+      description: 'Fetch last e-commerce order for quick reorder',
+      actions: [
+        {
+          id: 'fetch_last_order',
+          executor: 'quick_reorder',
+          config: {
+            moduleId: 5,
+            token: '{{session.auth_token}}',
+          },
+          output: 'reorder_result',
+        },
+      ],
+      transitions: {
+        success: 'show_cart',
+        no_items: 'init',
+        error: 'init',
       },
     },
 
@@ -280,6 +351,7 @@ Ask if they want to:
           config: {
             latPath: 'delivery_address.lat',
             lngPath: 'delivery_address.lng',
+            moduleId: 5,  // e-commerce
           },
           output: 'delivery_zone',
         },
@@ -433,13 +505,17 @@ Hit confirm and I'll place your order! 🚀`,
     // Set online payment
     set_payment_online: {
       type: 'action',
-      description: 'Set payment method to online',
+      description: 'Set payment method to online and persist to context',
       actions: [
         {
           id: 'set_online',
           executor: 'response',
           config: {
             message: '📱 Online payment selected. Processing your order...',
+            saveToContext: {
+              payment_method: 'digital_payment',
+              payment_details: { method: 'digital_payment', id: 'digital_payment' },
+            },
           },
           output: '_last_response',
         },
@@ -452,13 +528,17 @@ Hit confirm and I'll place your order! 🚀`,
     // Set COD payment
     set_payment_cod: {
       type: 'action',
-      description: 'Set payment method to COD',
+      description: 'Set payment method to COD and persist to context',
       actions: [
         {
           id: 'set_cod',
           executor: 'response',
           config: {
             message: '💵 Cash on Delivery selected. Processing your order...',
+            saveToContext: {
+              payment_method: 'cash_on_delivery',
+              payment_details: { method: 'COD', id: 'cash_on_delivery' },
+            },
           },
           output: '_last_response',
         },
@@ -475,16 +555,16 @@ Hit confirm and I'll place your order! 🚀`,
       actions: [
         {
           id: 'store_open_check',
-          executor: 'inventory',
+          executor: 'php_api',
           config: {
-            action: 'check_store',
-            storeIdPath: 'cart_items.0.store_id',
+            action: 'get_store_details',
+            storeId: '{{cart_items.0.store_id}}',
           },
           output: 'pre_order_store_check',
         },
       ],
       transitions: {
-        open: 'place_order',
+        success: 'place_order',
         closed: 'store_currently_closed',
         error: 'place_order', // graceful — PHP validates at order time
       },
@@ -520,9 +600,7 @@ Hit confirm and I'll place your order! 🚀`,
             itemsPath: 'cart_items',
             addressPath: 'delivery_address',
             pricingPath: 'pricing',
-            // Payment method determined by set_payment_online/set_payment_cod path
-            // Defaults to COD; wire into order context when context-set executor is added
-            paymentMethod: 'cod',
+            // Payment method read from context.data.payment_method (set by select_payment states)
           },
           output: 'order_result',
           retryOnError: true,
@@ -645,5 +723,5 @@ You'll receive order updates on WhatsApp. Track your order anytime!`,
   },
 
   initialState: 'check_trigger',
-  finalStates: ['completed', 'cancelled', 'address_error', 'out_of_zone', 'order_failed'],
+  finalStates: ['completed', 'cancelled', 'address_error', 'out_of_zone', 'order_failed', 'store_currently_closed'],
 };

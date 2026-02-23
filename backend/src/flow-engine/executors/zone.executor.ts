@@ -74,7 +74,7 @@ export class ZoneExecutor implements ActionExecutor {
           const zoneResult = await this.zoneService.getZoneIdByCoordinates(latitude, longitude);
 
           if (zoneResult && zoneResult.zone_id) {
-            const output = {
+            const output: Record<string, any> = {
               valid: true,
               zoneName: zoneResult.zone_name || `Zone ${zoneResult.zone_id}`,
               zoneId: zoneResult.zone_id,
@@ -84,6 +84,31 @@ export class ZoneExecutor implements ActionExecutor {
             };
 
             this.logger.debug(`Zone validation: VALID - ${output.zoneName} (ID: ${output.zoneId})`);
+
+            // Check module availability in zone if moduleId is specified
+            const moduleId = config.moduleId != null
+              ? (typeof config.moduleId === 'string' && config.moduleId.includes('.')
+                ? this.getValueByPath(context.data, config.moduleId)
+                : config.moduleId)
+              : null;
+
+            if (moduleId != null && output.available_modules && output.available_modules.length > 0) {
+              const moduleMap: Record<number, string> = { 3: 'parcel', 4: 'food', 5: 'ecommerce' };
+              const moduleName = moduleMap[Number(moduleId)] || String(moduleId).toLowerCase();
+              const available = output.available_modules.map((m: string) => m.toLowerCase());
+
+              if (!available.includes(moduleName)) {
+                this.logger.warn(`Module "${moduleName}" not available in zone "${output.zoneName}". Available: ${available.join(', ')}`);
+                return {
+                  success: false,
+                  output: { ...output, moduleAvailable: false },
+                  event: 'zone_invalid',
+                  error: `Module "${moduleName}" is not available in zone "${output.zoneName}"`,
+                };
+              }
+
+              output.moduleAvailable = true;
+            }
 
             return {
               success: true,
