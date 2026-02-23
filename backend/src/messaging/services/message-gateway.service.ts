@@ -14,7 +14,7 @@ import { OrderSyncService } from '../../personalization/order-sync.service';
 export interface MessageInput {
   identifier: string; // phone/userId/sessionId
   message: string;
-  channel: 'whatsapp' | 'web' | 'telegram' | 'voice' | 'mobile';
+  channel: 'whatsapp' | 'web' | 'telegram' | 'voice' | 'mobile' | 'instagram';
   metadata?: Record<string, any>;
   timestamp?: number;
 }
@@ -180,6 +180,25 @@ export class MessageGatewayService {
       metadata: {
         ...metadata,
         rawChatId: chatId,
+      },
+    });
+  }
+
+  /**
+   * Handle Instagram DM message
+   * Uses Instagram-Scoped ID (IGSID) as identifier
+   */
+  async handleInstagramMessage(
+    recipientId: string,
+    text: string,
+    metadata?: any,
+  ): Promise<MessageResponse> {
+    return this.processMessage({
+      identifier: recipientId,
+      message: text,
+      channel: 'instagram',
+      metadata: {
+        ...metadata,
       },
     });
   }

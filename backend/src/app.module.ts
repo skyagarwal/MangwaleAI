@@ -68,6 +68,7 @@ import { MarketingModule } from './marketing/marketing.module'; // ✨ Social Tr
 import { StrategyModule } from './strategy/strategy.module'; // ✨ Strategy Ledger & Institutional Memory
 import { ActionEngineModule } from './action-engine/action-engine.module'; // ✨ mOS Action Engine (Campaigns, Cart Recovery)
 import { SchedulerModule } from './scheduler/scheduler.module'; // ✨ mOS Scheduler (Cron Jobs & Auto-Actions)
+import { InstagramModule } from './instagram/instagram.module'; // ✨ Instagram DM Channel
 // import { ClientLogsController } from './logging/controllers/client-logs.controller'; // ✨ Frontend Logging (FILE MISSING)
 
 @Module({
@@ -172,6 +173,7 @@ FlowManagementModule, // ✨ Visual Flow Builder & Execution
     WhatsAppModule, // WhatsApp channel
     TelegramModule, // Telegram channel (inbound minimal)
     SmsModule, // SMS channel (MSG91 + Twilio)
+    ...(process.env.INSTAGRAM_ACCESS_TOKEN ? [InstagramModule] : []), // Instagram DM channel
     // WebChatModule, // Future: Web chat channel
     TestingModule, // Lightweight chat endpoints for testing AI flows
   ],
