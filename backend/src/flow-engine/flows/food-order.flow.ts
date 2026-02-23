@@ -4221,8 +4221,93 @@ Ask if they want to:
       },
     },
 
-    // Collect delivery address
+    // Collect delivery address — channel gate (WhatsApp Flow vs standard)
     collect_address: {
+      type: 'decision',
+      description: 'Route address collection by channel — WhatsApp Flow or standard input',
+      conditions: [
+        {
+          expression: `context.platform === 'whatsapp' && !!('${process.env.WA_FLOW_ADDRESS_ID || ''}')`,
+          event: 'whatsapp_flow',
+        },
+      ],
+      transitions: {
+        whatsapp_flow: 'send_address_flow',
+        default: 'collect_address_input',
+      },
+    },
+
+    // Send WhatsApp Flow for address selection
+    send_address_flow: {
+      type: 'action',
+      description: 'Send WhatsApp Flow for address selection',
+      actions: [
+        {
+          id: 'send_wa_address_flow',
+          executor: 'response',
+          config: {
+            message: 'Tap below to select or add a delivery address',
+            flow: {
+              flowId: process.env.WA_FLOW_ADDRESS_ID || '',
+              flowType: 'address_selection',
+              ctaText: 'Select Address',
+              body: 'Tap below to select or add a delivery address',
+            },
+          },
+          output: '_address_flow_result',
+        },
+      ],
+      transitions: {
+        flow_sent: 'await_flow_address',
+        default: 'collect_address_input', // Fallback if flow dispatch fails (e.g. no phone)
+        error: 'collect_address_input',
+      },
+    },
+
+    // Wait for WhatsApp Flow address response
+    await_flow_address: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow address response',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_address',
+        user_message: 'process_flow_address',
+        default: 'process_flow_address',
+      },
+    },
+
+    // Process address from WhatsApp Flow response
+    process_flow_address: {
+      type: 'action',
+      description: 'Process address from WhatsApp Flow response',
+      actions: [
+        {
+          id: 'load_flow_address',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_address_result',
+          },
+          output: 'flow_address',
+        },
+        {
+          id: 'save_flow_address_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              delivery_address: '{{flow_address.flow_address_result}}',
+            },
+          },
+          output: '_saved',
+        },
+      ],
+      transitions: {
+        default: 'validate_zone',
+      },
+    },
+
+    // Collect delivery address — standard input (non-WhatsApp or fallback)
+    collect_address_input: {
       type: 'wait',
       description: 'Get delivery address',
       onEntry: [
@@ -4255,8 +4340,8 @@ Ask if they want to:
       ],
       transitions: {
         address_valid: 'validate_zone',
-        address_invalid: 'collect_address',  // No coordinates → re-ask (clears options, shows location prompt)
-        waiting_for_input: null,  // 🔧 FIX: Stay in current wait state, don't re-enter and re-trigger onEntry
+        address_invalid: 'collect_address_input',  // No coordinates → re-ask
+        waiting_for_input: null,  // Stay in current wait state
         error: 'address_error',
       },
     },
@@ -4645,8 +4730,94 @@ Reply "confirm" to book the rider.`,
       },
     },
 
-    // Collect Payment Method - Fetch from PHP backend (same pattern as parcel flow)
+    // Collect Payment Method — channel gate (WhatsApp Flow vs standard)
     collect_payment_method: {
+      type: 'decision',
+      description: 'Route payment collection by channel — WhatsApp Flow or standard',
+      conditions: [
+        {
+          expression: `context.platform === 'whatsapp' && !!('${process.env.WA_FLOW_PAYMENT_ID || ''}')`,
+          event: 'whatsapp_flow',
+        },
+      ],
+      transitions: {
+        whatsapp_flow: 'send_payment_flow',
+        default: 'collect_payment_method_standard',
+      },
+    },
+
+    // Send WhatsApp Flow for payment selection
+    send_payment_flow: {
+      type: 'action',
+      description: 'Send WhatsApp Flow for payment method selection',
+      actions: [
+        {
+          id: 'send_wa_payment_flow',
+          executor: 'response',
+          config: {
+            message: 'Tap below to select how you want to pay',
+            flow: {
+              flowId: process.env.WA_FLOW_PAYMENT_ID || '',
+              flowType: 'payment_selection',
+              ctaText: 'Pay Now',
+              body: 'Tap below to select how you want to pay',
+            },
+          },
+          output: '_payment_flow_result',
+        },
+      ],
+      transitions: {
+        flow_sent: 'await_flow_payment',
+        default: 'collect_payment_method_standard', // Fallback if flow dispatch fails
+        error: 'collect_payment_method_standard',
+      },
+    },
+
+    // Wait for WhatsApp Flow payment response
+    await_flow_payment: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow payment response',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_payment',
+        user_message: 'process_flow_payment',
+        default: 'process_flow_payment',
+      },
+    },
+
+    // Process payment from WhatsApp Flow response
+    process_flow_payment: {
+      type: 'action',
+      description: 'Process payment method from WhatsApp Flow response',
+      actions: [
+        {
+          id: 'load_flow_payment',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_payment_result',
+          },
+          output: 'flow_payment',
+        },
+        {
+          id: 'save_flow_payment',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              payment_method: '{{flow_payment.flow_payment_result.payment_method}}',
+              payment_details: '{{flow_payment.flow_payment_result.payment_details}}',
+            },
+          },
+          output: '_payment_saved',
+        },
+      ],
+      transitions: {
+        default: 'prompt_coupon_code',
+      },
+    },
+
+    // Collect Payment Method (standard) - Fetch from PHP backend
+    collect_payment_method_standard: {
       type: 'action',
       description: 'Fetch and display payment methods from PHP backend',
       actions: [

@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { WebhookController } from './controllers/webhook.controller';
 import { WhatsAppCommerceController } from './controllers/whatsapp-commerce.controller';
+import { WhatsAppFlowController } from './controllers/whatsapp-flow.controller';
 import { MessageService } from './services/message.service';
 import { WhatsAppCloudService } from './services/whatsapp-cloud.service';
 import { WhatsAppCatalogService } from './services/whatsapp-catalog.service';
 import { WhatsAppOrderFlowService } from './services/whatsapp-order-flow.service';
+import { WhatsAppFlowTokenService } from './services/whatsapp-flow-token.service';
 import { PhpIntegrationModule } from '../php-integration/php-integration.module';
 import { MessagingModule } from '../messaging/messaging.module';
 import { SessionModule } from '../session/session.module';
@@ -39,9 +41,9 @@ import { AdminModule } from '../admin/admin.module';
     AsrModule, // For voice message transcription
     AdminModule,
   ],
-  controllers: [WebhookController, WhatsAppCommerceController],
-  providers: [MessageService, WhatsAppCloudService, WhatsAppCatalogService, WhatsAppOrderFlowService],
-  exports: [MessageService, WhatsAppCloudService, WhatsAppCatalogService, WhatsAppOrderFlowService],
+  controllers: [WebhookController, WhatsAppCommerceController, WhatsAppFlowController],
+  providers: [MessageService, WhatsAppCloudService, WhatsAppCatalogService, WhatsAppOrderFlowService, WhatsAppFlowTokenService],
+  exports: [MessageService, WhatsAppCloudService, WhatsAppCatalogService, WhatsAppOrderFlowService, WhatsAppFlowTokenService],
 })
 export class WhatsAppModule {}
 

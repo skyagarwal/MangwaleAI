@@ -1,5 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ActionExecutor, ActionExecutionResult, FlowContext } from '../types/flow.types';
+import { WhatsAppCloudService } from '../../whatsapp/services/whatsapp-cloud.service';
+import { WhatsAppFlowTokenService } from '../../whatsapp/services/whatsapp-flow-token.service';
 import * as Handlebars from 'handlebars';
 
 /**
@@ -16,6 +18,11 @@ import * as Handlebars from 'handlebars';
 export class ResponseExecutor implements ActionExecutor {
   readonly name = 'response';
   private readonly logger = new Logger(ResponseExecutor.name);
+
+  constructor(
+    @Optional() private readonly waCloudService?: WhatsAppCloudService,
+    @Optional() private readonly waFlowTokenService?: WhatsAppFlowTokenService,
+  ) {}
 
   private interpolate(text: string, data: any): string {
     if (!text) return text;
@@ -141,6 +148,37 @@ export class ResponseExecutor implements ActionExecutor {
         config = { ...config, ...channelConfig };
         delete config.channelResponses; // Prevent infinite recursion
         this.logger.debug(`Response executor: Using channel-specific config for platform="${channel}"`);
+      }
+
+      // WhatsApp Flow dispatch: if config has `flow` and user is on WhatsApp, send a Flow
+      const flowConfig = config.flow as { flowId: string; flowType: string; ctaText?: string; body?: string; screen?: string; initialData?: any } | undefined;
+      if (flowConfig && this.waCloudService && this.waFlowTokenService) {
+        const phone = context.data?.phone || (context as any).phone || (context as any).identifier;
+        if (phone) {
+          const flowToken = await this.waFlowTokenService.generateToken(phone, flowConfig.flowType, {
+            sessionId: context.data?.sessionId,
+            flowId: context.data?._flowId,
+            currentState: context.data?._currentState,
+            orderTotal: context.data?.totalPrice,
+            ...(flowConfig.initialData || {}),
+          });
+
+          await this.waCloudService.sendFlow(phone, {
+            body: this.interpolate(flowConfig.body || config.message || 'Continue below', context.data),
+            flowId: this.interpolate(flowConfig.flowId, context.data),
+            flowToken,
+            ctaText: flowConfig.ctaText || 'Continue',
+            screen: flowConfig.screen,
+            data: flowConfig.initialData,
+          });
+
+          this.logger.log(`Response executor: Sent WhatsApp Flow type=${flowConfig.flowType} to ${phone}`);
+          return {
+            success: true,
+            event: 'flow_sent',
+            output: { flowToken, flowType: flowConfig.flowType },
+          };
+        }
       }
 
       let message = config.message as string;

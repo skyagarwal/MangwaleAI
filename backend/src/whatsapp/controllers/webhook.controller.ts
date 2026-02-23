@@ -245,6 +245,20 @@ export class WebhookController {
             messageText = listTitle || listId;
             this.logger.log(`📋 List selection (option): id="${listId}", title="${listTitle}"`);
           }
+        } else if (interactive?.type === 'nfm_reply') {
+          // 📋 WhatsApp Flow completion — user completed a Flow form
+          let flowResponseData: Record<string, any> = {};
+          try {
+            flowResponseData = JSON.parse(interactive.nfm_reply?.response_json || '{}');
+          } catch (e) {
+            this.logger.warn('Failed to parse nfm_reply response_json');
+          }
+          const flowBody = interactive.nfm_reply?.body || '';
+          messageText = flowBody || 'FLOW_COMPLETED';
+          (message as any)._buttonAction = 'flow_response';
+          (message as any)._buttonValue = JSON.stringify(flowResponseData);
+          (message as any)._flowResponseData = flowResponseData;
+          this.logger.log(`📋 WhatsApp Flow response: body="${flowBody}", data=${JSON.stringify(flowResponseData).substring(0, 200)}`);
         } else {
           messageText = interactive?.button_reply?.title || interactive?.list_reply?.title || '';
         }
@@ -282,15 +296,19 @@ export class WebhookController {
 
       // 🎯 UNIFIED ARCHITECTURE: Route through MessageGateway (Phase 1 refactor)
       this.logger.log(`🚀 Processing WhatsApp message through MessageGateway`);
+      const isFlowResponse = (message as any)._buttonAction === 'flow_response';
       const result = await this.messageGateway.handleWhatsAppMessage(from, messageText, {
         messageId: message.id,
         // Map WhatsApp 'interactive' type → 'button_click' so ContextRouter skips NLU
-        type: type === 'interactive' ? 'button_click' : message.type,
+        // Flow responses get special 'flow_response' type
+        type: isFlowResponse ? 'flow_response' : (type === 'interactive' ? 'button_click' : message.type),
         isVoice: type === 'audio',
         location: locationData, // Pass location data to message gateway
         // Forward button/list IDs as action & value for proper ContextRouter routing
         action: (message as any)._buttonAction,
         value: (message as any)._buttonValue,
+        // WhatsApp Flow response data (parsed from nfm_reply.response_json)
+        ...(isFlowResponse && { flowResponseData: (message as any)._flowResponseData }),
       });
       
       this.logger.log(`✅ MessageGateway result: ${JSON.stringify(result)}`);

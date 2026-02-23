@@ -322,11 +322,33 @@ export const ecommerceOrderFlow: FlowDefinition = {
       actions: [
         {
           id: 'get_address',
+          executor: 'response',
+          config: {
+            channelResponses: {
+              whatsapp: {
+                message: '📍 Select delivery address',
+                flow: {
+                  flowId: '{{env.WA_FLOW_ADDRESS_ID}}',
+                  flowType: 'address_selection',
+                  ctaText: 'Select Address',
+                  body: '📍 Tap below to select or add a delivery address',
+                },
+              },
+              default: {
+                message: 'Where should we deliver your order?',
+              },
+            },
+          },
+          output: '_address_prompt_result',
+        },
+        {
+          id: 'get_address_fallback',
           executor: 'address',
           config: {
             field: 'delivery_address',
             prompt: 'Where should we deliver your order?',
             offerSaved: true,
+            skipIf: '{{_address_prompt_result.event === "flow_sent"}}',
           },
           output: 'delivery_address',
           retryOnError: true,
@@ -334,9 +356,67 @@ export const ecommerceOrderFlow: FlowDefinition = {
         },
       ],
       transitions: {
+        flow_sent: 'await_flow_address_ecom',
         address_valid: 'validate_zone',
         waiting_for_input: 'collect_address',
         error: 'address_error',
+      },
+    },
+
+    // Wait for WhatsApp Flow address response (e-commerce)
+    await_flow_address_ecom: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow address selection response',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_address_ecom',
+        user_message: 'process_flow_address_ecom',
+        default: 'process_flow_address_ecom',
+      },
+    },
+
+    // Read address result from session and save to context
+    process_flow_address_ecom: {
+      type: 'action',
+      description: 'Process WhatsApp Flow address result for e-commerce',
+      actions: [
+        {
+          id: 'read_flow_address',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_address_result',
+          },
+          output: '_flow_addr',
+        },
+        {
+          id: 'save_address_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              delivery_address: '{{_flow_addr.flow_address_result}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'check_flow_address_ecom',
+      },
+    },
+
+    // Validate that we got a valid address from the flow
+    check_flow_address_ecom: {
+      type: 'decision',
+      description: 'Check if Flow returned a valid address',
+      conditions: [
+        {
+          expression: 'context.delivery_address && (context.delivery_address.lat || context.delivery_address.address)',
+          event: 'valid',
+        },
+      ],
+      transitions: {
+        valid: 'validate_zone',
+        default: 'collect_address', // Fallback to normal address collection
       },
     },
 
@@ -449,17 +529,96 @@ Hit confirm and I'll place your order! 🚀`,
           id: 'payment_options_msg',
           executor: 'response',
           config: {
-            message: '💳 **How would you like to pay?**\n\nOrder Total: ₹{{pricing.total}}',
-            buttons: [
-              { label: '📱 UPI / Online', value: 'online', action: 'pay_online' },
-              { label: '💵 Cash on Delivery', value: 'cod', action: 'pay_cod' },
-            ],
+            channelResponses: {
+              whatsapp: {
+                message: '💳 Select payment method',
+                flow: {
+                  flowId: '{{env.WA_FLOW_PAYMENT_ID}}',
+                  flowType: 'payment_selection',
+                  ctaText: 'Select Payment',
+                  body: '💳 Tap below to choose how you want to pay\n\nOrder Total: ₹{{pricing.total}}',
+                  initialData: {
+                    orderTotal: '{{pricing.total}}',
+                  },
+                },
+              },
+              default: {
+                message: '💳 **How would you like to pay?**\n\nOrder Total: ₹{{pricing.total}}',
+                buttons: [
+                  { label: '📱 UPI / Online', value: 'online', action: 'pay_online' },
+                  { label: '💵 Cash on Delivery', value: 'cod', action: 'pay_cod' },
+                ],
+              },
+            },
           },
           output: '_last_response',
         },
       ],
       transitions: {
+        flow_sent: 'await_flow_payment_ecom',
         default: 'await_payment_choice',
+      },
+    },
+
+    // Wait for WhatsApp Flow payment response (e-commerce)
+    await_flow_payment_ecom: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow payment selection response',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_payment_ecom',
+        user_message: 'process_flow_payment_ecom',
+        default: 'process_flow_payment_ecom',
+      },
+    },
+
+    // Read payment result from session and route accordingly
+    process_flow_payment_ecom: {
+      type: 'action',
+      description: 'Process WhatsApp Flow payment result for e-commerce',
+      actions: [
+        {
+          id: 'read_flow_payment',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_payment_result',
+          },
+          output: '_flow_pay',
+        },
+        {
+          id: 'save_payment_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              _flow_payment_method: '{{_flow_pay.flow_payment_result.payment_method}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'route_flow_payment_ecom',
+      },
+    },
+
+    // Route based on payment method from WhatsApp Flow
+    route_flow_payment_ecom: {
+      type: 'decision',
+      description: 'Route based on WhatsApp Flow payment selection',
+      conditions: [
+        {
+          expression: 'context._flow_payment_method && (context._flow_payment_method.includes("cod") || context._flow_payment_method.includes("cash"))',
+          event: 'cod',
+        },
+        {
+          expression: 'context._flow_payment_method && (context._flow_payment_method.includes("digital") || context._flow_payment_method.includes("online") || context._flow_payment_method.includes("upi") || context._flow_payment_method.includes("wallet"))',
+          event: 'online',
+        },
+      ],
+      transitions: {
+        cod: 'set_payment_cod',
+        online: 'set_payment_online',
+        default: 'select_payment_method', // Fallback if no valid method
       },
     },
 

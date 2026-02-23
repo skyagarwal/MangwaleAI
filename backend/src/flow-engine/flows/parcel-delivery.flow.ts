@@ -317,6 +317,30 @@ export const parcelDeliveryFlow: FlowDefinition = {
       description: 'Collect pickup address',
       actions: [
         {
+          id: 'pickup_prompt',
+          executor: 'response',
+          config: {
+            channelResponses: {
+              whatsapp: {
+                message: '📍 Select pickup address',
+                flow: {
+                  flowId: '{{env.WA_FLOW_ADDRESS_ID}}',
+                  flowType: 'address_selection',
+                  ctaText: 'Select Pickup',
+                  body: '📍 **Question 1/5:** Tap below to select your pickup address',
+                  initialData: {
+                    addressPurpose: 'pickup',
+                  },
+                },
+              },
+              default: {
+                message: '📍 **Question 1/5:** Where should we pick up?\n\n• Share your live location 📍\n• Type an address\n• Or select a saved address (if logged in)',
+              },
+            },
+          },
+          output: '_pickup_prompt_result',
+        },
+        {
           id: 'get_pickup_address',
           executor: 'address',
           config: {
@@ -324,6 +348,7 @@ export const parcelDeliveryFlow: FlowDefinition = {
             prompt: '📍 **Question 1/5:** Where should we pick up?\n\n• Share your live location 📍\n• Type an address\n• Or select a saved address (if logged in)',
             offerSaved: true,
             requireAuth: false,
+            skipIf: '{{_pickup_prompt_result.event === "flow_sent"}}',
           },
           output: 'pickup_address',
           retryOnError: true,
@@ -331,10 +356,68 @@ export const parcelDeliveryFlow: FlowDefinition = {
         },
       ],
       transitions: {
+        flow_sent: 'await_flow_pickup',
         address_valid: 'validate_pickup_zone',
         waiting_for_input: 'wait_for_pickup',
         user_cancelled: 'cancelled',
         error: 'pickup_error',
+      },
+    },
+
+    // Wait for WhatsApp Flow pickup address response
+    await_flow_pickup: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow pickup address selection',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_pickup',
+        user_message: 'process_flow_pickup',
+        default: 'process_flow_pickup',
+      },
+    },
+
+    // Read pickup address from session and save to context
+    process_flow_pickup: {
+      type: 'action',
+      description: 'Process WhatsApp Flow pickup address result',
+      actions: [
+        {
+          id: 'read_flow_pickup',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_address_result',
+          },
+          output: '_flow_pickup',
+        },
+        {
+          id: 'save_pickup_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              pickup_address: '{{_flow_pickup.flow_address_result}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'check_flow_pickup',
+      },
+    },
+
+    // Validate that we got a valid pickup address from the flow
+    check_flow_pickup: {
+      type: 'decision',
+      description: 'Check if Flow returned a valid pickup address',
+      conditions: [
+        {
+          expression: 'context.pickup_address && (context.pickup_address.lat || context.pickup_address.latitude || context.pickup_address.address)',
+          event: 'valid',
+        },
+      ],
+      transitions: {
+        valid: 'validate_pickup_zone',
+        default: 'collect_pickup', // Fallback to normal address collection
       },
     },
 
@@ -436,6 +519,30 @@ export const parcelDeliveryFlow: FlowDefinition = {
       description: 'Collect delivery address',
       actions: [
         {
+          id: 'delivery_prompt',
+          executor: 'response',
+          config: {
+            channelResponses: {
+              whatsapp: {
+                message: '📍 Select delivery address',
+                flow: {
+                  flowId: '{{env.WA_FLOW_ADDRESS_ID}}',
+                  flowType: 'address_selection',
+                  ctaText: 'Select Drop-off',
+                  body: '✅ Pickup: {{pickup_address.address}}\n\n📍 **Question 2/5:** Tap below to select the drop-off address',
+                  initialData: {
+                    addressPurpose: 'dropoff',
+                  },
+                },
+              },
+              default: {
+                message: '✅ **Pickup:** {{pickup_address.address}}\n\n📍 **Question 2/5:** Where to deliver?\n\n• Share location 📍\n• Type address\n• Or select saved address (if logged in)',
+              },
+            },
+          },
+          output: '_delivery_prompt_result',
+        },
+        {
           id: 'get_delivery_address',
           executor: 'address',
           config: {
@@ -443,6 +550,7 @@ export const parcelDeliveryFlow: FlowDefinition = {
             prompt: '✅ **Pickup:** {{pickup_address.address}}\n\n📍 **Question 2/5:** Where to deliver?\n\n• Share location 📍\n• Type address\n• Or select saved address (if logged in)',
             offerSaved: true,
             requireAuth: false,
+            skipIf: '{{_delivery_prompt_result.event === "flow_sent"}}',
           },
           output: 'delivery_address',
           retryOnError: true,
@@ -450,10 +558,68 @@ export const parcelDeliveryFlow: FlowDefinition = {
         },
       ],
       transitions: {
+        flow_sent: 'await_flow_delivery',
         address_valid: 'validate_delivery_zone',
         waiting_for_input: 'wait_for_delivery',
         user_cancelled: 'cancelled',
         error: 'delivery_error',
+      },
+    },
+
+    // Wait for WhatsApp Flow delivery address response
+    await_flow_delivery: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow delivery address selection',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_delivery',
+        user_message: 'process_flow_delivery',
+        default: 'process_flow_delivery',
+      },
+    },
+
+    // Read delivery address from session and save to context
+    process_flow_delivery: {
+      type: 'action',
+      description: 'Process WhatsApp Flow delivery address result',
+      actions: [
+        {
+          id: 'read_flow_delivery',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_address_result',
+          },
+          output: '_flow_delivery',
+        },
+        {
+          id: 'save_delivery_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              delivery_address: '{{_flow_delivery.flow_address_result}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'check_flow_delivery',
+      },
+    },
+
+    // Validate that we got a valid delivery address from the flow
+    check_flow_delivery: {
+      type: 'decision',
+      description: 'Check if Flow returned a valid delivery address',
+      conditions: [
+        {
+          expression: 'context.delivery_address && (context.delivery_address.lat || context.delivery_address.latitude || context.delivery_address.address)',
+          event: 'valid',
+        },
+      ],
+      transitions: {
+        valid: 'validate_delivery_zone',
+        default: 'collect_delivery', // Fallback to normal address collection
       },
     },
 
@@ -1590,19 +1756,98 @@ Return ONLY the numeric ID, nothing else.`,
           id: 'show_payment_options',
           executor: 'response',
           config: {
-            message: '💳 **Select Payment Method:**',
-            buttonsPath: 'payment_methods_response.methods',
-            buttonConfig: {
-              labelPath: 'name',
-              valuePath: 'id',
+            channelResponses: {
+              whatsapp: {
+                message: '💳 Select payment method',
+                flow: {
+                  flowId: '{{env.WA_FLOW_PAYMENT_ID}}',
+                  flowType: 'payment_selection',
+                  ctaText: 'Select Payment',
+                  body: '💳 Tap below to choose how you want to pay\n\nTotal: ₹{{pricing.total_charge}}',
+                  initialData: {
+                    orderTotal: '{{pricing.total_charge}}',
+                  },
+                },
+              },
+              default: {
+                message: '💳 **Select Payment Method:**',
+                buttonsPath: 'payment_methods_response.methods',
+                buttonConfig: {
+                  labelPath: 'name',
+                  valuePath: 'id',
+                },
+              },
             },
           },
           output: '_last_response',
         },
       ],
       transitions: {
+        flow_sent: 'await_flow_payment_parcel',
         success: 'wait_payment_selection',
         error: 'select_payment_method_fallback',
+      },
+    },
+
+    // Wait for WhatsApp Flow payment response (parcel)
+    await_flow_payment_parcel: {
+      type: 'wait',
+      description: 'Wait for WhatsApp Flow payment selection response',
+      actions: [],
+      transitions: {
+        flow_response: 'process_flow_payment_parcel',
+        user_message: 'process_flow_payment_parcel',
+        default: 'process_flow_payment_parcel',
+      },
+    },
+
+    // Read payment result from session and route accordingly
+    process_flow_payment_parcel: {
+      type: 'action',
+      description: 'Process WhatsApp Flow payment result for parcel',
+      actions: [
+        {
+          id: 'read_flow_payment',
+          executor: 'session',
+          config: {
+            action: 'get',
+            key: 'flow_payment_result',
+          },
+          output: '_flow_pay',
+        },
+        {
+          id: 'save_payment_to_context',
+          executor: 'response',
+          config: {
+            saveToContext: {
+              _flow_payment_method: '{{_flow_pay.flow_payment_result.payment_method}}',
+            },
+          },
+        },
+      ],
+      transitions: {
+        default: 'route_flow_payment_parcel',
+      },
+    },
+
+    // Route based on payment method from WhatsApp Flow
+    route_flow_payment_parcel: {
+      type: 'decision',
+      description: 'Route based on WhatsApp Flow payment selection for parcel',
+      conditions: [
+        {
+          expression: 'context._flow_payment_method && (context._flow_payment_method.includes("cod") || context._flow_payment_method.includes("cash"))',
+          event: 'cod_selected',
+        },
+        {
+          expression: 'context._flow_payment_method && (context._flow_payment_method.includes("digital") || context._flow_payment_method.includes("online") || context._flow_payment_method.includes("upi") || context._flow_payment_method.includes("wallet"))',
+          event: 'digital_selected',
+        },
+      ],
+      transitions: {
+        cod_selected: 'place_order_cod',
+        digital_selected: 'place_order_digital',
+        default: 'select_payment_method', // Fallback if no valid method
       },
     },
 
