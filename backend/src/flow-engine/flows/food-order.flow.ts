@@ -3768,10 +3768,67 @@ Ask: "Would you like me to send a rider to pick it up for you?"`,
       onEntry: [],
       actions: [],
       transitions: {
-        user_message: 'collect_address',   // Any free text → proceed to address
-        proceed:      'collect_address',
+        user_message: 'suggest_upsells',   // Any free text → try upsells before address
+        proceed:      'suggest_upsells',
         modify_cart:  'show_current_cart',
         cancel:       'cancelled',
+        default:      'suggest_upsells',
+      },
+    },
+
+    // 🎯 Phase 5: Upsell — "You might also like" before checkout
+    suggest_upsells: {
+      type: 'action',
+      description: 'Fetch frequently-bought-together items for upsell before checkout',
+      actions: [
+        {
+          id: 'track_cart_for_recs',
+          executor: 'recommendation',
+          config: { action: 'track_add_to_cart', moduleId: 4 },
+          output: '_rec_tracking',
+        },
+        {
+          id: 'fetch_upsells',
+          executor: 'recommendation',
+          config: { action: 'get_upsells', limit: 3, moduleId: 4 },
+          output: 'upsell_results',
+        },
+      ],
+      conditions: [
+        {
+          expression: 'context.upsell_results && context.upsell_results.count > 0',
+          event: 'items_found',
+        },
+      ],
+      transitions: {
+        items_found: 'show_upsell_offer',
+        no_items:    'collect_address',   // No upsells → proceed directly
+        error:       'collect_address',
+        default:     'collect_address',
+      },
+    },
+
+    show_upsell_offer: {
+      type: 'wait',
+      description: 'Show upsell suggestions — user can add or skip',
+      onEntry: [
+        {
+          id: 'display_upsells',
+          executor: 'response',
+          config: {
+            message: '✨ **You might also like:**\nOther customers often add these with their order! 👇',
+            cardsPath: 'upsell_results.cards',
+            buttons: [
+              { id: 'btn_skip_upsell', label: '⏩ No thanks, checkout', value: 'skip_upsell' },
+            ],
+          },
+          output: '_last_response',
+        },
+      ],
+      actions: [],
+      transitions: {
+        skip_upsell:  'collect_address',
+        user_message: 'collect_address',  // Any text → proceed
         default:      'collect_address',
       },
     },
@@ -6090,6 +6147,12 @@ Reply "confirm" to book the rider.`,
             action: 'learn_from_order',
           },
           output: '_profile_learned',
+        },
+        {
+          id: 'track_purchase_for_recs',
+          executor: 'recommendation',
+          config: { action: 'track_purchase', moduleId: 4 },
+          output: '_rec_purchase_tracked',
         },
         {
           id: 'post_order_question',

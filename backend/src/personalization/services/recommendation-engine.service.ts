@@ -335,7 +335,7 @@ export class RecommendationEngineService implements OnModuleInit {
     let categories: string[] = [];
     const hour = new Date().getHours();
 
-    if (moduleId === 1) { // Food module
+    if (moduleId === 4) { // Food module (module_id=4 in PHP backend)
       if (hour >= 6 && hour < 11) {
         categories = ['Breakfast', 'Coffee', 'Tea', 'Paratha', 'Poha'];
       } else if (hour >= 11 && hour < 15) {

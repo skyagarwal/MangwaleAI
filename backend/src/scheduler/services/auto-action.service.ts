@@ -31,7 +31,7 @@ const ACTION_DEFINITIONS: ActionDefinition[] = [
   },
   {
     actionName: 'reorder_nudge',
-    defaultEnabled: false,
+    defaultEnabled: true,
     defaultConfig: { max_nudges_per_day: 50, cooldown_days: 3 },
     description: 'Users due for reorder get WhatsApp reminder',
   },
@@ -61,7 +61,7 @@ const ACTION_DEFINITIONS: ActionDefinition[] = [
   },
   {
     actionName: 'cart_recovery',
-    defaultEnabled: false,
+    defaultEnabled: true,
     defaultConfig: { abandonment_window_hours: 2, max_nudges_per_run: 30, discount_code: 'COMEBACK10' },
     description: 'Abandoned cart recovery via WhatsApp nudge with discount',
   },

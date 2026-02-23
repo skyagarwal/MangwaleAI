@@ -41,6 +41,8 @@ const JOB_DEFINITIONS: JobDefinition[] = [
   { jobName: 'find_reorder_candidates', cronExpression: '0 10 * * *', defaultEnabled: true, description: 'Find reorder nudge candidates (daily 10AM)' },
   { jobName: 'check_weather_triggers', cronExpression: '0 */2 * * *', defaultEnabled: false, description: 'Check weather campaign triggers (every 2h)' },
   { jobName: 'check_event_triggers', cronExpression: '0 8 * * *', defaultEnabled: true, description: 'Check event campaign triggers (daily 8AM)' },
+  { jobName: 'run_cart_recovery', cronExpression: '0 */3 * * *', defaultEnabled: true, description: 'Cart recovery nudges (every 3h)' },
+  { jobName: 'run_auto_refund', cronExpression: '0 11 * * *', defaultEnabled: false, description: 'Auto-refund late orders (daily 11AM)' },
 ];
 
 @Injectable()
@@ -105,7 +107,7 @@ export class SchedulerService implements OnModuleInit {
       }
 
       client.release();
-      this.logger.log('SchedulerService initialized with 9 job definitions');
+      this.logger.log('SchedulerService initialized with 11 job definitions');
     } catch (error: any) {
       this.logger.error(`Failed to initialize: ${error.message}`);
     }
@@ -188,6 +190,22 @@ export class SchedulerService implements OnModuleInit {
       const events = await this.eventTrigger.getEventsToTrigger();
       await this.autoAction.maybeRunAction('festival_campaign', { events });
       return { eventsFound: events.length };
+    });
+  }
+
+  @Cron('0 */3 * * *', { name: 'run_cart_recovery' })
+  async cronRunCartRecovery() {
+    await this.executeJob('run_cart_recovery', async () => {
+      await this.autoAction.maybeRunAction('cart_recovery', {});
+      return { status: 'triggered' };
+    });
+  }
+
+  @Cron('0 11 * * *', { name: 'run_auto_refund' })
+  async cronRunAutoRefund() {
+    await this.executeJob('run_auto_refund', async () => {
+      await this.autoAction.maybeRunAction('auto_refund_late', {});
+      return { status: 'triggered' };
     });
   }
 
@@ -303,6 +321,14 @@ export class SchedulerService implements OnModuleInit {
       check_event_triggers: async () => {
         const events = await this.eventTrigger.getEventsToTrigger();
         return { eventsFound: events.length };
+      },
+      run_cart_recovery: async () => {
+        await this.autoAction.maybeRunAction('cart_recovery', {});
+        return { status: 'triggered' };
+      },
+      run_auto_refund: async () => {
+        await this.autoAction.maybeRunAction('auto_refund_late', {});
+        return { status: 'triggered' };
       },
     };
 
