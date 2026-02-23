@@ -69,6 +69,7 @@ import { StrategyModule } from './strategy/strategy.module'; // ✨ Strategy Led
 import { ActionEngineModule } from './action-engine/action-engine.module'; // ✨ mOS Action Engine (Campaigns, Cart Recovery)
 import { SchedulerModule } from './scheduler/scheduler.module'; // ✨ mOS Scheduler (Cron Jobs & Auto-Actions)
 import { InstagramModule } from './instagram/instagram.module'; // ✨ Instagram DM Channel
+import { McpModule } from './mcp/mcp.module'; // ✨ MCP Server (AI Agent Commerce Discovery)
 // import { ClientLogsController } from './logging/controllers/client-logs.controller'; // ✨ Frontend Logging (FILE MISSING)
 
 @Module({
@@ -168,6 +169,7 @@ FlowManagementModule, // ✨ Visual Flow Builder & Execution
     StrategyModule, // ✨ Strategy Ledger & Institutional Memory
     ActionEngineModule, // ✨ mOS Action Engine (Campaigns, Cart Recovery)
     SchedulerModule, // ✨ mOS Scheduler (Cron Jobs & Auto-Actions)
+    McpModule, // ✨ MCP Server (AI Agent Commerce Discovery)
 
     // Channel implementation modules
     WhatsAppModule, // WhatsApp channel
